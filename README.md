@@ -2,6 +2,8 @@
 
 VS Code support for the [shopify liquid](https://shopify.github.io/liquid/) template language. This extension will provide syntax highlighting for sections blocks and object contained attributes.
 
+![showcase](https://github.com/panoply/vscode-shopify-liquid/blob/master/images/showcase.gif?raw=true)
+
 ## Blocks
 The extension supports syntax highlighting within sections.
 
