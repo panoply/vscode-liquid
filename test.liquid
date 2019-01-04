@@ -1,0 +1,194 @@
+
+{% stylesheet 'scss' %}
+
+  $position: relative;
+  $height: 50px;
+  $width: 100%;
+  $black: #000000;
+
+  .foo {
+    position: $position;
+
+    .bar {
+      height: $height;
+      width: $width;
+
+      &:hover {
+        color: $black;
+      }
+    }
+
+  }
+
+{% endstylesheet %}
+
+
+{% stylesheet  %}
+
+  .foo {
+    position: relative;
+  }
+
+  .bar {
+    height: 50px;
+    width: 100%;
+  }
+
+{% endstylesheet %}
+
+
+{% javascript %}
+
+  /* comment */
+  const bar = "string"
+  const foo = true
+
+  // comment
+  function helloWorld(){
+    return {
+      foo: "bar",
+      bar: true
+    }
+  }
+
+{% endjavascript %}
+
+
+{% schema %}
+  {
+    "string": "Hello World",
+    "regex": "\\",
+    "boolean": true,
+    "array": ["hello", "world"],
+    "object": {
+      "key": "value"
+    }
+  }
+{% endschema %}
+
+{{ order.name }}
+{{ checkout.id}}
+{{ tax_line.title }}
+{{ tablerow.index }}
+{{ shipping_method.title }}
+{{ transaction.title }}
+{{ form.body }}
+{{ discount.title }}
+{{ scripts.title }}
+{{ request.host }}
+
+{{ search.results }}
+{{ product.tags }}
+{{ all_products['fancy-shoes'].title }}
+{{ country_option_tags }}
+
+{%- for foo in collection[bar].products -%}
+  {{ foo.title }}
+{%- endfor -%}
+
+{% for tag in collection.all_tags %}
+  {% if current_tags contains tag %}
+    <li class="active">
+      {{ tag | link_to_remove_tag: tag }}
+    </li>
+  {% else %}
+    <li>
+      {{ tag | link_to_add_tag: tag }}
+    </li>
+  {% endif %}
+{% endfor %}
+
+
+{%- if foo == true or bar == false  -%}
+    {{ hello }}
+  {% else %}
+    {{ world }}
+{%- endif -%}}
+
+{%- case variable -%}
+
+  {%- when condition -%}
+    {{ foo }}
+  {%- else -%}
+    {{ bar | append: 'foo' }}
+
+{%- endcase -%}
+
+
+{% stylesheet 'scss' %}
+
+  $position: relative;
+  $height: 50px;
+  $width: 100%;
+  $black: #000000;
+
+  .foo {
+    position: $position;
+
+    .bar {
+      height: $height;
+      width: $width;
+
+      &:hover {
+        color: $black;
+      }
+    }
+
+  }
+
+{% endstylesheet %}
+
+
+{% stylesheet  %}
+
+  .foo {
+    position: relative;
+  }
+
+  .bar {
+    height: 50px;
+    width: 100%;
+  }
+
+{% endstylesheet %}
+
+
+{% javascript %}
+
+  /* comment */
+  const bar = "string"
+  const foo = true
+
+  // comment
+  function helloWorld(){
+    return {
+      foo: "bar",
+      bar: true
+    }
+  }
+
+{% endjavascript %}
+
+
+{% schema %}
+  {
+    "string": "Hello World",
+    "regex": "\\",
+    "boolean": true,
+    "array": ["hello", "world"],
+    "object": {
+      "key": "value"
+    }
+  }
+{% endschema %}
+
+
+
+
+
+
+
+
+
+
+

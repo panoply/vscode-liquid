@@ -1,0 +1,285 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Shopify Liquid (HTML)",
+	"scopeName": "text.html.liquid",
+	"fileTypes": [
+		"liquid"
+	],
+	"patterns": [
+		{
+			"include": "#section_code_blocks"
+		},
+		{
+			"name": "comment.block.liquid",
+			"begin": "{%-?\\s*comment\\s*-?%}",
+			"end": "{%-?\\s*endcomment\\s*-?%}"
+		},
+		{
+			"name": "punctuation.output.liquid",
+			"begin": "{{-?",
+			"end": "-?}}",
+			"patterns": [
+				{
+					"include": "#template_var"
+				}
+			]
+		},
+		{
+			"name": "punctuation.tag.liquid",
+			"begin": "{%-?",
+			"end": "-?%}",
+			"patterns": [
+				{
+					"include": "#template_tag_name"
+				},
+				{
+					"include": "#template_var"
+				}
+			]
+		},
+		{
+			"include": "text.html.basic"
+		}
+	],
+	"repository": {
+		"section_code_blocks": {
+			"patterns": [
+				{
+					"name": "meta.attribute.style.html.liquid",
+					"begin": "{%\\s*(stylesheet|\\s*((?:'|\")(scss)(.*)(?:'|\")))()\\s*%}",
+					"beginCaptures": {
+						"1": {
+							"name": "entity.name.tag.liquid"
+						},
+						"2": {
+							"patterns": [
+								{
+									"include": "source.css.scss"
+								},
+								{
+									"name": "entity.name.tag.liquid"
+								}
+							]
+						}
+					},
+					"end": "{%\\s*(endstylesheet)\\s*%}",
+					"endCaptures": {
+						"1": {
+							"name": "entity.name.tag.liquid"
+						}
+					},
+					"patterns": [
+						{
+							"include": "source.css"
+						}
+					]
+				},
+				{
+					"name": "meta.attribute.style.html.liquid",
+					"begin": "{%\\s*(stylesheet\\s*('scss'|\"scss\"))\\s*%}",
+					"beginCaptures": {
+						"1": {
+							"name": "entity.name.tag.liquid"
+						},
+						"2": {
+							"name": "string.quoted.liquid"
+						}
+					},
+					"end": "{%\\s*(endstylesheet)\\s*%}",
+					"endCaptures": {
+						"1": {
+							"name": "entity.name.tag.liquid"
+						}
+					},
+					"patterns": [
+						{
+							"include": "source.css.scss"
+						}
+					]
+				},
+				{
+					"name": "meta.embedded.js.liquid",
+					"begin": "{%\\s*(javascript)\\s*%}",
+					"beginCaptures": {
+						"1": {
+							"name": "entity.name.tag.liquid"
+						}
+					},
+					"end": "{%\\s*(endjavascript)\\s*%}",
+					"endCaptures": {
+						"1": {
+							"name": "entity.name.tag.liquid"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#template_tag_name"
+						},
+						{
+							"include": "source.js"
+						}
+					]
+				},
+				{
+					"name": "meta.embedded.json.liquid",
+					"begin": "{%\\s*(schema)\\s*%}",
+					"beginCaptures": {
+						"1": {
+							"name": "entity.name.tag.liquid"
+						}
+					},
+					"end": "{%\\s*(endschema)\\s*%}",
+					"endCaptures": {
+						"1": {
+							"name": "entity.name.tag.liquid"
+						}
+					},
+					"patterns": [
+						{
+							"include": "source.json"
+						}
+					]
+				}
+			]
+		},
+		"assign_op": {
+			"patterns": [
+				{
+					"name": "keyword.operator.assignment.augmented.liquid",
+					"match": "/="
+				}
+			]
+		},
+		"logic_expression": {
+			"patterns": [
+				{
+					"match": "/=",
+					"name": "keyword.operator.assignment.augmented.liquid"
+				}
+			]
+		},
+		"logic_op": {
+			"patterns": [
+				{
+					"name": "keyword.operator.logical.liquid",
+					"match": "\\s+(and|or|not|contains|(\\!\\=|\\=\\=|<\\=|>\\=|<|>)\\s+"
+				}
+			]
+		},
+		"template_tag_name": {
+			"patterns": [
+				{
+					"name": "entity.name.tag.liquid",
+					"match": "(?<={%)\\s*(\\w+)"
+				},
+				{
+					"name": "entity.name.tag.liquid",
+					"match": "(?<={%-)\\s*(\\w+)"
+				}
+			]
+		},
+		"template_var": {
+			"patterns": [
+				{
+					"match": "(\\[)(\\|)(?=[^\\]]*)(?=\\])",
+					"captures": {
+						"2": {
+							"name": "invalid.illegal.filter.liquid"
+						},
+						"3": {
+							"name": "invalid.illegal.filter.liquid"
+						}
+					}
+				},
+				{
+					"name": "invalid.illegal.filter.liquid",
+					"match": "(?<=\\s)(\\+|\\-|\\/|\\*)(?=\\s)"
+				},
+				{
+					"name": "constant.language.liquid",
+					"match": "(false|true|nil)"
+				},
+				{
+					"match": "(?=if|unless|elsif)\\s*[^%}]+\\s(in)\\s",
+					"captures": {
+						"3": {
+							"name": "invalid.illegal.operator.liquid"
+						}
+					}
+				},
+				{
+					"name": "keyword.operator.liquid",
+					"match": "\\s+(and|or|not|contains|in|by|((\\!|\\=|\\<|\\>)\\=))\\s+"
+				},
+				{
+					"match": "(?<=assign)([^\\=]+)(\\=\\=+)",
+					"captures": {
+						"2": {
+							"name": "invalid.illegal.assignment.liquid"
+						}
+					}
+				},
+				{
+					"name": "support.function.with-args.liquid",
+					"match": "\\|\\s+(?![\\.0-9])[a-zA-Z0-9_-]+\\:\\s+"
+				},
+				{
+					"name": "support.function.without-args.liquid",
+					"match": "\\|\\s+(?![\\.0-9])[a-zA-Z0-9_-]+\\s+"
+				},
+				{
+					"name": "keyword.control.liquid",
+					"match": "(?<=\\s)(with|offset\\:|limit\\:)(?=\\s)"
+				},
+				{
+					"match": "(?<=include)(.*)(with\\:|offset|limit)(?=\\s)",
+					"captures": {
+						"2": {
+							"name": "invalid.illegal.argument.liquid"
+						}
+					}
+				},
+				{
+					"name": "invalid.illegal.liquid",
+					"match": "(?<=\\s)(\\w+\\:)(?=\\:\\s)"
+				},
+				{
+					"name": "string.quoted.double.liquid",
+					"begin": "\"",
+					"end": "\""
+				},
+				{
+					"name": "string.quoted.single.liquid",
+					"begin": "'",
+					"end": "'"
+				},
+				{
+					"name": "constant.numeric.liquid",
+					"match": "(-|\\+)?\\s*[0-9]+(\\.[0-9]+)?"
+				},
+				{
+					"name": "support.class.liquid",
+					"match": "\\b(collection|product|linklist|linklists|order|link|customer|customer_address|line_item|shop|collections|page_title|template|image|blog|blogs|cart|pages|theme|themes|variant|items|comment|forloop|settings|checkout|shipping_method|transaction|tax_line|form|order|discount|fulfillment|paginate|search|tablerow|schema|javascript|stylesheet|scripts|request)\\b"
+				},
+				{
+					"name": "support.class.liquid",
+					"match": "\\b(assets|body_raw|current|results|date|excerpt_raw|meta|next|pages|products|parent|posts|previous|site|tags|taxonomy|url|all_products|country_option_tags)\\b"
+				},
+				{
+					"name": "variable.parameter.liquid",
+					"match": "((?<=\\w\\:\\s)\\w+)"
+				},
+				{
+					"name": "support.variable.liquid",
+					"match": "(?<=\\.)\\w+\\b"
+				},
+				{
+					"name": "variable.other.liquid",
+					"match": "\\w+"
+				}
+			]
+		}
+	},
+	"foldingStartMarker": "(?x){%\\s*(if|unless|for|paginate|capture|form|case|tablerow|raw|comment)[^(%})]+%}",
+	"foldingStopMarker": "(?x){%\\s*(endif|endunless|endfor|endpaginate|endcapture|endform|endcase|endtablerow|endraw|endcomment)[^(%})]+%}"
+}

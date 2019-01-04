@@ -1,0 +1,35 @@
+{
+    "name": "liquid",
+    "displayName": "liquid",
+    "description": "Liquid language support of Shopifys liquid variation. Supports section tags like schema, javascript and stylesheet.",
+    "publisher": "panoply",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.30.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "liquid",
+                "aliases": [
+                    "Liquid (HTML)",
+                    "liquid"
+                ],
+                "extensions": [
+                    ".liquid"
+                ],
+                "configuration": "./liquid.language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "liquid",
+                "scopeName": "text.html.liquid",
+                "path": "./syntaxes/liquid.json"
+            }
+        ]
+    }
+}
