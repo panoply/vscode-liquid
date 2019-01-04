@@ -1,4 +1,3 @@
-
 {% stylesheet 'scss' %}
 
   $position: relative;
@@ -55,15 +54,14 @@
 
 
 {% schema %}
+
   {
-    "string": "Hello World",
-    "regex": "\\",
-    "boolean": true,
-    "array": ["hello", "world"],
-    "object": {
-      "key": "value"
-    }
+   "name": "section",
+   "settings": [],
+   "blocks": [],
+   "presets": [],
   }
+
 {% endschema %}
 
 {{ order.name }}
@@ -113,76 +111,6 @@
     {{ bar | append: 'foo' }}
 
 {%- endcase -%}
-
-
-{% stylesheet 'scss' %}
-
-  $position: relative;
-  $height: 50px;
-  $width: 100%;
-  $black: #000000;
-
-  .foo {
-    position: $position;
-
-    .bar {
-      height: $height;
-      width: $width;
-
-      &:hover {
-        color: $black;
-      }
-    }
-
-  }
-
-{% endstylesheet %}
-
-
-{% stylesheet  %}
-
-  .foo {
-    position: relative;
-  }
-
-  .bar {
-    height: 50px;
-    width: 100%;
-  }
-
-{% endstylesheet %}
-
-
-{% javascript %}
-
-  /* comment */
-  const bar = "string"
-  const foo = true
-
-  // comment
-  function helloWorld(){
-    return {
-      foo: "bar",
-      bar: true
-    }
-  }
-
-{% endjavascript %}
-
-
-{% schema %}
-  {
-    "string": "Hello World",
-    "regex": "\\",
-    "boolean": true,
-    "array": ["hello", "world"],
-    "object": {
-      "key": "value"
-    }
-  }
-{% endschema %}
-
-
 
 
 
