@@ -1,7 +1,7 @@
 {
     "name": "liquid",
     "displayName": "liquid",
-    "description": "Liquid language support of Shopifys liquid variation. Supports section tags like schema, javascript and stylesheet.",
+    "description": "Liquid language support (Shopify variation). Supports section tags like schema, javascript and stylesheet.",
     "publisher": "panoply",
     "version": "0.0.1",
     "engines": {
