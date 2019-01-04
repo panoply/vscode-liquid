@@ -1,9 +1,23 @@
 {
-    "name": "liquid",
-    "displayName": "liquid",
-    "description": "Liquid language support (Shopify variation). Supports section tags like schema, javascript and stylesheet.",
-    "publisher": "panoply",
+    "name": "shopify-liquid",
+    "displayName": "Shopify Liquid",
+    "description": "Language support and syntax highlighting for the shopify liquid template language. Supports section tags like schema, javascript, stylesheet and more.",
+    "publisher": "sissel",
+    "icon": "images/logo.png",
+    "author": "Nikolas Savvidis <nicos@gmx.com>",
     "version": "0.0.1",
+    "keywords": [
+		"liquid",
+		"shopify",
+		"language"
+	],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/panoply/vscode-shopify-liquid.git"
+    },
+    "bugs": {
+        "url": "https://github.com/panoply/vscode-shopify-liquid/issues"
+    },
     "engines": {
         "vscode": "^1.30.0"
     },
