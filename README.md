@@ -1,3 +1,5 @@
+[![npm version](https://img.shields.io/badge/vscode-install-blue.svg)](https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid)
+
 # Liquid Language (VS Code)
 
 VS Code support for the [shopify liquid](https://shopify.github.io/liquid/) template language. This extension will provide syntax highlighting for sections blocks and object contained attributes.
