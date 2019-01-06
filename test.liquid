@@ -1,3 +1,61 @@
+{% <json> %}
+  {
+    "align": {{ section.settings.banner_align  }},
+    "buttons": {{ section.settings.banner_buttons  }},
+    "data": [
+      {%- for block in section.blocks -%}
+        {
+          "text": {{ block.settings.text | json }},
+          "href": {{ block.settings.link | json }}
+        }
+      {%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  }
+{% </json> %}
+
+{% <html> %}
+
+{% for tag in collection.all_tags %}
+  {% if current_tags contains tag %}
+    <li class="active">
+      {{ tag | link_to_remove_tag: tag }}
+    </li>
+  {% else %}
+    <li>
+      {{ tag | link_to_add_tag: tag }}
+    </li>
+  {% endif %}
+{% endfor %}
+
+
+{% </html> %}
+
+{% <style> %}
+
+  .foo {
+    position: relative;
+  }
+
+  .bar {
+    height: 50px;
+    width: 100%;
+  }
+
+{% </style> %}
+
+{% <script> %}
+
+  function(){
+
+  }
+
+{% </script> %}
+
+
+{% enddata %}
+
+
 {% stylesheet 'scss' %}
 
   $position: relative;
