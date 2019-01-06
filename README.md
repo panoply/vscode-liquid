@@ -39,3 +39,12 @@ Some shopify liquid object attributes contain objects. These tags will apply hig
 - `{{ all_products }}`
 - `{{ country_option_tags }}`
 
+## Single File Section Tags
+
+This extension also includes 4 additional syntax tags. **These tags are not apart of the liquid language** and are used as code block reference strings when developing single file sections.
+
+- `{% <json> %}`
+- `{% <html>%}`
+- `{% <style> %}`
+- `{% <script> %}`
+

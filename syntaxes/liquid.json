@@ -10,6 +10,9 @@
 			"include": "#section_code_blocks"
 		},
 		{
+			"include": "#single_file_sections"
+		},
+		{
 			"name": "comment.block.liquid",
 			"begin": "{%-?\\s*comment\\s*-?%}",
 			"end": "{%-?\\s*endcomment\\s*-?%}"
@@ -175,6 +178,91 @@
 				{
 					"name": "entity.name.tag.liquid",
 					"match": "(?<={%-)\\s*(\\w+)"
+				}
+			]
+		},
+		"single_file_sections": {
+			"patterns": [
+				{
+					"match": "{%\\s(<|</)\\s*(html)\\s*(>)\\s%}",
+					"captures": {
+						"1": {
+							"name": "support.class.liquid"
+						},
+						"2": {
+							"name": "entity.name.tag.liquid"
+						},
+						"3": {
+							"name": "support.class.liquid"
+						}
+					}
+				},
+				{
+					"name": "meta.embedded.json.liquid",
+					"begin": "{%\\s(<)\\s*(json)\\s*(>)\\s%}",
+					"end": "{%\\s(</)\\s*(json)\\s*(>)\\s%}",
+					"captures": {
+						"1": {
+							"name": "support.class.liquid"
+						},
+						"2": {
+							"name": "entity.name.tag.liquid"
+						},
+						"3": {
+							"name": "support.class.liquid"
+						}
+					},
+					"patterns": [
+						{
+							"include": "text.html.liquid"
+						},
+						{
+							"name": "string.quoted.double.liquid",
+							"match": "(?=)(\".*\"(\\s:|:))"
+						}
+					]
+				},
+				{
+					"name": "meta.embedded.js.liquid",
+					"begin": "{%\\s(<)\\s*(script)\\s*(>)\\s%}",
+					"end": "{%\\s(</)\\s*(script)\\s*(>)\\s%}",
+					"captures": {
+						"1": {
+							"name": "support.class.liquid"
+						},
+						"2": {
+							"name": "entity.name.tag.liquid"
+						},
+						"3": {
+							"name": "support.class.liquid"
+						}
+					},
+					"patterns": [
+						{
+							"include": "source.js"
+						}
+					]
+				},
+				{
+					"name": "meta.embedded.style.liquid",
+					"begin": "{%\\s(<)\\s*(style)\\s*(>)\\s%}",
+					"end": "{%\\s(</)\\s*(style)\\s*(>)\\s%}",
+					"captures": {
+						"1": {
+							"name": "support.class.liquid"
+						},
+						"2": {
+							"name": "entity.name.tag.liquid"
+						},
+						"3": {
+							"name": "support.class.liquid"
+						}
+					},
+					"patterns": [
+						{
+							"include": "source.css.scss"
+						}
+					]
 				}
 			]
 		},
