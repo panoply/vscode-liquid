@@ -218,7 +218,11 @@
 						},
 						{
 							"name": "string.quoted.double.liquid",
-							"match": "(?=)(\".*\"(\\s:|:))"
+							"match": "(?=)\".*\"(?<!\\s:|:)"
+						},
+						{
+							"name": "constant.language.liquid",
+							"match": "(false|true|nil)"
 						}
 					]
 				},
