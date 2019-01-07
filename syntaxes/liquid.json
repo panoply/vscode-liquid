@@ -139,7 +139,7 @@
 					},
 					"patterns": [
 						{
-							"include": "source.json"
+							"include": "source.js"
 						}
 					]
 				}
@@ -218,7 +218,11 @@
 						},
 						{
 							"name": "string.quoted.double.liquid",
-							"match": "(?=)\".*\"(?<!\\s:|:)"
+							"match": "(?<=:\\s)(\".*\")"
+						},
+						{
+							"name": "string.quoted.double.liquid",
+							"match": "(\".*\")(?=:)"
 						},
 						{
 							"name": "constant.language.liquid",
