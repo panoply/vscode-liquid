@@ -1,0 +1,67 @@
+{%- comment -%}
+  Single File Sections
+{%- endcomment -%}
+
+{% <json> %}
+
+  {
+    "string": "foo",
+    "boolean": true,
+    "boolean": false,
+    "array-object": [
+      {%- for block in section.blocks -%}
+        {
+          "string": "test",
+          "setting": {{ block.settings.foo | json }}
+        }
+      {%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  }
+
+{% </json> %}
+
+{% <html> %}
+
+  {% for tag in collection.all_tags %}
+    {% if current_tags contains tag %}
+      <li class="active">
+        {{ tag | link_to_remove_tag: tag }}
+      </li>
+    {% else %}
+      <li>
+        {{ tag | link_to_add_tag: tag }}
+      </li>
+    {% endif %}
+  {% endfor %}
+
+{% </html> %}
+
+{% <style> %}
+
+  .foo {
+    position: relative;
+  }
+
+  .bar {
+    height: 50px;
+    width: 100%;
+  }
+
+{% </style> %}
+
+{% <script> %}
+
+  /* comment */
+  const bar = "string"
+  const foo = true
+
+  // comment
+  function helloWorld(){
+    return {
+      foo: "bar",
+      bar: true
+    }
+  }
+
+{% </script> %}
