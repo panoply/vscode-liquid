@@ -184,7 +184,7 @@
 		"single_file_sections": {
 			"patterns": [
 				{
-					"match": "{%\\s(<|</)\\s*(html)\\s*(>)\\s%}",
+					"match": "{%\\s(<|</)(html)(>)\\s%}",
 					"captures": {
 						"1": {
 							"name": "support.class.liquid"
@@ -199,8 +199,8 @@
 				},
 				{
 					"name": "meta.embedded.json.liquid",
-					"begin": "{%\\s(<)\\s*(json)\\s*(>)\\s%}",
-					"end": "{%\\s(</)\\s*(json)\\s*(>)\\s%}",
+					"begin": "{%\\s(<)(json)(>)\\s%}",
+					"end": "{%\\s(</)(json)(>)\\s%}",
 					"captures": {
 						"1": {
 							"name": "support.class.liquid"
@@ -224,8 +224,8 @@
 				},
 				{
 					"name": "meta.embedded.js.liquid",
-					"begin": "{%\\s(<)\\s*(script)\\s*(>)\\s%}",
-					"end": "{%\\s(</)\\s*(script)\\s*(>)\\s%}",
+					"begin": "{%\\s(<)(script)(>)\\s%}",
+					"end": "{%\\s(</)(script)(>)\\s%}",
 					"captures": {
 						"1": {
 							"name": "support.class.liquid"
@@ -245,8 +245,8 @@
 				},
 				{
 					"name": "meta.embedded.style.liquid",
-					"begin": "{%\\s(<)\\s*(style)\\s*(>)\\s%}",
-					"end": "{%\\s(</)\\s*(style)\\s*(>)\\s%}",
+					"begin": "{%\\s(<)(style)(>)\\s%}",
+					"end": "{%\\s(</)(style)(>)\\s%}",
 					"captures": {
 						"1": {
 							"name": "support.class.liquid"
