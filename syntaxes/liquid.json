@@ -139,7 +139,7 @@
 					},
 					"patterns": [
 						{
-							"include": "source.js"
+							"include": "source.json"
 						}
 					]
 				}
