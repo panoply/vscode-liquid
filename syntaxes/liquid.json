@@ -184,7 +184,8 @@
 		"single_file_sections": {
 			"patterns": [
 				{
-					"match": "{%\\s(<|</)(html)(>)\\s%}",
+					"begin": "(<)(template)(>)",
+					"end": "(</)(template)(>)",
 					"captures": {
 						"1": {
 							"name": "support.class.liquid"
@@ -198,9 +199,9 @@
 					}
 				},
 				{
-					"name": "meta.embedded.json.liquid",
-					"begin": "{%\\s(<)(json)(>)\\s%}",
-					"end": "{%\\s(</)(json)(>)\\s%}",
+					"name": "meta.embedded.js.liquid",
+					"begin": "(<)(config)(>)",
+					"end": "(</)(config)(>)",
 					"captures": {
 						"1": {
 							"name": "support.class.liquid"
@@ -222,7 +223,12 @@
 						},
 						{
 							"name": "string.quoted.double.liquid",
-							"match": "(\".*\")(?=:)"
+							"match": "(.*)(:)",
+							"captures": {
+								"2": {
+									"name": "entity.name.tag.liquid"
+								}
+							}
 						},
 						{
 							"name": "constant.language.liquid",
@@ -232,8 +238,8 @@
 				},
 				{
 					"name": "meta.embedded.js.liquid",
-					"begin": "{%\\s(<)(script)(>)\\s%}",
-					"end": "{%\\s(</)(script)(>)\\s%}",
+					"begin": "(<)(script)(>)",
+					"end": "(</)(script)(>)",
 					"captures": {
 						"1": {
 							"name": "support.class.liquid"
@@ -253,8 +259,8 @@
 				},
 				{
 					"name": "meta.embedded.style.liquid",
-					"begin": "{%\\s(<)(style)(>)\\s%}",
-					"end": "{%\\s(</)(style)(>)\\s%}",
+					"begin": "(<)(style)(>)",
+					"end": "(</)(style)(>)",
 					"captures": {
 						"1": {
 							"name": "support.class.liquid"

@@ -2,26 +2,26 @@
   Single File Sections
 {%- endcomment -%}
 
-{% <json> %}
+<config>
 
   {
-    "string": "foo",
-    "boolean": true,
-    "boolean": false,
-    "array-object": [
+    string: "foo",
+    boolean: true,
+    boolean: false,
+    array-object: [
       {%- for block in section.blocks -%}
         {
-          "string": "test",
-          "setting": {{ block.settings.foo | json }}
+          string: "test",
+          setting: {{ block.settings.foo | json }}
         }
       {%- unless forloop.last -%},{%- endunless -%}
       {%- endfor -%}
     ]
   }
 
-{% </json> %}
+</config>
 
-{% <html> %}
+<template>
 
   {% for tag in collection.all_tags %}
     {% if current_tags contains tag %}
@@ -35,9 +35,9 @@
     {% endif %}
   {% endfor %}
 
-{% </html> %}
+</template>
 
-{% <style> %}
+<style>
 
   .foo {
     position: relative;
@@ -48,9 +48,9 @@
     width: 100%;
   }
 
-{% </style> %}
+</style>
 
-{% <script> %}
+<script>
 
   /* comment */
   const bar = "string"
@@ -64,4 +64,4 @@
     }
   }
 
-{% </script> %}
+</script>
