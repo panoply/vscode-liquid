@@ -3,22 +3,40 @@
 {%- endcomment -%}
 
 <config>
+{
+  config: {
+    sticky: {{ section.settings.sticky }},
+    icons: {{ section.settings.use_icons }},
+  },
+  boolean: false,
+  boolean: true,
+  logo: {
+    align: {{ section.settings.logo_align }},
+    src: {{ settings.logo | json }},
+    alt: {{ section.settings.logo.alt | default: shop.name | json }}
+  },
+  main_menu: [
+    {%- for link in linklists[section.settings.menu].links -%}
+      {
+        "title": {{ link.title | json }},
+        "url": {{ link.url | json }},
+        "sub_menu": [
+          {%- if link.links != blank -%}
+            {%- for sub in link.links -%}
+              {
+                "title": {{ sub.title | json }},
+                "url": {{ sub.url | json }}
+              }
+            {%- unless forloop.last -%},{%- endunless -%}
+            {%- endfor -%}
+          {%- endif -%}
+        ]
+      }
+    {%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
 
-  {
-    string: "foo",
-    boolean: true,
-    boolean: false,
-    array-object: [
-      {%- for block in section.blocks -%}
-        {
-          string: "test",
-          setting: {{ block.settings.foo | json }}
-        }
-      {%- unless forloop.last -%},{%- endunless -%}
-      {%- endfor -%}
-    ]
-  }
-
+}
 </config>
 
 <template>

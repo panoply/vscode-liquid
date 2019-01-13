@@ -227,11 +227,10 @@
 							"match": "(?<=:\\s)(\".*\")"
 						},
 						{
-							"name": "string.quoted.double.liquid",
-							"match": "(.*)(:)",
+							"match": "(.*?)(:\\s)",
 							"captures": {
-								"2": {
-									"name": "entity.name.tag.liquid"
+								"1": {
+									"name": "string.quoted.double.liquid"
 								}
 							}
 						},
