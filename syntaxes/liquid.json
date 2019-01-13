@@ -196,7 +196,12 @@
 						"3": {
 							"name": "support.class.liquid"
 						}
-					}
+					},
+					"patterns": [
+						{
+							"include": "text.html.liquid"
+						}
+					]
 				},
 				{
 					"name": "meta.embedded.js.liquid",
