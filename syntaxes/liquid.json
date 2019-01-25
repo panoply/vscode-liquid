@@ -204,6 +204,35 @@
 					]
 				},
 				{
+					"begin": "(<)(snippet)\\s(name)(=)(\".*\")(>)",
+					"end": "(</)(snippet)(>)",
+					"captures": {
+						"1": {
+							"name": "support.class.liquid"
+						},
+						"2": {
+							"name": "entity.name.tag.liquid"
+						},
+						"3": {
+							"name": "support.function.without-args.liquid"
+						},
+						"4": {
+							"name": "entity.name.tag.liquid"
+						},
+						"5": {
+							"name": "string.quoted.double.liquid"
+						},
+						"6": {
+							"name": "support.class.liquid"
+						}
+					},
+					"patterns": [
+						{
+							"include": "text.html.liquid"
+						}
+					]
+				},
+				{
 					"name": "meta.embedded.js.liquid",
 					"begin": "(<)(config)(>)",
 					"end": "(</)(config)(>)",
@@ -233,6 +262,10 @@
 									"name": "string.quoted.double.liquid"
 								}
 							}
+						},
+						{
+							"name": "constant.numeric.liquid",
+							"match": "[0-9]"
 						},
 						{
 							"name": "constant.language.liquid",
