@@ -44,6 +44,7 @@ Some shopify liquid object attributes contain objects. These tags will apply hig
 This extension also includes 4 additional syntax highlighters. These 4 tags when referenced without attribute will use support.class highlights on surrounding brackets. These tags are used as code block reference strings when developing single file sections with liquid files.
 
 - `<config>`
+- `<snippet name="*">`
 - `<template>`
 - `<style>`
 - `<script>`
