@@ -8,6 +8,7 @@
     sticky: {{ section.settings.sticky }},
     icons: {{ section.settings.use_icons }},
   },
+  number: 12345678,
   boolean: false,
   boolean: true,
   logo: {
@@ -38,6 +39,18 @@
 
 }
 </config>
+
+<snippet name="hello">
+
+  {%- if section.settings.logo != blank -%}
+    {{ section.settings.logo }}
+  {%- else -%}
+    {%- assign data_logo = shop.name  -%}
+    <h1>{{ data_logo }} CO.</h1>
+  {%- endif -%}
+
+</snippet>
+
 
 <template>
 
