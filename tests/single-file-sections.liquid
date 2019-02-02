@@ -4,7 +4,10 @@
 <stream>
 {
 
-  import: @stream('banner'),
+  import: @stream('import'),
+  import: @stream('import/slash'),
+  import: @stream('import.dot'),
+  import: @stream('import-dash'),
 
   number: 12345678,
   boolean: false,
@@ -27,9 +30,10 @@
 <stream prop="test">
 {
 
+  none: "non quoted property",
+
   'single': 'quotes',
   "double": "quote",
-  none: "non quoted property",
 
   -test: "invalid",
   foo-bar: "invalid",
@@ -139,6 +143,24 @@
     }
 
   }
+</style>
+
+<style lang="sass">
+
+  nav
+    ul
+      margin: 0
+      padding: 0
+      list-style: none
+
+    li
+      display: inline-block
+
+    a
+      display: block
+      padding: 6px 12px
+      text-decoration: none
+
 </style>
 
 <style>
