@@ -372,7 +372,7 @@
 									"match": "(?<=:\\s)(false|true|nil)"
 								},
 								{
-									"match": "(@(stream)[(])(['\"a-zA-Z-_/.:0-9]+)([)])",
+									"match": "(@(stream)[(])(['\"a-zA-Z_/.:0-9-]+)([)])",
 									"captures": {
 										"1": {
 											"name": "support.function.without-args.html"
@@ -470,7 +470,7 @@
 							"end": "(?=</snippet>)",
 							"patterns": [
 								{
-									"match": "(@(partial)[(])(['\"a-zA-Z-_/.:0-9]+)([)])",
+									"match": "(@(partial)[(])(['\"a-zA-Z_/.:0-9-]+)([)])",
 									"captures": {
 										"1": {
 											"name": "support.function.without-args.html"
@@ -526,7 +526,7 @@
 							"end": "(?=</template>)",
 							"patterns": [
 								{
-									"match": "(@(partial|snippet)[(])(['\"a-zA-Z-_/.:0-9]+)([)])",
+									"match": "(@(partial|snippet)[(])(['\"a-zA-Z-_/.:0-9-]+)([)])",
 									"captures": {
 										"1": {
 											"name": "support.function.without-args.html"
