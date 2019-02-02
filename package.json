@@ -5,12 +5,12 @@
     "publisher": "sissel",
     "icon": "images/logo.png",
     "author": "Nikolas Savvidis <nicos@gmx.com>",
-    "version": "0.2.7",
+    "version": "0.3.0",
     "keywords": [
-		"liquid",
-		"shopify",
-		"language"
-	],
+        "liquid",
+        "shopify",
+        "language"
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/panoply/vscode-shopify-liquid.git"
@@ -25,25 +25,21 @@
         "Programming Languages"
     ],
     "contributes": {
-        "languages": [
-            {
-                "id": "liquid",
-                "aliases": [
-                    "Liquid (HTML)",
-                    "liquid"
-                ],
-                "extensions": [
-                    ".liquid"
-                ],
-                "configuration": "./liquid.language-configuration.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "liquid",
-                "scopeName": "text.html.liquid",
-                "path": "./syntaxes/liquid.json"
-            }
-        ]
+        "languages": [{
+            "id": "liquid",
+            "aliases": [
+                "Liquid (HTML)",
+                "liquid"
+            ],
+            "extensions": [
+                ".liquid"
+            ],
+            "configuration": "./liquid.language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "liquid",
+            "scopeName": "text.html.liquid",
+            "path": "./syntaxes/liquid.json"
+        }]
     }
 }
