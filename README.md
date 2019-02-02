@@ -41,10 +41,11 @@ Some shopify liquid object attributes contain objects. These tags will apply hig
 
 ## Single File Section Tags
 
-This extension also includes 4 additional syntax highlighters. These 4 tags when referenced without attribute will use support.class highlights on surrounding brackets. These tags are used as code block reference strings when developing single file sections with liquid files.
+This extension also includes 6 additional syntax tags. These tags are used as code block reference strings when developing single file sections with liquid files. They are **RESERVED** tags when using HTML Liquid.
 
-- `<config>`
-- `<snippet name="*">`
+- `<stream>`
+- `<snippet>`
+- `<partial>`
 - `<template>`
-- `<style>`
-- `<script>`
+- `<style lang="sass/scss">`
+- `<script lang="ts">`
