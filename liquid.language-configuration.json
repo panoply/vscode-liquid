@@ -6,12 +6,14 @@
     },
     // symbols used as brackets
     "brackets": [
+        ["<", ">"],
         ["{", "}"],
         ["[", "]"],
         ["(", ")"]
     ],
     // symbols that are auto closed when typing
     "autoClosingPairs": [
+        ["<", ">"],
         ["{", "}"],
         ["[", "]"],
         ["(", ")"],
@@ -20,10 +22,17 @@
     ],
     // symbols that that can be used to surround a selection
     "surroundingPairs": [
+        ["<", ">"],
         ["{", "}"],
         ["[", "]"],
         ["(", ")"],
         ["\"", "\""],
         ["'", "'"]
-    ]
+    ],
+    "folding": {
+        "markers": {
+            "start": "^<(template|style|script|snippet|partial|schema)[^>]*>",
+            "end": "^</(template|style|script|snippet|partial|schema)>"
+        }
+    }
 }
