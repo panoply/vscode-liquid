@@ -1,10 +1,25 @@
 [![npm version](https://img.shields.io/badge/vscode-install-blue.svg)](https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid)
 
-# Shopify Liquid Language (VS Code)
+## Shopify Liquid Syntax (VS Code)
+VS Code support for the [shopify liquid](https://shopify.github.io/liquid/) template language.
 
-VS Code support for the [shopify liquid](https://shopify.github.io/liquid/) template language. This extension will provide syntax highlighting for sections blocks and object contained attributes.
+### Usage
+Add the below configuration to your users settings vs workspace settings:
+
+```json
+"emmet.includeLanguages":{
+  "liquid": "html"
+},
+```
 
 ![showcase](https://github.com/panoply/vscode-shopify-liquid/blob/master/images/showcase.gif?raw=true)
+
+## Syntax
+
+Syntax support for liquid which includes support for new sections code blocks and Shopify object contained attributes.
+
+## Snippets
+Liquid snippets are forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) to avoid conflicts due to its extension dependency.
 
 ## Blocks
 The extension supports syntax highlighting within sections.
@@ -13,7 +28,7 @@ The extension supports syntax highlighting within sections.
 - `{% javascript %}`
 - `{% stylesheet %}`
 
-> Sass syntax highlighting is applied to stylesheets using the the `SCSS` attribute.
+> Sass syntax highlighting is applied to stylesheets using the `SCSS` attribute.
 
 ## Objects
 
@@ -39,13 +54,14 @@ Some shopify liquid object attributes contain objects. These tags will apply hig
 - `{{ all_products }}`
 - `{{ country_option_tags }}`
 
-## Single File Section Tags
+## Single File Sections
 
-This extension also includes 6 additional syntax tags. These tags are used as code block reference strings when developing single file sections with liquid files. They are **RESERVED** tags when using HTML Liquid.
+This extension also includes 6 additional syntax HTML tags. These tags are used as code block references when developing single file sections with liquid files. They are **RESERVED** tags when using HTML.
 
 - `<stream>`
 - `<snippet>`
 - `<partial>`
 - `<template>`
+- `<schema>`
 - `<style lang="sass/scss">`
 - `<script lang="ts">`
