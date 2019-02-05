@@ -5,7 +5,7 @@
     "publisher": "sissel",
     "icon": "images/logo.png",
     "author": "Nikolas Savvidis <nicos@gmx.com>",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "keywords": [
         "liquid",
         "shopify",
@@ -28,7 +28,7 @@
         "languages": [{
             "id": "liquid",
             "aliases": [
-                "Liquid (HTML)",
+                "Shopify Liquid (HTML)",
                 "liquid"
             ],
             "extensions": [
@@ -36,6 +36,12 @@
             ],
             "configuration": "./liquid.language-configuration.json"
         }],
+        "snippets": [
+            {
+                "language": "liquid",
+                "path": "./snippets/liquid.json"
+            }
+        ],
         "grammars": [{
             "language": "liquid",
             "scopeName": "text.html.liquid",

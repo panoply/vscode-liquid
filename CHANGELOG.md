@@ -3,6 +3,19 @@ All notable changes are listed below.
 
 >Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [0.4.0] – <small>5/2/2019</small>
+
+This version now supports snippets forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). Prior to this release using [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) required an external dependency.
+
+*If you're using the [vscode-liquid](https://github.com/GingerBear/vscode-liquid) or [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) extensions then it's safe to remove them as this release now support both syntax and snippets.*
+
+### Added
+- Forked [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) and added snippet support.
+- Added HTML support usage to readme
+
+### Changed
+- Adjusted format of readme
+- Reverted `<` and `>` from configuration to avoid conflicts.
 
 ## [0.3.1] – <small>2/2/2019</small>
 
