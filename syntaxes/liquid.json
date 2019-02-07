@@ -582,6 +582,20 @@
 							"end": "(?=</schema>)",
 							"patterns": [
 								{
+									"match": "(@(schema)[(])(['\"a-zA-Z_/.:0-9-]+)([)])",
+									"captures": {
+										"1": {
+											"name": "support.function.without-args.html"
+										},
+										"3": {
+											"name": "string.html"
+										},
+										"4": {
+											"name": "support.function.without-args.html"
+										}
+									}
+								},
+								{
 									"include": "source.json"
 								}
 							]
