@@ -4,7 +4,7 @@
 VS Code support for the [shopify liquid](https://shopify.github.io/liquid/) template language.
 
 ### Usage
-Add the below configuration to your users settings vs workspace settings:
+Add the below configuration to your users settings:
 
 ```json
 "emmet.includeLanguages":{
@@ -16,10 +16,10 @@ Add the below configuration to your users settings vs workspace settings:
 
 ## Syntax
 
-Syntax support for liquid which includes support for new sections code blocks and Shopify object contained attributes.
+Syntax support for the liquid language which includes the new schema tag section code blocks and various Shopify specific object contained attributes tags.
 
 ## Snippets
-Liquid snippets are forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) to avoid conflicts due to its extension dependency.
+Liquid snippets are forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) to avoid conflicts due to its extension dependency. Some additional snippets and modifications are applied in the version included with this extension.
 
 ## Blocks
 The extension supports syntax highlighting within sections.
@@ -27,6 +27,7 @@ The extension supports syntax highlighting within sections.
 - `{% schema %}`
 - `{% javascript %}`
 - `{% stylesheet %}`
+- `{% stylesheet 'scss' %}`
 
 > Sass syntax highlighting is applied to stylesheets using the `SCSS` attribute.
 
@@ -56,7 +57,9 @@ Some shopify liquid object attributes contain objects. These tags will apply hig
 
 ## Single File Sections
 
-This extension also includes 6 additional syntax HTML tags. These tags are used as code block references when developing single file sections with liquid files. They are **RESERVED** tags when using HTML.
+This extension also includes additional syntax HTML tags. These tags are used as code block references when developing single file sections with liquid files.
+
+These tags are **RESERVED** for Shopify Liquid.
 
 - `<stream>`
 - `<snippet>`
@@ -65,3 +68,15 @@ This extension also includes 6 additional syntax HTML tags. These tags are used 
 - `<schema>`
 - `<style lang="sass/scss">`
 - `<script lang="ts">`
+
+Additionally, When developing Single file Sections you have various import tags that can be called within certian Single File Section HTML tags.
+
+- @snippet('*')
+- @partial('*')
+- @stream('*')
+
+### What the F*ck are Single File Sections?
+
+Good question! Single File Sections are similar to [Vue Single File Components](https://vuejs.org/v2/guide/single-file-components.html) but for Shopify. The Single File Section aspect of this project is currently used internally by myself for developing Shopify Sections which allow me to render them using a virtual DOM library.
+
+If you would like to learn more about Single File Section development, feel free to send me an [email](mailto:nicos@gmx.com).
