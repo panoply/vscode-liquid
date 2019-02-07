@@ -3,6 +3,23 @@ All notable changes are listed below.
 
 >Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [0.4.1] – <small>7/2/2019</small>
+
+This release supports `@schema('*')` tag imports for Single File Sections. Snippets now support Single File section HTML tags and various logic re-works.
+
+### Added
+- import schema tag `@schema('*')`
+- snippet helpers for single file sections.
+- Tests for new schema import
+- Added deeper level snippet for `{% schema %}` liquid tag.
+- Added additional information in readme about Single File Sections.
+
+### Changed
+- Included import tags within readme file along with some minor edits.
+- Fixed placeholder number for liquid stylesheet and javascript tag
+- Prefixed liquid sections snippets from "Tag" to "Liquid Tag" to avoid confusion with single file section snippet helpers.
+
+
 ## [0.4.0] – <small>5/2/2019</small>
 
 This version now supports snippets forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). Prior to this release using [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) required an external dependency.
