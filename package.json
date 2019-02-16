@@ -1,51 +1,57 @@
 {
-    "name": "shopify-liquid",
-    "displayName": "Shopify Liquid",
-    "description": "Language support and syntax highlighting for the shopify liquid template language. Supports section tags like schema, javascript, stylesheet and more.",
-    "publisher": "sissel",
-    "icon": "images/logo.png",
-    "author": "Nikolas Savvidis <nicos@gmx.com>",
-    "version": "0.4.1",
-    "keywords": [
-        "liquid",
-        "shopify",
-        "language"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/panoply/vscode-shopify-liquid.git"
-    },
-    "bugs": {
-        "url": "https://github.com/panoply/vscode-shopify-liquid/issues"
-    },
-    "engines": {
-        "vscode": "^1.30.0"
-    },
-    "categories": [
-        "Programming Languages"
-    ],
-    "contributes": {
-        "languages": [{
-            "id": "liquid",
-            "aliases": [
-                "Shopify Liquid (HTML)",
-                "liquid"
-            ],
-            "extensions": [
-                ".liquid"
-            ],
-            "configuration": "./liquid.language-configuration.json"
-        }],
-        "snippets": [
-            {
-                "language": "liquid",
-                "path": "./snippets/liquid.json"
-            }
-        ],
-        "grammars": [{
-            "language": "liquid",
-            "scopeName": "text.html.liquid",
-            "path": "./syntaxes/liquid.json"
-        }]
-    }
+  "name": "shopify-liquid",
+  "displayName": "Shopify Liquid",
+  "description": "Language support and syntax highlighting for the shopify liquid template language. Supports section tags like schema, javascript, stylesheet and more.",
+  "publisher": "sissel",
+  "icon": "images/logo.png",
+  "author": "Nikolas Savvidis <nicos@gmx.com>",
+  "version": "0.4.2",
+  "keywords": [
+    "liquid",
+    "shopify",
+    "language"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/panoply/vscode-shopify-liquid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/panoply/vscode-shopify-liquid/issues"
+  },
+  "engines": {
+    "vscode": "^1.30.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "liquid",
+      "aliases": [
+        "Shopify Liquid (HTML)",
+        "liquid"
+      ],
+      "extensions": [
+        ".liquid"
+      ],
+      "configuration": "./liquid.language-configuration.json"
+    }],
+    "snippets": [{
+      "language": "liquid",
+      "path": "./snippets/liquid.json"
+    }],
+    "grammars": [{
+      "language": "liquid",
+      "scopeName": "text.html.liquid",
+      "path": "./syntaxes/liquid.json",
+      "embeddedLanguages": {
+        "text.html.basic": "html",
+        "source.json": "json",
+        "source.css": "css",
+        "source.css.scss": "scss",
+        "source.js": "javascript",
+        "source.ts": "typescript"
+      }
+    }]
+  }
 }
