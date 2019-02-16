@@ -369,7 +369,7 @@
 								},
 								{
 									"name": "constant.language.html",
-									"match": "(?<=:\\s)(false|true|nil)"
+									"match": "(?<=:\\s)(false|true|nil|null)"
 								},
 								{
 									"match": "(@(stream)[(])(['\"a-zA-Z_/.:0-9-]+)([)])",
