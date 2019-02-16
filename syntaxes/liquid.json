@@ -5,8 +5,7 @@
 	"fileTypes": [
 		"liquid"
 	],
-	"patterns": [
-		{
+	"patterns": [{
 			"include": "#liquid_sections"
 		},
 		{
@@ -21,18 +20,15 @@
 			"name": "punctuation.output.liquid",
 			"begin": "{{-?",
 			"end": "-?}}",
-			"patterns": [
-				{
-					"include": "#liquid_syntaxes"
-				}
-			]
+			"patterns": [{
+				"include": "#liquid_syntaxes"
+			}]
 		},
 		{
 			"name": "punctuation.tag.liquid",
 			"begin": "{%-?",
 			"end": "-?%}",
-			"patterns": [
-				{
+			"patterns": [{
 					"include": "#liquid_tags"
 				},
 				{
@@ -46,52 +42,44 @@
 	],
 	"repository": {
 		"entities": {
-      "patterns": [
-        {
-          "captures": {
-            "1": {
-              "name": "punctuation.definition.entity.html"
-            },
-            "3": {
-              "name": "punctuation.definition.entity.html"
-            }
-          },
-          "match": "(&)([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+)(;)",
-          "name": "constant.character.entity.html"
-        },
-        {
-          "match": "&",
-          "name": "invalid.illegal.bad-ampersand.html"
-        }
-      ]
-    },
-		"assign_op": {
-			"patterns": [
+			"patterns": [{
+					"captures": {
+						"1": {
+							"name": "punctuation.definition.entity.html"
+						},
+						"3": {
+							"name": "punctuation.definition.entity.html"
+						}
+					},
+					"match": "(&)([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+)(;)",
+					"name": "constant.character.entity.html"
+				},
 				{
-					"name": "keyword.operator.assignment.augmented.liquid",
-					"match": "/="
+					"match": "&",
+					"name": "invalid.illegal.bad-ampersand.html"
 				}
 			]
+		},
+		"assign_op": {
+			"patterns": [{
+				"name": "keyword.operator.assignment.augmented.liquid",
+				"match": "/="
+			}]
 		},
 		"logic_expression": {
-			"patterns": [
-				{
-					"match": "/=",
-					"name": "keyword.operator.assignment.augmented.liquid"
-				}
-			]
+			"patterns": [{
+				"match": "/=",
+				"name": "keyword.operator.assignment.augmented.liquid"
+			}]
 		},
 		"logic_op": {
-			"patterns": [
-				{
-					"name": "keyword.operator.logical.liquid",
-					"match": "\\s+(and|or|not|contains|(\\!\\=|\\=\\=|<\\=|>\\=|<|>)\\s+"
-				}
-			]
+			"patterns": [{
+				"name": "keyword.operator.logical.liquid",
+				"match": "\\s+(and|or|not|contains|(\\!\\=|\\=\\=|<\\=|>\\=|<|>)\\s+"
+			}]
 		},
 		"liquid_tags": {
-			"patterns": [
-				{
+			"patterns": [{
 					"name": "entity.name.tag.liquid",
 					"match": "(?<={%)\\s*(\\w+)"
 				},
@@ -102,8 +90,7 @@
 			]
 		},
 		"liquid_syntaxes": {
-			"patterns": [
-				{
+			"patterns": [{
 					"match": "(\\[)(\\|)(?=[^\\]]*)(?=\\])",
 					"captures": {
 						"2": {
@@ -203,8 +190,7 @@
 			]
 		},
 		"liquid_sections": {
-			"patterns": [
-				{
+			"patterns": [{
 					"name": "meta.attribute.style.html.liquid",
 					"begin": "{%\\s*(stylesheet|\\s*((?:'|\")(scss)(.*)(?:'|\")))()\\s*%}",
 					"beginCaptures": {
@@ -212,8 +198,7 @@
 							"name": "entity.name.tag.liquid"
 						},
 						"2": {
-							"patterns": [
-								{
+							"patterns": [{
 									"include": "source.css.scss"
 								},
 								{
@@ -228,11 +213,9 @@
 							"name": "entity.name.tag.liquid"
 						}
 					},
-					"patterns": [
-						{
-							"include": "source.css"
-						}
-					]
+					"patterns": [{
+						"include": "source.css"
+					}]
 				},
 				{
 					"name": "meta.attribute.style.html.liquid",
@@ -251,11 +234,9 @@
 							"name": "entity.name.tag.liquid"
 						}
 					},
-					"patterns": [
-						{
-							"include": "source.css.scss"
-						}
-					]
+					"patterns": [{
+						"include": "source.css.scss"
+					}]
 				},
 				{
 					"name": "meta.embedded.js.liquid",
@@ -271,8 +252,7 @@
 							"name": "entity.name.tag.liquid"
 						}
 					},
-					"patterns": [
-						{
+					"patterns": [{
 							"include": "#liquid_tags"
 						},
 						{
@@ -294,17 +274,14 @@
 							"name": "entity.name.tag.liquid"
 						}
 					},
-					"patterns": [
-						{
-							"include": "source.json"
-						}
-					]
+					"patterns": [{
+						"include": "source.json"
+					}]
 				}
 			]
 		},
 		"html_sections": {
-			"patterns": [
-				{
+			"patterns": [{
 					"begin": "(<)(stream)(?![^/>]*/>\\s*$)",
 					"beginCaptures": {
 						"1": {
@@ -326,8 +303,7 @@
 							"name": "punctuation.definition.tag.end.html"
 						}
 					},
-					"patterns": [
-						{
+					"patterns": [{
 							"include": "#tag-extends"
 						},
 						{
@@ -338,8 +314,7 @@
 							},
 							"begin": "(>)",
 							"end": "(?=</stream>)",
-							"patterns": [
-								{
+							"patterns": [{
 									"name": "string.html",
 									"match": "(\\w+)(?=\\s*:\\s*)"
 								},
@@ -414,8 +389,7 @@
 							"name": "punctuation.definition.tag.end.html"
 						}
 					},
-					"patterns": [
-						{
+					"patterns": [{
 							"include": "#tag-extends"
 						},
 						{
@@ -426,11 +400,9 @@
 							},
 							"begin": "(>)",
 							"end": "(?=</partial>)",
-							"patterns": [
-								{
-									"include": "text.html.liquid"
-								}
-							]
+							"patterns": [{
+								"include": "text.html.liquid"
+							}]
 						}
 					]
 				},
@@ -456,8 +428,7 @@
 							"name": "punctuation.definition.tag.end.html"
 						}
 					},
-					"patterns": [
-						{
+					"patterns": [{
 							"include": "#tag-extends"
 						},
 						{
@@ -468,8 +439,7 @@
 							},
 							"begin": "(>)",
 							"end": "(?=</snippet>)",
-							"patterns": [
-								{
+							"patterns": [{
 									"match": "(@(partial)[(])(['\"a-zA-Z_/.:0-9-]+)([)])",
 									"captures": {
 										"1": {
@@ -512,8 +482,7 @@
 							"name": "punctuation.definition.tag.end.html"
 						}
 					},
-					"patterns": [
-						{
+					"patterns": [{
 							"include": "#tag-extends"
 						},
 						{
@@ -524,8 +493,7 @@
 							},
 							"begin": "(>)",
 							"end": "(?=</template>)",
-							"patterns": [
-								{
+							"patterns": [{
 									"match": "(@(partial|snippet)[(])(['\"a-zA-Z-_/.:0-9-]+)([)])",
 									"captures": {
 										"1": {
@@ -568,8 +536,7 @@
 							"name": "punctuation.definition.tag.end.html"
 						}
 					},
-					"patterns": [
-						{
+					"patterns": [{
 							"include": "#tag-extends"
 						},
 						{
@@ -580,8 +547,7 @@
 							},
 							"begin": "(>)",
 							"end": "(?=</schema>)",
-							"patterns": [
-								{
+							"patterns": [{
 									"match": "(@(schema)[(])(['\"a-zA-Z_/.:0-9-]+)([)])",
 									"captures": {
 										"1": {
@@ -618,11 +584,9 @@
 						}
 					},
 					"end": "(/>)",
-					"patterns": [
-						{
-							"include": "#tag-extends"
-						}
-					]
+					"patterns": [{
+						"include": "#tag-extends"
+					}]
 				},
 				{
 					"beginCaptures": {
@@ -646,8 +610,7 @@
 						}
 					},
 					"end": "(</)(style)(>)",
-					"patterns": [
-						{
+					"patterns": [{
 							"include": "#tag-extends"
 						},
 						{
@@ -683,8 +646,7 @@
 						}
 					},
 					"end": "(</)(style)(>)",
-					"patterns": [
-						{
+					"patterns": [{
 							"include": "#tag-extends"
 						},
 						{
@@ -695,11 +657,9 @@
 							},
 							"begin": "(>)",
 							"end": "(?=</style>)",
-							"patterns": [
-								{
-									"include": "source.css.scss"
-								}
-							],
+							"patterns": [{
+								"include": "source.css.scss"
+							}],
 							"contentName": "source.css.scss"
 						}
 					]
@@ -720,11 +680,9 @@
 						}
 					},
 					"end": "(/>)",
-					"patterns": [
-						{
-							"include": "#tag-extends"
-						}
-					]
+					"patterns": [{
+						"include": "#tag-extends"
+					}]
 				},
 				{
 					"beginCaptures": {
@@ -748,8 +706,7 @@
 						}
 					},
 					"end": "(</)(script)(>)",
-					"patterns": [
-						{
+					"patterns": [{
 							"include": "#tag-extends"
 						},
 						{
@@ -785,8 +742,7 @@
 						}
 					},
 					"end": "(</)(script)(>)",
-					"patterns": [
-						{
+					"patterns": [{
 							"include": "#tag-extends"
 						},
 						{
@@ -797,11 +753,9 @@
 							},
 							"begin": "(>)",
 							"end": "(?=</script>)",
-							"patterns": [
-								{
-									"include": "source.ts"
-								}
-							],
+							"patterns": [{
+								"include": "source.ts"
+							}],
 							"contentName": "source.ts"
 						}
 					]
@@ -828,8 +782,7 @@
 						}
 					},
 					"end": "(</)(script)(>)",
-					"patterns": [
-						{
+					"patterns": [{
 							"include": "#tag-extends"
 						},
 						{
@@ -840,74 +793,67 @@
 							},
 							"begin": "(>)",
 							"end": "(?=</script>)",
-							"patterns": [
-								{
-									"include": "source.js"
-								}
-							],
+							"patterns": [{
+								"include": "source.js"
+							}],
 							"contentName": "source.js"
 						}
 					]
 				}
 			]
 		},
-    "string-single-quoted": {
-      "beginCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.begin.html"
-        }
-      },
-      "patterns": [
-        {
-          "include": "#entities"
-        }
-      ],
-      "begin": "'",
-      "endCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.end.html"
-        }
-      },
-      "end": "'",
-      "name": "string.quoted.single.html"
-    },
-    "string-double-quoted": {
-      "beginCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.begin.html"
-        }
-      },
-      "patterns": [
-        {
-          "include": "#entities"
-        }
-      ],
-      "begin": "\"",
-      "endCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.end.html"
-        }
-      },
-      "end": "\"",
-      "name": "string.quoted.double.html"
-    },
+		"string-single-quoted": {
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.string.begin.html"
+				}
+			},
+			"patterns": [{
+				"include": "#entities"
+			}],
+			"begin": "'",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.string.end.html"
+				}
+			},
+			"end": "'",
+			"name": "string.quoted.single.html"
+		},
+		"string-double-quoted": {
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.string.begin.html"
+				}
+			},
+			"patterns": [{
+				"include": "#entities"
+			}],
+			"begin": "\"",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.string.end.html"
+				}
+			},
+			"end": "\"",
+			"name": "string.quoted.double.html"
+		},
 		"tag-generic-attribute": {
-      "match": "\\b([a-zA-Z\\-:_]+)",
-      "name": "entity.other.attribute-name.html"
-    },
+			"match": "\\b([a-zA-Z\\-:_]+)",
+			"name": "entity.other.attribute-name.html"
+		},
 		"tag-extends": {
-      "patterns": [
-        {
-          "include": "#tag-generic-attribute"
+			"patterns": [{
+					"include": "#tag-generic-attribute"
 				},
 				{
-          "include": "#string-double-quoted"
-        },
-        {
-          "include": "#string-single-quoted"
-        }
-      ]
-    }
+					"include": "#string-double-quoted"
+				},
+				{
+					"include": "#string-single-quoted"
+				}
+			]
+		}
 	},
 	"foldingStartMarker": "(?x){%\\s*(if|unless|for|paginate|capture|form|case|tablerow|raw|comment)[^(%})]+%}",
 	"foldingStopMarker": "(?x){%\\s*(endif|endunless|endfor|endpaginate|endcapture|endform|endcase|endtablerow|endraw|endcomment)[^(%})]+%}"
