@@ -192,51 +192,56 @@
 		"liquid_sections": {
 			"patterns": [{
 					"name": "meta.attribute.style.html.liquid",
-					"begin": "{%\\s*(stylesheet|\\s*((?:'|\")(scss)(.*)(?:'|\")))()\\s*%}",
+					"contentName": "meta.embedded.block.html.liquid",
+					"begin": "({%)\\s+\\b(style|stylesheet)\\b(?![%}]*%}\\s*$)",
 					"beginCaptures": {
 						"1": {
-							"name": "entity.name.tag.liquid"
+							"name": "punctuation.definition.tag.begin.html"
 						},
 						"2": {
-							"patterns": [{
-									"include": "source.css.scss"
+							"name": "entity.name.tag.liquid"
+						}
+					},
+					"end": "({%)\\s+(endstyle|endstylesheet)\\s+(%})",
+					"endCaptures": {
+						"1": {
+							"name": "punctuation.definition.tag.begin.html"
+						},
+						"2": {
+							"name": "entity.name.tag.template.html"
+						},
+						"3": {
+							"name": "punctuation.definition.tag.end.html"
+						}
+					},
+					"patterns": [{
+							"beginCaptures": {
+								"1": {
+									"name": "string.quoted.liquid"
 								},
-								{
-									"name": "entity.name.tag.liquid"
+								"2": {
+									"name": "punctuation.definition.tag.end.html"
 								}
-							]
-						}
-					},
-					"end": "{%\\s*(endstylesheet)\\s*%}",
-					"endCaptures": {
-						"1": {
-							"name": "entity.name.tag.liquid"
-						}
-					},
-					"patterns": [{
-						"include": "source.css"
-					}]
-				},
-				{
-					"name": "meta.attribute.style.html.liquid",
-					"begin": "{%\\s*(stylesheet\\s*('scss'|\"scss\"))\\s*%}",
-					"beginCaptures": {
-						"1": {
-							"name": "entity.name.tag.liquid"
+							},
+							"begin": "('scss')\\s+(%})",
+							"end": "(?=({%)\\s+(endstyle|endstylesheet)\\s+(%}))",
+							"patterns": [{
+								"include": "source.css.scss"
+							}]
 						},
-						"2": {
-							"name": "string.quoted.liquid"
+						{
+							"beginCaptures": {
+								"1": {
+									"name": "punctuation.definition.tag.end.html"
+								}
+							},
+							"begin": "(%})",
+							"end": "(?=({%)\\s+(endstyle|endstylesheet)\\s+(%}))",
+							"patterns": [{
+								"include": "source.css"
+							}]
 						}
-					},
-					"end": "{%\\s*(endstylesheet)\\s*%}",
-					"endCaptures": {
-						"1": {
-							"name": "entity.name.tag.liquid"
-						}
-					},
-					"patterns": [{
-						"include": "source.css.scss"
-					}]
+					]
 				},
 				{
 					"name": "meta.embedded.js.liquid",
