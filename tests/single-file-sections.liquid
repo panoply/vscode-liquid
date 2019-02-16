@@ -1,5 +1,5 @@
 {%- comment -%}
-  Stream Tags
+Stream Tags
 {%- endcomment -%}
 
 <stream prop="">
@@ -49,105 +49,135 @@
 
   'single': 'quotes',
   "double": "quote",
+  1_foo: "valid",
 
   -test: "invalid",
   foo-bar: "invalid",
 
-  1_foo: "valid",
 
 }
 </stream>
 
 
 
-
 {%- comment -%}
-  Schema Tags
+Schema Tags
 {%- endcomment -%}
+
+<!-- Import Tag -->
 <schema>
   @schema('test')
 </schema>
 
+<!-- Standard -->
 <schema>
 {
   "foo": "bar",
 }
 </schema>
 
-<schema prop="blocks">
+<!-- Property Import -->
+<schema for="blocks">
 {
   "foo": "test",
 }
 </schema>
 
 {%- comment -%}
-  Partial Tag
+Partial Tag
 {%- endcomment -%}
 <partial>
 
   {% for tag in collection.all_tags %}
-    {% if current_tags contains tag %}
-      <li class="active">
-        {{ tag | link_to_remove_tag: tag }}
-      </li>
-    {% else %}
-      <li>
-        {{ tag | link_to_add_tag: tag }}
-      </li>
-    {% endif %}
+  {% if current_tags contains tag %}
+  <li class="active">
+    {{ tag | link_to_remove_tag: tag }}
+  </li>
+  {% else %}
+  <li>
+    {{ tag | link_to_add_tag: tag }}
+  </li>
+  {% endif %}
   {% endfor %}
 
 </partial>
 
 {%- comment -%}
-  Template Tag
+Template Tag
 {%- endcomment -%}
 <template name="section-name">
 
+  <!--  Accepted Import Tags -->
+  @partial('filename')
+  @partial('path/filename')
+  @partial('file-name')
+  @partial('file_name.extention')
+  @partial('filename/0123456789')
 
-  @partial('partial')
-  @partial('partial/slash')
-  @partial('partial-dash')
-  @partial('partial.dot')
+  <!--  Rejected Import Tags -->
+  @partial('filename+')
+  @partial('filename*')
+  @partial('filename%')
+  @partial('filename#')
+  @partial('filename~')
 
-  {% for tag in collection.all_tags %}
-    {% if current_tags contains tag %}
-      <li class="active">
-        {{ tag | link_to_remove_tag: tag }}
-      </li>
-    {% else %}
-      <li>
-        {{ tag | link_to_add_tag: tag }}
-      </li>
-    {% endif %}
+  <!-- Liquid Tags -->
+  {%- for tag in collection.all_tags -%}
+  {% if current_tags contains tag %}
+  <li class="active">
+    {{ tag | link_to_remove_tag: tag }}
+  </li>
+  {% else %}
+  <li>
+    {{ tag | link_to_add_tag: tag }}
+  </li>
+  {% endif %}
+  {%- endfor -%}
+
+  {% for item in collection %}
+  <h1>Folding</h1>
   {% endfor %}
 
 </template>
 
 {%- comment -%}
-  Snippet Tag
+Snippet Tag
 {%- endcomment -%}
 <snippet name="test">
 
-  @partial('partial')
-  @partial('partial/slash')
-  @partial('partial-dash')
-  @partial('partial.dot')
+  <!--  Accepted Import Tags -->
+  @partial('filename')
+  @partial('path/filename')
+  @partial('file-name')
+  @partial('file_name.extention')
+  @partial('filename/0123456789')
 
+  <!--  Rejected Import Tags -->
+  @partial('filename+')
+  @partial('filename*')
+  @partial('filename%')
+  @partial('filename#')
+  @partial('filename~')
+
+  <!-- Liquid Tags -->
   {%- if section.settings.logo != blank -%}
-    {{ section.settings.logo }}
+  {{ section.settings.logo }}
   {%- else -%}
-    {%- assign data_logo = shop.name  -%}
-    <h1>{{ data_logo }} Hello World</h1>
+  {%- assign data_logo = shop.name -%}
+  <h1>{{ data_logo }} Hello World</h1>
   {%- endif -%}
+
+  <!-- HTML Tags -->
+  <div class="foo">
+    <h1>Hello World</h1>
+  </div>
 
 </snippet>
 
 {%- comment -%}
-  Styles Tag SASS/SCSS/CSS
+Styles Tag SCSS/CSS
 {%- endcomment -%}
 <style lang="scss">
-
   $position: relative;
   $height: 50px;
   $width: 100%;
@@ -155,6 +185,7 @@
 
   .foo {
     position: $position;
+
     .bar {
       height: $height;
       width: $width;
@@ -167,24 +198,9 @@
   }
 </style>
 
-<style lang="sass">
-
-  nav
-    ul
-      margin: 0
-      padding: 0
-      list-style: none
-
-    li
-      display: inline-block
-
-    a
-      display: block
-      padding: 6px 12px
-      text-decoration: none
-
-</style>
-
+{%- comment -%}
+Style Tag CSS
+{%- endcomment -%}
 <style>
   .foo {
     position: relative;
@@ -194,27 +210,43 @@
     height: 50px;
     width: 100%;
   }
-
 </style>
 
 {%- comment -%}
-  JavaScript Tags
+JavaScript Tags
 {%- endcomment -%}
 <script>
-
-
   /* comment */
   const bar = "string"
   const foo = true
 
   // comment
-  function helloWorld(){
+  function helloWorld() {
     return {
       foo: "bar",
       bar: true
     }
   }
-
 </script>
 
+{%- comment -%}
+Typescript Tags
+{%- endcomment -%}
+<script lang="ts">
+  /* comment */
+  interface Person {
+    firstName: string;
+    lastName: string;
+  }
 
+  function greeter(person: Person) {
+    return "Hello, " + person.firstName + " " + person.lastName;
+  }
+
+  let user = {
+    firstName: "Jane",
+    lastName: "User"
+  };
+
+  document.body.innerHTML = greeter(user);
+</script>

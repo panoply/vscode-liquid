@@ -2,6 +2,16 @@
   Common Liquid
 {%- endcomment -%}
 
+{% style  %}
+  .foo {
+    position: relative;
+  }
+  .bar {
+    height: 50px;
+    width: 100%;
+  }
+{% endstyle %}
+
 {%- for foo in collection[bar].products -%}
   {{ foo.title }}
 {%- endfor -%}
