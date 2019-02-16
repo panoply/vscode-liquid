@@ -670,49 +670,6 @@
 							"name": "entity.name.tag.style.html"
 						}
 					},
-					"begin": "(<)(style)\\b(?=[^>]*lang=('sass'|\"sass\"))(?![^/>]*/>\\s*$)",
-					"endCaptures": {
-						"1": {
-							"name": "punctuation.definition.tag.begin.html"
-						},
-						"2": {
-							"name": "entity.name.tag.style.html"
-						},
-						"3": {
-							"name": "punctuation.definition.tag.end.html"
-						}
-					},
-					"end": "(</)(style)(>)",
-					"patterns": [
-						{
-							"include": "#tag-extends"
-						},
-						{
-							"beginCaptures": {
-								"1": {
-									"name": "punctuation.definition.tag.end.html"
-								}
-							},
-							"begin": "(>)",
-							"end": "(?=</style>)",
-							"patterns": [
-								{
-									"include": "source.sass"
-								}
-							],
-							"contentName": "source.sass"
-						}
-					]
-				},
-				{
-					"beginCaptures": {
-						"1": {
-							"name": "punctuation.definition.tag.begin.html"
-						},
-						"2": {
-							"name": "entity.name.tag.style.html"
-						}
-					},
 					"begin": "(<)(style)\\b(?=[^>]*lang=('scss'|\"scss\"))(?![^/>]*/>\\s*$)",
 					"endCaptures": {
 						"1": {
