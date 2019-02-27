@@ -1,8 +1,8 @@
 {%- comment -%}
-  Common Liquid
+Common Liquid
 {%- endcomment -%}
 
-{% style  %}
+{% style %}
   .foo {
     position: relative;
   }
@@ -28,23 +28,21 @@
   {% endif %}
 {% endfor %}
 
-{%- if foo == true or bar == false  -%}
-    {{ hello }}
-  {% else %}
-    {{ world }}
+{%- if foo == true or bar == false -%}
+  {{ hello }}
+{% else %}
+  {{ world }}
 {%- endif -%}
 
 {%- case variable -%}
 
-  {%- when condition -%}
-    {{ foo }}
-  {%- else -%}
-    {{ bar | append: 'foo' }}
+{%- when condition -%}
+  {{ foo }}
+{%- else -%}
+  {{ bar | append: 'foo' }}
 
 {%- endcase -%}
 
 {%- unless condition -%}
   {{ foo }}
 {%- endunless -%}
-
-

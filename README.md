@@ -3,20 +3,11 @@
 ## Shopify Liquid Syntax (VS Code)
 VS Code support for the [shopify liquid](https://shopify.github.io/liquid/) template language.
 
-### Usage
-Add the below configuration to your users settings:
-
-```json
-"emmet.includeLanguages":{
-  "liquid": "html"
-},
-```
-
 ![showcase](https://github.com/panoply/vscode-shopify-liquid/blob/master/images/showcase.gif?raw=true)
 
 ## Syntax
 
-Syntax support for the liquid language which includes the new schema tag section code blocks and various Shopify specific object contained attributes tags.
+Syntax support for the liquid language which includes support for Shopify section code blocks and various Shopify specific object contained attributes tags.
 
 ## Snippets
 Liquid snippets are forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) to avoid conflicts due to its extension dependency. Some additional snippets and modifications are applied in the version included with this extension.
@@ -74,9 +65,8 @@ Additionally, When developing Single file Sections you have various import tags 
 - @snippet('*')
 - @partial('*')
 - @stream('*')
+- @schema('*')
 
-### What the F*ck are Single File Sections?
+### Wtf are Single File Sections?
 
-Good question! Single File Sections are similar to [Vue Single File Components](https://vuejs.org/v2/guide/single-file-components.html) but for Shopify. The Single File Section aspect of this project is currently used internally by myself for developing Shopify Sections which allow me to render them using a virtual DOM library.
-
-If you would like to learn more about Single File Section development, feel free to send me an [email](mailto:nicos@gmx.com).
+Single File Sections are similar to [Vue Single File Components](https://vuejs.org/v2/guide/single-file-components.html) but for Shopify. The Single File Section aspect of this project is currently used internally by myself for developing Shopify Sections in a way that allow me to render them using a virtual DOM library through DOM hydration.

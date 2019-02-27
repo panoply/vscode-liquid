@@ -135,7 +135,7 @@ Template Tag
   {%- endfor -%}
 
   {% for item in collection %}
-  <h1>Folding</h1>
+    <h1>Folding</h1>
   {% endfor %}
 
 </template>
@@ -172,12 +172,16 @@ Snippet Tag
     <h1>Hello World</h1>
   </div>
 
+  <table>
+    ull
+  </table>
 </snippet>
 
 {%- comment -%}
 Styles Tag SCSS/CSS
 {%- endcomment -%}
 <style lang="scss">
+
   $position: relative;
   $height: 50px;
   $width: 100%;
@@ -227,7 +231,11 @@ JavaScript Tags
       bar: true
     }
   }
+
+window.Blob
 </script>
+
+
 
 {%- comment -%}
 Typescript Tags
@@ -238,6 +246,7 @@ Typescript Tags
     firstName: string;
     lastName: string;
   }
+
 
   function greeter(person: Person) {
     return "Hello, " + person.firstName + " " + person.lastName;

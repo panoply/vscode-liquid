@@ -3,7 +3,8 @@
 	"name": "Shopify Liquid (HTML)",
 	"scopeName": "text.html.liquid",
 	"fileTypes": [
-		"liquid"
+		"liquid",
+		"html.liquid"
 	],
 	"patterns": [{
 			"include": "#liquid_sections"
