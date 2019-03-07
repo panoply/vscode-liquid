@@ -1,0 +1,36 @@
+{%- for foo in collection[bar].products -%}
+  {{foo.title}}
+{%- endfor -%}
+
+{% for tag in collection.all_tags %}
+  {% if current_tags contains tag %}
+    <li class="active">
+      {{tag | link_to_remove_tag: tag}}
+    </li>
+  {% else %}
+    <li>
+      {{tag | link_to_add_tag: tag}}
+    </li>
+  {% endif %}
+{% endfor %}
+
+{%- if foo == true or bar == false -%}
+  {{ hello }}
+{% else %}
+  {{ world }}
+{%- endif -%}
+
+<div>
+  {%- case variable -%}
+{%- when condition -%}
+  {{ foo }}
+{%- else -%}
+  {{ bar | append: 'foo'}}
+  {%- endcase -%}
+
+  {%- unless condition -%}
+    <h1>
+      {{ fooBar }}
+    </h1>
+  {%- endunless -%}
+</div>

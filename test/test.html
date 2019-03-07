@@ -1,0 +1,23 @@
+<div id="navigation">
+<ul class="menu">
+<li data-turbolinks-permanent id="menu-button">
+<button aria-expanded="false" class="js-menu" type="button">
+open
+</button>
+</li>
+{%- for link in linklists[section.settings.menu].links -%}
+<li {% if link.active -%} class="active" {%- endif -%}>
+<a href="{{- link.url -}}">
+  {{- link.title -}}
+</a>
+</li>
+{%- endfor -%}
+{%- if section.settings.desktop_layout == 'default' -%}
+<li>
+<a href="/search">
+  search
+</a>
+</li>
+{%- endif -%}
+</ul>
+</div>
