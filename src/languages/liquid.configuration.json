@@ -1,0 +1,8 @@
+{
+  "comments": {
+    "blockComment": ["{%- comment -%}", "{%- endcomment -%}", "{% comment %}", "{% endcomment %}"]
+  },
+  "brackets": [["{", "}"], ["[", "]"], ["(", ")"]],
+  "autoClosingPairs": [["[", "]"], ["(", ")"], ["\"", "\""], ["'", "'"]],
+  "surroundingPairs": [["{", "}"], ["[", "]"], ["(", ")"], ["\"", "\""], ["'", "'"]]
+}
