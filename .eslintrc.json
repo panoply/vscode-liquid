@@ -1,0 +1,43 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true,
+    "node": true
+  },
+  "extends": ["airbnb-base"],
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module"
+  },
+  "plugins": ["prettier", "html"],
+  "settings": {
+    "html/indent": "0",
+    "html/report-bad-indent": "error",
+    "html/html-extensions": [".html", ".liquid"]
+  },
+  "rules": {
+    "allowElseIf": true,
+    "allowAllPropertiesOnSameLine": false,
+    "array-bracket-newline": [
+      "error",
+      {
+        "minItems": 1,
+        "multiline": true
+      }
+    ],
+    "array-element-newline": ["error", "always"],
+    "comma-dangle": ["error", "never"],
+    "object-property-newline": "error",
+    "padded-blocks": [
+      "error",
+      {
+        "blocks": "always"
+      },
+      {
+        "allowSingleLineBlocks": true
+      }
+    ],
+    "semi": ["error", "never"]
+  }
+}
