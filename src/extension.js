@@ -1,12 +1,15 @@
+const vscode = require('vscode')
+const path = require('path')
+const prettydiff = require('prettydiff')
+
 /**
- * # LIQUID BEAUTFY
+ * # LIQUID FORMAT
  *
  * This extension formats liquid syntax using
  * PrettyDiff beautifier.
  *
  * # OPTIONS
  * - enable       = Enable / Disable extension
- * - ignore       = List of HTML tags to ignore
  *
  * # RULES
  * - indent_level = Start Indentation Padding
@@ -18,20 +21,38 @@
  *
  */
 
-const vscode = require('vscode')
-const prettydiff = require('prettydiff')
-const path = require('path')
+const { beautify, format } = vscode.workspace.getConfiguration('liquid')
+const { defaults } = prettydiff
+const lexers = {
+  html: {
+    mode: 'beautify',
+    language: 'liquid',
+    lexer: 'markup'
+  },
+  schema: {
+    mode: 'beautify',
+    language: 'JSON',
+    lexer: 'script'
+  },
+  stylesheet: {
+    mode: 'beautify',
+    language: 'SCSS',
+    lexer: 'style'
+  },
+  javascript: {
+    mode: 'beautify',
+    language: 'JavaScript',
+    lexer: 'script'
+  }
+}
 
-/**
- * # DEFAULTS
- */
-const ATTR = 'data-prettydiff-ignore'
-const IGNR = new RegExp(`(<temp ${ATTR}>|</temp>)`, 'g')
+const tags = Object.keys(lexers)
+tags.map(key => Object.assign(lexers[key], beautify[key]))
 
 /**
  * # PATTERN MATCHER
  * This ugly little pattern matches 4 groups.
- * Each match is used to apply modification.
+ * Each match is used to apply formatting modifications.
  *
  * - Full Match
  * - Opening Tag
@@ -40,231 +61,121 @@ const IGNR = new RegExp(`(<temp ${ATTR}>|</temp>)`, 'g')
  * - Closing Tag
  *
  */
-const REGX = /((?:<|{%)\s*\b(script|style|schema|javascript|stylesheet)\b(?:|.*)\s*(?:>|%})(?:\s*))((?:.|\n)*?)((?:(?:<\/|{%)\s*\b(?:(?:|end)\2)\b\s*(?:>|%})))/g
-
-/**
- * # LEXER DEFAULTS
- */
-const LEXR = {
-  html: {
-    node_error: true,
-    indent_size: vscode.workspace.getConfiguration().get('editor.tabSize'),
-    api: 'dom',
-    mode: 'beautify',
-    language: 'liquid',
-    lexer: 'markup',
-    quote_convert: 'none',
-    format_array: 'default',
-    format_object: 'default',
-    force_attribute: false
-  },
-  schema: {
-    node_error: true,
-    indent_size: vscode.workspace.getConfiguration().get('editor.tabSize'),
-    api: 'dom',
-    mode: 'beautify',
-    language: 'JSON',
-    lexer: 'script',
-    quote_convert: 'double',
-    format_array: 'default',
-    format_object: 'indent'
-  },
-  style: {
-    node_error: true,
-    indent_size: vscode.workspace.getConfiguration().get('editor.tabSize'),
-    api: 'dom',
-    mode: 'beautify',
-    language: 'CSS',
-    lexer: 'style',
-    quote_convert: 'none',
-    format_array: 'default',
-    format_object: 'default'
-  },
-  stylesheet: {
-    node_error: true,
-    indent_size: vscode.workspace.getConfiguration().get('editor.tabSize'),
-    api: 'dom',
-    mode: 'beautify',
-    language: 'SCSS',
-    lexer: 'style',
-    quote_convert: 'none',
-    format_array: 'default',
-    format_object: 'indent'
-  },
-  javascript: {
-    indent_size: vscode.workspace.getConfiguration().get('editor.tabSize'),
-    api: 'dom',
-    mode: 'beautify',
-    language: 'JavaScript',
-    lexer: 'script',
-    method_chain: 0,
-    quote_convert: 'none',
-    format_array: 'indent',
-    format_object: 'indent'
-  }
+const elements = tags.join('|')
+const patterns = {
+  open: `((?:<|{%-?)\\s*\\b(${elements})\\b(?:.|\\n)*?\\s*(?:>|-?%})\\s*)`,
+  inner: '((?:.|\\n)*?)',
+  close: '((?:</|{%-?)\\s*\\b(?:(?:|end)\\2)\\b\\s*(?:>|-?%}))'
 }
 
 /**
- * # CONFIG
- * The default configuration for the
- * extension.
- *
+ * # DEFAULTS
  */
-const config = vscode.workspace.getConfiguration('liquid')
-const pretty = prettydiff.defaults
-const lexer = lang => Object.assign(LEXR[lang], config.beautify[lang])
+const ATTR = 'data-prettydiff-ignore'
+const IGNR = new RegExp(`(<temp ${ATTR}>|</temp>)`, 'g')
+const REGX = new RegExp(patterns.open + patterns.inner + patterns.close, 'g')
+
 const ignoreTags = code => `<temp ${ATTR}>${code}</temp>`
-const verifyFileExtension = fileName => path.extname(fileName) !== '.liquid'
+const disposal = obj => Object.keys(obj).map(prop => obj[prop].dispose())
 
-/**
- * # DOCUMENT TAGS
- * Runs format of matched tags assigning
- * configuration beautification lexer.
- *
- * @param {string} code – Full code match
- * @param {string} open – Openning tag, eg: `{% tag %}` || `<tag>`
- * @param {string} name – Block name, eg: <`tag`> || {% `tag` %}
- * @param {string} source – Inner code, eg: <tag>`source`</tag>`
- * @param {string} close  – Closing tag, eg: `{% endtag %}` || `</tag>`
- *
- */
-const documentTags = (code, open, name, source, close) => {
-
+function documentTags(code, open, name, source, close) {
   // Filter matching liquid tags, eg: `{% schema %}` or `{% javascript %}`
-  if (Object.keys(LEXR).includes(name) && open[0] === '{') {
-
-    // Assign configured formatting lexer based on tag name
-    const assign = Object.assign(pretty, lexer(name))
-    assign.source = source
-
-    // Format liquid code blocks with prettyDiff
-    const format = prettydiff.mode(assign)
-
-    // Apply ignore tags to formatted code
-    return ignoreTags(`${open.trim()}\n\n${format}\n${close.trim()}`)
-
+  if (Object.keys(lexers).includes(name) && open[0] === '{') {
+    const assign = Object.assign({}, defaults, lexers[name], { source })
+    const pretty = prettydiff.mode(assign)
+    return ignoreTags(`${open.trim()}\n\n${pretty}\n${close.trim()}`)
   }
-
-  // Apply ignore tag to any other matches
   return ignoreTags(`${code}`)
-
 }
 
-/**
- * # BEAUTIFIER
- * Formats liquid syntax using PrettyDiff
- * Extension defaults are assigned.
- *
- * @param {object} document
- * @param {object} range
- * @param {object} options
- *
- */
-const beautifier = (document, range) => {
-
-  // empty array
-  const replace = []
-
-  // Get documents contents as string
+function beautifier(document, range) {
   const contents = document.getText(range)
-
-  // Run parser – applies block formats and ignores
   const source = contents.replace(REGX, documentTags)
-
-  // Assign configured formatting rules for liquid infused HTML
-  const assign = Object.assign(pretty, lexer('html'))
-  assign.source = source
-
-  // Format HTML code using prettyDiff
+  const assign = Object.assign({}, defaults, lexers.html, { source })
   const output = prettydiff
     .mode(assign)
     .replace(IGNR, '') // Remove ignore wraps, `<temp pretty-diff-ignore>*</temp>`
     .trim() // trim newlines to prevent repeated indentation
 
-  // Replace with formatted code
+  const replace = []
   replace.push(vscode.TextEdit.replace(range, `${output}`))
 
   return replace
-
 }
 
-/**
- * # REGISTER RANGE
- * The extension formatting register for VS Code.
- * Supports range document formatting.
- *
- * @param {string} lang
- *
- */
-const registerRange = (lang) => {
-
-  vscode.languages.registerDocumentRangeFormattingEditProvider(lang, {
-    provideDocumentRangeFormattingEdits(document, range) {
-
-      // Verify file is `.liquid`
-      if (verifyFileExtension(document.fileName)) {
-
-        return document
-
-      }
-
-      return beautifier(document, range)
-
+function ext(name) {
+  if (path.extname(name) === '.git') {
+    if (path.extname(name.slice(0, -4)) === '.liquid') {
+      return true
     }
-  })
-
+  } else if (path.extname(name) === '.liquid') {
+    return true
+  }
+  return false
 }
 
-/**
- * # REGISTER FILE
- * The extension formatting register for VS Code.
- * Supports file document formatting.
- *
- * @param {string} lang
- *
- */
-// Formatting entire document
-const registerFile = (lang) => {
-
-  vscode.languages.registerDocumentFormattingEditProvider(lang, {
-    provideDocumentFormattingEdits(document) {
-
-      // Verify file is `.liquid`
-      if (verifyFileExtension(document.fileName)) {
-
-        return document
-
+const register = obj => Object.assign(obj, {
+  range: vscode.languages.registerDocumentRangeFormattingEditProvider(
+    {
+      scheme: 'file',
+      language: 'html'
+    },
+    {
+      provideDocumentRangeFormattingEdits(document, range) {
+        return beautifier(document, range)
       }
-
-      const total = document.lineCount - 1
-      const last = document.lineAt(total).text.length
-      const top = new vscode.Position(0, 0)
-      const bottom = new vscode.Position(total, last)
-      const range = new vscode.Range(top, bottom)
-
-      return beautifier(document, range)
-
     }
-  })
+  ),
+  full: vscode.languages.registerDocumentFormattingEditProvider(
+    {
+      scheme: 'file',
+      language: 'html'
+    },
+    {
+      provideDocumentFormattingEdits(document) {
+        const total = document.lineCount - 1
+        const last = document.lineAt(total).text.length
+        const top = new vscode.Position(0, 0)
+        const bottom = new vscode.Position(total, last)
+        const range = new vscode.Range(top, bottom)
 
-}
+        return beautifier(document, range)
+      }
+    }
+  )
+})
+
+const activation = obj => vscode.workspace.onDidOpenTextDocument((document) => {
+  if (ext(document.fileName)) {
+    return register(obj)
+  }
+  return disposal(obj)
+})
+
+const formatting = obj => vscode.workspace.onDidChangeConfiguration(() => {
+  const name = vscode.window.activeTextEditor.document.uri.path
+  const editor = vscode.workspace.getConfiguration('editor').formatOnSave
+  if (editor === true && ext(name)) {
+    if (format === false) {
+      return disposal(obj)
+    }
+
+    return register(obj)
+  }
+
+  return disposal(obj)
+})
 
 /**
  * # ACTIVATE EXTENSION
  */
 exports.activate = (context) => {
-
   const active = vscode.window.activeTextEditor
   if (!active || !active.document) return
 
-  const lang = 'html'
-
-  // Ensure formatting is enabled
-  if (config.format === true) {
-
-    context.subscriptions.push(registerRange(lang))
-    context.subscriptions.push(registerFile(lang))
-
+  if (format) {
+    const object = {}
+    context.subscriptions.push(activation(object))
+    context.subscriptions.push(formatting(object))
   }
-
 }
