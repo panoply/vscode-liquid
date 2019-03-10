@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "keywords": [
     "liquid",
     "shopify",
@@ -28,7 +28,7 @@
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "onLanguage:html"
   ],
   "main": "./src/extension",
   "contributes": {
@@ -36,7 +36,6 @@
       {
         "id": "html",
         "aliases": [
-          "HTML",
           "Shopify Liquid (HTML)"
         ],
         "extensions": [
@@ -122,6 +121,6 @@
   },
   "dependencies": {
     "path": "^0.12.7",
-    "prettydiff": "^100.1.7"
+    "prettydiff": "^100.2.6"
   }
 }
