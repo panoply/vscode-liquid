@@ -21,6 +21,7 @@ By default formatting will use a combination of pre-configured and editor settin
 
 #### Please Note:
 
+- `<script>` and `<style>` HTML tags are ignored.
 - Only files using `.liquid` extension will be formatted.
 - Beautify on save will be enabled when "editor.formatOnSave" is `true`
 - When "liquid.format" is set to `false` no formatting will be applied.

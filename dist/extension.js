@@ -1,9 +1,11 @@
+'use strict';
+
 const {
   workspace, TextEdit, Position, languages, window
-} = require('vscode')
+} = require('vscode');
 
-const path = require('path')
-const prettydiff = require('prettydiff')
+const path = require('path');
+const prettydiff = require('prettydiff');
 
 /**
  * # LIQUID FORMAT
@@ -13,8 +15,8 @@ const prettydiff = require('prettydiff')
  *
  */
 
-const { beautify, format } = workspace.getConfiguration('liquid')
-const { defaults } = prettydiff
+const { beautify, format } = workspace.getConfiguration('liquid');
+const { defaults } = prettydiff;
 const lexers = {
   html: {
     mode: 'beautify',
@@ -36,10 +38,10 @@ const lexers = {
     language: 'JavaScript',
     lexer: 'script'
   }
-}
+};
 
-const tags = Object.keys(lexers)
-tags.map(key => Object.assign(lexers[key], beautify[key]))
+const tags = Object.keys(lexers);
+tags.map(key => Object.assign(lexers[key], beautify[key]));
 
 /**
  * # PATTERN MATCHER
@@ -53,44 +55,44 @@ tags.map(key => Object.assign(lexers[key], beautify[key]))
  * - Closing Tag
  *
  */
-const elements = tags.join('|')
+const elements = tags.join('|');
 const patterns = {
   open: `((?:<|{%-?)\\s*\\b(${elements})\\b(?:.|\\n)*?\\s*(?:>|-?%})\\s*)`,
   inner: '((?:.|\\n)*?)',
   close: '((?:</|{%-?)\\s*\\b(?:(?:|end)\\2)\\b\\s*(?:>|-?%}))'
-}
+};
 
 /**
  * # DEFAULTS
  */
-const ATTR = 'data-prettydiff-ignore'
-const IGNR = new RegExp(`(<temp ${ATTR}>|</temp>)`, 'g')
-const REGX = new RegExp(patterns.open + patterns.inner + patterns.close, 'g')
+const ATTR = 'data-prettydiff-ignore';
+const IGNR = new RegExp(`(<temp ${ATTR}>|</temp>)`, 'g');
+const REGX = new RegExp(patterns.open + patterns.inner + patterns.close, 'g');
 
-const ignoreTags = code => `<temp ${ATTR}>${code}</temp>`
-const disposal = obj => Object.keys(obj).map(prop => obj[prop].dispose())
+const ignoreTags = code => `<temp ${ATTR}>${code}</temp>`;
+const disposal = obj => Object.keys(obj).map(prop => obj[prop].dispose());
 
 function documentTags(code, open, name, source, close) {
   // Filter matching liquid tags, eg: `{% schema %}` or `{% javascript %}`
   if (Object.keys(lexers).includes(name) && open[0] === '{') {
-    const assign = Object.assign({}, defaults, lexers[name], { source })
-    const pretty = prettydiff.mode(assign)
+    const assign = Object.assign({}, defaults, lexers[name], { source });
+    const pretty = prettydiff.mode(assign);
     return ignoreTags(`${open.trim()}\n\n${pretty}\n${close.trim()}`)
   }
   return ignoreTags(`${code}`)
 }
 
 function beautifier(document, range) {
-  const contents = document.getText(range)
-  const source = contents.replace(REGX, documentTags)
-  const assign = Object.assign({}, defaults, lexers.html, { source })
+  const contents = document.getText(range);
+  const source = contents.replace(REGX, documentTags);
+  const assign = Object.assign({}, defaults, lexers.html, { source });
   const output = prettydiff
     .mode(assign)
     .replace(IGNR, '') // Remove ignore wraps, `<temp pretty-diff-ignore>*</temp>`
-    .trim() // trim newlines to prevent repeated indentation
+    .trim(); // trim newlines to prevent repeated indentation
 
-  const replace = []
-  replace.push(TextEdit.replace(range, `${output}`))
+  const replace = [];
+  replace.push(TextEdit.replace(range, `${output}`));
 
   return replace
 }
@@ -125,28 +127,28 @@ const register = obj => Object.assign(obj, {
     },
     {
       provideDocumentFormattingEdits(document) {
-        const total = document.lineCount - 1
-        const last = document.lineAt(total).text.length
-        const top = new Position(0, 0)
-        const bottom = new Position(total, last)
-        const range = new Range(top, bottom)
+        const total = document.lineCount - 1;
+        const last = document.lineAt(total).text.length;
+        const top = new Position(0, 0);
+        const bottom = new Position(total, last);
+        const range = new Range(top, bottom);
 
         return beautifier(document, range)
       }
     }
   )
-})
+});
 
 const activation = obj => workspace.onDidOpenTextDocument((document) => {
   if (ext(document.fileName)) {
     return register(obj)
   }
   return disposal(obj)
-})
+});
 
 const formatting = obj => workspace.onDidChangeConfiguration(() => {
-  const name = window.activeTextEditor.document.uri.path
-  const editor = workspace.getConfiguration('editor').formatOnSave
+  const name = window.activeTextEditor.document.uri.path;
+  const editor = workspace.getConfiguration('editor').formatOnSave;
   if (editor === true && ext(name)) {
     if (format === false) {
       return disposal(obj)
@@ -155,18 +157,18 @@ const formatting = obj => workspace.onDidChangeConfiguration(() => {
   }
 
   return disposal(obj)
-})
+});
 
 /**
  * # ACTIVATE EXTENSION
  */
 exports.activate = (context) => {
-  const active = window.activeTextEditor
+  const active = window.activeTextEditor;
   if (!active || !active.document) return
 
   if (format) {
-    const object = {}
-    context.subscriptions.push(activation(object))
-    context.subscriptions.push(formatting(object))
+    const object = {};
+    context.subscriptions.push(activation(object));
+    context.subscriptions.push(formatting(object));
   }
-}
+};
