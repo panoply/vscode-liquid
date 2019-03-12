@@ -3,18 +3,8 @@
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var vscode = require('vscode');
-var prettydiff = _interopDefault(require('prettydiff'));
 var path = _interopDefault(require('path'));
-
-/**
- * # Editor Configuration
- */
-const editor = vscode.workspace.getConfiguration('editor');
-
-/**
- * # Liquid Configuration
- */
-const liquid = vscode.workspace.getConfiguration('liquid');
+var prettydiff = _interopDefault(require('prettydiff'));
 
 /**
  * # PrettyDiff Defaults
@@ -22,23 +12,9 @@ const liquid = vscode.workspace.getConfiguration('liquid');
 const defaults = prettydiff.defaults;
 
 /**
- * Parser Pattern Matches
+ * # Editor Configuration
  */
-const pattern = {
-  open: (tags) => `((?:<|{%-?)\\s*\\b(${tags})\\b(?:.|\\n)*?\\s*(?:>|-?%})\\s*)`,
-  inner: '((?:.|\\n)*?)',
-  close: '((?:</|{%-?)\\s*\\b(?:(?:|end)\\2)\\b\\s*(?:>|-?%}))',
-  wrap: (code) => `<temp data-prettydiff-ignore>${code}</temp>`,
-  unwrap: new RegExp(`(<temp data-prettydiff-ignore>|</temp>)`, 'g')
-};
-
-/**
- * Formatting File Register
- */
-const schema = {
-  scheme: 'file',
-  language: 'html'
-};
+const editor = vscode.workspace.getConfiguration('editor');
 
 /**
  * Default Formatting Rules
@@ -47,67 +23,74 @@ const rules = {
   html: {
     mode: 'beautify',
     language: 'liquid',
-    lexer: 'markup'
+    lexer: 'markup',
+    indent_size: editor.tabSize
   },
   schema: {
     mode: 'beautify',
     language: 'JSON',
-    lexer: 'script'
+    lexer: 'script',
+    indent_size: editor.tabSize
   },
   stylesheet: {
     mode: 'beautify',
     language: 'SCSS',
-    lexer: 'style'
+    lexer: 'style',
+    indent_size: editor.tabSize
   },
   javascript: {
     mode: 'beautify',
     language: 'JavaScript',
-    lexer: 'script'
+    lexer: 'script',
+    indent_size: editor.tabSize
   }
 };
 
-function formatBlocks (code, open, name, source, close) {
-  if (Object.keys(rules).includes(name)) {
+var pattern = {
+  tags: Object.keys(rules),
+  inner: '((?:.|\\n)*?)',
+  close: '((?:</|{%-?)\\s*\\b(?:(?:|end)\\2)\\b\\s*(?:>|-?%}))',
+  ignored: new RegExp(`(<temp data-prettydiff-ignore>|</temp>)`, 'g'),
+  open: (tag) => `((?:<|{%-?)\\s*\\b(${tag})\\b(?:.|\\n)*?\\s*(?:>|-?%})\\s*)`,
+  ignore: (code) => `<temp data-prettydiff-ignore>${code}</temp>`,
+  matches () {
+    return new RegExp(this.open(this.tags.join('|')) + this.inner + this.close, 'g')
+  }
+};
+
+function blocks (code, open, name, source, close) {
+  if (pattern.tags.includes(name)) {
     const config = Object.assign({}, defaults, rules[name], { source });
     const pretty = prettydiff.mode(config);
-    return pattern.wrap(`${open.trim()}\n\n${pretty}\n${close.trim()}`)
+    return pattern.ignore(`${open.trim()}\n\n${pretty.trim()}\n\n${close.trim()}`)
   } else {
-    return pattern.wrap(`${code}`)
+    return pattern.ignore(`${code}`)
   }
 }
 
-const elements = () => {
-  const { open, inner, close } = pattern;
-  const tags = Object.keys(rules);
-  tags.map((key) => Object.assign(rules[key], liquid.beautify[key]));
-  return new RegExp(open(tags.join('|')) + inner + close, 'g')
-};
-
-const formatFile = (document) => {
-  console.log(document);
+function format (document) {
   const total = document.lineCount - 1;
   const last = document.lineAt(total).text.length;
   const top = new vscode.Position(0, 0);
   const bottom = new vscode.Position(total, last);
   const range = new vscode.Range(top, bottom);
-
   const contents = document.getText(range);
-  const source = contents.replace(elements(), formatBlocks);
+  const source = contents.replace(pattern.matches(), blocks);
   const assign = Object.assign({}, defaults, rules.html, { source });
-  const output = prettydiff
-    .mode(assign)
-    .replace(pattern.unwrap, '')
-    .trim();
-
+  const output = prettydiff.mode(assign).replace(pattern.ignored, '');
   const replace = [];
-  replace.push(vscode.TextEdit.replace(range, `${output}`));
+  replace.push(vscode.TextEdit.replace(range, `${output.trim()}`));
   return replace
-};
+}
 
-class Format {
+class Formatting {
 
-  constructor () {
+  constructor ({ liquid, schema }) {
     this.format = {};
+    this.editor = editor;
+    this.enable = liquid.format;
+    this.schema = schema;
+    pattern.tags.map((k) => Object.assign(rules[k], liquid.beautify[k]));
   }
   extname (name) {
     if (path.extname(name) === '.git') {
@@ -125,18 +108,18 @@ class Format {
   }
   register () {
     Object.assign(this.format, {
-      full: vscode.languages.registerDocumentFormattingEditProvider(schema, {
-        provideDocumentFormattingEdits: formatFile
+      full: vscode.languages.registerDocumentFormattingEditProvider(this.schema, {
+        provideDocumentFormattingEdits: format
       }),
-      range: vscode.languages.registerDocumentRangeFormattingEditProvider(schema, {
-        provideDocumentRangeFormattingEdits: formatFile
+      range: vscode.languages.registerDocumentRangeFormattingEditProvider(this.schema, {
+        provideDocumentRangeFormattingEdits: format
       })
     });
   }
   configuration () {
     vscode.workspace.onDidChangeConfiguration(() => {
       const uri = vscode.window.activeTextEditor.document.uri.path;
-      if (liquid.format === false) return this.disposal()
+      if (this.enable === false) return this.disposal()
       if (editor.formatOnSave === true && this.extname(uri)) {
         return this.register()
       } else {
@@ -155,9 +138,18 @@ class Format {
  */
 exports.activate = (context) => {
   const active = vscode.window.activeTextEditor;
+  const liquid = vscode.workspace.getConfiguration('liquid');
+
   if (!active || !active.document || !liquid.format) return
 
-  const format = new Format();
+  const format = new Formatting({
+    liquid: liquid,
+    schema: {
+      scheme: 'file',
+      language: 'html'
+    }
+  });
+
   context.subscriptions.push(format.activation());
   context.subscriptions.push(format.configuration());
 };

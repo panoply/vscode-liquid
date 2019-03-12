@@ -1,6 +1,6 @@
 export default [
   {
-    input: 'src/bundle.js',
+    input: 'src/extension.js',
     output: {
       file: 'extension/index.js',
       format: 'cjs'

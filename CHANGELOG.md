@@ -4,7 +4,22 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
-## [1.0.0] – <small>10/03/2019</small>
+## [1.2.0] – <small>10/03/2019</small>
+
+Additional fixes and ES6 development environment.
+
+### Changed
+
+- Use backup editor configuration for tab size
+- Upgraded to extension code to ES6
+- Switched air-bnb eslint for standard
+
+### Added
+
+- Exposed options of [PrettyDiff](http://prettydiff.com) for each code block.
+- Beautify on save will be enabled when "editor.formatOnSave" is `true` – Which means you can use the Formatting Toggle extension to enable and disable liquid formatting.
+
+## [1.1.0] – <small>10/03/2019</small>
 
 Fixes various bugs and the extension now allows
 

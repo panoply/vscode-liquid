@@ -1,12 +1,13 @@
+import { rules } from './config'
+
 export default {
-  close: '((?:</|{%-?)\\s*\\b(?:(?:|end)\\2)\\b\\s*(?:>|-?%}))',
+  tags: Object.keys(rules),
   inner: '((?:.|\\n)*?)',
-  open: (tags) => `((?:<|{%-?)\\s*\\b(${tags})\\b(?:.|\\n)*?\\s*(?:>|-?%})\\s*)`,
+  close: '((?:</|{%-?)\\s*\\b(?:(?:|end)\\2)\\b\\s*(?:>|-?%}))',
+  ignored: new RegExp(`(<temp data-prettydiff-ignore>|</temp>)`, 'g'),
+  open: (tag) => `((?:<|{%-?)\\s*\\b(${tag})\\b(?:.|\\n)*?\\s*(?:>|-?%})\\s*)`,
   ignore: (code) => `<temp data-prettydiff-ignore>${code}</temp>`,
-  elements (tags) {
-    return {
-      match: new RegExp(this.open(tags) + this.inner + this.close, 'g'),
-      skip: new RegExp(`(<temp data-prettydiff-ignore>|</temp>)`, 'g')
-    }
+  matches () {
+    return new RegExp(this.open(this.tags.join('|')) + this.inner + this.close, 'g')
   }
 }

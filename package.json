@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "keywords": [
     "liquid",
     "shopify",
@@ -79,12 +79,10 @@
           "description": "Format settings for liquid html and shopify stylesheet, javascript and schema tags.",
           "default": {
             "html": {
-              "indent_size": 2,
               "force_attribute": false,
               "preserve": 2
             },
             "javascript": {
-              "indent_size": 2,
               "preserve": 1,
               "method_chain": 0,
               "quote_convert": "none",
@@ -92,12 +90,10 @@
               "format_object": "indent"
             },
             "stylesheet": {
-              "indent_size": 2,
               "css_insert_lines": true,
               "preserve": 2
             },
             "schema": {
-              "indent_size": 2,
               "format_array": "indent"
             }
           }
@@ -113,7 +109,6 @@
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.11.0",
     "eslint": "^5.14.1",
-    "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-html": "^5.0.3",

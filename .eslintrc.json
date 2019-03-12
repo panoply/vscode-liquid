@@ -33,7 +33,12 @@
         }
       }
     ],
-    "newline-per-chained-call": "off",
+    "newline-per-chained-call": [
+      "error",
+      {
+        "ignoreChainWithDepth": 5
+      }
+    ],
     "object-curly-spacing": ["error", "always"],
     "object-curly-newline": "off",
     "object-property-newline": 2,

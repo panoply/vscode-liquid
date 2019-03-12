@@ -6,10 +6,10 @@ This extension brings [shopify liquid](https://shopify.github.io/liquid/) templa
 
 ## Features
 
-- ✅ Syntax Highlighting
-- ✅ Formatting and Beautification
-- ✅ Liquid Snippets
-- ✅ HTML Intellisense
+✅ Liquid syntax highlighting support<br>
+✅ Formatting and Beautification of liquid HTML and schema tag blocks<br>
+✅ Liquid Snippets auto-complete for fast development<br>
+✅ HTML Intellisense supported
 
 ![showcase](https://github.com/panoply/vscode-shopify-liquid/blob/master/images/showcase.gif?raw=true)
 
@@ -35,8 +35,7 @@ By default formatting will use a combination of pre-configured and editor settin
     "html": {
       "indent_size": 2,
       "force_attribute": false,
-      "preserve": 2,
-      "ignored_tags": ["style", "script"]
+      "preserve": 2
     },
     "javascript": {
       "indent_size": 2,
@@ -63,18 +62,17 @@ By default formatting will use a combination of pre-configured and editor settin
 
 ## Rules
 
-Below is default formatting beautification rules that are pre-configured.
+Below is default formatting beautification rules that are pre-configured. You can of course included and extend these option with the [PrettyDiff](http://prettydiff.com) defaults.
 
 ### HTML
 
 Format options for HTML Liquid code.
 
-| Property        | Value   | Description                                  |
-| --------------- | ------- | -------------------------------------------- |
-| indent_size     | `2`     | Tab size / indentation                       |
-| force_attribute | `false` | Indent HTML Attributes                       |
-| preserve        | integer | Lines to preserve                            |
-| ignored_tags    | array   | Tag blocks that should **not** be formatted. |
+| Property        | Value   | Description            |
+| --------------- | ------- | ---------------------- |
+| indent_size     | `2`     | Tab size / indentation |
+| force_attribute | `false` | Indent HTML Attributes |
+| preserve        | integer | Lines to preserve      |
 
 ### `{% javascript %}`
 
