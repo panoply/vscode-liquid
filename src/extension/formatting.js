@@ -5,7 +5,7 @@ import pattern from './pattern'
 import { editor, defaults, rules } from './config'
 
 function blocks (code, open, name, source, close) {
-  if (pattern.tags.includes(name)) {
+  if (pattern.enforce.includes(name) && open[0] === '{') {
     const config = Object.assign({}, defaults, rules[name], { source })
     const pretty = prettydiff.mode(config)
     return pattern.ignore(`${open.trim()}\n\n${pretty.trim()}\n\n${close.trim()}`)
@@ -36,7 +36,12 @@ class Formatting {
     this.editor = editor
     this.enable = liquid.format
     this.schema = schema
-    pattern.tags.map((k) => Object.assign(rules[k], liquid.beautify[k]))
+    console.log(pattern.tags)
+    pattern.tags.map((k) => {
+      if (liquid.beautify[k]) {
+        return Object.assign(rules[k], liquid.beautify[k])
+      }
+    })
   }
   extname (name) {
     if (path.extname(name) === '.git') {

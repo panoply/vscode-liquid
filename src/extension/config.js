@@ -19,7 +19,10 @@ export const rules = {
     mode: 'beautify',
     language: 'liquid',
     lexer: 'markup',
-    indent_size: editor.tabSize
+    indent_size: editor.tabSize,
+    ignore_tags: ['script',
+      'style',
+      'comment']
   },
   schema: {
     mode: 'beautify',

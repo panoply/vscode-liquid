@@ -18,6 +18,8 @@ exports.activate = (context) => {
     }
   })
 
+  console.log(active.document)
+
   context.subscriptions.push(format.activation())
   context.subscriptions.push(format.configuration())
 }

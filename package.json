@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "1.2.0",
+  "version": "1.2.3",
   "keywords": [
     "liquid",
     "shopify",
@@ -28,7 +28,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:html"
+    "*"
   ],
   "main": "./extension/index",
   "contributes": {
@@ -50,6 +50,9 @@
         "language": "html",
         "scopeName": "text.html.liquid",
         "path": "./src/syntax/liquid.json",
+        "injectTo": [
+          "liquid"
+        ],
         "embeddedLanguages": {
           "source.json": "json",
           "source.css": "css",

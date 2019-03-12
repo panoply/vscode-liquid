@@ -24,7 +24,10 @@ const rules = {
     mode: 'beautify',
     language: 'liquid',
     lexer: 'markup',
-    indent_size: editor.tabSize
+    indent_size: editor.tabSize,
+    ignore_tags: ['script',
+      'style',
+      'comment']
   },
   schema: {
     mode: 'beautify',
@@ -46,8 +49,17 @@ const rules = {
   }
 };
 
+const tags = Object.keys(rules);
+const ignore = rules.html.ignore_tags;
+const items = tags.concat(ignore);
+
+console.log(items);
 var pattern = {
-  tags: Object.keys(rules),
+  tags: items,
+  enforce: ['schema',
+    'style',
+    'stylesheet',
+    'javascript'],
   inner: '((?:.|\\n)*?)',
   close: '((?:</|{%-?)\\s*\\b(?:(?:|end)\\2)\\b\\s*(?:>|-?%}))',
   ignored: new RegExp(`(<temp data-prettydiff-ignore>|</temp>)`, 'g'),
@@ -59,7 +71,7 @@ var pattern = {
 };
 
 function blocks (code, open, name, source, close) {
-  if (pattern.tags.includes(name)) {
+  if (pattern.enforce.includes(name) && open[0] === '{') {
     const config = Object.assign({}, defaults, rules[name], { source });
     const pretty = prettydiff.mode(config);
     return pattern.ignore(`${open.trim()}\n\n${pretty.trim()}\n\n${close.trim()}`)
@@ -90,7 +102,12 @@ class Formatting {
     this.editor = editor;
     this.enable = liquid.format;
     this.schema = schema;
-    pattern.tags.map((k) => Object.assign(rules[k], liquid.beautify[k]));
+    console.log(pattern.tags);
+    pattern.tags.map((k) => {
+      if (liquid.beautify[k]) {
+        return Object.assign(rules[k], liquid.beautify[k])
+      }
+    });
   }
   extname (name) {
     if (path.extname(name) === '.git') {
@@ -149,6 +166,8 @@ exports.activate = (context) => {
       language: 'html'
     }
   });
+
+  console.log(active.document);
 
   context.subscriptions.push(format.activation());
   context.subscriptions.push(format.configuration());

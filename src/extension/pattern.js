@@ -1,7 +1,16 @@
 import { rules } from './config'
 
+const tags = Object.keys(rules)
+const ignore = rules.html.ignore_tags
+const items = tags.concat(ignore)
+
+console.log(items)
 export default {
-  tags: Object.keys(rules),
+  tags: items,
+  enforce: ['schema',
+    'style',
+    'stylesheet',
+    'javascript'],
   inner: '((?:.|\\n)*?)',
   close: '((?:</|{%-?)\\s*\\b(?:(?:|end)\\2)\\b\\s*(?:>|-?%}))',
   ignored: new RegExp(`(<temp data-prettydiff-ignore>|</temp>)`, 'g'),
