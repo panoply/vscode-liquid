@@ -5,7 +5,7 @@
     "jest": true,
     "node": true
   },
-  "extends": ["airbnb-base"],
+  "extends": ["standard"],
   "parserOptions": {
     "ecmaVersion": 2017,
     "sourceType": "module"
@@ -23,7 +23,25 @@
     "allowAllPropertiesOnSameLine": false,
     "array-element-newline": ["error", "always"],
     "comma-dangle": ["error", "never"],
-    "object-property-newline": "error",
+    "operator-linebreak": [
+      "error",
+      "after",
+      {
+        "overrides": {
+          "?": "before",
+          ":": "before"
+        }
+      }
+    ],
+    "newline-per-chained-call": [
+      "error",
+      {
+        "ignoreChainWithDepth": 5
+      }
+    ],
+    "object-curly-spacing": ["error", "always"],
+    "object-curly-newline": "off",
+    "object-property-newline": 2,
     "padded-blocks": [
       "error",
       {
@@ -31,7 +49,7 @@
         "blocks": "never"
       },
       {
-        "allowSingleLineBlocks": true
+        "allowAllPropertiesOnSameLine": true
       }
     ],
     "semi": ["error", "never"]
