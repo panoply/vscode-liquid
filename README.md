@@ -9,7 +9,6 @@ This extension brings [shopify liquid](https://shopify.github.io/liquid/) templa
 ✅ Liquid syntax highlighting support<br>
 ✅ Formatting and Beautification of liquid HTML and schema tag blocks<br>
 ✅ Liquid Snippets auto-complete for fast development<br>
-✅ HTML Intellisense supported
 
 ![showcase](https://github.com/panoply/vscode-shopify-liquid/blob/master/images/showcase.gif?raw=true)
 

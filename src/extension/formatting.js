@@ -26,6 +26,7 @@ function format (document) {
   const output = prettydiff.mode(assign).replace(pattern.ignored, '')
   const replace = []
   replace.push(TextEdit.replace(range, `${output.trim()}`))
+  console.log('Liquid code was formatted!')
   return replace
 }
 
@@ -36,7 +37,6 @@ class Formatting {
     this.editor = editor
     this.enable = liquid.format
     this.schema = schema
-    console.log(pattern.tags)
     pattern.tags.map((k) => {
       if (liquid.beautify[k]) {
         return Object.assign(rules[k], liquid.beautify[k])

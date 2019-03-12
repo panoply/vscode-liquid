@@ -14,11 +14,9 @@ exports.activate = (context) => {
     liquid: liquid,
     schema: {
       scheme: 'file',
-      language: 'html'
+      language: 'liquid'
     }
   })
-
-  console.log(active.document)
 
   context.subscriptions.push(format.activation())
   context.subscriptions.push(format.configuration())

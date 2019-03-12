@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Shopify Liquid",
   "scopeName": "text.html.liquid",
-  "fileTypes": ["liquid", "html.liquid"],
+  "fileTypes": ["liquid"],
   "patterns": [
     {
       "include": "#liquid_sections"

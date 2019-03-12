@@ -92,6 +92,7 @@ function format (document) {
   const output = prettydiff.mode(assign).replace(pattern.ignored, '');
   const replace = [];
   replace.push(vscode.TextEdit.replace(range, `${output.trim()}`));
+  console.log('Liquid code was formatted!');
   return replace
 }
 
@@ -102,7 +103,6 @@ class Formatting {
     this.editor = editor;
     this.enable = liquid.format;
     this.schema = schema;
-    console.log(pattern.tags);
     pattern.tags.map((k) => {
       if (liquid.beautify[k]) {
         return Object.assign(rules[k], liquid.beautify[k])
@@ -163,11 +163,9 @@ exports.activate = (context) => {
     liquid: liquid,
     schema: {
       scheme: 'file',
-      language: 'html'
+      language: 'liquid'
     }
   });
-
-  console.log(active.document);
 
   context.subscriptions.push(format.activation());
   context.subscriptions.push(format.configuration());
