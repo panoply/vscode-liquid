@@ -120,12 +120,11 @@
     "prettier": "^1.16.4",
     "prettier-eslint": "^8.8.2",
     "rollup": "^1.6.0",
-    "rollup-plugin-babel": "^4.3.2"
+    "rollup-plugin-babel": "^4.3.2",
+    "vscode": "^1.1.30"
   },
   "dependencies": {
     "path": "^0.12.7",
-    "prettydiff": "^100.2.6",
-    "typescript": "^3.3.3333",
-    "vscode": "^1.1.30"
+    "prettydiff": "^100.2.6"
   }
 }
