@@ -6,9 +6,10 @@ This extension brings [shopify liquid](https://shopify.github.io/liquid/) templa
 
 ## Features
 
-✅ Liquid syntax highlighting support<br>
-✅ Formatting and Beautification of liquid HTML and schema tag blocks<br>
-✅ Liquid Snippets auto-complete for fast development<br>
+<small>✅</small> Liquid syntax highlighting support<br>
+<small>✅</small> Formatting and Beautification of liquid HTML and schema tag blocks<br>
+<small>✅</small> Liquid Snippets auto-complete for fast development<br>
+<small>✅</small> Optionally use HTML IntelliSense with "files.associations"
 
 ![showcase](https://github.com/panoply/vscode-shopify-liquid/blob/master/images/showcase.gif?raw=true)
 
@@ -20,10 +21,20 @@ By default formatting will use a combination of pre-configured and editor settin
 
 #### Please Note:
 
-- `<script>` and `<style>` HTML tags are ignored.
 - Only files using `.liquid` extension will be formatted.
+- Any `<script>` and `<style>` HTML tags are ignored.
 - Beautify on save will be enabled when "editor.formatOnSave" is `true`
 - When "liquid.format" is set to `false` no formatting will be applied.
+
+### Enable HTML IntelliSence
+
+If you want HTML IntelliSense features you will need to associate `.liquid` files to `HTML` within your `settings.json` file:
+
+```json
+"files.associations": {
+  "*.liquid": "html"
+},
+```
 
 ### `settings.json`
 
@@ -108,9 +119,3 @@ Format options for the schema tag.
 ## Snippets
 
 Liquid snippets are supported, they are forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) to avoid conflicts due to its extension dependency.
-
-## Important
-
-The extension extends upon `HTML`. The plus side to this is you will get all the awesome Intellisense HTML features that ships with VS Code but the down side is when you're working with `html` files the extension will be activated. This means you will receive liquid snippet autocompletion and liquis syntax highlighting in your `.html` files.
-
-If this is something that bugs you, then disable the extension when you're working with `.html` files.

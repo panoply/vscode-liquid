@@ -4,7 +4,6 @@ const tags = Object.keys(rules)
 const ignore = rules.html.ignore_tags
 const items = tags.concat(ignore)
 
-console.log(items)
 export default {
   tags: items,
   enforce: ['schema',

@@ -7,6 +7,7 @@ import Formatting from './extension/formatting'
 exports.activate = (context) => {
   const active = window.activeTextEditor
   const liquid = workspace.getConfiguration('liquid')
+  const associate = workspace.getConfiguration('files.associations')
 
   if (!active || !active.document || !liquid.format) return
 
@@ -14,7 +15,7 @@ exports.activate = (context) => {
     liquid: liquid,
     schema: {
       scheme: 'file',
-      language: 'liquid'
+      language: (associate && associate['*.liquid']) || 'liquid'
     }
   })
 

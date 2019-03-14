@@ -26,7 +26,6 @@ function format (document) {
   const output = prettydiff.mode(assign).replace(pattern.ignored, '')
   const replace = []
   replace.push(TextEdit.replace(range, `${output.trim()}`))
-  console.log('Liquid code was formatted!')
   return replace
 }
 

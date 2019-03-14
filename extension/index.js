@@ -53,7 +53,6 @@ const tags = Object.keys(rules);
 const ignore = rules.html.ignore_tags;
 const items = tags.concat(ignore);
 
-console.log(items);
 var pattern = {
   tags: items,
   enforce: ['schema',
@@ -92,7 +91,6 @@ function format (document) {
   const output = prettydiff.mode(assign).replace(pattern.ignored, '');
   const replace = [];
   replace.push(vscode.TextEdit.replace(range, `${output.trim()}`));
-  console.log('Liquid code was formatted!');
   return replace
 }
 
@@ -156,6 +154,7 @@ class Formatting {
 exports.activate = (context) => {
   const active = vscode.window.activeTextEditor;
   const liquid = vscode.workspace.getConfiguration('liquid');
+  const associate = vscode.workspace.getConfiguration('files.associations');
 
   if (!active || !active.document || !liquid.format) return
 
@@ -163,7 +162,7 @@ exports.activate = (context) => {
     liquid: liquid,
     schema: {
       scheme: 'file',
-      language: 'liquid'
+      language: (associate && associate['*.liquid']) || 'liquid'
     }
   });
 
