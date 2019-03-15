@@ -19,6 +19,7 @@ export const rules = {
     mode: 'beautify',
     language: 'liquid',
     lexer: 'markup',
+    fix: true,
     indent_size: editor.tabSize,
     ignore_tags: ['script',
       'style',

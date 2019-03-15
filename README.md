@@ -22,7 +22,7 @@ By default formatting will use a combination of pre-configured and editor settin
 #### Please Note:
 
 - Only files using `.liquid` extension will be formatted.
-- Any `<script>` and `<style>` HTML tags are ignored.
+- Any `<script>` and `<style>` HTML tags are ignored by default.
 - Beautify on save will be enabled when "editor.formatOnSave" is `true`
 - When "liquid.format" is set to `false` no formatting will be applied.
 
@@ -35,6 +35,10 @@ If you want HTML IntelliSense features you will need to associate `.liquid` file
   "*.liquid": "html"
 },
 ```
+
+### Commands
+
+You can format seelections or programmatically call formatting by typing `liquid`.
 
 ### `settings.json`
 

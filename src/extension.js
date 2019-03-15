@@ -1,5 +1,12 @@
 import { window, workspace } from 'vscode'
-import Formatting from './extension/formatting'
+import {
+  formatting,
+  setup,
+  configuration,
+  formatDocument,
+  formatSelection,
+  enableFormatting
+} from './extension/formatting'
 
 /**
  * # ACTIVATE EXTENSION
@@ -7,18 +14,14 @@ import Formatting from './extension/formatting'
 exports.activate = (context) => {
   const active = window.activeTextEditor
   const liquid = workspace.getConfiguration('liquid')
-  const associate = workspace.getConfiguration('files.associations')
 
   if (!active || !active.document || !liquid.format) return
 
-  const format = new Formatting({
-    liquid: liquid,
-    schema: {
-      scheme: 'file',
-      language: (associate && associate['*.liquid']) || 'liquid'
-    }
-  })
+  setup()
 
-  context.subscriptions.push(format.activation())
-  context.subscriptions.push(format.configuration())
+  context.subscriptions.push(enableFormatting)
+  context.subscriptions.push(formatDocument)
+  context.subscriptions.push(formatSelection)
+  context.subscriptions.push(workspace.onDidOpenTextDocument(formatting))
+  context.subscriptions.push(configuration)
 }

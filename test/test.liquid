@@ -1,27 +1,29 @@
-<div id="navigation">
-  <ul class="menu">
-    <li data-turbolinks-permanentid="menu-button">
-      <button aria-expanded="false" class="js-menu" type="button">
-        open
-      </button>
-    </li>
-    {%- for link in linklists[section.settings.menu].links -%}
-      <li {% if link.active -%} class="active" {%- endif -%}>
-        <a href="{{- link.url -}}">
-          {{- link.title -}}
-        </a>
+<ul>
+  {%- for tag in collection.all_tags -%}
+    {%- if current_tags contains tag -%}
+      <li class="active">
+        {{tag | link_to_remove_tag: tag}}
       </li>
-    {%- endfor -%}
-    {%- if section.settings.desktop_layout == 'default' -%}
+    {%- else -%}
       <li>
-        <a href="/search">
-          search
-        </a>
+        {{tag | link_to_add_tag: tag}}
       </li>
     {%- endif -%}
-  </ul>
-</div>
+  {%- endfor -%}
+</ul>
 
+{%- include 'layout.banner' -%}
+{% for tag in collection.all_tags %}
+  {% if current_tags contains tag %}
+    <li class="active">
+      {{tag | link_to_remove_tag: tag}}
+    </li>
+  {% else %}
+    <li>
+      {{tag | link_to_add_tag: tag}}
+    </li>
+  {% endif %}
+{% endfor %}
 
 {%- comment -%}
 Comments are ignored
@@ -53,7 +55,6 @@ Comments are ignored
 
 import Banner from "./banner.liquid"
 import state from "application/state"
-
 export default {
   onLoad() {
     this.banner = this.container.querySelector("#banner")

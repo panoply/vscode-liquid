@@ -24,6 +24,7 @@ const rules = {
     mode: 'beautify',
     language: 'liquid',
     lexer: 'markup',
+    fix: true,
     indent_size: editor.tabSize,
     ignore_tags: ['script',
       'style',
@@ -69,7 +70,13 @@ var pattern = {
   }
 };
 
-function blocks (code, open, name, source, close) {
+let handler = {};
+
+const liquid = vscode.workspace.getConfiguration('liquid');
+
+const info = (message) => vscode.window.showInformationMessage(message);
+
+const blocks = (code, open, name, source, close) => {
   if (pattern.enforce.includes(name) && open[0] === '{') {
     const config = Object.assign({}, defaults, rules[name], { source });
     const pretty = prettydiff.mode(config);
@@ -77,76 +84,109 @@ function blocks (code, open, name, source, close) {
   } else {
     return pattern.ignore(`${code}`)
   }
-}
+};
 
-function format (document) {
-  const total = document.lineCount - 1;
-  const last = document.lineAt(total).text.length;
-  const top = new vscode.Position(0, 0);
-  const bottom = new vscode.Position(total, last);
-  const range = new vscode.Range(top, bottom);
+const fullRange = (document) => {
+  const first = document.lineAt(0).range.start.character;
+  const last = document.lineAt(document.lineCount - 1).range.end.character;
+  const range = new vscode.Range(0, first, document.lineCount - 1, last);
+  return range
+};
+
+const replace = (range, output) => [vscode.TextEdit.replace(range, output)];
+
+const applyFormat = (document, range) => {
   const contents = document.getText(range);
   const source = contents.replace(pattern.matches(), blocks);
   const assign = Object.assign({}, defaults, rules.html, { source });
   const output = prettydiff.mode(assign).replace(pattern.ignored, '');
-  const replace = [];
-  replace.push(vscode.TextEdit.replace(range, `${output.trim()}`));
-  return replace
-}
+  return `${output.trim()}`
+};
+const format = (document) => {
+  const range = fullRange(document);
+  const output = applyFormat(document, range);
+  return replace(range, output)
+};
 
-class Formatting {
-
-  constructor ({ liquid, schema }) {
-    this.format = {};
-    this.editor = editor;
-    this.enable = liquid.format;
-    this.schema = schema;
-    pattern.tags.map((k) => {
-      if (liquid.beautify[k]) {
-        return Object.assign(rules[k], liquid.beautify[k])
-      }
-    });
+const schema = () => {
+  const associate = vscode.workspace.getConfiguration('files').associations;
+  return {
+    scheme: 'file',
+    language: (associate && associate['*.liquid']) || 'liquid'
   }
-  extname (name) {
-    if (path.extname(name) === '.git') {
-      if (path.extname(name.slice(0, -4)) === '.liquid') return true
-    } else if (path.extname(name) === '.liquid') {
-      return true
-    } else {
-      return false
+};
+
+const disposal = () => {
+  if (Object.keys(handler).length > 0) {
+    for (const key in handler) {
+      handler[key].dispose();
     }
   }
-  activation () {
-    vscode.workspace.onDidOpenTextDocument((document) => {
-      return this.extname(document.fileName) ? this.register() : this.disposal()
-    });
-  }
-  register () {
-    Object.assign(this.format, {
-      full: vscode.languages.registerDocumentFormattingEditProvider(this.schema, {
-        provideDocumentFormattingEdits: format
-      }),
-      range: vscode.languages.registerDocumentRangeFormattingEditProvider(this.schema, {
-        provideDocumentRangeFormattingEdits: format
-      })
-    });
-  }
-  configuration () {
-    vscode.workspace.onDidChangeConfiguration(() => {
-      const uri = vscode.window.activeTextEditor.document.uri.path;
-      if (this.enable === false) return this.disposal()
-      if (editor.formatOnSave === true && this.extname(uri)) {
-        return this.register()
-      } else {
-        return this.disposal()
-      }
-    });
-  }
-  disposal () {
-    Object.keys(this.format).map((prop) => this.format[prop].dispose());
-  }
+};
 
-}
+vscode.commands.registerCommand('liquid.disableFormatting', () => {
+  liquid.update('format', false, vscode.ConfigurationTarget.Global);
+  disposal();
+  return info('Liquid: Formatting has been disabled')
+});
+
+const formatDocument = vscode.commands.registerCommand('liquid.formatDocument', () => {
+  const document = vscode.window.activeTextEditor.document;
+  const range = fullRange(document);
+  const output = applyFormat(document, range);
+  vscode.window.activeTextEditor.edit((edits) => edits.replace(range, output));
+  return info('Liquid: File was formatted')
+});
+
+const formatSelection = vscode.commands.registerCommand('liquid.formatSelection', () => {
+  const root = vscode.window.activeTextEditor;
+  const range = root.selection;
+  const output = applyFormat(root.document, range);
+  vscode.window.activeTextEditor.edit((edits) => edits.replace(range, output));
+  return info('Liquid: Selection was formatted')
+});
+
+const setup = () => {
+  pattern.tags.map((k) => {
+    if (liquid.beautify[k]) {
+      return Object.assign(rules[k], liquid.beautify[k])
+    }
+  });
+};
+
+const formatting = () => {
+  const name = vscode.window.activeTextEditor.document.uri.path;
+  if (path.extname(name) === '.liquid') {
+    if (Object.keys(handler).length === 0) {
+      handler = {
+        full: vscode.languages.registerDocumentFormattingEditProvider(schema(), {
+          provideDocumentFormattingEdits: format
+        }),
+        range: vscode.languages.registerDocumentRangeFormattingEditProvider(schema(), {
+          provideDocumentRangeFormattingEdits: format
+        })
+      };
+    }
+  } else {
+    disposal();
+    handler = {};
+  }
+};
+
+const enableFormatting = vscode.commands.registerCommand('liquid.enableFormatting', () => {
+  liquid.update('format', true, vscode.ConfigurationTarget.Global);
+  formatting();
+  return info('Liquid: Formatting has been enabled.')
+});
+
+const configuration = () => {
+  return vscode.workspace.onDidChangeConfiguration(() => {
+    if (liquid.format === false) return disposal()
+    if (editor.formatOnSave === true) {
+      formatting();
+    }
+  })
+};
 
 /**
  * # ACTIVATE EXTENSION
@@ -154,18 +194,14 @@ class Formatting {
 exports.activate = (context) => {
   const active = vscode.window.activeTextEditor;
   const liquid = vscode.workspace.getConfiguration('liquid');
-  const associate = vscode.workspace.getConfiguration('files.associations');
 
   if (!active || !active.document || !liquid.format) return
 
-  const format = new Formatting({
-    liquid: liquid,
-    schema: {
-      scheme: 'file',
-      language: (associate && associate['*.liquid']) || 'liquid'
-    }
-  });
+  setup();
 
-  context.subscriptions.push(format.activation());
-  context.subscriptions.push(format.configuration());
+  context.subscriptions.push(enableFormatting);
+  context.subscriptions.push(formatDocument);
+  context.subscriptions.push(formatSelection);
+  context.subscriptions.push(vscode.workspace.onDidOpenTextDocument(formatting));
+  context.subscriptions.push(configuration);
 };
