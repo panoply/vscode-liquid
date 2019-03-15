@@ -22,7 +22,7 @@ const editor = vscode.workspace.getConfiguration('editor');
 const rules = {
   html: {
     mode: 'beautify',
-    language: 'liquid',
+    language: 'html',
     lexer: 'markup',
     fix: true,
     indent_size: editor.tabSize,

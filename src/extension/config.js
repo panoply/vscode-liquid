@@ -17,7 +17,7 @@ export const editor = workspace.getConfiguration('editor')
 export const rules = {
   html: {
     mode: 'beautify',
-    language: 'liquid',
+    language: 'html',
     lexer: 'markup',
     fix: true,
     indent_size: editor.tabSize,
