@@ -1,7 +1,7 @@
 {%- for foo in collection[bar].products -%}
   {{foo.title}}
 {%- endfor -%}
-<img alt="" src="">
+
 {% for tag in collection.all_tags %}
   {% if current_tags contains tag %}
     <li class="active">

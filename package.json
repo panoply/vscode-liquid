@@ -5,11 +5,12 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "keywords": [
     "liquid",
     "shopify",
-    "language"
+    "language",
+    "formatting"
   ],
   "repository": {
     "type": "git",
