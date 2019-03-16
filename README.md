@@ -1,34 +1,35 @@
 [![npm version](https://img.shields.io/badge/vscode-install-blue.svg)](https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid)
 
-## Shopify Liquid (VS Code)
+<a href="https://shopify.github.io/liquid" title="Jekyll" target="_blank"><img src="https://github.com/panoply/vscode-shopify-liquid/blob/master/images/banner.gif?raw=true" atl="Liquid Logo" width="100%" style="text-align:center; margin: 0 auto;"></a>
 
-This extension brings [shopify liquid](https://shopify.github.io/liquid/) templating language support to VS Code.
+# Shopify Liquid <small style="color:#999;">(VS Code)</small>
 
-## Features
+A visual studio code extension for the [Shopify liquid](https://shopify.github.io/liquid/) template language.
 
-<small>✅</small> Liquid syntax highlighting support<br>
-<small>✅</small> Formatting and Beautification of liquid HTML and schema tag blocks<br>
-<small>✅</small> Liquid Snippets auto-complete for fast development<br>
-<small>✅</small> Optionally use HTML IntelliSense with "files.associations"
+### Features
+
+🎨 Liquid syntax highlighting support<br>
+😍 Formatting and Beautification of liquid HTML and schema tag blocks<br>
+💭 Liquid Snippets auto-complete for fast development<br>
+🎓Optionally use HTML IntelliSense with `files.associations`
+
+### Showcase
 
 ![showcase](https://github.com/panoply/vscode-shopify-liquid/blob/master/images/showcase.gif?raw=true)
 
 ## Settings
 
-The extension allows you to customize how your liquid HTML is formatted. Formatting is applied using the ([PrettyDiff](http://prettydiff.com)) parser and thus coheres to its beautification rules.
+The extension allows you to customize how your liquid HTML is formatted. Formatting is applied using the ([PrettyDiff](http://prettydiff.com)) parser and thus coheres to its beautification [options](https://github.com/prettydiff/prettydiff/blob/master/options.md).
 
-By default formatting will use a combination of pre-configured and editor settings but you can override these defaults to fit your coding style.
+By default, formatting will use a combination of pre-configured and editor settings but you can override the defaults to fit your coding style.
 
-#### Please Note:
+#### Please Note
 
-- Only files using `.liquid` extension will be formatted.
-- Any `<script>` and `<style>` HTML tags are ignored by default.
-- Beautify on save will be enabled when "editor.formatOnSave" is `true`
-- When "liquid.format" is set to `false` no formatting will be applied.
+> Both the `<script>` and `<style>` HTML tags are ignored by default.
 
-### Enable HTML IntelliSence
+### Enabling HTML IntelliSence
 
-If you want HTML IntelliSense features you will need to associate `.liquid` files to `HTML` within your `settings.json` file:
+If you want HTML IntelliSense features you will need to associate `.liquid` files with `HTML` files within your `settings.json` file:
 
 ```json
 "files.associations": {
@@ -38,9 +39,16 @@ If you want HTML IntelliSense features you will need to associate `.liquid` file
 
 ### Commands
 
-You can format seelections or programmatically call formatting by typing `liquid`.
+You can format selections or files by programmatically running a format method via the command palette. There are 4 available commands:
 
-### `settings.json`
+| Command                    | Description                           |
+| -------------------------- | ------------------------------------- |
+| Liquid: Format File        | Formats the current file              |
+| Liquid: Format Selection   | Formats the selected code             |
+| Liquid: Enable Formatting  | Enables formatting on `.liquid` files |
+| Liquid: Disable Formatting | Disabled formatting                   |
+
+### Settings <small>`settings.json`</small>
 
 ```json
 {
@@ -72,11 +80,20 @@ You can format seelections or programmatically call formatting by typing `liquid
 }
 ```
 
-> You can apply any [PrettyDiff](http://prettydiff.com)) formatting rule.
+## Formatting
 
-## Rules
+Formatting is applied to files using a `.liquid` extension. Liquid infused HTML code aswell as the shopify liquid specific `{% schema %}`, `{% javascript %}` and `{% stylesheet %}` code blocks will also be formatted:
 
-Below is default formatting beautification rules that are pre-configured. You can of course included and extend these option with the [PrettyDiff](http://prettydiff.com) defaults.
+| Property     | Type     | Description                                                  |
+| ------------ | -------- | ------------------------------------------------------------ |
+| `html`       | HTML     | Format options for Liquid infused HTML code                  |
+| `javascript` | JS       | Format options for `{% javascript %}` tags                   |
+| `stylesheet` | CSS/SCSS | Format options for `{% stylesheet %}` and `{% style %}` tags |
+| `schema`     | JSON     | Format options `{% schema %}` tags                           |
+
+#### Options
+
+You can apply any [PrettyDiff](http://prettydiff.com) formatting options which are applicable to the property type. Refer to the [PrettyDiff Options](https://github.com/prettydiff/prettydiff/blob/master/options.md) documentation for a complete list of beautify option that can be applied. By default the extension has a bunch of preset options defined.
 
 ### HTML
 
@@ -88,7 +105,7 @@ Format options for HTML Liquid code.
 | force_attribute | `false` | Indent HTML Attributes |
 | preserve        | integer | Lines to preserve      |
 
-### `{% javascript %}`
+#### JavaScript `{% javascript %}`
 
 Format options for JavaScript located within the javascript section tag.
 
@@ -101,7 +118,7 @@ Format options for JavaScript located within the javascript section tag.
 | format_array  | `indent` | Format Array, Accepts `indent` or `newline`.  |
 | format_object | `indent` | Format Object, Accepts `indent` or `newline`. |
 
-### `{% stylesheet %}`
+#### Stylesheet `{% stylesheet %}`
 
 Format options for CSS and SCSS located withing the stylesheet section tag. Format rules applied here will also be used on CSS within the `{% style %}` tag.
 
@@ -111,7 +128,7 @@ Format options for CSS and SCSS located withing the stylesheet section tag. Form
 | css_insert_lines | `true`  | Should use new lines in CSS/SCSS |
 | preserve         | `2`     | Lines to preserve                |
 
-### `{% schema %}`
+#### Schema `{% schema %}`
 
 Format options for the schema tag.
 
@@ -122,4 +139,9 @@ Format options for the schema tag.
 
 ## Snippets
 
-Liquid snippets are supported, they are forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) to avoid conflicts due to its extension dependency.
+Liquid snippets are supported in this extension. The snippets which are included have been forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). The reason for forking this extension is to avoid conflicts due to a extension dependency it relies on.
+
+> If you have [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) installed, you can safely uninstall this extension and it's dependency.
+
+<br>
+Made with 🖤 By Nikolas Savvidis
