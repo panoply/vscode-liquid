@@ -1,6 +1,6 @@
 [![npm version](https://img.shields.io/badge/vscode-install-blue.svg)](https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid)
 
-<a href="https://shopify.github.io/liquid" title="Jekyll" target="_blank"><img src="https://github.com/panoply/vscode-shopify-liquid/blob/master/images/banner.gif?raw=true" atl="Liquid Logo" width="100%" style="text-align:center; margin: 0 auto;"></a>
+<img src="https://github.com/panoply/vscode-shopify-liquid/blob/master/images/banner.gif?raw=true" atl="Liquid Logo" width="100%">
 
 # Shopify Liquid <small style="color:#999;">(VS Code)</small>
 
