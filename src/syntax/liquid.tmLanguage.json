@@ -8,6 +8,16 @@
       "include": "#liquid_sections"
     },
     {
+      "name": "punctuation.tag.liquid",
+      "begin": "---",
+      "end": "---",
+      "patterns": [
+        {
+          "include": "source.yaml"
+        }
+      ]
+    },
+    {
       "name": "comment.block.liquid",
       "begin": "{%-?\\s*comment\\s*-?%}",
       "end": "{%-?\\s*endcomment\\s*-?%}"
@@ -181,7 +191,7 @@
         },
         {
           "name": "support.class.liquid",
-          "match": "\\b(assets|body_raw|current|results|date|excerpt_raw|meta|next|pages|products|parent|posts|previous|site|tags|taxonomy|url|all_products|country_option_tags)\\b"
+          "match": "\\b(assets|body_raw|current|results|date|excerpt_raw|jekyll|meta|next|page|pages|products|parent|posts|previous|site|tags|taxonomy|url|all_products|country_option_tags)\\b"
         },
         {
           "name": "variable.parameter.liquid",
