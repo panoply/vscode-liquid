@@ -1,0 +1,102 @@
+<ul>
+  {%- for tag in collection.all_tags -%}
+    {%- if current_tags contains tag -%}
+      <li class="active">
+        {{tag | link_to_remove_tag: tag}}
+      </li>
+    {%- else -%}
+      <li>
+        {{tag | link_to_add_tag: tag}}
+      </li>
+    {%- endif -%}
+  {%- endfor -%}
+</ul>
+
+{%- include 'layout.banner' -%}
+
+{% for tag in collection.all_tags %}
+  {% if current_tags contains tag %}
+    <li class="active">
+      {{tag | link_to_remove_tag: tag}}
+    </li>
+  {% else %}
+    <li>
+      {{tag | link_to_add_tag: tag}}
+    </li>
+  {% endif %}
+{% endfor %}
+
+{%- comment -%}
+Comments are ignored
+{%- endcomment -%}
+
+{% stylesheet 'scss' %}
+
+.popover {
+  background-color: $white;
+  border: 1px solid $storm;
+  display: none;
+  position: absolute;
+  right: 0;
+  top: $navbar-height-desktop - 1;
+  z-index: 999;
+
+  ul > li {
+    display: block;
+
+    a {
+      font-size: 0.795rem;
+    }
+  }
+}
+
+{% endstylesheet %}
+
+{% javascript %}
+
+import Banner from "banner"
+import state from "state"
+
+export default {
+  onLoad() {
+    this.banner = this.container.querySelector("#banner")
+    m.mount(banner, {
+      view: () => {
+        m(Banner, {
+          banner: state.data.header.banner
+        })
+      }
+    })
+  },
+  state: {
+    navbar: {
+      active: null
+    },
+    subnav: {
+      show: false
+    }
+  }
+}
+
+{% endjavascript %}
+
+{% schema %}
+
+{
+  "name": "Slideshow",
+  "settings": [
+    {
+      "default": "Hello world",
+      "id": "header",
+      "label": "Header",
+      "type": "text",
+      "arry": [
+        "test",
+        "test",
+        "feoo"
+      ]
+    }
+  ]
+}
+
+{% endschema %}
