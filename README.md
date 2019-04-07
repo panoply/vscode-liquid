@@ -2,16 +2,18 @@
 
 <img src="https://github.com/panoply/vscode-shopify-liquid/blob/master/images/banner.gif?raw=true" atl="Liquid Logo" width="100%">
 
-# Shopify Liquid <small style="color:#999;">(VS Code)</small>
+# Liquid Language <small style="color:#999;">(VS Code)</small>
 
-A visual studio code extension for the [Shopify liquid](https://shopify.github.io/liquid/) template language.
+A visual studio code extension for the [liquid](https://shopify.github.io/liquid/) template language.
 
 ### Features
 
-🎨 Liquid syntax highlighting support<br>
-😍 Formatting and Beautification of liquid HTML and schema tag blocks<br>
-💭 Liquid Snippets auto-complete for fast development<br>
-🎓Optionally use HTML IntelliSense with `files.associations`
+- Liquid syntax highlighting support
+- Formatting and Beautification onSave, Selection or command
+- Liquid Snippet auto-complete for fast development
+- HTML IntelliSense
+- Jekyll Frontmatter YAML tags
+- Shopify Liquid Schema, JavaScript and Stylesheet tags
 
 ### Showcase
 
@@ -25,7 +27,8 @@ By default, formatting will use a combination of pre-configured and editor setti
 
 #### Please Note
 
-> Both the `<script>` and `<style>` HTML tags are ignored by default.
+- Formatting is enabled by default, so `.html` files will be formatted
+- Both the `<script>` and `<style>` HTML tags are ignored by default
 
 ### Enabling HTML IntelliSence
 
@@ -41,12 +44,12 @@ If you want HTML IntelliSense features you will need to associate `.liquid` file
 
 You can format selections or files by programmatically running a format method via the command palette. There are 4 available commands:
 
-| Command                    | Description                           |
-| -------------------------- | ------------------------------------- |
-| Liquid: Format File        | Formats the current file              |
-| Liquid: Format Selection   | Formats the selected code             |
-| Liquid: Enable Formatting  | Enables formatting on `.liquid` files |
-| Liquid: Disable Formatting | Disabled formatting                   |
+| Command                    | Description                                        |
+| -------------------------- | -------------------------------------------------- |
+| Liquid: Format File        | Formats the current file                           |
+| Liquid: Format Selection   | Formats the selected code                          |
+| Liquid: Enable Formatting  | Enables formatting of `*.html` or `*.liquid` files |
+| Liquid: Disable Formatting | Disables formatting                                |
 
 ### Settings <small>`settings.json`</small>
 

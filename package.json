@@ -1,14 +1,15 @@
 {
   "name": "shopify-liquid",
-  "displayName": "Shopify Liquid",
-  "description": "Language syntax, formatting and snippet support for the shopify liquid template language. Supports section tags like schema, javascript, stylesheet and more.",
+  "displayName": "Liquid Language",
+  "description": "Language syntax highlighting, formatting and snippet support for the liquid template language. Supports both Jekyll and Shopify liquid variations.",
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "keywords": [
     "liquid",
     "shopify",
+    "jekyll",
     "language",
     "formatting"
   ],
@@ -37,38 +38,43 @@
   ],
   "main": "./extension/index",
   "contributes": {
-    "commands": [{
+    "commands": [
+      {
         "command": "liquid.disableFormatting",
-        "title": "Liquid: Disable Formatting"
+        "title": "Liquid Language: Disable Formatting"
       },
       {
         "command": "liquid.enableFormatting",
-        "title": "Liquid: Enable Formatting"
+        "title": "Liquid Language: Enable Formatting"
       },
       {
         "command": "liquid.formatDocument",
-        "title": "Liquid: Format File"
+        "title": "Liquid Language: Format File"
       },
       {
         "command": "liquid.formatSelection",
-        "title": "Liquid: Format Selection"
+        "title": "Liquid Language: Format Selection"
       }
     ],
-    "languages": [{
-      "id": "liquid",
-      "aliases": [
-        "Shopify Liquid (HTML)"
-      ],
-      "extensions": [
-        ".liquid"
-      ],
-      "configuration": "./src/language/liquid.configuration.json"
-    }],
-    "grammars": [{
+    "languages": [
+      {
+        "id": "liquid",
+        "aliases": [
+          "Liquid (HTML)"
+        ],
+        "extensions": [
+          ".liquid"
+        ],
+        "configuration": "./src/language/liquid.configuration.json"
+      }
+    ],
+    "grammars": [
+      {
         "language": "html",
         "scopeName": "source.liquid",
         "path": "./src/syntax/liquid.tmLanguage.json",
         "embeddedLanguages": {
+          "source.yaml": "yaml",
           "source.json": "json",
           "source.css": "css",
           "source.css.scss": "scss",
@@ -81,6 +87,7 @@
         "scopeName": "source.liquid",
         "path": "./src/syntax/liquid.tmLanguage.json",
         "embeddedLanguages": {
+          "source.yaml": "yaml",
           "source.json": "json",
           "source.css": "css",
           "source.css.scss": "scss",
@@ -89,7 +96,8 @@
         }
       }
     ],
-    "snippets": [{
+    "snippets": [
+      {
         "language": "liquid",
         "path": "./src/snippets/snippets.json"
       },
@@ -109,7 +117,7 @@
         },
         "liquid.beautify": {
           "type": "object",
-          "description": "Format settings for liquid html and shopify stylesheet, javascript and schema tags.",
+          "description": "Format settings for liquid html, stylesheet, javascript and schema tags.",
           "default": {
             "html": {
               "force_attribute": false,
@@ -141,6 +149,8 @@
   "devDependencies": {
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.11.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
     "eslint": "^5.14.1",
     "eslint-config-prettier": "^4.1.0",
     "eslint-config-standard": "^12.0.0",

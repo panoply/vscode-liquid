@@ -4,6 +4,28 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [1.4.0] – <small>07/04/2019</small>
+
+This version will support formatting by default for any files using a `.html`, `*.html` or `.liquid` extension when the `liquid.format` setting is set to `true`.
+
+Extension Changes:
+
+- Changed extension display name from "Shopify Liquid" to just "Liquid" as the extension now supports Jekyll and basically all Liquid variations.
+
+Added Jekyll Support:
+
+- Jekyll Frontmatter
+- Jekyll objects like `{{ page }}` and `{{ jekyll }}`
+
+Fixed Formatting issues:
+
+- Fixed enable/disable
+- Code adjustments
+
+## [1.2.0] - [1.3.3] – <small>03/2019</small>
+
+Various Bug fixes
+
 ## [1.2.0] – <small>10/03/2019</small>
 
 Additional fixes and ES6 development environment.
