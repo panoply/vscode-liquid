@@ -45,8 +45,9 @@ export const rules = {
   }
 }
 
-export default {
-  editor,
-  defaults,
-  rules
+export const cmd = {
+  document: 'liquid.formatDocument',
+  selection: 'liquid.formatSelection',
+  enable: 'liquid.enableFormatting',
+  disable: 'liquid.disableFormatting'
 }
