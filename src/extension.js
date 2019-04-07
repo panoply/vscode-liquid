@@ -1,11 +1,11 @@
 import { window, workspace } from 'vscode'
 import {
-  formatting,
-  setup,
-  configuration,
-  formatDocument,
-  formatSelection,
-  enableFormatting
+  formatEnable,
+  formatDisable,
+  textDocument,
+  textSelection,
+  registerFormat,
+  registerRules
 } from './extension/formatting'
 
 /**
@@ -13,15 +13,16 @@ import {
  */
 exports.activate = (context) => {
   const active = window.activeTextEditor
-  const liquid = workspace.getConfiguration('liquid')
 
-  if (!active || !active.document || !liquid.format) return
+  if (!active || !active.document) return
 
-  setup()
+  registerRules()
+  registerFormat()
 
-  context.subscriptions.push(enableFormatting)
-  context.subscriptions.push(formatDocument)
-  context.subscriptions.push(formatSelection)
-  context.subscriptions.push(workspace.onDidOpenTextDocument(formatting))
-  context.subscriptions.push(configuration)
+  context.subscriptions.push(formatEnable)
+  context.subscriptions.push(formatDisable)
+  context.subscriptions.push(textDocument)
+  context.subscriptions.push(textSelection)
+  context.subscriptions.push(workspace.onDidOpenTextDocument(registerFormat))
+  context.subscriptions.push(workspace.onDidChangeConfiguration(registerFormat))
 }
