@@ -12,19 +12,6 @@
   {%- endfor -%}
 </ul>
 
-{%- include 'layout.banner' -%}
-
-{% for tag in collection.all_tags %}
-  {% if current_tags contains tag %}
-    <li class="active">
-      {{tag | link_to_remove_tag: tag}}
-    </li>
-  {% else %}
-    <li>
-      {{tag | link_to_add_tag: tag}}
-    </li>
-  {% endif %}
-{% endfor %}
 
 {%- comment -%}
 Comments are ignored
