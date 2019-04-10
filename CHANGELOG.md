@@ -4,6 +4,11 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [1.4.1] – <small>07/10/2019</small>
+
+- Updated readme
+- Changed name to simply "Liquid"
+
 ## [1.4.0] – <small>07/04/2019</small>
 
 This version will support formatting by default for any files using a `.html`, `*.html` or `.liquid` extension when the `liquid.format` setting is set to `true`.

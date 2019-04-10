@@ -1,11 +1,11 @@
 {
   "name": "shopify-liquid",
-  "displayName": "Liquid Language",
-  "description": "Language syntax highlighting, formatting and snippet support for the liquid template language. Supports both Jekyll and Shopify liquid variations.",
+  "displayName": "Liquid",
+  "description": "Syntax highlighting, formatting and snippet support for the liquid template language. Supports both Jekyll and Shopify variations.",
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "keywords": [
     "liquid",
     "shopify",
