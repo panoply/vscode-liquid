@@ -1,28 +1,30 @@
 {
   "env": {
-    "browser": true,
+    "browser": false,
     "es6": true,
-    "jest": true,
+    "jest": false,
     "node": true
   },
-  "extends": ["standard"],
+  "extends": [
+    "standard"
+  ],
   "parserOptions": {
     "ecmaVersion": 2017,
     "sourceType": "module"
-  },
-  "plugins": ["prettier", "html"],
-  "settings": {
-    "html/indent": "0",
-    "html/report-bad-indent": "error",
-    "html/html-extensions": [".html", ".liquid"]
   },
   "rules": {
     "class-methods-use-this": 0,
     "guard-for-in": 0,
     "allowElseIf": true,
     "allowAllPropertiesOnSameLine": false,
-    "array-element-newline": ["error", "always"],
-    "comma-dangle": ["error", "never"],
+    "array-element-newline": [
+      "error",
+      "always"
+    ],
+    "comma-dangle": [
+      "error",
+      "never"
+    ],
     "operator-linebreak": [
       "error",
       "after",
@@ -39,19 +41,24 @@
         "ignoreChainWithDepth": 5
       }
     ],
-    "object-curly-spacing": ["error", "always"],
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
     "object-curly-newline": "off",
     "object-property-newline": 2,
     "padded-blocks": [
-      "error",
+      1,
       {
-        "classes": "always",
-        "blocks": "never"
+        "classes": "always"
       },
       {
-        "allowAllPropertiesOnSameLine": true
+        "allowSingleLineBlocks": true
       }
     ],
-    "semi": ["error", "never"]
+    "semi": [
+      "error",
+      "never"
+    ]
   }
 }
