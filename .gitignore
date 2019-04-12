@@ -2,6 +2,7 @@ node_modules
 .vscode-test/
 *.vsix
 yarn.lock
+test/components/*.html
 
 ### OSX ###
 # General
