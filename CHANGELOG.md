@@ -4,6 +4,12 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [1.5.1] – <small>12/10/2019</small>
+
+- Fix disable
+- Add status bar icon
+
+
 ## [1.5.0] – <small>12/10/2019</small>
 
 Various fixes, modifications and updates in this version. The extension is now leveraging classes and source was re-wrote.

@@ -165,7 +165,7 @@ class Format {
   }
 
   register () {
-    vscode.languages.registerDocumentFormattingEditProvider(
+    return vscode.languages.registerDocumentFormattingEditProvider(
       {
         scheme: 'file',
         language: 'html'
@@ -176,7 +176,7 @@ class Format {
           return [vscode.TextEdit.replace(range, `${result.trim()}`)]
         }
       }
-    );
+    )
   }
 
   document () {
@@ -196,37 +196,63 @@ class Format {
 class Document extends Format {
 
   static notify (message) {
-    return vscode.window.showInformationMessage(`Liquid: ${message}`)
+    return vscode.window.showInformationMessage(`Liquid ${message}`)
   }
   constructor () {
     super();
-    this.handler = null;
-    this.editor = vscode.window.activeTextEditor;
+    this.handler = {};
+    this.run = vscode.workspace.getConfiguration('liquid').format;
+    this.bar = vscode.StatusBarItem;
+    this.bar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -2);
     this.rules = super.rules(liquid);
   }
-  dispose () {
-    if (this.handler !== null) {
-      this.handler.dispose();
-      this.handler = null;
-    }
-  }
   format () {
-    if (!vscode.workspace.getConfiguration('liquid').format) {
-      return this.dispose()
-    }
+    const { fileName, languageId } = vscode.window.activeTextEditor.document;
     if (!vscode.workspace.getConfiguration('editor').formatOnSave) {
-      return this.dispose()
+      this.run = false;
+      return this.run
     }
-    this.dispose();
-    this.handler = super.register();
+    if (this.run) {
+      try {
+        this.handler.hasOwnProperty(fileName) && this.handler[fileName].dispose();
+        this.handler[fileName] = super.register();
+        Object.assign(this.bar, {
+          text: `💧Liquid: $(check)`,
+          command: 'liquid.disableFormatting'
+        });
+      } catch (error) {
+        console.error(error);
+        Document.notify('Error registering the formatter, re-open the file 💧');
+      }
+    } else {
+      Object.assign(this.bar, {
+        text: `💧Liquid: $(x)`,
+        command: 'liquid.enableFormatting'
+      });
+    }
+    languageId === 'html' ? this.bar.show() : this.bar.hide();
   }
-  enable () {
-    liquid.update('format', true, vscode.ConfigurationTarget.Global);
-    return Document.notify('Formatting Enabled 💧')
+  async enable () {
+    this.run = true;
+    await liquid
+      .update('format', this.run, vscode.ConfigurationTarget.Global)
+      .then(() => {
+        this.format();
+      })
+      .then(() => Document.notify('Formatting Enabled 💧'));
   }
-  disable () {
-    liquid.update('format', false, vscode.ConfigurationTarget.Global);
-    return Document.notify('Formatting Disabled')
+  async disable () {
+    this.run = false;
+    await liquid
+      .update('format', this.run, vscode.ConfigurationTarget.Global)
+      .then(() => {
+        for (const key in this.handler) {
+          if (this.handler.hasOwnProperty(key)) {
+            this.handler[key].dispose();
+          }
+        }
+      })
+      .then(() => Document.notify('Formatting Disabled 💧'));
   }
   selection () {
     try {
@@ -260,19 +286,24 @@ exports.activate = context => {
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument(() => {
       document.format();
-    }),
-    vscode.workspace.onDidChangeConfiguration(() => {
-      document.format();
-    }),
-    vscode.commands.registerCommand(cmd.enable, () => {
-      document.enable();
-    }),
+    })
+  );
+  context.subscriptions.push(
     vscode.commands.registerCommand(cmd.disable, () => {
       document.disable();
-    }),
+    })
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(cmd.enable, () => {
+      document.enable();
+    })
+  );
+  context.subscriptions.push(
     vscode.commands.registerCommand(cmd.document, () => {
       document.document();
-    }),
+    })
+  );
+  context.subscriptions.push(
     vscode.commands.registerCommand(cmd.selection, () => {
       document.selection();
     })

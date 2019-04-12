@@ -58,7 +58,7 @@ export default class Format {
   }
 
   register () {
-    languages.registerDocumentFormattingEditProvider(
+    return languages.registerDocumentFormattingEditProvider(
       {
         scheme: 'file',
         language: 'html'
