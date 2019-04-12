@@ -15,19 +15,24 @@ exports.activate = context => {
   context.subscriptions.push(
     workspace.onDidOpenTextDocument(() => {
       document.format()
-    }),
-    workspace.onDidChangeConfiguration(() => {
-      document.format()
-    }),
-    commands.registerCommand(cmd.enable, () => {
-      document.enable()
-    }),
+    })
+  )
+  context.subscriptions.push(
     commands.registerCommand(cmd.disable, () => {
       document.disable()
-    }),
+    })
+  )
+  context.subscriptions.push(
+    commands.registerCommand(cmd.enable, () => {
+      document.enable()
+    })
+  )
+  context.subscriptions.push(
     commands.registerCommand(cmd.document, () => {
       document.document()
-    }),
+    })
+  )
+  context.subscriptions.push(
     commands.registerCommand(cmd.selection, () => {
       document.selection()
     })
