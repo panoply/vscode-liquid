@@ -90,8 +90,6 @@ The `<script>` tag is ignored and its contents will not be formatted. If you req
 | Liquid: Enable Formatting  | Enable formatting of `*.html` or `*.liquid` files |
 | Liquid: Disable Formatting | Disable formatting                                |
 
-For
-
 #### Rules
 
 Below is a list of the default beautification rules that will be applied when formatting.
