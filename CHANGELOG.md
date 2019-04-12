@@ -4,6 +4,20 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [1.5.0] – <small>12/10/2019</small>
+
+Various fixes, modifications and updates in this version. The extension is now leveraging classes and source was re-wrote.
+
+- Added
+  - `---` frontmatter to configurations
+  - Schema blocks to folding markers
+  - Ignore frontmatter Jekyll when formatting
+  - Keybinding of `cmd + shift + l` can be used
+- Changes
+  - Rewrote source files
+  - Updated readme.
+  - Disabled extensions in development host
+
 ## [1.4.1] – <small>07/10/2019</small>
 
 - Updated readme
