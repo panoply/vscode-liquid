@@ -1,8 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "name": "Shopify Liquid",
+  "name": "Liquid",
   "scopeName": "source.liquid",
-  "fileTypes": ["liquid"],
+  "fileTypes": ["liquid", "html"],
   "patterns": [
     {
       "include": "#liquid_sections"
@@ -191,7 +191,7 @@
         },
         {
           "name": "support.class.liquid",
-          "match": "\\b(assets|body_raw|current|results|date|excerpt_raw|jekyll|meta|next|page|pages|products|parent|posts|previous|site|tags|taxonomy|url|all_products|country_option_tags)\\b"
+          "match": "\\b(assets|body_raw|current|results|date|excerpt_raw|jekyll|meta|next|page|pages|products|parent|posts|previous|site|tags|taxonomy|title|url|all_products|country_option_tags)\\b"
         },
         {
           "name": "variable.parameter.liquid",
@@ -313,6 +313,6 @@
       ]
     }
   },
-  "foldingStartMarker": "(?x){%\\s*(if|unless|for|paginate|capture|form|case|tablerow|raw|comment|style|stylesheet|javascript)[^(%})]+%}",
-  "foldingStopMarker": "(?x){%\\s*(endif|endunless|endfor|endpaginate|endcapture|endform|endcase|endtablerow|endraw|endcomment|endstyle|endstylesheet|endjavascript)[^(%})]+%}"
+  "foldingStartMarker": "(?x){%\\s*(if|unless|for|paginate|capture|form|case|tablerow|raw|comment|schema|style|stylesheet|javascript)[^(%})]+%}",
+  "foldingStopMarker": "(?x){%\\s*(endif|endunless|endfor|endpaginate|endcapture|endform|endcase|endtablerow|endraw|endcomment|endschema|endstyle|endstylesheet|endjavascript)[^(%})]+%}"
 }
