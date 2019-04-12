@@ -1,21 +1,31 @@
-import { rules } from './config'
-
-const tags = Object.keys(rules)
-const ignore = rules.html.ignore_tags
-const items = tags.concat(ignore)
+import { preset } from './config'
 
 export default {
-  tags: items,
-  enforce: ['schema',
-    'style',
-    'stylesheet',
-    'javascript'],
-  inner: '((?:.|\\n)*?)',
-  close: '((?:</|{%-?)\\s*\\b(?:(?:|end)\\2)\\b\\s*(?:>|-?%}))',
-  ignored: new RegExp(`(<temp data-prettydiff-ignore>|</temp>)`, 'g'),
-  open: (tag) => `((?:<|{%-?)\\s*\\b(${tag})\\b(?:.|\\n)*?\\s*(?:>|-?%})\\s*)`,
-  ignore: (code) => `<temp data-prettydiff-ignore>${code}</temp>`,
-  matches () {
-    return new RegExp(this.open(this.tags.join('|')) + this.inner + this.close, 'g')
-  }
+  frontmatter: new RegExp(['---',
+    '(?:[^]*?)',
+    '---'].join(''), 'g'),
+  tags: new RegExp(
+    [
+      '(', // Opening
+      '(?:<|{%-?)\\s*',
+      `\\b(${preset.tags.concat(preset.ignore).join('|')})\\b`,
+      '(?:.|\\n)*?\\s*',
+      '(?:>|-?%})\\s*',
+      ')',
+      '(', // Inner
+      '(?:.|\\n)*?',
+      ')',
+      '(', // Closing
+      '(?:</|{%-?)\\s*',
+      '\\b(?:(?:|end)\\2)\\b',
+      '\\s*(?:>|-?%})',
+      ')'
+    ].join(''),
+    'g'
+  ),
+  ignore: new RegExp(['(',
+    '<temp data-prettydiff-ignore>',
+    '|',
+    '</temp>',
+    ')'].join(''), 'g')
 }

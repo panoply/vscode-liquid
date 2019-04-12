@@ -2,49 +2,73 @@ import { workspace } from 'vscode'
 import prettydiff from 'prettydiff'
 
 /**
- * # PrettyDiff Defaults
+ * PrettyDiff Defaults
  */
 export const defaults = prettydiff.defaults
 
 /**
- * # Editor Configuration
+ * Preset Configuration
  */
-export const editor = workspace.getConfiguration('editor')
+export const preset = {
+  tags: ['javascript',
+    'stylesheet',
+    'schema',
+    'style'],
+  ignore: [
+    'script', // <script>
+    'comment' // {% comment %}
+  ]
+}
 
 /**
- * Default Formatting Rules
+ * Editor Configuration
+ */
+export const editor = workspace.getConfiguration('editor')
+export const liquid = workspace.getConfiguration('liquid')
+
+/**
+ * Rules
  */
 export const rules = {
   html: {
     mode: 'beautify',
+    language_name: 'Liquid',
     language: 'html',
     lexer: 'markup',
     fix: true,
+    preserve: 1,
     indent_size: editor.tabSize,
-    ignore_tags: ['script',
-      'style',
-      'comment']
+    end_quietly: 'log',
+    node_error: true
   },
   schema: {
     mode: 'beautify',
     language: 'JSON',
+    language_name: 'json',
     lexer: 'script',
     indent_size: editor.tabSize
   },
   stylesheet: {
     mode: 'beautify',
-    language: 'SCSS',
+    language_name: 'SASS',
+    language: 'scss',
     lexer: 'style',
+    preserve: 1,
     indent_size: editor.tabSize
   },
   javascript: {
     mode: 'beautify',
-    language: 'JavaScript',
+    language_name: 'JavaScript',
+    language: 'javascript',
     lexer: 'script',
+    preserve: 1,
     indent_size: editor.tabSize
   }
 }
 
+/**
+ * Command Palette
+ */
 export const cmd = {
   document: 'liquid.formatDocument',
   selection: 'liquid.formatSelection',
