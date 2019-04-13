@@ -15,10 +15,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/panoply/vscode-shopify-liquid.git"
+    "url": "https://github.com/panoply/vscode-liquid.git"
   },
   "bugs": {
-    "url": "https://github.com/panoply/vscode-shopify-liquid/issues"
+    "url": "https://github.com/panoply/vscode-liquid/issues"
   },
   "engines": {
     "vscode": "^1.30.0"
