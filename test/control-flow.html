@@ -1,0 +1,29 @@
+{% if product.title == 'Awesome Shoes' %}
+  You are buying some awesome shoes!
+{% endif %}
+
+{% unless product.title == 'Awesome Shoes' %}
+  You are not buying awesome shoes.
+{% endunless %}
+
+{% if product.title != 'Awesome Shoes' %}
+  You are not buying awesome shoes.
+{% endif %}
+
+{% if shipping_method.title == 'International Shipping' %}
+  You're shipping internationally. Your order should arrive in 2–3 weeks.
+{% elsif shipping_method.title == 'Domestic Shipping' %}
+  Your order should arrive in 3–4 days.
+{% else %}
+  Thank you for your order!
+{% endif %}
+
+{% if line_item.grams > 20000 and customer_address.city == 'Ottawa' %}
+  You're buying a heavy item, and live in the same city as our store. Choose local pick-up as a shipping option to avoid paying high shipping costs.
+{% endif %}
+
+{% if customer.tags contains 'VIP' or customer.email contains 'mycompany.com' %}
+  Welcome! We're pleased to offer you a special discount of 15% on all products.
+{% else %}
+  Welcome to our store!
+{% endif %}

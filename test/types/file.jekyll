@@ -1,0 +1,39 @@
+---
+author: "John Smith"
+layout: "foobar"
+permalink: "/"
+layout: default
+foo:
+ - bar: test
+ - foo: bar
+ - jekyll: frontmatter
+---
+
+<nav class="header__navigation col">
+  <ul>
+    {% for link in site.data.menu %}
+    <li class="{% if link.children %}nested {% endif %}{% if url == link.url %}current{% endif %}">
+      {% if link.children %}
+      <ul class="first-level">
+        {% for child in link.children %}
+        <li>
+          {% if child.children %}
+          <ul class="second-level">
+            {% for child in child.children %}
+            <li>
+              <a href="{{ child.url | absolute_url }}">{{ child.title }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+          <a href="{{ child.url | absolute_url }}">
+            {{ child.title }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</nav>
