@@ -1,10 +1,15 @@
 # Change Log
 
 
-
 All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
+
+## [1.5.4] – <small>12/10/2019</small>
+
+- Fixed `{% include %}` tag syntax highlighting when using with Jekyll.
+- Added attribute syntax highlighting, any `attr="tag"` code occurances in liquid tags.
+- Adjusted test files to make more sense.
 
 ## [1.5.3] – <small>12/10/2019</small>
 
