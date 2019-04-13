@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Liquid",
   "scopeName": "source.liquid",
-  "fileTypes": ["liquid", "html"],
+  "fileTypes": ["liquid", "html", "jekyll"],
   "patterns": [
     {
       "include": "#liquid_sections"
@@ -148,6 +148,15 @@
           }
         },
         {
+          "name": "string.quoted.liquid",
+          "begin": "(?<=include|include_relative)\\s+([^{])",
+          "end": "([^{\\s]+)"
+        },
+        {
+          "name": "entity.other.attribute-name.liquid",
+          "match": "(\\S+)(?=\\=['\"])"
+        },
+        {
           "name": "support.function.with-args.liquid",
           "match": "\\|\\s+(?![\\.0-9])[a-zA-Z0-9_-]+\\:\\s+"
         },
@@ -158,14 +167,6 @@
         {
           "name": "keyword.control.liquid",
           "match": "(?<=\\s)(with|offset\\:|limit\\:)(?=\\s)"
-        },
-        {
-          "match": "(?<=include)(.*)(with\\:|offset|limit)(?=\\s)",
-          "captures": {
-            "2": {
-              "name": "invalid.illegal.argument.liquid"
-            }
-          }
         },
         {
           "name": "invalid.illegal.liquid",
