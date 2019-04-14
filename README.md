@@ -2,7 +2,7 @@
 
 <img  src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/banner.gif"  atl="Liquid Logo"  width="100%">
 
-<small>If you're using the [Liquid Language Support](https://github.com/GingerBear/vscode-liquid) and/or the [Shopify Liquid Template Snippets](https://github.com/killalau/vscode-liquid-snippets) extension then it's recommended that you either uninstall or disable both these extensions before using this.</small>
+If you're using the [Liquid Language Support](https://github.com/GingerBear/vscode-liquid) and/or the [Shopify Liquid Template Snippets](https://github.com/killalau/vscode-liquid-snippets) extension then it's recommended that you either uninstall or disable both these extensions before using this.
 
 # Liquid <small style="color:#999;">(vs code)</small>
 
