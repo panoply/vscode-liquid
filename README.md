@@ -47,6 +47,7 @@ cmd + shift + L -> Format Document
 ```json
 {
   "liquid.format": true,
+  "liquid.formatIgnore": ["case"], // ignores {% case %}
   "liquid.beautify": {
     "html": {
       "indent_size": 2,
@@ -77,6 +78,13 @@ cmd + shift + L -> Format Document
 ## Formatting
 
 Formatting can be enable or disabled via the command palette and also respects the `editor.formatOnSave` setting. When Liquid formatting is **enabled** the extension will format any HTML (`*.html`) or Liquid (`*.liquid`) file in your workspace as it will assume these files contain Liquid syntax. You can customize how Liquid HTML is to be beautified when formatting is applied by configuring the workspace setting.
+
+<strong>Parser</strong><br>
+Under the hood this extension uses language aware code comparison tool known as [PrettyDiff](https://prettydiff.com/). You can apply any PrettyDiff formatting [option](https://github.com/prettydiff/prettydiff/blob/master/options.md) to language specific properties of the `liquid.beautify` rules object in workspace settings.
+
+<strong>Ignoring Tags</strong><br>
+Sometimes PrettyDiff will have trouble formatting your code, in this case you can apply the tag to the ignore array setting by adding the name of the tag.
+
 
 <strong>❗Important ❗</strong><br>
 The `<script>` tag is ignored and its contents will not be formatted. If you require formatting for this tag you should consider using [eslint](<[https://eslint.org](https://eslint.org/)>) and the [eslint-plugin-html](https://github.com/BenoitZugmeyer/eslint-plugin-html) with [prettier](https://prettier.io/).
