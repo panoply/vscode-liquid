@@ -82,7 +82,7 @@ Formatting can be enable or disabled via the command palette and also respects t
 <strong>Toggle Button</strong><br>
 When an HTML or Liquid file is open in the editor you will see the Liquid toggle button appear on the bottom right hand side of the status bar. This button will allow you to enable/disable liquid formatting.
 
-<img src="https://github.com/panoply/vscode-liquid/blob/master/images/toggle-button.png?raw=true" width="140px" style="padding-bottom:10px;">
+<img src="https://github.com/panoply/vscode-liquid/blob/master/images/toggle-button.png?raw=true" width="150px" style="padding-bottom:2px;">
 
 <br>
 
