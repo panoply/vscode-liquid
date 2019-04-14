@@ -79,6 +79,13 @@ cmd + shift + L -> Format Document
 
 Formatting can be enable or disabled via the command palette and also respects the `editor.formatOnSave` setting. When Liquid formatting is **enabled** the extension will format any HTML (`*.html`) or Liquid (`*.liquid`) file in your workspace as it will assume these files contain Liquid syntax. You can customize how Liquid HTML is to be beautified when formatting is applied by configuring the workspace setting.
 
+<strong>Toggle Button</strong><br>
+When an HTML or Liquid file is open in the editor you will see the Liquid toggle button appear on the bottom right hand side of the status bar. This button will allow you to enable/disable liquid formatting.
+
+<img src="https://github.com/panoply/vscode-liquid/blob/master/images/toggle-button.png?raw=true" width="140px" style="padding-bottom:10px;">
+
+<br>
+
 <strong>Parser</strong><br>
 Under the hood this extension uses language aware code comparison tool known as [PrettyDiff](https://prettydiff.com/). You can apply any PrettyDiff formatting [option](https://github.com/prettydiff/prettydiff/blob/master/options.md) to language specific properties of the `liquid.beautify` rules object in workspace settings.
 
@@ -91,7 +98,7 @@ Sometimes PrettyDiff will have trouble formatting your code, in this case you ca
 }
 ```
 
-In the above example the contents of Liquid `{% case %}` tag and the HTML `<head>` tag will both be ignored when formatting.
+In the above example the contents of Liquid `{% case %}` tag and the HTML `<head>` tag will both be ignored when formatting. Only contained block tags can be applied the have both an opening and closing tag.
 
 
 <strong>❗Important ❗</strong><br>
