@@ -1,5 +1,5 @@
 import { workspace, window, ConfigurationTarget, StatusBarAlignment, StatusBarItem } from 'vscode'
-import { liquid, editor } from './config'
+import { liquid } from './config'
 import Format from './format'
 
 export default class Document extends Format {
@@ -33,7 +33,8 @@ export default class Document extends Format {
         console.error(error)
         Document.notify('Error registering the formatter, re-open the file 💧')
       }
-    } else {
+    }
+    if (!this.run) {
       Object.assign(this.bar, {
         text: `💧Liquid: $(x)`,
         command: 'liquid.enableFormatting'

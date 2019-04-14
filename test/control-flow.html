@@ -19,7 +19,8 @@
 {% endif %}
 
 {% if line_item.grams > 20000 and customer_address.city == 'Ottawa' %}
-  You're buying a heavy item, and live in the same city as our store. Choose local pick-up as a shipping option to avoid paying high shipping costs.
+  You're buying a heavy item, and live in the same city as our store. Choose local pick-up as a shipping option to avoid
+      paying high shipping costs.
 {% endif %}
 
 {% if customer.tags contains 'VIP' or customer.email contains 'mycompany.com' %}
@@ -27,3 +28,7 @@
 {% else %}
   Welcome to our store!
 {% endif %}
+
+{% case variable %}{% when condition %}{% else %}
+
+{% endcase %}

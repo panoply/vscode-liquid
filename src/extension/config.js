@@ -7,6 +7,12 @@ import prettydiff from 'prettydiff'
 export const defaults = prettydiff.defaults
 
 /**
+ * Editor Configuration
+ */
+export const editor = workspace.getConfiguration('editor')
+export const liquid = workspace.getConfiguration('liquid')
+
+/**
  * Preset Configuration
  */
 export const preset = {
@@ -17,14 +23,8 @@ export const preset = {
   ignore: [
     'script', // <script>
     'comment' // {% comment %}
-  ]
+  ].concat(liquid.formatIgnore || [])
 }
-
-/**
- * Editor Configuration
- */
-export const editor = workspace.getConfiguration('editor')
-export const liquid = workspace.getConfiguration('liquid')
 
 /**
  * Rules
