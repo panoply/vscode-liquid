@@ -5,24 +5,29 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
-## [1.5.4] – <small>12/10/2019</small>
+
+## [1.5.4] – <small>14/04/2019</small>
+
+- Exposed ignore tags option to configuration settings. Allows for tags to be ignored when formatting.
+
+## [1.5.4] – <small>13/04/2019</small>
 
 - Fixed `{% include %}` tag syntax highlighting when using with Jekyll.
 - Added attribute syntax highlighting, any `attr="tag"` code occurances in liquid tags.
 - Adjusted test files to make more sense.
 
-## [1.5.3] – <small>12/10/2019</small>
+## [1.5.3] – <small>12/04/2019</small>
 
 - Added `block` and `item` to support syntax class
 
 
-## [1.5.1] – <small>12/10/2019</small>
+## [1.5.1] – <small>12/04/2019</small>
 
 - Fix disable
 - Add status bar icon
 
 
-## [1.5.0] – <small>12/10/2019</small>
+## [1.5.0] – <small>12/04/2019</small>
 
 Various fixes, modifications and updates in this version. The extension is now leveraging classes and source was re-wrote.
 
@@ -36,7 +41,7 @@ Various fixes, modifications and updates in this version. The extension is now l
   - Updated readme.
   - Disabled extensions in development host
 
-## [1.4.1] – <small>07/10/2019</small>
+## [1.4.1] – <small>07/04/2019</small>
 
 - Updated readme
 - Changed name to simply "Liquid"

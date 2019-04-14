@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "1.5.4",
+  "version": "1.6.0",
   "keywords": [
     "liquid",
     "shopify",
@@ -101,6 +101,11 @@
           "type": "boolean",
           "default": true,
           "description": "Whether to enable/disable Liquid formatting."
+        },
+        "liquid.formatIgnore": {
+          "type": "array",
+          "default": ["case"],
+          "description": "Add tag blocks that should be ignored when formatting."
         },
         "liquid.beautify": {
           "type": "object",

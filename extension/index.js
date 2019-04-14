@@ -11,6 +11,12 @@ var prettydiff = _interopDefault(require('prettydiff'));
 const defaults = prettydiff.defaults;
 
 /**
+ * Editor Configuration
+ */
+const editor = vscode.workspace.getConfiguration('editor');
+const liquid = vscode.workspace.getConfiguration('liquid');
+
+/**
  * Preset Configuration
  */
 const preset = {
@@ -21,14 +27,8 @@ const preset = {
   ignore: [
     'script', // <script>
     'comment' // {% comment %}
-  ]
+  ].concat(liquid.formatIgnore || [])
 };
-
-/**
- * Editor Configuration
- */
-const editor = vscode.workspace.getConfiguration('editor');
-const liquid = vscode.workspace.getConfiguration('liquid');
 
 /**
  * Rules
@@ -224,7 +224,8 @@ class Document extends Format {
         console.error(error);
         Document.notify('Error registering the formatter, re-open the file 💧');
       }
-    } else {
+    }
+    if (!this.run) {
       Object.assign(this.bar, {
         text: `💧Liquid: $(x)`,
         command: 'liquid.enableFormatting'
