@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "keywords": [
     "liquid",
     "shopify",
@@ -67,7 +67,8 @@
           "HTML"
         ],
         "extensions": [
-          ".liquid"
+          ".liquid",
+          ".jekyll"
         ],
         "configuration": "./src/language/liquid.configuration.json"
       }

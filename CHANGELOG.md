@@ -6,9 +6,19 @@ All notable changes are listed below.
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
 
-## [1.5.4] – <small>14/04/2019</small>
+## [1.6.1] – <small>22/04/2019</small>
+
+- Added default support for `.jekyll` extension files.
+- Added Frontmatter snippet, enabled when doublde dash is detected, eg: `--`
+- Accepts any word following underscore case for `{% include_* %}` tags. This is to help with plugins like Jekyll Cached which will use `{% include_cached %}`.
+
+
+## [1.6.0] – <small>14/04/2019</small>
 
 - Exposed ignore tags option to configuration settings. Allows for tags to be ignored when formatting.
+- Various bug fixes
+- Better Documentation
+
 
 ## [1.5.4] – <small>13/04/2019</small>
 
