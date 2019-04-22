@@ -1,4 +1,13 @@
 {
+  "Jekyll frontmatter": {
+    "prefix": "--",
+    "description": "Jekyll: Frontmatter",
+    "body": [
+      "---",
+      "$2",
+      "---"
+    ]
+  },
   "Tag if": {
     "prefix": "if",
     "description": "Control flow tag: if",
