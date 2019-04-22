@@ -149,7 +149,7 @@
         },
         {
           "name": "string.quoted.liquid",
-          "begin": "(?<=include|include_relative)\\s+([^{])",
+          "begin": "(?<=include|include_\\w)\\s+([^{])",
           "end": "([^{\\s]+)"
         },
         {
