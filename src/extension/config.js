@@ -21,8 +21,7 @@ export const preset = {
     'schema',
     'style'],
   ignore: [
-    'script', // <script>
-    'comment' // {% comment %}
+    'script' // <script>
   ].concat(liquid.formatIgnore || [])
 }
 

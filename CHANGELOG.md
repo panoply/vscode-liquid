@@ -5,6 +5,9 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [1.6.2] – <small>25/04/2019</small>
+
+- Fixes https://github.com/panoply/vscode-liquid/issues/7 comment tags formatting issue caused by PrettyDiff.
 
 ## [1.6.1] – <small>22/04/2019</small>
 
