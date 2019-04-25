@@ -12,10 +12,6 @@
   {%- endfor -%}
 </ul>
 
-{%- comment -%}
-
-{%- endcomment -%}
-
 <div>
   {% for item in collection %}{% endfor %}
 </div>
@@ -43,22 +39,21 @@
 
 {% endstylesheet %}
 
-
 {% javascript %}
 
-import Banner from "banner"
-import state from "state"
+import Banner from "banner";
+import state from "state";
 
 export default {
   onLoad() {
-    this.banner = this.container.querySelector("#banner")
+    this.banner = this.container.querySelector("#banner");
     m.mount(banner, {
       view: () => {
         m(Banner, {
           banner: state.data.header.banner
-        })
+        });
       }
-    })
+    });
   },
   state: {
     navbar: {
@@ -71,7 +66,6 @@ export default {
 }
 
 {% endjavascript %}
-
 
 {% schema %}
 
@@ -90,6 +84,6 @@ export default {
       ]
     }
   ]
-}
+};
 
 {% endschema %}

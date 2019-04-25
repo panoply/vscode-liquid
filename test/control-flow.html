@@ -19,8 +19,7 @@
 {% endif %}
 
 {% if line_item.grams > 20000 and customer_address.city == 'Ottawa' %}
-  You're buying a heavy item, and live in the same city as our store. Choose local pick-up as a shipping option to avoid
-      paying high shipping costs.
+  You're buying a heavy item, and live in the same city as our store. Choose local pick-up as a shipping option to avoid paying high shipping costs.
 {% endif %}
 
 {% if customer.tags contains 'VIP' or customer.email contains 'mycompany.com' %}
@@ -29,6 +28,27 @@
   Welcome to our store!
 {% endif %}
 
-{% case variable %}{% when condition %}{% else %}
-
+{% case variable %}
+  hello
+{% when condition %}
+  hello
+{% else %}
+  hello
 {% endcase %}
+
+{% if bool %}
+  hello
+{% endif %}
+
+<div class="container-fluid w-90 bg-white">
+  <div class="row">
+    <div class="col-6 {% if bool %} hello {% endif %} p-5">
+      <h3>{{ block.title }}</h3>
+      <h5>{{ block.subtitle }}</h5>
+      {{ block.description }}
+    </div>
+    <div class="col align-self-center text-center">
+      <img class="img-fluid w-75 px-4" src="{{ block.image.url }}">
+    </div>
+  </div>
+</div>
