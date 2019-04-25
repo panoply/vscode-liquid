@@ -17,7 +17,21 @@
     "guard-for-in": 0,
     "allowElseIf": true,
     "allowAllPropertiesOnSameLine": false,
+    "function-paren-newline": [
+      "error",
+      "consistent"
+    ],
     "array-element-newline": [
+      "error",
+      "always"
+    ],
+    "array-bracket-newline": [
+      "error",
+      {
+        "multiline": true
+      }
+    ],
+    "array-bracket-spacing": [
       "error",
       "always"
     ],
@@ -38,7 +52,7 @@
     "newline-per-chained-call": [
       "error",
       {
-        "ignoreChainWithDepth": 5
+        "ignoreChainWithDepth": 2
       }
     ],
     "object-curly-spacing": [
@@ -50,7 +64,8 @@
     "padded-blocks": [
       1,
       {
-        "classes": "always"
+        "classes": "always",
+        "blocks": "always"
       },
       {
         "allowSingleLineBlocks": true
@@ -59,6 +74,14 @@
     "semi": [
       "error",
       "never"
+    ],
+    "padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "any",
+        "prev": "cjs-export",
+        "next": "*"
+      }
     ]
   }
 }
