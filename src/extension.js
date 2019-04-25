@@ -1,11 +1,11 @@
 import { window, workspace, commands } from 'vscode'
 import Document from './extension/document'
-import { cmd } from './extension/config'
 
 /**
  * # ACTIVATE EXTENSION
  */
 exports.activate = context => {
+
   const active = window.activeTextEditor
 
   if (!active || !active.document) return
@@ -14,27 +14,38 @@ exports.activate = context => {
 
   context.subscriptions.push(
     workspace.onDidOpenTextDocument(() => {
+
       document.format()
+
     })
   )
   context.subscriptions.push(
-    commands.registerCommand(cmd.disable, () => {
+    commands.registerCommand('liquid.disableFormatting', () => {
+
       document.disable()
+
     })
   )
   context.subscriptions.push(
-    commands.registerCommand(cmd.enable, () => {
+    commands.registerCommand('liquid.enableFormatting', () => {
+
       document.enable()
+
     })
   )
   context.subscriptions.push(
-    commands.registerCommand(cmd.document, () => {
+    commands.registerCommand('liquid.formatDocument', () => {
+
       document.document()
+
     })
   )
   context.subscriptions.push(
-    commands.registerCommand(cmd.selection, () => {
+    commands.registerCommand('liquid.formatSelection', () => {
+
       document.selection()
+
     })
   )
+
 }
