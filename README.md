@@ -1,6 +1,6 @@
 [![install](https://img.shields.io/badge/vscode-install-blue.svg?style=popout-square)](https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid) &nbsp; ![](https://img.shields.io/visual-studio-marketplace/v/sissel.shopify-liquid.svg?style=popout-square) &nbsp; ![install](https://vsmarketplacebadge.apphb.com/downloads-short/sissel.shopify-liquid.svg?style=popout-square)
 
-<img  src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/banner.gif"  atl="Liquid Logo"  width="100%">
+<img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/banner.gif"  atl="Liquid Logo"  width="100%">
 
 If you're using the [Liquid Language Support](https://github.com/GingerBear/vscode-liquid) and/or the [Shopify Liquid Template Snippets](https://github.com/killalau/vscode-liquid-snippets) extension then it's recommended that you either uninstall or disable both these extensions before using this.
 
@@ -100,9 +100,10 @@ Sometimes PrettyDiff will have trouble formatting your code, in this case you ca
 
 In the above example the contents of Liquid `{% case %}` tag and the HTML `<head>` tag will both be ignored when formatting. Only contained block tags can be applied the have both an opening and closing tag.
 
-
 <strong>❗Important ❗</strong><br>
-The `<script>` tag is ignored and its contents will not be formatted. If you require formatting for this tag you should consider using [eslint](<[https://eslint.org](https://eslint.org/)>) and the [eslint-plugin-html](https://github.com/BenoitZugmeyer/eslint-plugin-html) with [prettier](https://prettier.io/).
+By default the formatter will ignore both the `<script>` and `{%- comment -%}` tag blocks. These tags are forcefully ignored and their contents will not be formatted due to a defect within the parser. The defect will be resolved in future versions.
+
+> If you require formatting for `<script>` tags you should consider using [eslint](<[https://eslint.org](https://eslint.org/)>) and the [eslint-plugin-html](https://github.com/BenoitZugmeyer/eslint-plugin-html) with [prettier](https://prettier.io/).
 
 #### Commands
 
