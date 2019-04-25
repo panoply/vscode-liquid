@@ -1,42 +1,26 @@
 import { workspace } from 'vscode'
-import prettydiff from 'prettydiff'
 
-/**
- * PrettyDiff Defaults
- */
-export const defaults = prettydiff.defaults
+export const preset = [
+  'javascript',
+  'stylesheet',
+  'schema',
+  'style'
+]
 
-/**
- * Editor Configuration
- */
-export const editor = workspace.getConfiguration('editor')
-export const liquid = workspace.getConfiguration('liquid')
+export const ignore = [
+  'comment',
+  'script'
+].concat(workspace.getConfiguration('liquid').formatIgnore || [])
 
-/**
- * Preset Configuration
- */
-export const preset = {
-  tags: ['javascript',
-    'stylesheet',
-    'schema',
-    'style'],
-  ignore: [
-    'script' // <script>
-  ].concat(liquid.formatIgnore || [])
-}
-
-/**
- * Rules
- */
 export const rules = {
   html: {
     mode: 'beautify',
     language_name: 'Liquid',
     language: 'html',
     lexer: 'markup',
-    fix: true,
+    correct: true,
     preserve: 1,
-    indent_size: editor.tabSize,
+    indent_size: workspace.getConfiguration('editor').tabSize,
     end_quietly: 'log',
     node_error: true
   },
@@ -45,7 +29,7 @@ export const rules = {
     language: 'JSON',
     language_name: 'json',
     lexer: 'script',
-    indent_size: editor.tabSize
+    indent_size: workspace.getConfiguration('editor').tabSize
   },
   stylesheet: {
     mode: 'beautify',
@@ -53,7 +37,7 @@ export const rules = {
     language: 'scss',
     lexer: 'style',
     preserve: 1,
-    indent_size: editor.tabSize
+    indent_size: workspace.getConfiguration('editor').tabSize
   },
   javascript: {
     mode: 'beautify',
@@ -61,16 +45,37 @@ export const rules = {
     language: 'javascript',
     lexer: 'script',
     preserve: 1,
-    indent_size: editor.tabSize
+    indent_size: workspace.getConfiguration('editor').tabSize
   }
 }
 
-/**
- * Command Palette
- */
-export const cmd = {
-  document: 'liquid.formatDocument',
-  selection: 'liquid.formatSelection',
-  enable: 'liquid.enableFormatting',
-  disable: 'liquid.disableFormatting'
+export const matches = {
+  frontmatter: [
+    '---',
+    '(?:[^]*?)',
+    '---'
+  ],
+  tags: [
+    '(',
+    '(?:<|{%-?)\\s*',
+    `\\b(${preset.concat(ignore).join('|')})\\b`,
+    '(?:.|\\n)*?\\s*',
+    '(?:>|-?%})\\s*',
+    ')',
+    '(',
+    '(?:.|\\n)*?',
+    ')',
+    '(',
+    '(?:</|{%-?)\\s*',
+    '\\b(?:(?:|end)\\2)\\b',
+    '\\s*(?:>|-?%})',
+    ')'
+  ],
+  ignore: [
+    '(',
+    '<temp data-prettydiff-ignore>',
+    '|',
+    '</temp>',
+    ')'
+  ]
 }
