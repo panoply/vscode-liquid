@@ -97,6 +97,9 @@ export default class Format {
 
   }
 
+  /**
+   * Constructor
+   */
   constructor () {
 
     this.scheme = {
@@ -106,6 +109,9 @@ export default class Format {
 
   }
 
+  /**
+   * @param {object} liquid
+   */
   rules (liquid) {
 
     preset.map(language => {
@@ -120,6 +126,9 @@ export default class Format {
 
   }
 
+  /**
+   * @returns
+   */
   register () {
 
     return languages.registerDocumentFormattingEditProvider(this.scheme, {
@@ -133,6 +142,9 @@ export default class Format {
 
   }
 
+  /**
+   * @returns
+   */
   document () {
 
     const { document } = window.activeTextEditor
@@ -142,6 +154,9 @@ export default class Format {
 
   }
 
+  /**
+   * @returns
+   */
   selection () {
 
     const { document, selection } = window.activeTextEditor

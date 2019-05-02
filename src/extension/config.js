@@ -1,5 +1,8 @@
 import { workspace } from 'vscode'
 
+/**
+ * Tag Presets
+ */
 export const preset = [
   'javascript',
   'stylesheet',
@@ -7,11 +10,17 @@ export const preset = [
   'style'
 ]
 
+/**
+ * Ignored Tags
+ */
 export const ignore = [
   'comment',
   'script'
 ].concat(workspace.getConfiguration('liquid').formatIgnore || [])
 
+/**
+ * PrettyDiff Formatting Rules
+ */
 export const rules = {
   html: {
     mode: 'beautify',
@@ -49,6 +58,9 @@ export const rules = {
   }
 }
 
+/**
+ * HTML/Liquid Tag Parser
+ */
 export const matches = {
   frontmatter: [
     '---',

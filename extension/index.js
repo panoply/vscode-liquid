@@ -5,6 +5,9 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var vscode = require('vscode');
 var prettydiff = _interopDefault(require('prettydiff'));
 
+/**
+ * Tag Presets
+ */
 const preset = [
   'javascript',
   'stylesheet',
@@ -12,11 +15,17 @@ const preset = [
   'style'
 ];
 
+/**
+ * Ignored Tags
+ */
 const ignore = [
   'comment',
   'script'
 ].concat(vscode.workspace.getConfiguration('liquid').formatIgnore || []);
 
+/**
+ * PrettyDiff Formatting Rules
+ */
 const rules = {
   html: {
     mode: 'beautify',
@@ -54,6 +63,9 @@ const rules = {
   }
 };
 
+/**
+ * HTML/Liquid Tag Parser
+ */
 const matches = {
   frontmatter: [
     '---',
@@ -85,6 +97,9 @@ const matches = {
   ]
 };
 
+/**
+ * Expression Helpers
+ */
 var pattern = {
   frontmatter: new RegExp(matches.frontmatter.join(''), 'g'),
   tags: new RegExp(matches.tags.join(''), 'g'),
@@ -185,6 +200,9 @@ class Format {
 
   }
 
+  /**
+   * Constructor
+   */
   constructor () {
 
     this.scheme = {
@@ -194,6 +212,9 @@ class Format {
 
   }
 
+  /**
+   * @param {object} liquid
+   */
   rules (liquid) {
 
     preset.map(language => {
@@ -208,6 +229,9 @@ class Format {
 
   }
 
+  /**
+   * @returns
+   */
   register () {
 
     return vscode.languages.registerDocumentFormattingEditProvider(this.scheme, {
@@ -221,6 +245,9 @@ class Format {
 
   }
 
+  /**
+   * @returns
+   */
   document () {
 
     const { document } = vscode.window.activeTextEditor;
@@ -230,6 +257,9 @@ class Format {
 
   }
 
+  /**
+   * @returns
+   */
   selection () {
 
     const { document, selection } = vscode.window.activeTextEditor;
