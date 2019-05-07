@@ -4,7 +4,7 @@
 All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
-## [1.6.4] – <small>26/04/2019</small>
+## [1.6.4] – <small>08/05/2019</small>
 
 - Added support for literal string injection syntax highlighting, applying liquid syntax to HTML tag attributes inject highlights, partial close for https://github.com/panoply/vscode-liquid/issues/10.
 
