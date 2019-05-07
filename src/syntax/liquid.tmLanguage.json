@@ -3,6 +3,44 @@
   "name": "Liquid",
   "scopeName": "source.liquid",
   "fileTypes": ["liquid", "html", "jekyll"],
+  "injections": {
+    "L:meta.attribute": {
+      "patterns": [
+        {
+          "name": "punctuation.output.liquid",
+          "begin": "{{-?",
+          "end": "-?}}",
+          "patterns": [
+            {
+              "include": "#liquid_tags"
+            },
+            {
+              "include": "#liquid_syntaxes"
+            },
+            {
+              "include": "#literal"
+            }
+          ]
+        },
+        {
+          "name": "punctuation.tag.liquid",
+          "begin": "{%-?",
+          "end": "-?%}",
+          "patterns": [
+            {
+              "include": "#liquid_tags"
+            },
+            {
+              "include": "#liquid_syntaxes"
+            },
+            {
+              "include": "#literal"
+            }
+          ]
+        }
+      ]
+    }
+  },
   "patterns": [
     {
       "include": "#liquid_sections"
@@ -50,6 +88,14 @@
     }
   ],
   "repository": {
+    "literal": {
+      "patterns": [
+        {
+          "name": "variable.parameter.liquid",
+          "match": "\\.\\w+"
+        }
+      ]
+    },
     "entities": {
       "patterns": [
         {
