@@ -1,12 +1,12 @@
 <ul>
-  {%- for tag in collection.all_tags -%}
-    {%- if current_tags contains tag -%}
+  {%- for taggg in collection.all_tags -%}
+    {%- if current_tags contains taggg -%}
       <li class="active">
-        {{tag | link_to_remove_tag: tag}}
+        {{ current_tags.tag | link_to_remove_tag: taggg }}
       </li>
     {%- else -%}
       <li>
-        {{tag | link_to_add_tag: tag}}
+        {{ current_tags.tag | link_to_add_tag: tag }}
       </li>
     {%- endif -%}
   {%- endfor -%}
@@ -15,6 +15,19 @@
 <div>
   {% for item in collection %}{% endfor %}
 </div>
+
+{% style %}
+
+.popover {
+
+  display: none;
+  position: absolute;
+  right: 0;
+  z-index: 999;
+
+}
+
+{% endstyle %}
 
 {% stylesheet 'scss' %}
 

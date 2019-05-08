@@ -24,11 +24,11 @@
   {% endif %}
 {% endfor %}
 
-{% for item in numbers limit:2 %}
+{% for item in numbers limit: 2 %}
   {{ item }}
 {% endfor %}
 
-{% for item in numbers offset:2 %}
+{% for item in numbers offset: 2 %}
   {{ item }}
 {% endfor %}
 
@@ -39,6 +39,10 @@
 {% assign my_limit = 4 %}
 {% for i in (1..my_limit) %}
   {{ i }}
+{% endfor %}
+
+{% for fff in (1..my_limit) %}
+  {{ fff  }}
 {% endfor %}
 
 {% for item in array reversed %}
