@@ -2,7 +2,10 @@
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/banner.gif"  atl="Liquid Logo"  width="100%">
 
-If you're using the [Liquid Language Support](https://github.com/GingerBear/vscode-liquid) and/or the [Shopify Liquid Template Snippets](https://github.com/killalau/vscode-liquid-snippets) extension then it's recommended that you either uninstall or disable both these extensions before using this.
+#### IMPORTANT
+
+**If you're using the [Liquid Language Support](https://github.com/GingerBear/vscode-liquid) and/or the [Shopify Liquid Template Snippets](https://github.com/killalau/vscode-liquid-snippets) then it's highly recommended that you either uninstall or disable both of these before using this extension.**
+
 
 # Liquid <small style="color:#999;">(vs code)</small>
 
@@ -82,7 +85,7 @@ Formatting can be enable or disabled via the command palette and also respects t
 <strong>Toggle Button</strong><br>
 When an HTML or Liquid file is open in the editor you will see the Liquid toggle button appear on the bottom right hand side of the status bar. This button will allow you to enable/disable liquid formatting.
 
-<img src="https://github.com/panoply/vscode-liquid/blob/master/images/toggle-button.png?raw=true" width="150px" style="padding-bottom:2px;">
+<img src="https://github.com/panoply/vscode-liquid/blob/master/images/togglebutton.png?raw=true" width="150px" style="padding-bottom:2px;">
 
 <br>
 
