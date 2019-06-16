@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "JavaScript (Liquid)",
+  "scopeName": "source.js.liquid",
+  "injections": {
+    "L:meta.var.expr.js": {
+      "patterns": [
+        {
+          "include": "source.liquid#template-vars"
+        }
+      ]
+    }
+  },
+  "patterns": [
+    {
+      "include": "source.liquid#template-tags"
+    },
+    {
+      "include": "source.liquid#template-vars"
+    },
+    {
+      "include": "source.js"
+    }
+  ]
+}

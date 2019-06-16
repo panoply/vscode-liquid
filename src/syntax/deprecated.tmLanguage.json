@@ -4,83 +4,64 @@
   "scopeName": "source.liquid",
   "fileTypes": ["liquid", "html", "jekyll"],
   "injections": {
-    "L:string - (string.quoted.*.html string.unquoted.html, text.html.basic)": {
+    "L:string - (string.quoted.*.html, string.quoted.single.html)": {
       "patterns": [
         {
-          "include": "#tags"
+          "include": "#tag_block"
+        },
+        {
+          "include": "#tag_output"
         }
       ]
     }
   },
   "patterns": [
     {
+      "name": "meta.embedded.html",
+      "begin": "<script>",
+      "end": "</script>",
+      "patterns": [
+        {
+          "include": "#tag_block"
+        },
+        {
+          "include": "#tag_output"
+        }
+      ]
+    },
+    {
+      "name": "comment.block.liquid",
+      "begin": "{%-?\\s*comment\\s*-?%}",
+      "end": "{%-?\\s*endcomment\\s*-?%}"
+    },
+    {
+      "include": "#tag_block"
+    },
+    {
+      "include": "#tag_output"
+    },
+    {
       "include": "#sections"
     },
     {
-      "include": "#comments"
-    },
-    {
-      "include": "#tags"
-    },
-    {
-      "include": "#frontmatter"
+      "name": "punctuation.tag.liquid",
+      "begin": "---",
+      "end": "---",
+      "patterns": [
+        {
+          "include": "source.yaml"
+        }
+      ]
     },
     {
       "include": "text.html.basic"
     }
   ],
   "repository": {
-    "frontmatter": {
-      "patterns": [
-        {
-          "name": "punctuation.tag.liquid",
-          "begin": "---",
-          "end": "---",
-          "patterns": [
-            {
-              "include": "source.yaml"
-            }
-          ]
-        }
-      ]
-    },
-    "comments": {
-      "patterns": [
-        {
-          "name": "comment.block.liquid",
-          "begin": "{%-?\\s*comment\\s*-?%}",
-          "end": "{%-?\\s*endcomment\\s*-?%}"
-        }
-      ]
-    },
-    "tags": {
-      "patterns": [
-        {
-          "name": "punctuation.tag.liquid",
-          "begin": "{%-?",
-          "end": "-?%}",
-          "patterns": [
-            {
-              "include": "#blocks"
-            },
-            {
-              "include": "#filters"
-            }
-          ]
-        },
-        {
-          "name": "punctuation.output.liquid",
-          "begin": "{{-?",
-          "end": "-?}}",
-          "patterns": [
-            {
-              "include": "#filters"
-            }
-          ]
-        }
-      ]
-    },
-    "blocks": {
+    "tag_block": {
+      "name": "punctuation.tag.liquid",
+      "begin": "{%-?",
+      "end": "-?%}",
       "patterns": [
         {
           "name": "entity.name.tag.liquid",
@@ -89,6 +70,19 @@
         {
           "name": "entity.name.tag.liquid",
           "match": "(?<={%-)\\s*(\\w+)"
+        },
+        {
+          "include": "#filters"
+        }
+      ]
+    },
+    "tag_output": {
+      "name": "punctuation.tag.liquid",
+      "begin": "{{-?",
+      "end": "-?}}",
+      "patterns": [
+        {
+          "include": "#filters"
         }
       ]
     },
@@ -152,11 +146,6 @@
               "name": "invalid.illegal.assignment.liquid"
             }
           }
-        },
-        {
-          "name": "string.quoted.liquid",
-          "begin": "(?<=include|include_relative|include_cached)\\s+([^{])",
-          "end": "([^{\\s]+)"
         },
         {
           "name": "entity.other.attribute-name.liquid",

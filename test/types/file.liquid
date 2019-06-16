@@ -1,3 +1,7 @@
+{% comment %}
+  hello world
+{% endcomment %}
+
 <ul>
   {%- for taggg in collection.all_tags -%}
     {%- if current_tags contains taggg -%}
@@ -15,19 +19,6 @@
 <div>
   {% for item in collection %}{% endfor %}
 </div>
-
-{% style %}
-
-.popover {
-
-  display: none;
-  position: absolute;
-  right: 0;
-  z-index: 999;
-
-}
-
-{% endstyle %}
 
 {% stylesheet 'scss' %}
 
@@ -57,17 +48,16 @@
 import Banner from "banner";
 import state from "state";
 
+const test = {
+  foo: bar
+};
+
+Object.assign(this.bar, {
+  text: `💧Liquid: $(check)`,
+  command: 'liquid.disableFormatting'
+});
+
 export default {
-  onLoad() {
-    this.banner = this.container.querySelector("#banner");
-    m.mount(banner, {
-      view: () => {
-        m(Banner, {
-          banner: state.data.header.banner
-        });
-      }
-    });
-  },
   state: {
     navbar: {
       active: null
@@ -76,7 +66,17 @@ export default {
       show: false
     }
   }
-}
+  onLoad() {
+    this.banner = this.container.querySelector("#banner");
+    m.mount(this.banner, {
+      view: () => {
+        m(Banner, {
+          banner: state.data.header.banner
+        });
+      }
+    });
+  }
+};
 
 {% endjavascript %}
 
