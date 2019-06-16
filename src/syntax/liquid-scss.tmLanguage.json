@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "SCSS (Liquid)",
+  "scopeName": "source.scss.liquid",
+  "injections": {
+    "L:meta.definition.variable.scss": {
+      "patterns": [
+        {
+          "include": "source.liquid#template-vars"
+        }
+      ]
+    }
+  },
+  "patterns": [
+    {
+      "include": "source.liquid#template-tags"
+    },
+    {
+      "include": "source.liquid#template-vars"
+    },
+    {
+      "include": "source.css.scss"
+    }
+  ]
+}
