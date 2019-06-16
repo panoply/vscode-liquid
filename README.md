@@ -13,12 +13,12 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 
 ### Features
 
-- Syntax highlighting support for all Liquid variations
+- SCSS and JavaScript liquid syntax highighting
 - Auto formatting and beautification
 - Snippet auto-completion
 - HTML IntelliSense
 - Jekyll [Front Matter](https://jekyllrb.com/docs/front-matter) yaml syntax support
-- Shopify [Section](https://help.shopify.com/en/themes/development/sections) tags syntax support + formatting
+- Shopify [Sections](https://help.shopify.com/en/themes/development/sections) tag syntax support + formatting
 
 ### Showcase
 
