@@ -1,6 +1,11 @@
 // liquid
 
-$test: {{ '/assets/bundle.js' | relative_url }};
+$test: {{ '/assets/bundle.js' | prepend: 'hello' | json }};
+
+{% if products.title %}
+
+{% endif %}
+
 
 // endliquid
 
