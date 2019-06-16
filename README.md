@@ -9,11 +9,12 @@
 
 # Liquid <small style="color:#999;">(vs code)</small>
 
-A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting, formatting + beautification, snippet auto-completion and HTML Intellisense.
+A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes liquid syntax highlighting within HTML, JavaScript and SCSS files, formatting + beautification, snippet auto-completion and HTML Intellisense.
+
 
 ### Features
 
-- SCSS and JavaScript liquid syntax highighting
+- 🆕 SCSS and JavaScript liquid syntax highighting
 - Auto formatting and beautification
 - Snippet auto-completion
 - HTML IntelliSense
@@ -23,6 +24,7 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 ### Showcase
 
 ![showcase](https://github.com/panoply/vscode-shopify-liquid/blob/master/images/showcase.gif?raw=true)
+
 
 ## Snippets
 
@@ -77,6 +79,13 @@ cmd + shift + L -> Format Document
   }
 }
 ```
+
+## Syntax Support
+
+The extension supports liquid syntax highlighting in both the `SCSS` and `JavaScript` language. Files that use a `.scss.liquid` or `.js.liquid` extension provide syntax highlighting of infused liquid code. Additionally, Liquid syntax contained within `<script>` tags will also be highlighted.
+
+> JavaScript and SCSS stylesheet files must use `.liquid` suffix filename.
+
 
 ## Formatting
 
