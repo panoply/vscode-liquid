@@ -17,14 +17,14 @@
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
-      "args": ["--disable-extensions", "--extensionDevelopmentPath=${workspaceFolder}"]
+      "args": ["--disable-extensions","--extensionDevelopmentPath=${workspaceFolder}"]
     },
     {
       "name": "Extension Tests",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
-      "args": ["--disable-extensions", "--extensionDevelopmentPath=${workspaceFolder}", "--extensionTestsPath=${workspaceFolder}/test"]
+      "args": ["--disable-extensions","--extensionDevelopmentPath=${workspaceFolder}","--extensionTestsPath=${workspaceFolder}/test"]
     }
   ]
 }
