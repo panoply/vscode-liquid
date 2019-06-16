@@ -5,6 +5,20 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [1.7.0] – <small>16/06/2019</small>
+
+- Complete overhaul on syntax definitions.
+- Support syntax highlighting for SCSS Liquid `.scss.liquid` files
+- Support syntax highlighting for JavaScript Liquid `.js.liquid` files
+- Support syntax highlighting within `<script>` tags
+
+## [1.6.5] – <small>10/05/2019</small>
+
+- Minor overhaul on syntax definitions, leverages variable tags.
+- Fixes Shopfy `{% javascript %}` and `{% schema %}` syntax highlighting.
+- Make new literal string highlighting injection more sane
+- Format tmLanguage, bring sanity to the ever growing file.
+
 ## [1.6.5] – <small>10/05/2019</small>
 
 - Minor overhaul on syntax definitions, leverages variable tags.
