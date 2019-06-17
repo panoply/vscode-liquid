@@ -5,6 +5,16 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [1.7.2] – <small>17/06/2019</small>
+
+- Updated PrettyDiff Version
+- Added `brace_block` formatting rule which allows newlines to be placed before and after shopify section blocks.
+- Fixed `{% style %}` formatting. Formatting rules inherit those set within `stylesheet`.
+
+## [1.7.1] – <small>16/06/2019</small>
+
+- Added Folding marker integration
+
 ## [1.7.0] – <small>16/06/2019</small>
 
 - Complete overhaul on syntax definitions.

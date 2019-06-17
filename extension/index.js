@@ -36,6 +36,7 @@ const rules = {
     preserve: 1,
     indent_size: vscode.workspace.getConfiguration('editor').tabSize,
     end_quietly: 'log',
+    brace_block: false,
     node_error: true
   },
   schema: {
@@ -43,6 +44,7 @@ const rules = {
     language: 'JSON',
     language_name: 'json',
     lexer: 'script',
+    brace_block: false,
     indent_size: vscode.workspace.getConfiguration('editor').tabSize
   },
   stylesheet: {
@@ -51,6 +53,7 @@ const rules = {
     language: 'scss',
     lexer: 'style',
     preserve: 1,
+    brace_block: true,
     indent_size: vscode.workspace.getConfiguration('editor').tabSize
   },
   javascript: {
@@ -59,6 +62,7 @@ const rules = {
     language: 'javascript',
     lexer: 'script',
     preserve: 1,
+    brace_block: true,
     indent_size: vscode.workspace.getConfiguration('editor').tabSize
   }
 };
@@ -114,6 +118,13 @@ class Format {
    */
   static beautify (rule, source) {
 
+    // Inherit stylesheet ruleset for `{% style %}` tags
+    if (rule === 'style') {
+
+      rule = 'stylesheet';
+
+    }
+
     prettydiff.options = Object.assign(prettydiff.options, rules[rule], {
       source
     });
@@ -159,7 +170,8 @@ class Format {
     }
 
     const format = Format.beautify(name, source);
-    const output = `${open.trim()}\n\n${format.trim()}\n\n${close.trim()}`;
+    const pad = prettydiff.options.brace_block ? `\n\n` : `\n`;
+    const output = `${open.trim()}${pad}${format.trim()}${pad}${close.trim()}`;
 
     return Format.ignores(output.trim())
 

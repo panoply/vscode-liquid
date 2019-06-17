@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "keywords": [
     "liquid",
     "shopify",
@@ -78,7 +78,9 @@
         "aliases": [
           "SCSS (Liquid)"
         ],
-        "extensions": [".scss.liquid"],
+        "extensions": [
+          ".scss.liquid"
+        ],
         "configuration": "./src/language/liquid.configuration.json"
       },
       {
@@ -151,14 +153,17 @@
               "method_chain": 0,
               "quote_convert": "none",
               "format_array": "indent",
-              "format_object": "indent"
+              "format_object": "indent",
+              "brace_block": true
             },
             "stylesheet": {
               "css_insert_lines": true,
-              "preserve": 2
+              "preserve": 2,
+              "brace_block": true
             },
             "schema": {
-              "format_array": "indent"
+              "format_array": "indent",
+              "brace_block": false
             }
           }
         }
