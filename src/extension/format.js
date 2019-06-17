@@ -11,6 +11,13 @@ export default class Format {
    */
   static beautify (rule, source) {
 
+    // Inherit stylesheet ruleset for `{% style %}` tags
+    if (rule === 'style') {
+
+      rule = 'stylesheet'
+
+    }
+
     prettydiff.options = Object.assign(prettydiff.options, rules[rule], {
       source
     })
@@ -56,7 +63,8 @@ export default class Format {
     }
 
     const format = Format.beautify(name, source)
-    const output = `${open.trim()}\n\n${format.trim()}\n\n${close.trim()}`
+    const pad = prettydiff.options.brace_block ? `\n\n` : `\n`
+    const output = `${open.trim()}${pad}${format.trim()}${pad}${close.trim()}`
 
     return Format.ignores(output.trim())
 
