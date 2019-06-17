@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "1.7.2",
+  "version": "1.7.3",
   "keywords": [
     "liquid",
     "shopify",
@@ -154,6 +154,7 @@
               "quote_convert": "none",
               "format_array": "indent",
               "format_object": "indent",
+              "no_semicolon": false,
               "brace_block": true
             },
             "stylesheet": {
@@ -163,6 +164,7 @@
             },
             "schema": {
               "format_array": "indent",
+              "no_semicolon": true,
               "brace_block": false
             }
           }
