@@ -14,7 +14,7 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 
 ### Features
 
-- 🆕 SCSS and JavaScript liquid syntax highighting
+- 🆕 [SCSS](https://github.com/panoply/vscode-liquid#syntax-support) and [JavaScript](https://github.com/panoply/vscode-liquid#syntax-support) liquid syntax highighting
 - Auto formatting and beautification
 - Snippet auto-completion
 - HTML IntelliSense
@@ -65,16 +65,19 @@ cmd + shift + L -> Format Document
       "method_chain": 0,
       "quote_convert": "none",
       "format_array": "indent",
-      "format_object": "indent"
+      "format_object": "indent",
+      "brace_block": true
     },
     "stylesheet": {
       "indent_size": 2,
       "css_insert_lines": true,
-      "preserve": 2
+      "preserve": 2,
+      "brace_block": true
     },
     "schema": {
       "indent_size": 2,
-      "format_array": "indent"
+      "format_array": "indent",
+      "brace_block": false
     }
   }
 }
@@ -82,10 +85,12 @@ cmd + shift + L -> Format Document
 
 ## Syntax Support
 
-The extension supports liquid syntax highlighting in both the `SCSS` and `JavaScript` language. Files that use a `.scss.liquid` or `.js.liquid` extension provide syntax highlighting of infused liquid code. Additionally, Liquid syntax contained within `<script>` tags will also be highlighted.
+The extension supports liquid syntax highlighting within `SCSS` and `JavaScript` languages. Files that use a `.scss.liquid` or `.js.liquid` extension provide syntax highlighting of infused liquid code. Additionally, liquid syntax contained within `<script>` tags will also be highlighted.
 
-> JavaScript and SCSS stylesheet files must use `.liquid` suffix filename.
+Liquid syntax written in JavaScript and SCSS stylesheet files **require** you use `.liquid` suffix filename.
 
+<br>
+<img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/sass-javascript.png"  atl="Liquid SCSS and Liquid JavaScript"  width="100%">
 
 ## Formatting
 
@@ -167,6 +172,7 @@ Format rules for JavaScript within Shopify section `{% javascript %}` tags. Thes
 | format_object | `indent` | Format Object, Accepts `indent` or `newline`         |
 | comment_line  | `false`  | If a blank new line should be forced above comments. |
 | else_line     | `false`  | If keyword 'else' is forced onto a new line          |
+| brace_block   | `true`   | Inserts newline before and after inner content.      |
 
 </p>
 </details>
@@ -187,6 +193,7 @@ Format rules for CSS and/or SCSS within Shopify section `{% stylesheet %}` tags.
 | indent_size      | `2`     | Tab size / indentation           |
 | css_insert_lines | `true`  | Should use new lines in CSS/SCSS |
 | preserve         | `2`     | Lines to preserve                |
+| brace_block      | `true`  | Inserts newline before and after inner content. |
 
 </p>
 
@@ -209,6 +216,7 @@ Format options for JSON within Shopify section `{% schema %}` tags.
 | ------------ | -------- | -------------------------------------------- |
 | indent_size  | `2`      | Tab size / indentation                       |
 | format_array | `indent` | Format Array, Accepts `indent` or `newline`. |
+| brace_block | `false` | Inserts newline before and after inner content. |
 
 </p>
 </details>
