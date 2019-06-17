@@ -31,6 +31,7 @@ export const rules = {
     preserve: 1,
     indent_size: workspace.getConfiguration('editor').tabSize,
     end_quietly: 'log',
+    brace_block: false,
     node_error: true
   },
   schema: {
@@ -38,6 +39,7 @@ export const rules = {
     language: 'JSON',
     language_name: 'json',
     lexer: 'script',
+    brace_block: false,
     indent_size: workspace.getConfiguration('editor').tabSize
   },
   stylesheet: {
@@ -46,6 +48,7 @@ export const rules = {
     language: 'scss',
     lexer: 'style',
     preserve: 1,
+    brace_block: true,
     indent_size: workspace.getConfiguration('editor').tabSize
   },
   javascript: {
@@ -54,6 +57,7 @@ export const rules = {
     language: 'javascript',
     lexer: 'script',
     preserve: 1,
+    brace_block: true,
     indent_size: workspace.getConfiguration('editor').tabSize
   }
 }
