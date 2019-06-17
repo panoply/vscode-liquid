@@ -40,6 +40,7 @@ export const rules = {
     language_name: 'json',
     lexer: 'script',
     brace_block: false,
+    no_semicolon: true,
     indent_size: workspace.getConfiguration('editor').tabSize
   },
   stylesheet: {
@@ -58,6 +59,7 @@ export const rules = {
     lexer: 'script',
     preserve: 1,
     brace_block: true,
+    no_semicolon: false,
     indent_size: workspace.getConfiguration('editor').tabSize
   }
 }
