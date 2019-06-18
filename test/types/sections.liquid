@@ -1,24 +1,13 @@
-{% comment %}
-  hello world
-{% endcomment %}
+{% style %}
 
-<ul>
-  {%- for taggg in collection.all_tags -%}
-    {%- if current_tags contains taggg -%}
-      <li class="active">
-        {{ current_tags.tag | link_to_remove_tag: taggg }}
-      </li>
-    {%- else -%}
-      <li>
-        {{ current_tags.tag | link_to_add_tag: tag }}
-      </li>
-    {%- endif -%}
-  {%- endfor -%}
-</ul>
+.popover {
+  display: none;
+  position: absolute;
+  right: 0;
+  z-index: 999;
+}
 
-<div>
-  {% for item in collection %}{% endfor %}
-</div>
+{% endstyle %}
 
 {% stylesheet 'scss' %}
 
@@ -45,19 +34,22 @@
 
 {% javascript %}
 
-import Banner from "banner";
-import state from "state";
+import Banner from "banner"
+import state from "state"
 
 const test = {
+
   foo: bar
-};
+
+}
 
 Object.assign(this.bar, {
   text: `💧Liquid: $(check)`,
   command: 'liquid.disableFormatting'
-});
+})
 
 export default {
+
   state: {
     navbar: {
       active: null
@@ -65,23 +57,32 @@ export default {
     subnav: {
       show: false
     }
+
   }
   onLoad() {
-    this.banner = this.container.querySelector("#banner");
+
+    this.banner = this.container.querySelector("#banner")
     m.mount(this.banner, {
+
       view: () => {
+
         m(Banner, {
+
           banner: state.data.header.banner
-        });
+
+        })
+
       }
-    });
+
+    })
+
   }
-};
+
+}
 
 {% endjavascript %}
 
 {% schema %}
-
 {
   "name": "Slideshow",
   "settings": [
@@ -97,6 +98,5 @@ export default {
       ]
     }
   ]
-};
-
+}
 {% endschema %}
