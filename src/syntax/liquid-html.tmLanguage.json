@@ -88,9 +88,6 @@
           "include": "#entity-name-tag-whitespace"
         },
         {
-          "include": "#entity-other-attribute-name"
-        },
-        {
           "include": "invalid-ampersand"
         },
         {
@@ -209,10 +206,6 @@
     "entity-name-tag-whitespace": {
       "name": "entity.name.tag.liquid",
       "match": "(?<={%-)\\s*(\\w+)"
-    },
-    "entity-other-attribute-name": {
-      "name": "entity.other.attribute-name.liquid",
-      "match": "(\\S+)(?=\\=['\"])"
     },
     "frontmatter": {
       "name": "punctuation.tag.liquid",
