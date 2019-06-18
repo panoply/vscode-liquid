@@ -5,6 +5,10 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [1.7.5] – <small>17/06/2019</small>
+
+- Support `CSS` (.css.liquid) files and syntax
+
 ## [1.7.4] – <small>17/06/2019</small>
 
 - Fix `=` entity other attribute name syntax highlighting issue
