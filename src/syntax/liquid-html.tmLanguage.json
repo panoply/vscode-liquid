@@ -10,7 +10,7 @@
   "foldingStartMarker": "(?x){%-?\\s*(if|unless|for|paginate|capture|form|case|tablerow|raw|comment|block|paginate|schema|stylesheet|javascript)[^(%})]+-?%",
   "foldingStopMarker": "(?x){%-?\\s*(endif|endunless|endfor|endpaginate|endcapture|endform|endcase|endtablerow|endraw|endcomment|endblock|endpaginate|endschema|endstylesheet|endjavascript)[^(%})]+-?%}",
   "injections": {
-    "L:string - (string.quoted.*.html, string.quoted.single.html)": {
+    "L:string.quoted.double.html, L:string.quoted.single.html": {
       "patterns": [
         {
           "include": "#template-tags"
@@ -22,6 +22,9 @@
     },
     "L:meta.embedded.block.html - (L:source.js)": {
       "patterns": [
+        {
+          "include": "#comments"
+        },
         {
           "include": "#template-tags"
         },
@@ -180,7 +183,7 @@
       "end": "{%-?\\s*endcomment\\s*-?%}"
     },
     "constant-characters": {
-      "name": "constant.character.entity.html",
+      "name": "constant.character.entity.liquid",
       "match": "(&)([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+)(;)",
       "captures": {
         "1": {
@@ -219,7 +222,7 @@
     },
     "invalid-ampersand": {
       "match": "&",
-      "name": "invalid.illegal.bad-ampersand.html"
+      "name": "invalid.illegal.bad-ampersand.liquid"
     },
     "invalid-array": {
       "match": "(\\[)(\\|)(?=[^\\]]*)(?=\\])",

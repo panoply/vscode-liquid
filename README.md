@@ -9,12 +9,12 @@
 
 # Liquid <small style="color:#999;">(vs code)</small>
 
-A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes liquid syntax highlighting within HTML, JavaScript and SCSS files, formatting + beautification, snippet auto-completion and HTML Intellisense.
+A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes liquid syntax highlighting within HTML, JavaScript, CSS, SCSS and Markdown files, formatting + beautification, snippet auto-completion and HTML Intellisense.
 
 
 ### Features
 
-- 🆕 [SCSS](https://github.com/panoply/vscode-liquid#syntax-support) and [JavaScript](https://github.com/panoply/vscode-liquid#syntax-support) liquid syntax highighting
+- 🆕 Liquid [CSS/SCSS](https://github.com/panoply/vscode-liquid#syntax-support), [JavaScript](https://github.com/panoply/vscode-liquid#syntax-support) and [Markdown](https://github.com/panoply/vscode-liquid#syntax-support) syntax highighting
 - Auto formatting and beautification
 - Snippet auto-completion
 - HTML IntelliSense
@@ -54,30 +54,34 @@ cmd + shift + L -> Format Document
   "liquid.format": true,
   "liquid.formatIgnore": ["case"],
   "liquid.beautify": {
-    "html": {
-      "indent_size": 2,
+   "html": {
+      "correct": true,
       "force_attribute": false,
+      "braces": false,
       "preserve": 2
     },
     "javascript": {
-      "indent_size": 2,
       "preserve": 1,
       "method_chain": 0,
       "quote_convert": "none",
       "format_array": "indent",
       "format_object": "indent",
+      "braces": false,
+      "no_semicolon": false,
       "brace_block": true
     },
     "stylesheet": {
-      "indent_size": 2,
       "css_insert_lines": true,
       "preserve": 2,
+      "braces": false,
       "brace_block": true
     },
     "schema": {
-      "indent_size": 2,
+      "perserve": 0,
       "format_array": "indent",
-      "brace_block": false
+      "braces": true,
+      "brace_block": false,
+      "no_semicolon": true
     }
   }
 }
@@ -144,6 +148,7 @@ Below is a list of the default beautification rules that will be applied when fo
 
 | Property        | Value   | Description            |
 | --------------- | ------- | ---------------------- |
+| correct     | `true`     | Corrects code |
 | indent_size     | `2`     | Tab size / indentation |
 | force_attribute | `false` | Indent HTML Attributes |
 | preserve        | integer | Lines to preserve      |
@@ -172,6 +177,7 @@ Format rules for JavaScript within Shopify section `{% javascript %}` tags. Thes
 | format_object | `indent` | Format Object, Accepts `indent` or `newline`         |
 | comment_line  | `false`  | If a blank new line should be forced above comments. |
 | else_line     | `false`  | If keyword 'else' is forced onto a new line          |
+| no_semicolon | `false` | Prevents semicons for being added |
 | brace_block   | `true`   | Inserts newline before and after inner content.      |
 
 </p>
@@ -216,11 +222,18 @@ Format options for JSON within Shopify section `{% schema %}` tags.
 | ------------ | -------- | -------------------------------------------- |
 | indent_size  | `2`      | Tab size / indentation                       |
 | format_array | `indent` | Format Array, Accepts `indent` or `newline`. |
+| no_semicolon | `true` | Prevents semicons for being added |
 | brace_block | `false` | Inserts newline before and after inner content. |
 
 </p>
 </details>
 
+### Support this extension
+Did this extension help you? Do you have bitcoin? Help evolve this extension to higher grounds.
+
+Donate: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
+
 <br>
+
 
 Made with 🖤 By Nikolas Savvidis

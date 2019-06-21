@@ -3,15 +3,27 @@
   "name": "JavaScript (Liquid)",
   "scopeName": "source.js.liquid",
   "injections": {
-    "L:meta.var.expr.js": {
+    "L:meta.var.expr.js, L:meta.block.js": {
       "patterns": [
         {
+          "include": "source.liquid#comments"
+        },
+        {
           "include": "source.liquid#template-vars"
+        },
+        {
+          "include": "source.liquid#template-tags"
         }
       ]
     }
   },
   "patterns": [
+    {
+      "include": "source.liquid#frontmatter"
+    },
+    {
+      "include": "source.liquid#comments"
+    },
     {
       "include": "source.liquid#template-tags"
     },

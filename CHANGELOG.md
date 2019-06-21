@@ -5,6 +5,13 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [1.8.0] – <small>17/06/2019</small>
+
+- Support `Markdown` files (.md)
+- Various syntax fixez for `SCSS`, `CSS` and `JS` Syntax support
+- Add `braces` rule in shopify sections `schema` block
+- Expose the `correct` rule for HTML Formtting.
+
 ## [1.7.5] – <small>17/06/2019</small>
 
 - Support `CSS` (.css.liquid) files and syntax
@@ -33,13 +40,6 @@ All notable changes are listed below.
 - Support syntax highlighting for SCSS Liquid `.scss.liquid` files
 - Support syntax highlighting for JavaScript Liquid `.js.liquid` files
 - Support syntax highlighting within `<script>` tags
-
-## [1.6.5] – <small>10/05/2019</small>
-
-- Minor overhaul on syntax definitions, leverages variable tags.
-- Fixes Shopfy `{% javascript %}` and `{% schema %}` syntax highlighting.
-- Make new literal string highlighting injection more sane
-- Format tmLanguage, bring sanity to the ever growing file.
 
 ## [1.6.5] – <small>10/05/2019</small>
 

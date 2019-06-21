@@ -3,15 +3,27 @@
   "name": "CSS (Liquid)",
   "scopeName": "source.css.liquid",
   "injections": {
-    "L:meta.definition.variable.scss": {
+    "L:meta.property-list.css": {
       "patterns": [
         {
+          "include": "source.liquid#comments"
+        },
+        {
           "include": "source.liquid#template-vars"
+        },
+        {
+          "include": "source.liquid#template-tags"
         }
       ]
     }
   },
   "patterns": [
+    {
+      "include": "source.liquid#frontmatter"
+    },
+    {
+      "include": "source.liquid#comments"
+    },
     {
       "include": "source.liquid#template-tags"
     },
