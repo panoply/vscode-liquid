@@ -3,7 +3,7 @@
   "name": "JavaScript (Liquid)",
   "scopeName": "source.js.liquid",
   "injections": {
-    "L:meta.var.expr.js, L:meta.block.js": {
+    "L:source.js.liquid -comment -string": {
       "patterns": [
         {
           "include": "source.liquid#comments"
