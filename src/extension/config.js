@@ -27,34 +27,68 @@ export const rules = {
     language_name: 'Liquid',
     language: 'html',
     lexer: 'markup',
-    correct: true,
-    preserve: 1,
-    indent_size: workspace.getConfiguration('editor').tabSize,
     end_quietly: 'log',
-    node_error: true
+    node_error: true,
+    brace_block: false,
+
+    // Inherited
+    indent_size: workspace.getConfiguration('editor').tabSize,
+
+    // Exposed Options
+    correct: true,
+    force_attribute: false,
+    braces: false,
+    preserve: 1
   },
   schema: {
     mode: 'beautify',
     language: 'JSON',
     language_name: 'json',
     lexer: 'script',
-    indent_size: workspace.getConfiguration('editor').tabSize
+
+    // Inherited
+    indent_size: workspace.getConfiguration('editor').tabSize,
+
+    // Exposed Default Rules
+    format_array: 'indent',
+    preserve: 0,
+    braces: true,
+    no_semicolon: true,
+    brace_block: false
   },
   stylesheet: {
     mode: 'beautify',
     language_name: 'SASS',
     language: 'scss',
     lexer: 'style',
-    preserve: 1,
-    indent_size: workspace.getConfiguration('editor').tabSize
+
+    // Inherited
+    indent_size: workspace.getConfiguration('editor').tabSize,
+
+    // Exposed Default Rules
+    css_insert_lines: true,
+    preserve: 2,
+    braces: false,
+    brace_block: false
   },
   javascript: {
     mode: 'beautify',
     language_name: 'JavaScript',
     language: 'javascript',
     lexer: 'script',
+
+    // Inherited
+    indent_size: workspace.getConfiguration('editor').tabSize,
+
+    // Exposed Rules
     preserve: 1,
-    indent_size: workspace.getConfiguration('editor').tabSize
+    method_chain: 0,
+    quote_convert: 'none',
+    format_array: 'indent',
+    format_object: 'indent',
+    braces: false,
+    no_semicolon: false,
+    brace_block: false
   }
 }
 
