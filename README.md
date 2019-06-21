@@ -204,6 +204,11 @@ Format options for JSON within Shopify section `{% schema %}` tags.
 </p>
 </details>
 
+### Support this extension
+Got bitcoin? Help evolve this extension to higher grounds.
+
+Donate: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
+
 <br>
 
 Made with 🖤 By Nikolas Savvidis
