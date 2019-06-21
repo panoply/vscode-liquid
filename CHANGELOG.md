@@ -48,13 +48,6 @@ All notable changes are listed below.
 - Make new literal string highlighting injection more sane
 - Format tmLanguage, bring sanity to the ever growing file.
 
-## [1.6.5] – <small>10/05/2019</small>
-
-- Minor overhaul on syntax definitions, leverages variable tags.
-- Fixes Shopfy `{% javascript %}` and `{% schema %}` syntax highlighting.
-- Make new literal string highlighting injection more sane
-- Format tmLanguage, bring sanity to the ever growing file.
-
 
 ## [1.6.4] – <small>08/05/2019</small>
 
