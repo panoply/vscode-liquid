@@ -32,34 +32,68 @@ const rules = {
     language_name: 'Liquid',
     language: 'html',
     lexer: 'markup',
-    correct: true,
-    preserve: 1,
-    indent_size: vscode.workspace.getConfiguration('editor').tabSize,
     end_quietly: 'log',
-    node_error: true
+    node_error: true,
+    brace_block: false,
+
+    // Inherited
+    indent_size: vscode.workspace.getConfiguration('editor').tabSize,
+
+    // Exposed Options
+    correct: true,
+    force_attribute: false,
+    braces: false,
+    preserve: 1
   },
   schema: {
     mode: 'beautify',
     language: 'JSON',
     language_name: 'json',
     lexer: 'script',
-    indent_size: vscode.workspace.getConfiguration('editor').tabSize
+
+    // Inherited
+    indent_size: vscode.workspace.getConfiguration('editor').tabSize,
+
+    // Exposed Default Rules
+    format_array: 'indent',
+    preserve: 0,
+    braces: true,
+    no_semicolon: true,
+    brace_block: false
   },
   stylesheet: {
     mode: 'beautify',
     language_name: 'SASS',
     language: 'scss',
     lexer: 'style',
-    preserve: 1,
-    indent_size: vscode.workspace.getConfiguration('editor').tabSize
+
+    // Inherited
+    indent_size: vscode.workspace.getConfiguration('editor').tabSize,
+
+    // Exposed Default Rules
+    css_insert_lines: true,
+    preserve: 2,
+    braces: false,
+    brace_block: false
   },
   javascript: {
     mode: 'beautify',
     language_name: 'JavaScript',
     language: 'javascript',
     lexer: 'script',
+
+    // Inherited
+    indent_size: vscode.workspace.getConfiguration('editor').tabSize,
+
+    // Exposed Rules
     preserve: 1,
-    indent_size: vscode.workspace.getConfiguration('editor').tabSize
+    method_chain: 0,
+    quote_convert: 'none',
+    format_array: 'indent',
+    format_object: 'indent',
+    braces: false,
+    no_semicolon: false,
+    brace_block: false
   }
 };
 
@@ -114,6 +148,13 @@ class Format {
    */
   static beautify (rule, source) {
 
+    // Inherit stylesheet ruleset for `{% style %}` tags
+    if (rule === 'style') {
+
+      rule = 'stylesheet';
+
+    }
+
     prettydiff.options = Object.assign(prettydiff.options, rules[rule], {
       source
     });
@@ -159,7 +200,8 @@ class Format {
     }
 
     const format = Format.beautify(name, source);
-    const output = `${open.trim()}\n\n${format.trim()}\n\n${close.trim()}`;
+    const pad = prettydiff.options.brace_block ? `\n\n` : `\n`;
+    const output = `${open.trim()}${pad}${format.trim()}${pad}${close.trim()}`;
 
     return Format.ignores(output.trim())
 

@@ -5,6 +5,49 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [1.8.0] – <small>17/06/2019</small>
+
+- Support `Markdown` files (.md)
+- Various syntax fixez for `SCSS`, `CSS` and `JS` Syntax support
+- Add `braces` rule in shopify sections `schema` block
+- Expose the `correct` rule for HTML Formtting.
+
+## [1.7.5] – <small>17/06/2019</small>
+
+- Support `CSS` (.css.liquid) files and syntax
+
+## [1.7.4] – <small>17/06/2019</small>
+
+- Fix `=` entity other attribute name syntax highlighting issue
+
+## [1.7.3] – <small>17/06/2019</small>
+
+- Fixed semi-colon in schema tags
+
+## [1.7.2] – <small>17/06/2019</small>
+
+- Updated PrettyDiff Version
+- Added `brace_block` formatting rule which allows newlines to be placed before and after shopify section blocks.
+- Fixed `{% style %}` formatting. Formatting rules inherit those set within `stylesheet`.
+
+## [1.7.1] – <small>16/06/2019</small>
+
+- Added Folding marker integration
+
+## [1.7.0] – <small>16/06/2019</small>
+
+- Complete overhaul on syntax definitions.
+- Support syntax highlighting for SCSS Liquid `.scss.liquid` files
+- Support syntax highlighting for JavaScript Liquid `.js.liquid` files
+- Support syntax highlighting within `<script>` tags
+
+## [1.6.5] – <small>10/05/2019</small>
+
+- Minor overhaul on syntax definitions, leverages variable tags.
+- Fixes Shopfy `{% javascript %}` and `{% schema %}` syntax highlighting.
+- Make new literal string highlighting injection more sane
+- Format tmLanguage, bring sanity to the ever growing file.
+
 ## [1.6.5] – <small>10/05/2019</small>
 
 - Minor overhaul on syntax definitions, leverages variable tags.

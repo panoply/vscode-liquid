@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "keywords": [
     "liquid",
     "shopify",
@@ -74,11 +74,34 @@
         "configuration": "./src/language/liquid.configuration.json"
       },
       {
+        "id": "markdown",
+        "aliases": [
+          "Markdown (Liquid)"
+        ],
+        "extensions": [
+          ".md",
+          ".md.liquid"
+        ],
+        "configuration": "./src/language/liquid.configuration.json"
+      },
+      {
+        "id": "css-liquid",
+        "aliases": [
+          "CSS (Liquid)"
+        ],
+        "extensions": [
+          ".css.liquid"
+        ],
+        "configuration": "./src/language/liquid.configuration.json"
+      },
+      {
         "id": "scss-liquid",
         "aliases": [
           "SCSS (Liquid)"
         ],
-        "extensions": [".scss.liquid"],
+        "extensions": [
+          ".scss.liquid"
+        ],
         "configuration": "./src/language/liquid.configuration.json"
       },
       {
@@ -106,9 +129,19 @@
         }
       },
       {
+        "language": "markdown",
+        "scopeName": "source.md.liquid",
+        "path": "./src/syntax/liquid-md.tmLanguage.json"
+      },
+      {
         "language": "scss-liquid",
         "scopeName": "source.scss.liquid",
         "path": "./src/syntax/liquid-scss.tmLanguage.json"
+      },
+      {
+        "language": "css-liquid",
+        "scopeName": "source.css.liquid",
+        "path": "./src/syntax/liquid-css.tmLanguage.json"
       },
       {
         "language": "js-liquid",
@@ -119,6 +152,22 @@
     "snippets": [
       {
         "language": "html",
+        "path": "./src/snippets/snippets.json"
+      },
+      {
+        "language": "markdown",
+        "path": "./src/snippets/snippets.json"
+      },
+      {
+        "language": "css-liquid",
+        "path": "./src/snippets/snippets.json"
+      },
+      {
+        "language": "scss-liquid",
+        "path": "./src/snippets/snippets.json"
+      },
+      {
+        "language": "js-liquid",
         "path": "./src/snippets/snippets.json"
       }
     ],
@@ -143,7 +192,9 @@
           "description": "Format settings for Liquid HTML and Shopify section Stylesheet, JavaScript and Schema tags.",
           "default": {
             "html": {
+              "correct": true,
               "force_attribute": false,
+              "braces": false,
               "preserve": 2
             },
             "javascript": {
@@ -151,14 +202,23 @@
               "method_chain": 0,
               "quote_convert": "none",
               "format_array": "indent",
-              "format_object": "indent"
+              "format_object": "indent",
+              "braces": false,
+              "no_semicolon": false,
+              "brace_block": true
             },
             "stylesheet": {
               "css_insert_lines": true,
-              "preserve": 2
+              "preserve": 2,
+              "braces": false,
+              "brace_block": true
             },
             "schema": {
-              "format_array": "indent"
+              "perserve": 0,
+              "format_array": "indent",
+              "braces": true,
+              "brace_block": false,
+              "no_semicolon": true
             }
           }
         }
