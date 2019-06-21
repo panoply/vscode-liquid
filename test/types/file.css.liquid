@@ -1,5 +1,3 @@
-// LIQUID
-
 {%- comment -%}
   Liquid Comment
 {%- endcomment -%}
@@ -16,13 +14,8 @@
   {%- endif -%}
 {%- endfor -%}
 
-// VARIABLES
 
-$filter:  {{ 'bar' | prepend: 'foo/' | json }};
-$object:  {{ foo.bar | t }};
-$item:    {{ foo.bar }};
-
-// INSIDE CLASS
+/* INSIDE CLASS */
 
 .element {
 
@@ -32,30 +25,20 @@ $item:    {{ foo.bar }};
       {%- assign border = '1px $item' -%}
   {% endif %}
 
-  background-color: $white;
   border: {{ border | append: '#000000' }};
   display: none;
   position: absolute;
 
 }
 
-// NORMAL
 
 .element {
 
-  background-color: $white;
-  border: 1px solid $storm;
   display: none;
   position: absolute;
   right: {{ 'foo' |  json }};
 
-  ul > li {
-    display: block;
 
-    a {
-      font-size: 0.795rem;
-    }
-  }
 }
 
 @font-face {

@@ -9,6 +9,7 @@ foo:
  - jekyll: frontmatter
 ---
 
+
 # Example
 
 {%- for taggg in collection.all_tags -%}
@@ -19,11 +20,13 @@ foo:
   {%- endif -%}
 {%- endfor -%}
 
-## [1.6.5] –
-<small>10/05/2019</small>
+## [1.6.5]
 
-- Minor overhaul on syntax definitions, leverages variable tags.
-- Fixes Shopfy `{% javascript %}` and `{% schema %}` syntax highlighting.
-- Make new literal string highlighting injection more sane
-- Format tmLanguage, bring sanity to the ever growing file.
+**bold**
+*italic*
+
+<small>Example</small>
+
+- Hello world
+- Code inline `{% test %}` and `{% test %}` syntax.
 

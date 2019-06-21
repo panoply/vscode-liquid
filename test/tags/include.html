@@ -9,3 +9,10 @@
 {% include_relative foo/bar.html %}
 {% include_relative foo.html | offset: 2 | limit: 10 %}
 {% include_cached foo/bar.html %}
+{% include 'foo/bar.html' | var: 'hello' %}
+
+{%- if 1 = true -%}
+  test
+{%- endif -%}
+
+{%- assign variable = 'hello' -%}
