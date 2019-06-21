@@ -9,7 +9,6 @@ foo:
  - jekyll: frontmatter
 ---
 
-
 # Example
 
 {%- for taggg in collection.all_tags -%}

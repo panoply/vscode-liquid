@@ -7,6 +7,8 @@
     "html",
     "jekyll"
   ],
+  "foldingStartMarker": "(?x){%-?\\s*(if|unless|for|paginate|capture|form|case|tablerow|raw|comment|block|paginate|schema|stylesheet|javascript)[^(%})]+-?%",
+  "foldingStopMarker": "(?x){%-?\\s*(endif|endunless|endfor|endpaginate|endcapture|endform|endcase|endtablerow|endraw|endcomment|endblock|endpaginate|endschema|endstylesheet|endjavascript)[^(%})]+-?%}",
   "injections": {
     "L:string.quoted.double.html, L:string.quoted.single.html": {
       "patterns": [
@@ -107,6 +109,9 @@
           "include": "#keyword-operators"
         },
         {
+          "include": "#keyword-operator-assignment"
+        },
+        {
           "include": "#string-quoted-double"
         },
         {
@@ -114,6 +119,15 @@
         },
         {
           "include": "#support-class"
+        },
+        {
+          "include": "#support-function"
+        },
+        {
+          "include": "#support-variable"
+        },
+        {
+          "include": "#support-constant"
         },
         {
           "include": "#variable-parameter"
@@ -124,7 +138,7 @@
       ]
     },
     "template-vars": {
-      "name": "punctuation.tag.liquid",
+      "name": "punctuation.output.liquid",
       "begin": "{{-?",
       "end": "-?}}",
       "patterns": [
@@ -141,10 +155,19 @@
           "include": "#support-class"
         },
         {
+          "include": "#support-function"
+        },
+        {
+          "include": "#support-variable"
+        },
+        {
           "include": "#support-function-with-args"
         },
         {
           "include": "#support-function-without-args"
+        },
+        {
+          "include": "#var-support-variable"
         },
         {
           "include": "#variable-parameter"
@@ -173,7 +196,7 @@
     },
     "constant-boolean": {
       "name": "constant.language.liquid",
-      "match": "(false|true|nil|blank)"
+      "match": "(false|true|nil|null|empty|blank)"
     },
     "constant-numeric": {
       "name": "constant.numeric.liquid",
@@ -220,6 +243,7 @@
         }
       }
     },
+
     "invalid-operators": {
       "name": "invalid.illegal.filter.liquid",
       "match": "(?<=\\s)(\\+|\\-|\\/|\\*)(?=\\s)"
@@ -231,6 +255,10 @@
     "keyword-operators": {
       "name": "keyword.operator.liquid",
       "match": "\\s+(and|or|not|contains|in|by||((\\!|\\=|\\<|\\>)\\=))\\s+"
+    },
+    "keyword-operator-assignment": {
+      "match": "/=",
+      "name": "keyword.operator.assignment.augmented.liquid"
     },
     "schema": {
       "contentName": "meta.embedded.block.liquid",
@@ -412,7 +440,19 @@
     },
     "support-class": {
       "name": "support.class.liquid",
-      "match": "\\b(all_products|assets|block|blog|blogs|body_raw|cart|checkout|collection|collections|comment|current|customer|customer_address|date|discount|excerpt_raw|forloop|form|fulfillment|image|item|items|javascript|jekyll|line_item|link|linklist|linklists|meta|next|order|order|page|page_title|pages|paginate|parent|posts|previous|product|products|request|scripts|search|settings|shipping_method|schema|shop|site|style|stylesheet|tablerow|tags|tax_line|taxonomy|template|theme|themes|transaction|url|variant)\\b"
+      "match": "\\b(all_products|article|assets|block|blog|blogs|body_raw|canonical_url|cart|checkout|collection|collections|comment|current|customer|customer_address|date|discount|excerpt_raw|forloop|form|fulfillment|image|item|items|javascript|jekyll|line_item|link|linklist|linklists|meta|next|order|order|page|page_title|pages|paginate|parent|posts|previous|product|products|request|scripts|search|settings|shipping_method|schema|shop|site|style|stylesheet|tablerow|tags|tax_line|taxonomy|template|theme|themes|transaction|url|variant)\\b"
+    },
+    "support-function": {
+      "name": "support.function.liquid",
+      "match": "\\b(break|content_for_header|content_for_index|content_for_layout|continue|cycle|assign|increment|decrement|include|form|layout|highlight|highlight_active|json|join|sort|ceil|divided_by|floor|minus|plus|round|times|modulo|money|money_with_currency|money_without_trailing_zeros|money_without_currency|append|camelcase|capitalize|downcase|escape|handleize|md5|newline_to_br|pluralize|prepend|remove|remove_first|replace|replace_first|slice|split|strip|lstrip|rstrip|strip_html|strip_newlines|truncate|truncatewords|uniq|upcase|url_escape|url_param_escape)\\b"
+    },
+    "support-variable": {
+        "name": "support.variable.liquid",
+        "match": "\\b(date|weight_with_unit|index|size|asset_img_url|asset_url|file_img_url|file_url|img_url|product_img_url|url_for_type|url_for_vendor|link_to|link_to_vendor|link_to_type|link_to_tag|link_to_add_tag|link_to_remove_tag)\\b"
+    },
+    "support-constant": {
+      "name":"support.constant.liquid",
+      "match": "\\b(default|default_errors|default_pagination|first|last|script_tag|stylesheet_tag|img_tag|customer_login_link|global_asset_url|payment_type_img_url|shopify_asset_url)\\b"
     },
     "support-function-with-args": {
       "name": "support.function.with-args.liquid",
@@ -422,13 +462,13 @@
       "name": "support.function.without-args.liquid",
       "match": "\\|\\s+(?![\\.0-9])[a-zA-Z0-9_-]+\\s+"
     },
-    "support-variable": {
+    "var-support-variable": {
       "name": "support.variable.liquid",
-      "match": "(?<=\\.)\\w+"
+      "match": "(?<=\\.)\\w+\\b"
     },
     "variable-parameter": {
       "name": "variable.parameter.liquid",
-      "match": "(?<=:)\\s+(\\w+)"
+      "match": "((?<=\\w\\:\\s)\\w+)"
     },
     "variable-other": {
       "name": "variable.other.liquid",

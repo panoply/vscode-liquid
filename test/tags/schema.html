@@ -1,110 +1,20 @@
 {% schema %}
+
 {
-  "name": "Header",
-  "tag": "header",
-  "class": "container-fluid header",
+  "name": "Slideshow",
   "settings": [
     {
-      "type": "header",
-      "content": "Main Menu",
-      "info": "The navigation to be used for the main menu."
-    },
-    {
-      "type": "link_list",
-      "id": "main_menu",
-      "default": "main-menu",
-      "label": "Select navigation"
-    },
-    {
-      "type": "header",
-      "content": "Support",
-      "info": "Customize the customer support link and hover block."
-    },
-    {
-      "id": "support_link_text",
+      "default": "Hello world",
+      "id": "header",
+      "label": "Header",
       "type": "text",
-      "label": "Title"
-    },
-    {
-      "type": "url",
-      "id": "support_link_url",
-      "label": "URL"
-    },
-    {
-      "type": "link_list",
-      "id": "support_block_menu",
-      "label": "Links"
-    },
-    {
-      "type": "header",
-      "content": "Banner",
-      "info": "Customize the banner with sliding text promotions and annoucements."
-    },
-    {
-      "type": "checkbox",
-      "id": "banner",
-      "label": "Enable",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "banner_buttons",
-      "label": "Show Buttons",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "banner_index",
-      "label": "Home page only",
-      "default": false
-    },
-    {
-      "type": "radio",
-      "id": "banner_align",
-      "options": [
-        {
-          "value": "top",
-          "label": "Top"
-        },
-        {
-          "value": "bottom",
-          "label": "Bottom"
-        }
-      ],
-      "label": "Position",
-      "default": "top"
-    },
-    {
-      "type": "range",
-      "id": "banner_interval",
-      "min": 1,
-      "max": 10,
-      "step": 1,
-      "unit": "sec",
-      "label": "Slideshow Interval",
-      "default": 4,
-      "info": "The banner slideshow is activated when there is more than 1 banner text content block."
-    }
-  ],
-  "blocks": [
-    {
-      "type": "select",
-      "name": "Banner Content",
-      "limit": 10,
-      "settings": [
-        {
-          "id": "text",
-          "type": "text",
-          "label": "Banner Text"
-        },
-        {
-          "type": "url",
-          "id": "href",
-          "label": "Banner Link",
-          "info": "Optional"
-        }
+      "arry": [
+        "test",
+        "test",
+        "feoo"
       ]
     }
   ]
-}
+};
+
 {% endschema %}

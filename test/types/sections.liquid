@@ -40,7 +40,8 @@ data: [
 
 {% stylesheet 'scss' %}
 
-.popover {
+.popover
+{
 
   background-color: $white;
   border: 1px solid $storm;
@@ -50,10 +51,12 @@ data: [
   top: $navbar-height-desktop - 1;
   z-index: 999;
 
-  ul > li {
+  ul > li
+  {
     display: block;
 
-    a {
+    a
+    {
       font-size: 0.795rem;
     }
   }
@@ -67,15 +70,19 @@ import Banner from "banner"
 import state from "state"
 
 const test = {
+
   foo: bar
 }
 
-Object.assign(this.bar, {
+Object.assign(this.bar,
+{
   text: `💧Liquid: $(check)`,
   command: 'liquid.disableFormatting'
 })
 
-export default {
+export default
+{
+
   state: {
     navbar: {
       active: null
@@ -84,11 +91,17 @@ export default {
       show: false
     }
   },
-  onLoad() {
+  onLoad()
+  {
     this.banner = this.container.querySelector("#banner")
-    m.mount(this.banner, {
+    m.mount(this.banner,
+    {
+
       view: () => {
-        m(Banner, {
+
+        m(Banner,
+        {
+
           banner: state.data.header.banner
         })
       }

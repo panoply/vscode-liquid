@@ -3,6 +3,7 @@ node_modules
 *.vsix
 yarn.lock
 test/components/*.html
+.vscode/settings.json
 
 ### OSX ###
 # General
