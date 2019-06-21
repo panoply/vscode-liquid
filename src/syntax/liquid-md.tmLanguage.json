@@ -2,23 +2,34 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Markdown (Liquid)",
   "scopeName": "source.md.liquid",
+  "fileTypes": [
+    "markdown"
+  ],
   "injections": {
     "L:meta.paragraph.markdown": {
       "patterns": [
         {
-          "include": "source.liquid#template-tags"
+          "include": "source.liquid#comments"
         },
         {
           "include": "source.liquid#template-vars"
+        },
+        {
+          "include": "source.liquid#template-tags"
         }
       ]
     }
   },
   "patterns": [
     {
-      "include": "source.liquid"
+      "include": "source.liquid#comments"
     },
-
+    {
+      "include": "source.liquid#template-vars"
+    },
+    {
+      "include": "source.liquid#template-tags"
+    },
     {
       "include": "text.html.markdown"
     }
