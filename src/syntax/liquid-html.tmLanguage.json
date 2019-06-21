@@ -7,10 +7,10 @@
     "html",
     "jekyll"
   ],
-  "foldingStartMarker": "(?x){%-?\\s*(if|unless|for|paginate|capture|form|case|tablerow|raw|comment|block|paginate|schema|stylesheet|javascript)[^(%})]+-?%",
-  "foldingStopMarker": "(?x){%-?\\s*(endif|endunless|endfor|endpaginate|endcapture|endform|endcase|endtablerow|endraw|endcomment|endblock|endpaginate|endschema|endstylesheet|endjavascript)[^(%})]+-?%}",
+    "foldingStartMarker": "(?x){%-?\\s*(if|unless|for|paginate|capture|form|case|tablerow|raw|comment|block|paginate|schema|stylesheet|javascript)[^(%})]+-?%",
+    "foldingStopMarker": "(?x){%-?\\s*(endif|endunless|endfor|endpaginate|endcapture|endform|endcase|endtablerow|endraw|endcomment|endblock|endpaginate|endschema|endstylesheet|endjavascript)[^(%})]+-?%}",
   "injections": {
-    "L:string.quoted.double.html, L:string.quoted.single.html": {
+    "L:string - (string.quoted.*.html, string.quoted.*.html)": {
       "patterns": [
         {
           "include": "#template-tags"
@@ -20,7 +20,7 @@
         }
       ]
     },
-    "L:meta.embedded.block.html - (L:source.js)": {
+    "L:meta.embedded.block.html - L:source.js": {
       "patterns": [
         {
           "include": "#comments"
@@ -69,8 +69,18 @@
   "repository": {
     "template-tags": {
       "name": "punctuation.tag.liquid",
-      "begin": "{%-?",
-      "end": "-?%}",
+      "begin": "({%)(-)?",
+      "beginCaptures": {
+        "2":{
+          "name": "keyword.other.liquid"
+        }
+      },
+      "end": "(-)?(%})",
+      "endCaptures": {
+        "1": {
+          "name": "keyword.other.liquid"
+        }
+      },
       "patterns": [
         {
           "include": "#constant-characters"
@@ -88,7 +98,7 @@
           "include": "#entity-name-tag"
         },
         {
-          "include": "#entity-name-tag-whitespace"
+          "include": "#entity-other-attribute-name"
         },
         {
           "include": "invalid-ampersand"
@@ -139,8 +149,18 @@
     },
     "template-vars": {
       "name": "punctuation.output.liquid",
-      "begin": "{{-?",
-      "end": "-?}}",
+      "begin": "({{)(-)?",
+      "beginCaptures": {
+        "2": {
+          "name": "keyword.other.liquid"
+        }
+      },
+      "end": "(-)?(}})",
+      "endCaptures": {
+        "1": {
+          "name": "keyword.other.liquid"
+        }
+      },
       "patterns": [
         {
           "include": "#constant-characters"
@@ -203,12 +223,12 @@
       "match": "(-|\\+)?\\s*[0-9]+(\\.[0-9]+)?"
     },
     "entity-name-tag": {
-      "name": "entity.name.tag.liquid",
-      "match": "(?<={%)\\s*(\\w+)"
-    },
-    "entity-name-tag-whitespace": {
-      "name": "entity.name.tag.liquid",
-      "match": "(?<={%-)\\s*(\\w+)"
+      "match": "(((?<={%)|(?<={%-))\\s*(\\w+))",
+      "captures": {
+        "1":{
+          "name": "entity.name.tag.liquid"
+        }
+      }
     },
     "frontmatter": {
       "name": "punctuation.tag.liquid",
@@ -251,6 +271,9 @@
     "keyword-control": {
       "name": "keyword.control.liquid",
       "match": "(?<=\\s)(with|offset\\:|limit\\:)(?=\\s)"
+    },
+    "keyword-control-conditional": {
+      "name": "keyword.control.conditional.liquid"
     },
     "keyword-operators": {
       "name": "keyword.operator.liquid",
