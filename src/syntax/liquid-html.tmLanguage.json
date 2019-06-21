@@ -474,7 +474,5 @@
       "name": "variable.other.liquid",
       "match": "\\w+"
     }
-  },
-  "foldingStartMarker": "(?x){%-?\\s*(if|unless|for|paginate|capture|form|case|tablerow|raw|comment|schema|stylesheet|javascript)[^(%})]+-?%}",
-  "foldingStopMarker": "(?x){%-?\\s*(endif|endunless|endfor|endpaginate|endcapture|endform|endcase|endtablerow|endraw|endcomment|endstylesheet|endjavascript|endschema)[^(-?%})]+-?%}"
+  }
 }
