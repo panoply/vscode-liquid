@@ -39,7 +39,7 @@
 {%- endif -%}
 
 <a href="{{ product.url }}">
-  <p>{{ product.title }}</p>
+  <p>{{- product.title -}}</p>
 
   <div style='margin-bottom:-24rem;margin-top:-1rem;' class='jdgm-widget jdgm-preview-badge' data-id='{{ product.id }}'>
     {{ product.metafields.judgeme.badge }}</div>

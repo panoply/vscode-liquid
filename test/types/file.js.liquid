@@ -1,29 +1,32 @@
 import Banner from "banner"
 import state from "state"
 
+{%- comment -%}
+
+{%- endcomment -%}
+
+const testt = {{ 'test.htel' | t }};
+
+// liquid
+
 {%- for taggg in collection.all_tags -%}
-  {%- if current_tags contains taggg -%}
-    {{ current_tags.tag | link_to_remove_tag: taggg }}
-  {%- else -%}
-    {{ current_tags.tag | link_to_add_tag: tag }}
-  {%- endif -%}
+{%- if current_tags contains taggg -%}
+{{ current_tags.tag | link_to_remove_tag: taggg }}
+{%- else -%}
+{{ current_tags.tag | link_to_add_tag: tag }}
+{%- endif -%}
 {%- endfor -%}
 
+
 const test = {
-  foo: {{ foo | replace: 'hello', 'world' }},
-  bar: {{ 'general.meta.page' | page: current_page | json  }}
+  foo:  {{ foo | replace: 'hello', 'world' }},
+  bar: {{ 'general.meta.page' | page: current_page | json }}
 }
+
+
 
 export default {
   onLoad() {
-
-    {%- for taggg in collection.all_tags -%}
-      {%- if current_tags contains taggg -%}
-        {{ current_tags.tag | link_to_remove_tag: taggg }}
-      {%- else -%}
-        {{ current_tags.tag | link_to_add_tag: tag }}
-      {%- endif -%}
-    {%- endfor -%}
 
     this.banner = this.container.querySelector("#banner")
       m.mount(banner, {
@@ -40,3 +43,14 @@ export default {
     }
   }
 }
+
+  {%- for taggg in collection.all_tags -%}
+
+  {%- if current_tags contains taggg -%}
+    {{ current_tags.tag | link_to_remove_tag: taggg }}
+  {%- else -%}
+    {{ current_tags.tag | link_to_add_tag: tag }}
+
+  {%- endif -%}
+
+  {%- endfor -%}
