@@ -15,9 +15,10 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 ### Features
 
 - 🆕 Liquid [CSS/SCSS](https://github.com/panoply/vscode-liquid#syntax-support), [JavaScript](https://github.com/panoply/vscode-liquid#syntax-support) and [Markdown](https://github.com/panoply/vscode-liquid#syntax-support) syntax highighting
-- Auto formatting and beautification
-- Snippet auto-completion
-- HTML IntelliSense
+- Support Liquid with ES6 [Template literals](https://github.com/panoply/vscode-liquid#template-literals) ` liquid`` ` JSX strings
+- Auto formatting and beautification with the powerful [PrettyDiff](https://prettydiff.com/).
+- Snippet auto-completion for faster development
+- HTML IntelliSense and Emmet included
 - Jekyll [Front Matter](https://jekyllrb.com/docs/front-matter) yaml syntax support
 - Shopify [Sections](https://help.shopify.com/en/themes/development/sections) tag syntax support + formatting
 
@@ -95,6 +96,10 @@ Liquid syntax written in JavaScript and SCSS stylesheet files **require** you us
 
 <br>
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/sass-javascript.png"  atl="Liquid SCSS and Liquid JavaScript"  width="100%">
+
+## Template Literals
+
+The extension supports ES6 Template Strings in ES6 JavaScript. Use the ` liquid`` ` literal in your `.js` or `.ts` files. The template literal supports JSX, HTML and Liquid synaxes.
 
 ## Formatting
 
@@ -229,9 +234,9 @@ Format options for JSON within Shopify section `{% schema %}` tags.
 </details>
 
 ### Support this extension
-Did this extension help you? Do you have bitcoin? Help evolve this extension to higher grounds.
+Did this extension make your development life happier? Help evolve this extension to higher grounds.
 
-Donate: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
+BTC Donation: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
 
 <br>
 
