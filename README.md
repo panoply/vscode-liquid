@@ -105,6 +105,7 @@ cmd + shift + L -> Format Document
 
 The extension supports liquid syntax highlighting in various languages. To support Liquid in CSS, SCSS and/or JavaScript you must append a `.liquid` extension to the filename. Additionally, Liquid syntax present within HTML `<script>` and/or `<style>` tags are also supported.
 
+
 | Language        | Files Extensions            |
 | --------------- | --------------------------- |
 | HTML            | `.html` `.jekyll` `.liquid` |
@@ -113,7 +114,8 @@ The extension supports liquid syntax highlighting in various languages. To suppo
 | JavaScript      | `.js.liquid`                |
 | Markdown        | `.md`                       |
 
-<strong>TIP</strong><br>
+
+<strong>❗Important ❗</strong><br>
 
 Consider disabling HTML Validation in editor settings to prevent VS Code from validating `<style>` and `<script>` HTML tags that contain Liquid syntax:
 
@@ -124,8 +126,9 @@ Consider disabling HTML Validation in editor settings to prevent VS Code from va
 }
 ```
 
-<br>
+
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/sass-javascript.png"  atl="Liquid SCSS and Liquid JavaScript"  width="100%">
+
 
 ## Template Literals
 
@@ -279,11 +282,11 @@ Format options for JSON within Shopify section `{% schema %}` tags.
 </p>
 </details>
 
-## Support this extension
+## Support
 
 This extension brings sufficient support of the Liquid language to VS Code. If this extension has helped your development workflow and you would like to keep it free then please consider supporting its growth and maintainance:
 
-**PayPal**: [Donation](https://www.paypal.me/paynicos)
+**PayPal**: [Donate](https://www.paypal.me/paynicos)<br>
 **BTC**: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
 
 
