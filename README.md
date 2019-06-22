@@ -103,16 +103,49 @@ cmd + shift + L -> Format Document
 
 ## Syntax Support
 
-The extension supports liquid syntax highlighting within `SCSS` and `JavaScript` languages. Files that use a `.scss.liquid` or `.js.liquid` extension provide syntax highlighting of infused liquid code. Additionally, liquid syntax contained within `<script>` tags will also be highlighted.
+The extension supports liquid syntax highlighting in various languages. To support Liquid in CSS, SCSS and/or JavaScript you must append a `.liquid` extension to the filename. Additionally, Liquid syntax present within HTML `<script>` and/or `<style>` tags are also supported.
 
-Liquid syntax written in JavaScript and SCSS stylesheet files **require** you use `.liquid` suffix filename.
+| Language        | Files Extensions            |
+| --------------- | --------------------------- |
+| HTML            | `.html` `.jekyll` `.liquid` |
+| CSS             | `.css.liquid`               |
+| SCSS            | `.scss.liquid`              |
+| JavaScript      | `.js.liquid`                |
+| Markdown        | `.md`                       |
+
+<strong>TIP</strong><br>
+
+Consider disabling HTML Validation in editor settings to prevent VS Code from validating `<style>` and `<script>` HTML tags that contain Liquid syntax:
+
+```json
+{
+  "html.validate.scripts": false,
+  "html.validate.styles": false,
+}
+```
 
 <br>
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/sass-javascript.png"  atl="Liquid SCSS and Liquid JavaScript"  width="100%">
 
 ## Template Literals
 
-The extension supports ES6 Template Strings in ES6 JavaScript. Use the ` liquid`` ` literal in your `.js` or `.ts` files. The template literal supports JSX, HTML and Liquid synaxes.
+The extension supports ES6 Template Strings in JavaScript. Use the ` liquid`` ` literal in your `.js` or `.ts` file and the liquid syntax will be highlighted accordingly, Example:
+
+```javascript
+
+liquid`
+
+  {%- for tag in collection.all_tags -%}
+    {%- if current_tags contains tag -%}
+      {{ current_tags.tag | link_to_remove_tag: taggg }}
+    {%- else -%}
+      {{ current_tags.tag | link_to_add_tag: tag }}
+    {%- endif -%}
+  {%- endfor -%}
+
+`
+
+```
 
 ## Formatting
 
@@ -246,12 +279,19 @@ Format options for JSON within Shopify section `{% schema %}` tags.
 </p>
 </details>
 
-### Support this extension
-Did this extension make your development life happier? Help evolve this extension to higher grounds.
+## Support this extension
 
-BTC Donation: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
+This extension brings sufficient support of the Liquid language to VS Code. If this extension has helped your development workflow and you would like to keep it free then please consider supporting its growth and maintainance:
+
+**PayPal**: [Donation](https://www.paypal.me/paynicos)
+**BTC**: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
+
+
+## Changelog
+
+Refer to the [Changelog](https://github.com/panoply/vscode-liquid/blob/master/CHANGELOG.md) for each per-version update and/or fixes.
 
 <br>
 
 
-Made with 🖤 By Nikolas Savvidis
+Currently made with 🖤 by Nikolas Savvidis
