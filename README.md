@@ -17,7 +17,8 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 - 🆕 Liquid [CSS/SCSS](https://github.com/panoply/vscode-liquid#syntax-support), [JavaScript](https://github.com/panoply/vscode-liquid#syntax-support) and [Markdown](https://github.com/panoply/vscode-liquid#syntax-support) syntax highighting
 - Support Liquid with ES6 [Template literals](https://github.com/panoply/vscode-liquid#template-literals) ` liquid`` ` JSX strings
 - Auto formatting and beautification with the powerful [PrettyDiff](https://prettydiff.com/).
-- Snippet auto-completion for faster development
+- Liquid syntax snippet auto-completion
+- Shopify sections [Schema Snippets](https://github.com/panoply/vscode-liquid#snippets) auto-completion
 - HTML IntelliSense and Emmet included
 - Jekyll [Front Matter](https://jekyllrb.com/docs/front-matter) yaml syntax support
 - Shopify [Sections](https://help.shopify.com/en/themes/development/sections) tag syntax support + formatting
@@ -32,6 +33,18 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 Liquid snippets are supported in this extension. The snippets which have been included were forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). The reason for forking this extension is to avoid conflicts due to the extension dependency it relies on.
 
 > If you have [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) installed, you can safely uninstall this extension and it's dependency.
+
+<strong>Schema Snippets (Shopify)</strong><br>
+
+Shopify `{% schema %}` section snippets are supported when using the `schema` prefix followed by the input type setting name. The `schema` snippets injects complete input types and allow you to quickly write apply the schema setting.
+
+> Schema snippets leverage [Tabstops](https://code.visualstudio.com/docs/editor/userdefinedsnippets#_tabstops).
+
+<br>
+
+<img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/schema-snippets.png"  atl="Shopify Schema Snippets"  width="100%">
+
+
 
 ## Key binding
 

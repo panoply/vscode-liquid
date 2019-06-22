@@ -5,6 +5,10 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [1.8.3] – <small>17/06/2019</small>
+
+- Support Shopify section `schema` settings snippets
+
 ## [1.8.2] – <small>17/06/2019</small>
 
 - Support `liquid` template literal
