@@ -1,23 +1,34 @@
-import { workspace, window, ConfigurationTarget, StatusBarItem, StatusBarAlignment } from 'vscode'
+import { workspace,
+  languages,
+  window,
+  ConfigurationTarget,
+  StatusBarItem,
+  StatusBarAlignment } from 'vscode'
 
+import assign from 'assign-deep'
 import Format from './format'
 
 export default class Document extends Format {
 
-  static notify (message) {
-
-    return window.showInformationMessage(`Liquid ${message}`)
-
-  }
-
   constructor () {
 
     super()
+
     this.handler = {}
-    this.run = workspace.getConfiguration('liquid').format
     this.bar = StatusBarItem
     this.bar = window.createStatusBarItem(StatusBarAlignment.Right, -2)
-    this.rules = super.rules(workspace.getConfiguration('liquid'))
+    this.isFormat = this.liquid.get('format')
+    this.fixDeprecatedSettings()
+    this.init()
+
+  }
+
+  init () {
+
+    this.isFormat = workspace.getConfiguration('liquid').format
+    this.setFormattingRules()
+    this.getPatterns()
+    this.format()
 
   }
 
@@ -25,83 +36,94 @@ export default class Document extends Format {
 
     const { fileName, languageId } = window.activeTextEditor.document
 
+    if (this.handler.hasOwnProperty(fileName)) {
+
+      this.handler[fileName].dispose()
+
+    }
+
+    if (languageId !== 'html') {
+
+      this.bar.hide()
+
+    }
+
     if (!workspace.getConfiguration('editor').formatOnSave) {
 
-      this.run = false
-
-      return this.run
+      this.isFormat = false
 
     }
 
-    if (this.run) {
-
-      try {
-
-        if (fileName && this.handler.hasOwnProperty(fileName)) {
-
-          this.handler[fileName].dispose()
-
-        }
-
-        this.handler[fileName] = super.register()
-
-        Object.assign(this.bar, {
-          text: `💧Liquid: $(check)`,
-          command: 'liquid.disableFormatting'
-        })
-
-      } catch (error) {
-
-        console.error(error)
-        Document.notify('Error registering the formatter, re-open the file 💧')
-
-      }
-
-    }
-    if (!this.run) {
+    if (!this.isFormat || !workspace.getConfiguration('liquid').format) {
 
       Object.assign(this.bar, {
         text: `💧Liquid: $(x)`,
         command: 'liquid.enableFormatting'
       })
 
-    }
-    if (languageId === 'html') {
+      this.dispose()
 
       this.bar.show()
 
-    } else {
-
-      this.bar.hide()
+      return
 
     }
 
+    if (super.isError) {
+
+      assign(this.bar, {
+        text: `⚠️ Liquid: $(x)`,
+        command: 'liquid.toggleOutput'
+      })
+
+      this.dispose()
+
+      return this.bar.show()
+
+    }
+
+    this.handler[fileName] = languages.registerDocumentFormattingEditProvider({
+      scheme: 'file',
+      language: 'html'
+    }, {
+      provideDocumentFormattingEdits: this.provider.bind(this)
+    })
+
+    Object.assign(this.bar, {
+      text: `💧Liquid: $(check)`,
+      command: 'liquid.disableFormatting'
+    })
+
+    this.bar.show()
+
   }
+
   selection () {
 
     try {
 
       super.selection()
-      Document.notify('Selection Formatted 💧')
+      window.showInformationMessage('Selection Formatted 💧')
 
     } catch (error) {
 
-      Document.notify('Format Failed! The selection is invalid or incomplete!')
+      window.showInformationMessage('Format Failed! The selection is invalid or incomplete!')
 
     }
 
   }
+
   document () {
 
     try {
 
       super.document()
-      Document.notify('Document Formatted 💧')
+      window.showInformationMessage('Document Formatted 💧')
 
     } catch (error) {
 
       console.log(error)
-      Document.notify('Document could not be formatted, check your code!')
+      window.showInformationMessage('Document could not be formatted, check your code!')
 
     }
 
@@ -113,7 +135,7 @@ export default class Document extends Format {
 
       if (this.handler.hasOwnProperty(key)) {
 
-        this.handler[key].dispose()
+        return this.handler[key].dispose()
 
       }
 
@@ -123,22 +145,23 @@ export default class Document extends Format {
 
   async enable () {
 
-    this.run = true
-    await workspace
-      .getConfiguration('liquid')
-      .update('format', this.run, ConfigurationTarget.Global)
-      .then(() => this.format())
-      .then(() => Document.notify('Formatting Enabled 💧'))
+    this.isFormat = true
+
+    await this.liquid.update('format', this.isFormat, ConfigurationTarget.Global)
+    .then(() => this.format())
+    .then(() => this.init())
+    .then(() => window.showInformationMessage('Formatting Enabled 💧'))
 
   }
+
   async disable () {
 
-    this.run = false
-    await workspace
-      .getConfiguration('liquid')
-      .update('format', this.run, ConfigurationTarget.Global)
-      .then(() => this.dispose())
-      .then(() => Document.notify('Formatting Disabled 💧'))
+    this.isFormat = false
+
+    await this.liquid.update('format', this.isFormat, ConfigurationTarget.Global)
+    .then(() => this.dispose())
+    .then(() => this.init())
+    .then(() => window.showInformationMessage('Formatting Disabled 💧'))
 
   }
 
