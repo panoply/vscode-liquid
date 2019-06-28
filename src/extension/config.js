@@ -2,10 +2,7 @@ import { workspace, window } from 'vscode'
 import assign from 'assign-deep'
 import path from 'path'
 import fs from 'fs'
-import { Rules } from './rules'
-import { output } from './api'
-import chalk from 'chalk'
-import { throws } from 'assert'
+import { Rules, liquidConfig, outputChannel } from './options'
 
 export default class Config {
 
@@ -13,7 +10,6 @@ export default class Config {
 
     this.config = Rules
     this.rcfile = path.join(workspace.rootPath, '.liquidrc')
-    this.liquid = workspace.getConfiguration('liquid')
     this.isWatching = false
     this.isError = false
 
@@ -32,14 +28,14 @@ export default class Config {
   setFormattingRules () {
 
     // Check if using rule file
-    if (!this.liquid.get('useRuleFile')) {
+    if (!liquidConfig.get('useRuleFile')) {
 
       // Notify output
-      output.appendLine(`💧 'Not using a .liquidrc rule file`)
+      outputChannel.appendLine(`💧 'Not using a .liquidrc rule file`)
 
       // Assign workspace rules
       // Deep assignment
-      assign(this.config, this.liquid.get('formattingRules'))
+      assign(this.config, liquidConfig.get('formattingRules'))
 
       return
 
@@ -65,7 +61,7 @@ export default class Config {
 
       window.showErrorMessage('An error occured from within the .liquidrc formatting rules file, see the output for more information. 💧')
 
-      output.appendLine(`💧Liquid: ${error}`)
+      outputChannel.appendLine(`💧Liquid: ${error}`)
 
       return false
 
@@ -78,7 +74,7 @@ export default class Config {
         watch.onDidChange(() => this.setFormattingRules())
         watch.onDidDelete(() => this.setFormattingRules())
 
-        output.appendLine(`💧Liquid: Watching ${this.rcfile}`)
+        outputChannel.appendLine(`💧Liquid: Watching ${this.rcfile}`)
 
         this.isWatching = true
 
@@ -127,9 +123,9 @@ export default class Config {
 
   fixDeprecatedSettings () {
 
-    if (!fs.existsSync(this.rcfile) && this.liquid.get('beautify')) {
+    if (!fs.existsSync(this.rcfile) && liquidConfig.get('beautify')) {
 
-      if (this.liquid.get('formatIgnore')) {
+      if (liquidConfig.get('formatIgnore')) {
 
         return this.fixDeprecatedIgnore()
 
@@ -149,14 +145,14 @@ export default class Config {
 
       if (selected === 'Next') {
 
-        this.liquid.update('formatIgnore', undefined, true)
+        liquidConfig.update('formatIgnore', undefined, true)
         return this.fixDeprecatedRules()
 
       }
 
       if (selected === 'Learn More') {
 
-        output.append(``)
+        outputChannel.append(``)
 
       }
 
@@ -171,11 +167,11 @@ export default class Config {
       'No').then((selected) => {
 
       const content = {
-        html: this.liquid.beautify.html || this.liquid.formattingRules.html,
-        js: this.liquid.beautify.javascript || this.liquid.formattingRules.js,
-        scss: this.liquid.beautify.stylesheet || this.liquid.formattingRules.scss,
-        css: this.liquid.beautify.stylesheet || this.liquid.formattingRules.css,
-        json: this.liquid.beautify.schema || this.liquid.formattingRules.json
+        html: liquidConfig.beautify.html || liquidConfig.formattingRules.html,
+        js: liquidConfig.beautify.javascript || liquidConfig.formattingRules.js,
+        scss: liquidConfig.beautify.stylesheet || liquidConfig.formattingRules.scss,
+        css: liquidConfig.beautify.stylesheet || liquidConfig.formattingRules.css,
+        json: liquidConfig.beautify.schema || liquidConfig.formattingRules.json
       }
 
       if (selected !== 'No') {
@@ -186,9 +182,9 @@ export default class Config {
 
           if (error) {
 
-            output.appendLine(`${error}`)
+            outputChannel.appendLine(`${error}`)
 
-            return window.showErrorMessage('An error occured while generating the .liquidrc rule file.', 'Details', () => output.show())
+            return window.showErrorMessage('An error occured while generating the .liquidrc rule file.', 'Details', () => outputChannel.show())
 
           }
 
@@ -196,11 +192,11 @@ export default class Config {
 
       } else {
 
-        this.liquid.update('formattingRules', content, true)
+        liquidConfig.update('formattingRules', content, true)
 
       }
 
-      this.liquid.update('beautify', undefined, true)
+      liquidConfig.update('beautify', undefined, true)
 
     })
 
