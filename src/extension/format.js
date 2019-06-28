@@ -2,7 +2,7 @@ import { window, TextEdit, Range } from 'vscode'
 import prettydiff from 'prettydiff'
 import Pattern from './pattern'
 import chalk from 'chalk'
-import { output } from './api'
+import { outputChannel } from './options'
 
 export default class Format extends Pattern {
 
@@ -65,7 +65,7 @@ export default class Format extends Pattern {
 
       if (document.match(this.pattern.tags[i])) {
 
-        document = document.replace(this.pattern.tags[i], this.formatMatchedTags.bind(this))
+        document = document.replace(this.pattern.tags[i], this.tagCaptures.bind(this))
 
       }
 
@@ -92,7 +92,7 @@ export default class Format extends Pattern {
    * @param {string} source
    * @param {string} close
    */
-  formatMatchedTags (
+  tagCaptures (
     code,
     open,
     name,
@@ -128,7 +128,7 @@ export default class Format extends Pattern {
 
       if (prettydiff.sparser.parseerror.length > 0) {
 
-        return output.appendLine(`💧${prettydiff.sparser.parseerror}`)
+        return outputChannel.appendLine(`💧${prettydiff.sparser.parseerror}`)
 
       }
 
@@ -138,11 +138,11 @@ export default class Format extends Pattern {
 
       if (prettydiff.sparser.parseerror.length > 0) {
 
-        output.appendLine(`💧${prettydiff.sparser.parseerror}`)
+        outputChannel.appendLine(`💧${prettydiff.sparser.parseerror}`)
 
       }
 
-      throw output.appendLine(chalk`💧{red ${error}}`)
+      throw outputChannel.appendLine(chalk`💧{red ${error}}`)
 
     }
 
