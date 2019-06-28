@@ -26,33 +26,6 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 
 ![showcase](https://github.com/panoply/vscode-shopify-liquid/blob/master/images/showcase.gif?raw=true)
 
-# Snippets
-
-Liquid snippets are supported in this extension. The snippets which have been included were forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). The reason for forking this extension is to avoid conflicts due to the extension dependency it relies on.
-
-
-### Schema Snippets (Shopify)
-
-Shopify `{% schema %}` section snippets are supported when using the `schema` prefix followed by the input type setting name. The schema snippets inject complete input types and allow you to quickly apply the schema setting.
-
-<br>
-
-<img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/schema-snippets.png"  atl="Shopify Schema Snippets"  width="100%">
-
-
-# Key binding
-You can use the Liquid formatter by using the below key binding.
-
-```
-cmd + shift + L -> Format Document
-```
-
-> Use `ctrl` for windows
-
-<br>
-
-<strong>Custom keybindings</strong><br>
-*If you don't like the defaults then rebind editor.action.formatDocument in the keyboard shortcuts menu of vscode.*
 
 # Commands
 
@@ -181,7 +154,7 @@ Below is a list of the default code style rules that are applied when formatting
       }
     ]
   },
-  "javascript": {
+  "js": {
     "preserve": 1,
     "method_chain": 0,
     "quote_convert": "none",
@@ -191,21 +164,24 @@ Below is a list of the default code style rules that are applied when formatting
     "no_semicolon": false,
     "brace_block": true
   },
-  "stylesheet": {
+  "scss": {
     "css_insert_lines": true,
     "preserve": 2,
     "braces": false,
     "brace_block": true
   },
-  "schema": {
+  "css": {
+    "css_insert_lines": true,
+    "preserve": 2,
+    "braces": false,
+    "brace_block": true
+  },
+  "json": {
     "perserve": 0,
     "format_array": "indent",
     "braces": true,
     "no_semicolon": true,
     "brace_block": false
-  },
-  "frontmatter": {
-    "padding": 0
   }
 }
 ```
@@ -298,6 +274,34 @@ Format options for JSON within Shopify section `{% schema %}` tags.
 
 </p>
 </details>
+
+# Snippets
+
+Liquid snippets are supported in this extension. The snippets which have been included were forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). The reason for forking this extension is to avoid conflicts due to the extension dependency it relies on.
+
+
+### Schema Snippets (Shopify)
+
+Shopify `{% schema %}` section snippets are supported when using the `schema` prefix followed by the input type setting name. The schema snippets inject complete input types and allow you to quickly apply the schema setting.
+
+<br>
+
+<img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/schema-snippets.png"  atl="Shopify Schema Snippets"  width="100%">
+
+
+# Key binding
+You can use the Liquid formatter by using the below key binding.
+
+```
+cmd + shift + L -> Format Document
+```
+
+> Use `ctrl` for windows
+
+<br>
+
+<strong>Custom keybindings</strong><br>
+*If you don't like the defaults then rebind editor.action.formatDocument in the keyboard shortcuts menu of vscode.*
 
 # Support
 
