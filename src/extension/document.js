@@ -7,6 +7,7 @@ import { workspace,
 
 import assign from 'assign-deep'
 import Format from './format'
+import { liquidConfig } from './options'
 
 export default class Document extends Format {
 
@@ -17,7 +18,7 @@ export default class Document extends Format {
     this.handler = {}
     this.bar = StatusBarItem
     this.bar = window.createStatusBarItem(StatusBarAlignment.Right, -2)
-    this.isFormat = this.liquid.get('format')
+    this.isFormat = liquidConfig.format
     this.fixDeprecatedSettings()
     this.init()
 
@@ -25,10 +26,8 @@ export default class Document extends Format {
 
   init () {
 
-    this.isFormat = workspace.getConfiguration('liquid').format
     this.setFormattingRules()
     this.getPatterns()
-    this.format()
 
   }
 
@@ -46,6 +45,8 @@ export default class Document extends Format {
 
       this.bar.hide()
 
+      return
+
     }
 
     if (!workspace.getConfiguration('editor').formatOnSave) {
@@ -54,7 +55,7 @@ export default class Document extends Format {
 
     }
 
-    if (!this.isFormat || !workspace.getConfiguration('liquid').format) {
+    if (!this.isFormat) {
 
       Object.assign(this.bar, {
         text: `💧Liquid: $(x)`,
@@ -77,8 +78,9 @@ export default class Document extends Format {
       })
 
       this.dispose()
+      this.bar.show()
 
-      return this.bar.show()
+      return
 
     }
 
@@ -135,7 +137,7 @@ export default class Document extends Format {
 
       if (this.handler.hasOwnProperty(key)) {
 
-        return this.handler[key].dispose()
+        this.handler[key].dispose()
 
       }
 
@@ -147,9 +149,9 @@ export default class Document extends Format {
 
     this.isFormat = true
 
-    await this.liquid.update('format', this.isFormat, ConfigurationTarget.Global)
-    .then(() => this.format())
+    await liquidConfig.update('format', this.isFormat, ConfigurationTarget.Global)
     .then(() => this.init())
+    .then(() => this.format())
     .then(() => window.showInformationMessage('Formatting Enabled 💧'))
 
   }
@@ -158,9 +160,10 @@ export default class Document extends Format {
 
     this.isFormat = false
 
-    await this.liquid.update('format', this.isFormat, ConfigurationTarget.Global)
+    await liquidConfig.update('format', this.isFormat, ConfigurationTarget.Global)
     .then(() => this.dispose())
     .then(() => this.init())
+    .then(() => this.format())
     .then(() => window.showInformationMessage('Formatting Disabled 💧'))
 
   }
