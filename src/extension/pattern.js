@@ -1,5 +1,5 @@
 import Config from './config'
-import { output } from './api'
+import { outputChannel } from './options'
 
 export default class Pattern extends Config {
 
@@ -33,7 +33,7 @@ export default class Pattern extends Config {
 
         if (!type) {
 
-          return output.appendLine(`💧Tag is missing "type" property`)
+          return outputChannel.appendLine(`💧Tag is missing "type" property`)
 
         }
 
@@ -59,12 +59,11 @@ export default class Pattern extends Config {
 
       if (!type) {
 
-        return output.appendLine(`💧Ignored tag is missing "type" property`)
+        return outputChannel.appendLine(`💧Ignored tag is missing "type" property`)
 
       }
 
       ignore.push(Pattern.captures(type, begin, end))
-      //! this.matches.includes(begin) && this.matches.push(begin)
 
     })
 
