@@ -162,7 +162,24 @@ Below is a list of the default code style rules that are applied when formatting
   "html": {
     "correct": true,
     "force_attribute": false,
-    "preserve": 2
+    "preserve": 2,
+    "ignored": [
+      {
+        "type": "liquid",
+        "begin": "comment",
+        "end": "endcomment"
+      },
+      {
+        "type": "html",
+        "begin": "script",
+        "end": "script"
+      },
+      {
+        "type": "html",
+        "begin": "style",
+        "end": "style"
+      }
+    ]
   },
   "javascript": {
     "preserve": 1,
