@@ -1,6 +1,6 @@
 import { window, workspace, commands } from 'vscode'
 import Document from './extension/document'
-import { output } from './extension/api'
+import { outputChannel } from './extension/options'
 
 const { registerCommand } = commands
 
@@ -16,11 +16,12 @@ exports.activate = context => {
 
   const document = new Document()
 
+  sub.push(window.onDidChangeActiveTextEditor(document.format.bind(document)))
   sub.push(workspace.onDidOpenTextDocument(document.format.bind(document)))
   sub.push(workspace.onDidChangeConfiguration(document.init.bind(document)))
   sub.push(registerCommand('liquid.disableFormatting', document.disable.bind(document)))
   sub.push(registerCommand('liquid.enableFormatting', document.enable.bind(document)))
-  sub.push(registerCommand('liquid.toggleOutput', output.show()))
+  sub.push(registerCommand('liquid.toggleOutput', outputChannel.show()))
   sub.push(registerCommand('liquid.formatDocument', document.document.bind(document)))
   sub.push(registerCommand('liquid.formatSelection', document.selection.bind(document)))
 
