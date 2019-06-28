@@ -1,6 +1,5 @@
-import { workspace } from 'vscode'
-
-const { tabSize } = workspace.getConfiguration('editor')
+import { workspace,
+  window } from 'vscode'
 
 /**
  * Rule Defaults
@@ -10,7 +9,7 @@ const { tabSize } = workspace.getConfiguration('editor')
  * reset formatting options that are applied
  * on a per tag basis.
  *
- *
+ * @returns {object}
  */
 export const defaults = {
 
@@ -30,6 +29,14 @@ export const defaults = {
   brace_block: false
 
 }
+
+/**
+ * Formatting Rules
+ *
+ * @returns {object}
+ */
+
+const { tabSize } = workspace.getConfiguration('editor')
 
 export const Rules = {
 
@@ -78,7 +85,7 @@ export const Rules = {
   // Schema Tag
   json: {
 
-    // Settings
+    // Private Settings
     tags: [
       {
         type: 'liquid',
@@ -213,3 +220,17 @@ export const Rules = {
   }
 
 }
+
+/**
+ * Output Channel
+ *
+ * @returns {ui}
+ */
+export const outputChannel = window.createOutputChannel('Liquid')
+
+/**
+ * Liquid configuration settings
+ *
+ * @returns {object}
+ */
+export const liquidConfig = workspace.getConfiguration('liquid')
