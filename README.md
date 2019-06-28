@@ -9,10 +9,10 @@
 
 # Liquid <small style="color:#999;">(vs code)</small>
 
-A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes liquid syntax highlighting within HTML, JavaScript, CSS, SCSS and Markdown files, formatting + beautification, snippet auto-completion and HTML Intellisense.
+A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes liquid syntax highlighting within HTML, JavaScript, CSS, SCSS and Markdown files, formatting + beautification, advanced snippet auto-completion and HTML Intellisense.
 
 
-### Features
+### Key Features
 
 - Supports Liquid CSS/SCSS, JavaScript and Markdown syntax highighting
 - Auto formatting and beautification with the powerful [PrettyDiff](https://prettydiff.com/).
@@ -41,12 +41,8 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 
 ```jsonc
 {
-  // Controls whether formatting is enabled or disabled
-  "liquid.format": true,
-
-  // Controls the formatting rules
-  // Each property is uses different rule sets
-  "liquid.formatRules": {}
+  "liquid.format": true,  // Controls whether formatting is enabled or disabled
+  "liquid.formatRules": {}  // Controls the formatting rules
 
 }
 ```
@@ -115,17 +111,35 @@ Formatting uses a default set of style rules which enforce a consistent coding s
 Including a .liquid file in the root of your projects workspace is the reccomended approach for defining a custom set of formatting style rules.
 
 ### Using the workspace setting option
-Rules can also be applied in your User or Workspace settings using the `liquid.formattingRules` option. Please note that if a `.liquidrc` is present in the workspace root it will runs precedence over `liquid.formattingRules` and any rules defined in your User or Workspace settings will be ignored.
+Rules can also be applied in your User or Workspace settings using the `liquid.formattingRules` option. Please note that if a `.liquidrc` is present in the workspace root it will run precedence.
 
 ### Toggle and Status button
 When a HTML, Liquid and Jekyll file is open and active in the editor you will see the Liquid toggle/status button appear on the bottom right hand side of the VS Code status bar. The toggle button will allow you to enable/disable liquid formatting and open the output panel.
 
 <img src="https://github.com/panoply/vscode-liquid/blob/master/images/togglebutton.png?raw=true" width="150px">
 
+### Include Tags
+The are some situations where you may want to apply language formatting to a specific tag block. Using the `tags` property you can set multiple tags blocks and format their inner content according to their language definition. Take the following example:
+
+```jsonc
+{
+  "json": {
+    "tags": [
+      {
+        "type": "html",
+        "begin": "script\\s+type=\"application\\/json\"",
+        "end": "script"
+      }
+    ]
+  }
+}
+```
+
 ### Ignoring Tags
 Sometimes you may wish to ignore formatting certain HTML or Liquid tags. The `ignored_tags` option available to HTML ruleset accepts an array of tags you wish to exclude when formatting. Only Tags that have matching and open and close definitions are accepted.
 
 By default the formatter will ignore HTML `<script>` and `<style>` tag blocks. If you require formatting for `<script>` tags which contain no liquid code you should consider using [eslint](<[https://eslint.org](https://eslint.org/)>) and the [eslint-plugin-html](https://github.com/BenoitZugmeyer/eslint-plugin-html) with [prettier](https://prettier.io/).
+
 
 # Rules
 Below is a list of the default code style rules that are applied when formatting your document. Rules must be written in JSON format.
@@ -193,19 +207,19 @@ Below is a list of the default code style rules that are applied when formatting
 <p>Format rules for HTML Liquid code.</p>
 <p>
 
-| Property        | Default               | Description            |
-| --------------- | --------------------- | ---------------------- |
-| correct         | `true`                | Corrects code          |
-| force_attribute | `false`               | Indents HTML tag attributes to a newline |
-| preserve        | `2`                   | Lines to preserve      |
-| ignored_tags    | `["script", "style"]` | Lines to preserve      |
+| Property        | Default                 | Description            |
+| --------------- | ---------------------   | ---------------------- |
+| correct         | `true`                  | Corrects code          |
+| force_attribute | `false`                 | Indents HTML tag attributes to a newline |
+| preserve        | `2`                     | Lines to preserve             |
+| ignored         | `[]`                    | An array of ignored tags     |
 
 </p>
 </details>
 
 <details>
 <summary>
-  <strong>JavaScript</strong>
+  <strong>JS</strong>
 </summary>
 <p>
 
@@ -224,15 +238,16 @@ Format rules for JavaScript within Shopify section `{% javascript %}` tags. Thes
 | format_object | `indent` | Format Object, Accepts `indent` or `newline`         |
 | comment_line  | `false`  | If a blank new line should be forced above comments. |
 | else_line     | `false`  | If keyword 'else' is forced onto a new line          |
-| no_semicolon | `false` | Prevents semicons for being added |
+| no_semicolon | `false`   | Prevents semicons for being added |
 | brace_block   | `true`   | Inserts newline before and after inner content.      |
+| tags         | `[]`      | An array of included tags     |
 
 </p>
 </details>
 
 <details>
 <summary>
-  <strong>Stylesheet</strong>
+  <strong>CSS</strong>
 </summary>
 <p>
 
@@ -247,16 +262,39 @@ Format rules for CSS and/or SCSS within Shopify section `{% stylesheet %}` tags.
 | css_insert_lines | `true`  | Should use new lines in CSS/SCSS |
 | preserve         | `2`     | Lines to preserve                |
 | brace_block      | `true`  | Inserts newline before and after inner content. |
+| tags         | `[]`      | An array of included tags     |
 
 </p>
 
-> Format rules applied here will also be used on CSS within the `{% style %}` tag.
 
 </details>
 
 <details>
 <summary>
-  <strong>Schema</strong>
+  <strong>SCSS/SASS</strong>
+</summary>
+<p>
+
+Format rules for SCSS/SASS. These rules will not be applied to content within `<style>` HTML tags, those are ignored.
+</p>
+<p>
+
+| Property         | Default | Description                      |
+| ---------------- | ------- | -------------------------------- |
+| indent_size      | `2`     | Tab size / indentation           |
+| css_insert_lines | `true`  | Should use new lines in CSS/SCSS |
+| preserve         | `2`     | Lines to preserve                |
+| brace_block      | `true`  | Inserts newline before and after inner content. |
+| tags         | `[]`      | An array of included tags     |
+
+</p>
+
+
+</details>
+
+<details>
+<summary>
+  <strong>JSON</strong>
 </summary>
 <p>
 
@@ -271,23 +309,10 @@ Format options for JSON within Shopify section `{% schema %}` tags.
 | format_array | `indent` | Format Array, Accepts `indent` or `newline`.     |
 | no_semicolon | `true`   | Prevents semicons for being added.               |
 | brace_block  | `false`  | Inserts newline before and after inner content.  |
+| tags         | `[]`      | An array of included tags     |
 
 </p>
 </details>
-
-# Snippets
-
-Liquid snippets are supported in this extension. The snippets which have been included were forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). The reason for forking this extension is to avoid conflicts due to the extension dependency it relies on.
-
-
-### Schema Snippets (Shopify)
-
-Shopify `{% schema %}` section snippets are supported when using the `schema` prefix followed by the input type setting name. The schema snippets inject complete input types and allow you to quickly apply the schema setting.
-
-<br>
-
-<img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/schema-snippets.png"  atl="Shopify Schema Snippets"  width="100%">
-
 
 # Key binding
 You can use the Liquid formatter by using the below key binding.
@@ -302,6 +327,20 @@ cmd + shift + L -> Format Document
 
 <strong>Custom keybindings</strong><br>
 *If you don't like the defaults then rebind editor.action.formatDocument in the keyboard shortcuts menu of vscode.*
+
+# Snippets
+
+Liquid snippets are supported in this extension. Some snippets which have been included were forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). The reason for forking this extension is to avoid conflicts due to the extension dependency it relies on, however additionally the extension includes over 50+ snippet helpers for both Jekyll and Shopify development.
+
+
+### Schema Snippets (Shopify)
+
+Shopify `{% schema %}` section snippets are supported when using the `schema` prefix followed by the input type setting name. The schema snippets inject complete input types and allow you to quickly apply the schema setting.
+
+<br>
+
+<img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/schema-snippets.png"  atl="Shopify Schema Snippets"  width="100%">
+
 
 # Support
 
