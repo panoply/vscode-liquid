@@ -14,40 +14,33 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 
 ### Features
 
-- 🆕 Liquid [CSS/SCSS](https://github.com/panoply/vscode-liquid#syntax-support), [JavaScript](https://github.com/panoply/vscode-liquid#syntax-support) and [Markdown](https://github.com/panoply/vscode-liquid#syntax-support) syntax highighting
-- Support Liquid with ES6 [Template literals](https://github.com/panoply/vscode-liquid#template-literals) ` liquid`` ` JSX strings
+- Supports Liquid CSS/SCSS, JavaScript and Markdown syntax highighting
 - Auto formatting and beautification with the powerful [PrettyDiff](https://prettydiff.com/).
-- Liquid syntax snippet auto-completion
-- Shopify sections [Schema Snippets](https://github.com/panoply/vscode-liquid#snippets) auto-completion
+- Snippet autocompletion for Liquid Tags, Filters, Shopify Schema and more!
 - HTML IntelliSense and Emmet included
 - Jekyll [Front Matter](https://jekyllrb.com/docs/front-matter) yaml syntax support
 - Shopify [Sections](https://help.shopify.com/en/themes/development/sections) tag syntax support + formatting
+- ES6 Template Literal and comment syntax injection tags
 
 ### Showcase
 
 ![showcase](https://github.com/panoply/vscode-shopify-liquid/blob/master/images/showcase.gif?raw=true)
 
-
-## Snippets
+# Snippets
 
 Liquid snippets are supported in this extension. The snippets which have been included were forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). The reason for forking this extension is to avoid conflicts due to the extension dependency it relies on.
 
-> If you have [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) installed, you can safely uninstall this extension and it's dependency.
 
-<strong>Schema Snippets (Shopify)</strong><br>
+### Schema Snippets (Shopify)
 
-Shopify `{% schema %}` section snippets are supported when using the `schema` prefix followed by the input type setting name. The `schema` snippets injects complete input types and allow you to quickly write apply the schema setting.
-
-> Schema snippets leverage [Tabstops](https://code.visualstudio.com/docs/editor/userdefinedsnippets#_tabstops).
+Shopify `{% schema %}` section snippets are supported when using the `schema` prefix followed by the input type setting name. The schema snippets inject complete input types and allow you to quickly apply the schema setting.
 
 <br>
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/schema-snippets.png"  atl="Shopify Schema Snippets"  width="100%">
 
 
-
-## Key binding
-
+# Key binding
 You can use the Liquid formatter by using the below key binding.
 
 ```
@@ -61,62 +54,44 @@ cmd + shift + L -> Format Document
 <strong>Custom keybindings</strong><br>
 *If you don't like the defaults then rebind editor.action.formatDocument in the keyboard shortcuts menu of vscode.*
 
-## Workspace Settings
+# Commands
 
-```json
+| Command                    | Description                                       |
+| -------------------------- | ------------------------------------------------- |
+| Liquid: Format File        | Formats the current file                          |
+| Liquid: Format Selection   | Formats the selected code                         |
+| Liquid: Enable Formatting  | Enable formatting of `*.html` or `*.liquid` files |
+| Liquid: Disable Formatting | Disable formatting                                |
+
+
+# Workspace Settings
+
+```jsonc
 {
+  // Controls whether formatting is enabled or disabled
   "liquid.format": true,
-  "liquid.formatIgnore": ["case"],
-  "liquid.beautify": {
-   "html": {
-      "correct": true,
-      "force_attribute": false,
-      "braces": false,
-      "preserve": 2
-    },
-    "javascript": {
-      "preserve": 1,
-      "method_chain": 0,
-      "quote_convert": "none",
-      "format_array": "indent",
-      "format_object": "indent",
-      "braces": false,
-      "no_semicolon": false,
-      "brace_block": true
-    },
-    "stylesheet": {
-      "css_insert_lines": true,
-      "preserve": 2,
-      "braces": false,
-      "brace_block": true
-    },
-    "schema": {
-      "perserve": 0,
-      "format_array": "indent",
-      "braces": true,
-      "brace_block": false,
-      "no_semicolon": true
-    }
-  }
+
+  // Controls the formatting rules
+  // Each property is uses different rule sets
+  "liquid.formatRules": {}
+
 }
 ```
 
-## Syntax Support
+# Syntax Support
 
-The extension supports liquid syntax highlighting in various languages. To support Liquid in CSS, SCSS and/or JavaScript you must append a `.liquid` extension to the filename. Additionally, Liquid syntax present within HTML `<script>` and/or `<style>` tags are also supported.
+This extension provides liquid syntax support in various languages. To support Liquid in CSS, SCSS and/or JavaScript you must append a `.liquid` extension to the filename. Additionally, Liquid code contained in HTML `<script>` and/or `<style>` tags are also supported.
+
+| Language        | Extensions                    |
+| --------------- | ----------------------------- |
+| HTML            | `.html` `.jekyll` `.liquid`   |
+| Markdown        | `.md`                         |
+| CSS             | `.css.liquid`                 |
+| SCSS            | `.scss.liquid` `sass.liquid`  |
+| JavaScript      | `.js.liquid`                  |
 
 
-| Language        | Files Extensions            |
-| --------------- | --------------------------- |
-| HTML            | `.html` `.jekyll` `.liquid` |
-| CSS             | `.css.liquid`               |
-| SCSS            | `.scss.liquid`              |
-| JavaScript      | `.js.liquid`                |
-| Markdown        | `.md`                       |
-
-
-<strong>❗Important ❗</strong><br>
-
+#### TIP
 Consider disabling HTML Validation in editor settings to prevent VS Code from validating `<style>` and `<script>` HTML tags that contain Liquid syntax:
 
 ```json
@@ -126,72 +101,97 @@ Consider disabling HTML Validation in editor settings to prevent VS Code from va
 }
 ```
 
-
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/sass-javascript.png"  atl="Liquid SCSS and Liquid JavaScript"  width="100%">
 
-
-## Template Literals
-
+### Template Literals
 The extension supports ES6 Template Strings in JavaScript. Use the ` liquid`` ` literal in your `.js` or `.ts` file and the liquid syntax will be highlighted accordingly, Example:
 
 ```javascript
-
 liquid`
 
-  {%- for tag in collection.all_tags -%}
-    {%- if current_tags contains tag -%}
-      {{ current_tags.tag | link_to_remove_tag: taggg }}
-    {%- else -%}
-      {{ current_tags.tag | link_to_add_tag: tag }}
-    {%- endif -%}
-  {%- endfor -%}
+  {%- if tag contains condition -%}
+    {% assign foo = 'bar' %}
+  {%- endif -%}
 
 `
-
 ```
 
-## Formatting
+### Comment Range
+Code located btween block comment tags `/* liquid */` and `/* endliquid */` will inject syntax highlighting support for Liquid between that range. Below is an example used in combination with ESLint.
 
-Formatting can be enable or disabled via the command palette and also respects the `editor.formatOnSave` setting. When Liquid formatting is **enabled** the extension will format any HTML (`*.html`) or Liquid (`*.liquid`) file in your workspace as it will assume these files contain Liquid syntax. You can customize how Liquid HTML is to be beautified when formatting is applied by configuring the workspace setting.
+```html
+<script>
+  /* eslint-disable */
+  /* liquid */
 
-<strong>Toggle Button</strong><br>
-When an HTML or Liquid file is open in the editor you will see the Liquid toggle button appear on the bottom right hand side of the status bar. This button will allow you to enable/disable liquid formatting.
+  {%- if condition -%}
+    {% assign foo = 'bar' %}
+  {%- endif -%}
 
-<img src="https://github.com/panoply/vscode-liquid/blob/master/images/togglebutton.png?raw=true" width="150px" style="padding-bottom:2px;">
+  /* endliquid */
+  /* eslint-enable */
+</script>
+```
 
-<br>
+# Formatting
+Formatting can be enable/disabled via the command palette and will respect the `editor.formatOnSave` setting to avoid third party extension conflicts. When Liquid formatting is **enabled** the extension will format (beautify) any HTML, Liquid or Jekyll file in your workspace as it will assume these files contain Liquid syntax.
 
-<strong>Parser</strong><br>
-Under the hood this extension uses language aware code comparison tool known as [PrettyDiff](https://prettydiff.com/). You can apply any PrettyDiff formatting [option](https://github.com/prettydiff/prettydiff/blob/master/options.md) to language specific properties of the `liquid.beautify` rules object in workspace settings.
+Formatting uses a default set of style rules which enforce a consistent coding style. You can customize the format rules and overwrite the defaults using a `.liquidrc` file or alternatively use the `liquid.formatRules` workspace setting option.
 
-<strong>Ignoring Tags</strong><br>
-Sometimes PrettyDiff will have trouble formatting your code, in this case you can apply the tag to the ignore array setting by adding the name of the tag, eg:
+### Using .liquidrc rule file
+Including a .liquid file in the root of your projects workspace is the reccomended approach for defining a custom set of formatting style rules.
 
-```json
+### Using the workspace setting option
+Rules can also be applied in your User or Workspace settings using the `liquid.formattingRules` option. Please note that if a `.liquidrc` is present in the workspace root it will runs precedence over `liquid.formattingRules` and any rules defined in your User or Workspace settings will be ignored.
+
+### Toggle and Status button
+When a HTML, Liquid and Jekyll file is open and active in the editor you will see the Liquid toggle/status button appear on the bottom right hand side of the VS Code status bar. The toggle button will allow you to enable/disable liquid formatting and open the output panel.
+
+<img src="https://github.com/panoply/vscode-liquid/blob/master/images/togglebutton.png?raw=true" width="150px">
+
+### Ignoring Tags
+Sometimes you may wish to ignore formatting certain HTML or Liquid tags. The `ignored_tags` option available to HTML ruleset accepts an array of tags you wish to exclude when formatting. Only Tags that have matching and open and close definitions are accepted.
+
+By default the formatter will ignore HTML `<script>` and `<style>` tag blocks. If you require formatting for `<script>` tags which contain no liquid code you should consider using [eslint](<[https://eslint.org](https://eslint.org/)>) and the [eslint-plugin-html](https://github.com/BenoitZugmeyer/eslint-plugin-html) with [prettier](https://prettier.io/).
+
+# Rules
+Below is a list of the default code style rules that are applied when formatting your document. Rules must be written in JSON format.
+
+```jsonc
 {
-  "liquid.formatIgnore": ["case", "head"]
+  "html": {
+    "correct": true,
+    "force_attribute": false,
+    "preserve": 2
+  },
+  "javascript": {
+    "preserve": 1,
+    "method_chain": 0,
+    "quote_convert": "none",
+    "format_array": "indent",
+    "format_object": "indent",
+    "braces": false,
+    "no_semicolon": false,
+    "brace_block": true
+  },
+  "stylesheet": {
+    "css_insert_lines": true,
+    "preserve": 2,
+    "braces": false,
+    "brace_block": true
+  },
+  "schema": {
+    "perserve": 0,
+    "format_array": "indent",
+    "braces": true,
+    "no_semicolon": true,
+    "brace_block": false
+  },
+  "frontmatter": {
+    "padding": 0
+  }
 }
 ```
-
-In the above example the contents of Liquid `{% case %}` tag and the HTML `<head>` tag will both be ignored when formatting. Only contained block tags can be applied the have both an opening and closing tag.
-
-<strong>❗Important ❗</strong><br>
-By default the formatter will ignore both the `<script>` and `{%- comment -%}` tag blocks. These tags are forcefully ignored and their contents will not be formatted due to a defect within the parser. The defect will be resolved in future versions.
-
-> If you require formatting for `<script>` tags you should consider using [eslint](<[https://eslint.org](https://eslint.org/)>) and the [eslint-plugin-html](https://github.com/BenoitZugmeyer/eslint-plugin-html) with [prettier](https://prettier.io/).
-
-#### Commands
-
-| Command                    | Description                                       |
-| -------------------------- | ------------------------------------------------- |
-| Liquid: Format File        | Formats the current file                          |
-| Liquid: Format Selection   | Formats the selected code                         |
-| Liquid: Enable Formatting  | Enable formatting of `*.html` or `*.liquid` files |
-| Liquid: Disable Formatting | Disable formatting                                |
-
-#### Rules
-
-Below is a list of the default beautification rules that will be applied when formatting.
 
 <details>
 <summary>
@@ -200,12 +200,12 @@ Below is a list of the default beautification rules that will be applied when fo
 <p>Format rules for HTML Liquid code.</p>
 <p>
 
-| Property        | Value   | Description            |
-| --------------- | ------- | ---------------------- |
-| correct     | `true`     | Corrects code |
-| indent_size     | `2`     | Tab size / indentation |
-| force_attribute | `false` | Indent HTML Attributes |
-| preserve        | integer | Lines to preserve      |
+| Property        | Default               | Description            |
+| --------------- | --------------------- | ---------------------- |
+| correct         | `true`                | Corrects code          |
+| force_attribute | `false`               | Indents HTML tag attributes to a newline |
+| preserve        | `2`                   | Lines to preserve      |
+| ignored_tags    | `["script", "style"]` | Lines to preserve      |
 
 </p>
 </details>
@@ -216,7 +216,7 @@ Below is a list of the default beautification rules that will be applied when fo
 </summary>
 <p>
 
-Format rules for JavaScript within Shopify section `{% javascript %}` tags. These rules will not be applied to content within `<script>` HTML tags, those are ignored.
+Format rules for JavaScript within Shopify section `{% javascript %}` tags. These rules will not be applied to in the formatting of HTML `<script>` tags.
 
 </p>
 <p>
@@ -272,17 +272,17 @@ Format options for JSON within Shopify section `{% schema %}` tags.
 </p>
 <p>
 
-| Property     | Default  | Description                                  |
-| ------------ | -------- | -------------------------------------------- |
-| indent_size  | `2`      | Tab size / indentation                       |
-| format_array | `indent` | Format Array, Accepts `indent` or `newline`. |
-| no_semicolon | `true` | Prevents semicons for being added |
-| brace_block | `false` | Inserts newline before and after inner content. |
+| Property     | Default  | Description                                      |
+| ------------ | -------- | ------------------------------------------------ |
+| indent_size  | `2`      | Tab size / indentation                           |
+| format_array | `indent` | Format Array, Accepts `indent` or `newline`.     |
+| no_semicolon | `true`   | Prevents semicons for being added.               |
+| brace_block  | `false`  | Inserts newline before and after inner content.  |
 
 </p>
 </details>
 
-## Support
+# Support
 
 This extension brings sufficient support of the Liquid language to VS Code. If this extension has helped your development workflow and you would like to keep it free then please consider supporting its growth and maintainance:
 
@@ -290,7 +290,7 @@ This extension brings sufficient support of the Liquid language to VS Code. If t
 **BTC**: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
 
 
-## Changelog
+# Changelog
 
 Refer to the [Changelog](https://github.com/panoply/vscode-liquid/blob/master/CHANGELOG.md) for each per-version update and/or fixes.
 
