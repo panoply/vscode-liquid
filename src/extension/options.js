@@ -1,5 +1,4 @@
-import { workspace,
-  window } from 'vscode'
+import { workspace, window } from 'vscode'
 
 /**
  * Rule Defaults
@@ -40,6 +39,25 @@ const { tabSize } = workspace.getConfiguration('editor')
 
 export const Rules = {
 
+  // Ignored Tags
+  ignore: [
+    {
+      type: 'liquid',
+      begin: 'comment',
+      end: 'endcomment'
+    },
+    {
+      type: 'html',
+      begin: 'script',
+      end: 'script'
+    },
+    {
+      type: 'html',
+      begin: 'style',
+      end: 'style'
+    }
+  ],
+
   // HTML + Liquid
   html: {
 
@@ -61,24 +79,7 @@ export const Rules = {
     preserve: 1,
 
     // Custom Rules
-    brace_block: false,
-    ignored: [
-      {
-        type: 'liquid',
-        begin: 'comment',
-        end: 'endcomment'
-      },
-      {
-        type: 'html',
-        begin: 'script',
-        end: 'script'
-      },
-      {
-        type: 'html',
-        begin: 'style',
-        end: 'style'
-      }
-    ]
+    brace_block: false
 
   },
 
@@ -91,6 +92,11 @@ export const Rules = {
         type: 'liquid',
         begin: 'schema',
         end: 'endschema'
+      },
+      {
+        type: 'html',
+        begin: 'script\\s+type="application\\/json"',
+        end: 'script'
       }
     ],
 
@@ -227,10 +233,3 @@ export const Rules = {
  * @returns {ui}
  */
 export const outputChannel = window.createOutputChannel('Liquid')
-
-/**
- * Liquid configuration settings
- *
- * @returns {object}
- */
-export const liquidConfig = workspace.getConfiguration('liquid')

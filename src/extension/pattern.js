@@ -8,7 +8,8 @@ export default class Pattern extends Config {
     super()
 
     this.pattern = {}
-    this.frontmatter = new RegExp(`---(?:[^]*?)---`, 'g')
+    this.frontmatter = new RegExp(/---(?:[^]*?)---/, 'g')
+    this.denotations = new RegExp(/(?=(<|<\/|{%-?|{{-?\s+))/, 'g')
 
   }
 
@@ -25,21 +26,39 @@ export default class Pattern extends Config {
 
     for (let lang in this.config) {
 
-      this.config[lang].hasOwnProperty('tags') && this.config[lang].tags.map(({
-        type,
-        begin,
-        end
-      }) => {
+      if (language !== 'ignore' || language !== 'html') {
 
-        if (!type) {
+        this.config[lang].hasOwnProperty('tags') && this.config[lang].tags.map(({
+          type,
+          begin,
+          end
+        }) => {
 
-          return outputChannel.appendLine(`💧Tag is missing "type" property`)
+          if (!type) {
 
-        }
+            this.outputLog({
+              title: `Error parsing "${lang} > tags > type" rule`,
+              show: true,
+              message: `Ignored tag has a missing or invalid "type" property at ${type}`
+            })
 
-        language.push(Pattern.captures(type, begin, end))
+          }
 
-      })
+          if (begin.match(this.denotations) || end.match(this.denotations)) {
+
+            this.outputLog({
+              title: `Error parsing "${lang} > tags" rule`,
+              show: true,
+              message: `Do not denote tag associations. The begin and end pattern restricts ${this.denotations}expressions.`
+            })
+
+          }
+
+          language.push(Pattern.captures(type, begin, end))
+
+        })
+
+      }
 
     }
 
@@ -51,7 +70,7 @@ export default class Pattern extends Config {
 
     const ignore = []
 
-    this.config.html.ignored.map(({
+    this.config.ignore.map(({
       type,
       begin,
       end
@@ -59,13 +78,32 @@ export default class Pattern extends Config {
 
       if (!type) {
 
-        return outputChannel.appendLine(`💧Ignored tag is missing "type" property`)
+        this.outputLog({
+          title: `Error parsing "ignore > type" rule`,
+          show: true,
+          message: `Ignored tag has a missing or invalid "type" property at ${type}`
+        })
 
       }
 
+      // if user includes denotations
+      if (begin.match(this.denotations) || end.match(this.denotations)) {
+
+        this.outputLog({
+          title: 'Error parsing "ignore" rule',
+          show: true,
+          message: `Do not denote ignored tag captures. The begin and end pattern restricts ${this.denotations} expressions.`
+        })
+
+      }
+
+      // Apply captures
       ignore.push(Pattern.captures(type, begin, end))
 
     })
+
+    ignore.push(Pattern.captures('html_comment', `liquid:disable`, `liquid:enable`))
+    ignore.push(Pattern.captures('js_comment', `liquid:disable`, `liquid:enable`))
 
     this.pattern.ignored = ignore
 
@@ -76,7 +114,9 @@ export default class Pattern extends Config {
     const pattern = {
 
       html: `(<(${begin})>)([^]*?)(</${end}>)`,
-      liquid: `({%-?\\s*(${begin}).*?\\s*-?%})([^]*?)({%-?\\s*${end}\\s*-?%})`
+      liquid: `({%-?\\s*(${begin}).*?\\s*-?%})([^]*?)({%-?\\s*${end}\\s*-?%})`,
+      html_comment: `(<!--\\s*(${begin})\\s*-->)([^]*?)(<!--\\s*${end}\\s*-->)`,
+      js_comment: `(\\/\\*\\s*(${begin})\\s*\\*\\/)([^]*?)(\\/\\*\\s*${end}\\s*\\*\\/)`
 
     }[type]
 

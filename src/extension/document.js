@@ -1,13 +1,5 @@
-import { workspace,
-  languages,
-  window,
-  ConfigurationTarget,
-  StatusBarItem,
-  StatusBarAlignment } from 'vscode'
-
-import assign from 'assign-deep'
+import { workspace, languages, window, ConfigurationTarget } from 'vscode'
 import Format from './format'
-import { liquidConfig } from './options'
 
 export default class Document extends Format {
 
@@ -16,73 +8,72 @@ export default class Document extends Format {
     super()
 
     this.handler = {}
-    this.bar = StatusBarItem
-    this.bar = window.createStatusBarItem(StatusBarAlignment.Right, -2)
-    this.isFormat = liquidConfig.format
+    this.liquidConfig = workspace.getConfiguration('liquid')
+    this.isFormat = this.liquidConfig.format
     this.fixDeprecatedSettings()
-    this.init()
-
-  }
-
-  init () {
-
     this.setFormattingRules()
     this.getPatterns()
 
   }
 
-  format () {
+  onConfigChanges () {
+
+    this.error = false
+    this.setFormattingRules()
+    this.getPatterns()
+    this.onOpenTextDocument()
+
+  }
+
+  onOpenTextDocument () {
 
     const { fileName, languageId } = window.activeTextEditor.document
 
-    if (this.handler.hasOwnProperty(fileName)) {
+    if (this.error) {
 
-      this.handler[fileName].dispose()
+      this.statusBarItem('error', true)
 
     }
 
+    // Skip if log
+    if (languageId === 'Log') return
+
+    // Hide status bar item if not HTML and return the provider early
     if (languageId !== 'html') {
 
-      this.bar.hide()
+      this.dispose()
+      this.barItem.hide()
 
       return
 
     }
 
+    // If formatOnSave editor option is false, apply its state to Liquid formatter
     if (!workspace.getConfiguration('editor').formatOnSave) {
 
       this.isFormat = false
 
     }
 
+    // Formatter is set to false, skip it
     if (!this.isFormat) {
 
-      Object.assign(this.bar, {
-        text: `💧Liquid: $(x)`,
-        command: 'liquid.enableFormatting'
-      })
-
+      // Show disabled formatter status bar
       this.dispose()
-
-      this.bar.show()
+      this.statusBarItem('disabled', true)
 
       return
 
     }
 
-    if (super.isError) {
+    // Disposal of match filename handler
+    if (this.handler.hasOwnProperty(fileName)) {
 
-      assign(this.bar, {
-        text: `⚠️ Liquid: $(x)`,
-        command: 'liquid.toggleOutput'
-      })
-
-      this.dispose()
-      this.bar.show()
-
-      return
+      this.handler[fileName].dispose()
 
     }
+
+    this.statusBarItem('enabled', true)
 
     this.handler[fileName] = languages.registerDocumentFormattingEditProvider({
       scheme: 'file',
@@ -90,13 +81,6 @@ export default class Document extends Format {
     }, {
       provideDocumentFormattingEdits: this.provider.bind(this)
     })
-
-    Object.assign(this.bar, {
-      text: `💧Liquid: $(check)`,
-      command: 'liquid.disableFormatting'
-    })
-
-    this.bar.show()
 
   }
 
@@ -110,6 +94,7 @@ export default class Document extends Format {
     } catch (error) {
 
       window.showInformationMessage('Format Failed! The selection is invalid or incomplete!')
+      throw outputChannel.appendLine(`💧Liquid: ${error}`)
 
     }
 
@@ -124,8 +109,8 @@ export default class Document extends Format {
 
     } catch (error) {
 
-      console.log(error)
       window.showInformationMessage('Document could not be formatted, check your code!')
+      throw outputChannel.appendLine(`💧Liquid: ${error}`)
 
     }
 
@@ -149,9 +134,8 @@ export default class Document extends Format {
 
     this.isFormat = true
 
-    await liquidConfig.update('format', this.isFormat, ConfigurationTarget.Global)
-    .then(() => this.init())
-    .then(() => this.format())
+    await this.liquidConfig.update('format', this.isFormat, ConfigurationTarget.Global)
+    .then(() => this.onConfigChanges())
     .then(() => window.showInformationMessage('Formatting Enabled 💧'))
 
   }
@@ -160,10 +144,9 @@ export default class Document extends Format {
 
     this.isFormat = false
 
-    await liquidConfig.update('format', this.isFormat, ConfigurationTarget.Global)
+    await this.liquidConfig.update('format', this.isFormat, ConfigurationTarget.Global)
     .then(() => this.dispose())
-    .then(() => this.init())
-    .then(() => this.format())
+    .then(() => this.onConfigChanges())
     .then(() => window.showInformationMessage('Formatting Disabled 💧'))
 
   }

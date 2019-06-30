@@ -1,8 +1,6 @@
 import { window, TextEdit, Range } from 'vscode'
 import prettydiff from 'prettydiff'
 import Pattern from './pattern'
-import chalk from 'chalk'
-import { outputChannel } from './options'
 
 export default class Format extends Pattern {
 
@@ -12,6 +10,12 @@ export default class Format extends Pattern {
    * @returns
    */
   provider (document) {
+
+    if (!this.error) {
+
+      this.statusBarItem('enabled')
+
+    }
 
     const { range, result } = this.apply(document)
 
@@ -73,7 +77,7 @@ export default class Format extends Pattern {
 
     document = this.beautify('html', document)
 
-    const remove = new RegExp(`(<temp data-prettydiff-ignore>|</temp>)`, 'g')
+    const remove = new RegExp(`(\n?<temp data-prettydiff-ignore>\n?|\n?</temp>\n?)`, 'g')
 
     if (document.match(remove)) {
 
@@ -101,8 +105,8 @@ export default class Format extends Pattern {
   ) {
 
     const format = this.beautify(name, source)
-    const pad = prettydiff.options.brace_block ? `\n\n` : `\n`
-    const output = `${open}${pad}${format}${pad}${close}`
+    const newline = prettydiff.options.brace_block ? `\n\n` : `\n`
+    const output = open + newline + format + newline + close
 
     return Format.ignore(output)
 
@@ -128,21 +132,36 @@ export default class Format extends Pattern {
 
       if (prettydiff.sparser.parseerror.length > 0) {
 
-        return outputChannel.appendLine(`💧${prettydiff.sparser.parseerror}`)
+        this.statusBarItem('error')
+
+        this.outputLog({
+          title: 'PrettyDiff',
+          message: `${prettydiff.sparser.parseerror}`
+        })
+
+        return source
+
+      } else {
+
+        return content
 
       }
-
-      return content
 
     } catch (error) {
 
       if (prettydiff.sparser.parseerror.length > 0) {
 
-        outputChannel.appendLine(`💧${prettydiff.sparser.parseerror}`)
+        this.outputLog({
+          title: 'PrettyDiff',
+          message: `${prettydiff.sparser.parseerror}`
+        })
 
       }
 
-      throw outputChannel.appendLine(chalk`💧{red ${error}}`)
+      return this.outputLog({
+        title: 'Error',
+        message: `${error.message}`
+      })
 
     }
 
@@ -164,9 +183,19 @@ export default class Format extends Pattern {
   /**
    * @param {string} code
    */
-  static ignore (code) {
+  static ignore (
+    code, open, name, source, close
+  ) {
 
-    return `<temp data-prettydiff-ignore>${code}</temp>`
+    if (name === 'liquid:disable' || name === 'liquid:enable') {
+
+      return `${open}\n<temp data-prettydiff-ignore>\n${source}\n</temp>\n${close}`
+
+    } else {
+
+      return `\n<temp data-prettydiff-ignore>\n${code}\n</temp>\n`
+
+    }
 
   }
 
