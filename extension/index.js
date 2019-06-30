@@ -628,10 +628,8 @@ class Pattern extends Config {
 
     });
 
-    const prefix = `liquid-formatting`;
-
-    ignore.push(Pattern.captures('html_comment', `${prefix}-disable`, `${prefix}-enable`));
-    ignore.push(Pattern.captures('js_comment', `${prefix}-disable`, `${prefix}-enable`));
+    ignore.push(Pattern.captures('html_comment', `liquid:disable`, `liquid:enable`));
+    ignore.push(Pattern.captures('js_comment', `liquid:disable`, `liquid:enable`));
 
     this.pattern.ignored = ignore;
 
@@ -713,7 +711,7 @@ class Format extends Pattern {
 
       if (document.match(this.pattern.ignored[i])) {
 
-        document = document.replace(this.pattern.ignored[i], Format.ignoreReplace);
+        document = document.replace(this.pattern.ignored[i], Format.ignore);
 
       }
 
@@ -730,9 +728,8 @@ class Format extends Pattern {
     }
 
     document = this.beautify('html', document);
-    console.log(document);
 
-    const remove = new RegExp(`(<div data-prettydiff-ignore>|</div>)`, 'g');
+    const remove = new RegExp(`(\n?<temp data-prettydiff-ignore>\n?|\n?</temp>\n?)`, 'g');
 
     if (document.match(remove)) {
 
@@ -789,14 +786,18 @@ class Format extends Pattern {
 
         this.statusBarItem('error');
 
-        return this.outputLog({
+        this.outputLog({
           title: 'PrettyDiff',
           message: `${prettydiff.sparser.parseerror}`
-        })
+        });
+
+        return source
+
+      } else {
+
+        return content
 
       }
-
-      return content
 
     } catch (error) {
 
@@ -831,25 +832,22 @@ class Format extends Pattern {
 
   }
 
-  static ignoreReplace (
-    code,
-    open,
-    name,
-    source,
-    close
-  ) {
-
-    const output = `<div data-prettydiff-ignore>` + source + `</div>`;
-
-    return Format.ignore(output)
-
-  }
   /**
    * @param {string} code
    */
-  static ignore (code) {
+  static ignore (
+    code, open, name, source, close
+  ) {
 
-    return `<div data-prettydiff-ignore>${code}</div>`
+    if (name === 'liquid:disable' || name === 'liquid:enable') {
+
+      return `${open}\n<temp data-prettydiff-ignore>\n${source}\n</temp>\n${close}`
+
+    } else {
+
+      return `\n<temp data-prettydiff-ignore>\n${code}\n</temp>\n`
+
+    }
 
   }
 
