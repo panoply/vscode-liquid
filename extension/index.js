@@ -13,6 +13,7 @@ var fs = _interopDefault(require('fs'));
  *
  * @export
  * @class Utils
+ * @extends Deprecations
  */
 class Utils {
 
@@ -86,13 +87,9 @@ class Utils {
  *
  * @returns {object}
  */
-
-const { tabSize } = vscode.workspace.getConfiguration('editor');
-
 const Rules = {
 
   // Ignored Tags
-
   ignore: [
     {
       type: 'liquid',
@@ -123,7 +120,7 @@ const Rules = {
     lexer: 'markup',
 
     // Editor Specific
-    indent_size: tabSize,
+    indent_size: vscode.workspace.getConfiguration('editor').tabSize,
 
     // Exposed Default Rules
     correct: true,
@@ -162,7 +159,7 @@ const Rules = {
     lexer: 'script',
 
     // Editor Specific
-    indent_size: tabSize,
+    indent_size: vscode.workspace.getConfiguration('editor').tabSize,
 
     // Exposed Default Rules
     format_array: 'indent',
@@ -196,7 +193,7 @@ const Rules = {
     lexer: 'style',
 
     // Editor Specific
-    indent_size: tabSize,
+    indent_size: vscode.workspace.getConfiguration('editor').tabSize,
 
     // Exposed Default Rules
     css_insert_lines: true,
@@ -230,7 +227,7 @@ const Rules = {
     language: 'css',
 
     // Editor Specific
-    indent_size: tabSize,
+    indent_size: vscode.workspace.getConfiguration('editor').tabSize,
 
     // Exposed Default Rules
     css_insert_lines: true,
@@ -262,7 +259,7 @@ const Rules = {
     lexer: 'script',
 
     // Editor Specific
-    indent_size: tabSize,
+    indent_size: vscode.workspace.getConfiguration('editor').tabSize,
 
     // Exposed Default Rules
     preserve: 1,
@@ -296,6 +293,7 @@ class Config extends Utils {
     super();
 
     this.config = Rules;
+    this.liquid = vscode.workspace.getConfiguration('liquid');
     this.rcfile = path.join(vscode.workspace.rootPath, '.liquidrc');
     this.watching = false;
     this.error = false;
@@ -306,9 +304,6 @@ class Config extends Utils {
    * Defines where formatting rules are sourced.
    * Looks for rules defined in a `.liquirc` file and if
    * no file present will default to workspace settings.
-   *
-   * @returns Assigned Rules to `this.config` object
-   *
    */
   setFormattingRules () {
 
@@ -318,9 +313,9 @@ class Config extends Utils {
     if (!liquid.get('useRuleFile')) {
 
       // Deep assignment
-      assign(this.config, liquid.rules);
+      this.config = assign(this.config, liquid.rules);
 
-      return
+      return true
 
     }
 
@@ -363,13 +358,7 @@ class Config extends Utils {
 
       const watch = vscode.workspace.createFileSystemWatcher(this.rcfile, true, false, false);
 
-      watch.onDidChange(() => {
-
-        console.log('HELLO');
-
-        this.setFormattingRules();
-
-      });
+      watch.onDidChange(() => this.setFormattingRules());
       watch.onDidDelete(() => this.setFormattingRules());
 
       this.watching = true;
@@ -387,128 +376,35 @@ class Config extends Utils {
   getRuleByTagName (tag) {
 
     // skip iteration if tag equals html
-    if (tag === 'html') return this.config.html
+    if (tag === 'html') {
+
+      return this.config.html
+
+    }
 
     let rules;
 
     // loop over each language prop
-    for (let language in this.config) {
+    for (let lang in this.config) {
 
-      if (language !== 'ignore' || language !== 'html') {
+      if (lang !== 'ignore' || lang !== 'html') {
 
         // filters out object without a `tags` prop, eg: `html`
-        if (this.config[language].hasOwnProperty('tags')) {
+        this.config[lang].hasOwnProperty('tags') && this.config[lang].tags.map(i => {
 
-          this.config[language].tags.map(i => {
+          if (i.begin === tag) {
 
-            if (i.begin === tag) {
+            rules = this.config[lang];
 
-              rules = this.config[language];
+          }
 
-            }
-
-          });
-
-        }
+        });
 
       }
 
     }
 
     return rules
-
-  }
-
-  fixDeprecatedSettings () {
-
-    const liquid = vscode.workspace.getConfiguration('liquid');
-
-    if (!fs.existsSync(this.rcfile) && liquid.get('beautify')) {
-
-      if (liquid.get('formatIgnore')) {
-
-        return this.fixDeprecatedIgnore(liquid)
-
-      } else {
-
-        return this.fixDeprecatedRules(liquid)
-
-      }
-
-    }
-
-  }
-
-  fixDeprecatedIgnore (liquid) {
-
-    vscode.window.showInformationMessage('Do you want to continue?', {
-      modal: true
-    }, 'Yes', 'No');
-
-    vscode.window.showInformationMessage(`The "liquid.formatIgnore" workspace setting has been deprecated. Ignored tags are now defined within the html.ignore formatting ruleset and use a new definition schema. Please re-define your ignored tags.`, 'Learn more', 'Next').then((selected) => {
-
-      if (selected === 'Next') {
-
-        liquid.update('formatIgnore', undefined, true);
-        return this.fixDeprecatedRules(liquid)
-
-      }
-
-      if (selected === 'Learn More') {
-
-        this.outputChannel.append(``);
-
-      }
-
-    });
-
-  }
-
-  fixDeprecatedRules (liquid) {
-
-    vscode.window.showInformationMessage(`Liquid formatting rules can now be defined using a .liquidrc file. Would you like to generate one based on your current beautify ruleset?`,
-      `Yes, (Recommended)`,
-      'No').then((selected) => {
-
-      const content = {
-        ignore: liquid.rules.ignore,
-        html: liquid.beautify.html || liquid.rules.html,
-        js: liquid.beautify.javascript || liquid.rules.js,
-        scss: liquid.beautify.stylesheet || liquid.rules.scss,
-        css: liquid.beautify.stylesheet || liquid.rules.css,
-        json: liquid.beautify.schema || liquid.rules.json
-      };
-
-      if (selected !== 'No') {
-
-        const json = JSON.stringify(content, null, 2);
-
-        fs.writeFile(this.rcfile, json, (error) => {
-
-          if (error) {
-
-            this.outputChannel.appendLine(`${error}`);
-
-            this.outputLog({
-              title: 'Error generating rules',
-              file: this.rcfile,
-              message: error.message
-            });
-            return vscode.window.showErrorMessage('An error occured while generating the .liquidrc rule file.', 'Details', () => this.outputChannel.show())
-
-          }
-
-        });
-
-      } else {
-
-        liquid.update('rules', content, true);
-
-      }
-
-      liquid.update('beautify', undefined, true);
-
-    });
 
   }
 
@@ -548,32 +444,6 @@ class Pattern extends Config {
 
     this.getdocumentTagsPattern();
     this.getIgnoreTagsPattern();
-
-  }
-
-  /**
-   * Regex pattern helper to generate tag pattern
-   * matches when formatting.
-   *
-   * @param {"string"} type The type of pattern to generate
-   * @param {"string"} [begin] The begin tag name (optional)
-   * @param {"string"} [end] The end tag name (optional)
-   * @returns RegExp regular expression
-   */
-
-  static captures (type, begin, end) {
-
-    const pattern = {
-
-      frontmatter: '---(?:[^]*?)---',
-      ignore: '(<temp data-prettydiff-ignore>|</temp>)',
-      denotations: '(?=(<|<\\/|{%-?|{{-?\\s+))',
-      html: `(<(${begin})>)([^]*?)(</${end}>)`,
-      liquid: `({%-?\\s*(${begin}).*?\\s*-?%})([^]*?)({%-?\\s*${end}\\s*-?%})`
-
-    }[type];
-
-    return new RegExp(pattern, 'g')
 
   }
 
@@ -671,12 +541,35 @@ class Pattern extends Config {
 
   }
 
+  /**
+   * Regex pattern helper to generate tag pattern
+   * matches when formatting.
+   *
+   * @param {"string"} type The type of pattern to generate
+   * @param {"string"} [begin] The begin tag name (optional)
+   * @param {"string"} [end] The end tag name (optional)
+   * @returns RegExp regular expression
+   */
+  static captures (type, begin, end) {
+
+    const pattern = {
+
+      frontmatter: '---(?:[^]*?)---',
+      ignore: '(<temp data-prettydiff-ignore>|</temp>)',
+      denotations: '(?=(<|<\\/|{%-?|{{-?\\s+))',
+      html: `(<(${begin})>)([^]*?)(</${end}>)`,
+      liquid: `({%-?\\s*(${begin}).*?\\s*-?%})([^]*?)({%-?\\s*${end}\\s*-?%})`
+
+    }[type];
+
+    return new RegExp(pattern, 'g')
+
+  }
+
 }
 
 /**
- * Formatter
- *
- * Formats the `activeTextDocument`
+ * Applies formatting to the document
  *
  * @class Format
  * @extends {Pattern}
@@ -687,7 +580,6 @@ class Format extends Pattern {
    * Formatting provider function
    *
    * @param {Object} document The VSCode document
-   * @returns {Array} The formatted range of code
    * @memberof Format
    */
   provider (document) {
@@ -698,7 +590,8 @@ class Format extends Pattern {
 
     }
 
-    const { range, result } = this.apply(document);
+    const range = Format.range(document);
+    const result = this.apply(document.getText(range));
 
     return [
       vscode.TextEdit.replace(range, `${result.trim()}`)
@@ -707,31 +600,12 @@ class Format extends Pattern {
   }
 
   /**
-   * Apply formatting to the document
+   * Applies the formatting and beautification
    *
-   * @param {Object} document The VSCode document
+   * @param {string} document The current document   *
    * @memberof Format
    */
   apply (document) {
-
-    const range = Format.range(document);
-    const result = this.code(document.getText(range));
-
-    return {
-      range,
-      result
-    }
-
-  }
-
-  /**
-   * Applies the formatting and beautification
-   *
-   * @param {string} document The current document
-   * @returns The newly formatted code
-   * @memberof Format
-   */
-  code (document) {
 
     if (document.match(this.frontmatter)) {
 
@@ -753,7 +627,7 @@ class Format extends Pattern {
 
       if (document.match(this.pattern.tags[i])) {
 
-        document = document.replace(this.pattern.tags[i], this.tagCaptures.bind(this));
+        document = document.replace(this.pattern.tags[i], this.tags.bind(this));
 
       }
 
@@ -772,7 +646,7 @@ class Format extends Pattern {
   }
 
   /**
-   * Applies formatting to matched tags
+   * Applies formatting to captured tag blocks
    *
    * @param {"string"} code The full tag match
    * @param {"string"} open the open tag (begin), eg: `<div>`
@@ -781,7 +655,7 @@ class Format extends Pattern {
    * @param {"string"} close the close tag (end), eg: `</div>`
    * @memberof Format
    */
-  tagCaptures (
+  tags (
     code,
     open,
     name,
@@ -798,6 +672,8 @@ class Format extends Pattern {
   }
 
   /**
+   * Executes formatting
+   *
    * @param {string} rule
    * @param {string} source
    */
@@ -851,7 +727,38 @@ class Format extends Pattern {
   }
 
   /**
-   * @param {object} document
+   * Formats the entire document
+   *
+   * @memberof Format
+   */
+  completeDocument () {
+
+    const { document } = vscode.window.activeTextEditor;
+    const { range, result } = this.provider(document);
+
+    vscode.window.activeTextEditor.edit(code => code.replace(range, result));
+
+  }
+
+  /**
+   * Format the selected (highlighted) text
+   *
+   * @memberof Format
+   */
+  selectedText () {
+
+    const { document, selection } = vscode.window.activeTextEditor;
+    const format = this.code(document.getText(selection));
+
+    vscode.window.activeTextEditor.edit(code => code.replace(selection, format));
+
+  }
+
+  /**
+   * Get the formatting range
+   *
+   * @param {Object} document The vscode document
+   * @memberof Format
    */
   static range (document) {
 
@@ -864,7 +771,10 @@ class Format extends Pattern {
   }
 
   /**
-   * @param {string} code
+   * Apply ignore wrapper to code
+   *
+   * @param {"string"} code
+   * @memberof Format
    */
   static ignore (code) {
 
@@ -872,47 +782,24 @@ class Format extends Pattern {
 
   }
 
-  /**
-   * Document Formatting
-   *
-   * @returns
-   */
-  document () {
-
-    const { document } = vscode.window.activeTextEditor;
-    const { range, result } = this.apply(document);
-
-    console.log(document);
-    vscode.window.activeTextEditor.edit(code => code.replace(range, result));
-
-  }
-
-  /**
-   * Selection Formatting
-   *
-   * @returns
-   */
-  selection () {
-
-    const { document, selection } = vscode.window.activeTextEditor;
-    const format = this.code(document.getText(selection));
-
-    vscode.window.activeTextEditor.edit(code => code.replace(selection, format));
-
-  }
-
 }
 
+/**
+ * Document intializer class
+ *
+ * @class Document
+ * @extends {Format}
+ */
 class Document extends Format {
 
-  constructor () {
+  constructor (deprecations) {
 
     super();
 
     this.handler = {};
-    this.liquidConfig = vscode.workspace.getConfiguration('liquid');
-    this.isFormat = this.liquidConfig.format;
-    this.fixDeprecatedSettings();
+    this.deprecate = deprecations;
+    this.isFormat = this.liquid.format;
+    this.deprecate.check();
     this.setFormattingRules();
     this.getPatterns();
 
@@ -1028,7 +915,7 @@ class Document extends Format {
 
     try {
 
-      super.selection();
+      this.selectedText();
       vscode.window.showInformationMessage('Selection Formatted 💧');
 
     } catch (error) {
@@ -1049,7 +936,7 @@ class Document extends Format {
 
     try {
 
-      super.document();
+      this.completeDocument();
       vscode.window.showInformationMessage('Document Formatted 💧');
 
     } catch (error) {
@@ -1081,7 +968,7 @@ class Document extends Format {
 
     this.isFormat = true;
 
-    await this.liquidConfig.update('format', this.isFormat, vscode.ConfigurationTarget.Global)
+    await this.liquid.update('format', this.isFormat, vscode.ConfigurationTarget.Global)
     .then(() => this.onConfigChanges())
     .then(() => this.onOpenTextDocument())
     .then(() => vscode.window.showInformationMessage('Formatting Enabled 💧'));
@@ -1097,7 +984,7 @@ class Document extends Format {
 
     this.isFormat = false;
 
-    await this.liquidConfig.update('format', this.isFormat, vscode.ConfigurationTarget.Global)
+    await this.liquid.update('format', this.isFormat, vscode.ConfigurationTarget.Global)
     .then(() => this.dispose())
     .then(() => this.onConfigChanges())
     .then(() => vscode.window.showInformationMessage('Formatting Disabled 💧'));
@@ -1106,19 +993,114 @@ class Document extends Format {
 
 }
 
-const { registerCommand } = vscode.commands;
+/**
+ * Fixes deprecated settings in previous versions
+ *
+ * @class Deprecations
+ * @extends Config
+ */
+class Deprecations extends Config {
+
+  check () {
+
+    if (!fs.existsSync(this.rcfile) && this.liquid.get('beautify')) {
+
+      return this.liquid.get('formatIgnore') ? this.ignores() : this.rules()
+
+    }
+
+  }
+
+  ignores () {
+
+    vscode.window.showInformationMessage('Do you want to continue?', {
+      modal: true
+    }, 'Yes', 'No');
+
+    vscode.window.showInformationMessage(`The "liquid.formatIgnore" workspace setting has been deprecated. Ignored tags are now defined within the html.ignore formatting ruleset and use a new definition schema. Please re-define your ignored tags.`, 'Learn more', 'Next').then((selected) => {
+
+      if (selected === 'Next') {
+
+        this.liquid.update('formatIgnore', undefined, true);
+
+        return this.rules(liquid)
+
+      } else if (selected === 'Learn More') {
+
+        this.outputLog({
+          title: 'Ignored Tags',
+          show: true,
+          message: 'Ignored tags now use a new defintion schema. As of version 2.0.0 you should now define ignore rules to the "ignore" property.'
+        });
+
+      }
+
+    });
+
+  }
+
+  rules (liquid) {
+
+    vscode.window.showInformationMessage(`Liquid formatting rules can now be defined using a .liquidrc file. Would you like to generate one based on your current beautify ruleset?`,
+      'No', 'Yes, (Recommended)').then((selected) => {
+
+      const content = {
+        ignore: liquid.rules.ignore,
+        html: liquid.beautify.html || liquid.rules.html,
+        js: liquid.beautify.javascript || liquid.rules.js,
+        scss: liquid.beautify.stylesheet || liquid.rules.scss,
+        css: liquid.beautify.stylesheet || liquid.rules.css,
+        json: liquid.beautify.schema || liquid.rules.json
+      };
+
+      if (selected === 'Yes, (Recommended)') {
+
+        const json = JSON.stringify(content, null, 2);
+
+        fs.writeFile(this.rcfile, json, (error) => {
+
+          error && this.outputLog({
+            title: 'Error generating rules',
+            file: this.rcfile,
+            message: error.message,
+            show: true
+          });
+
+        });
+
+      } else if (selected === 'No') {
+
+        liquid.update('rules', content, true);
+
+      }
+
+      liquid.update('beautify', undefined, true);
+
+    });
+
+  }
+
+}
 
 /**
- * Active the vscode-liquid extension
+ * vscode-liquid
+ *
+ * @author Nikolas Savvidis
+ * @version 2.x.x
  */
 exports.activate = context => {
 
+  const { registerCommand } = vscode.commands;
   const sub = context.subscriptions;
   const active = vscode.window.activeTextEditor;
 
   if (!active || !active.document) return
 
-  const document = new Document();
+  // Fix Deprecations
+  const deprecations = new Deprecations();
+
+  // Get Document
+  const document = new Document(deprecations);
 
   // Workspace
   sub.push(vscode.workspace.onDidChangeConfiguration(document.onConfigChanges.bind(document)));
