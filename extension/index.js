@@ -1109,7 +1109,7 @@ class Document extends Format {
 const { registerCommand } = vscode.commands;
 
 /**
- * # ACTIVATE EXTENSION
+ * Active the vscode-liquid extension
  */
 exports.activate = context => {
 
