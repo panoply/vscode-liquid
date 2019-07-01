@@ -37,8 +37,7 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
   - [Toggle and Status button](#toggle-and-status-button)
   - [Include Tags](#include-tags)
   - [Ignored Tags](#ignored-tags)
-    - [Global Ignores](#global-ignores)
-    - [Comment Ignores](#comment-ignores)
+  - [Global Ignores](#global-ignores)
   - [Key Binding](#key-bindind)
   - [Rules](#rules)
 - [Snippets](#snippets)
@@ -141,6 +140,7 @@ The are some situations where you may want to apply language formatting to a spe
 Behing these secenes this is how the extension applies formatting to the tag blocks `{% javascript %}`, `{% schema %}`, `{% stylesheet %}`, and `{% style %}` that are used in Shopify's Liquid variation.
 
 <strong>Example</strong>
+
 ```jsonc
 {
  "scss": {
@@ -194,49 +194,6 @@ Global ignores must have matching open and close definition tags and are defined
 }
 ```
 > Do not include tag denotations (eg: `<`, `>`, `</`, `{%`, `%}`) when defining **begin** and **end** capture expressions. The `type` property defines the denotations of the tag.
-
-#### Comment Ignores
-Comment ignores can be included inline and will disable formatting when encounted by the parser. There are 3 different comment ignores that you can leverage depending on language.
-
-```html
-
-<!-- liquid-format-disable -->
-
-{% if condition %}
-{% assign class = '.foo { font-size: 20px; }' %}
-{% capture ignore %} foo: 'bar' {% endcapture %}
-{% endif %}
-
-<!-- liquid-format-enable -->
-
-<style>
-
-/* liquid-format-disable */
-
-{{ class }}
-
-/* liquid-format-enable */
-
-.bar {
-  padding: 50px;
-  margin: 50px;
-}
-
-</style>
-
-<script>
-
-/* liquid-format-disable */
-const prop = {{ ignore | append: '{' | prepend: '}' }}
-/* liquid-format-enable */
-
-if(prop.foo === 'bar') {
-  console.log(foo)
-}
-
-</script>
-
-```
 
 # Rules
 Below is the default code style formatting rules. You can include this using a `.liquidrc` file in the root of your project or via the`"liquid.rules"` option in workspace settings.
@@ -306,7 +263,7 @@ Below is the default code style formatting rules. You can include this using a `
 
 <details>
 <summary>
-  <strong>IGNORE</strong>
+  <strong>Ignore</strong>
 </summary>
 
 <p>HTML or Liquid tags that the formatter will ignore. See [Ignoring Tags](#ignoring-tags) for more information.</p>
@@ -331,11 +288,11 @@ Below is the default code style formatting rules. You can include this using a `
 
 <p>
 
-| Property        | Default                 | Description            |
-| --------------- | ---------------------   | ---------------------- |
-| correct         | `true`                  | Corrects code          |
-| force_attribute | `false`                 | Indents HTML tag attributes to a newline |
-| preserve        | `2`                     | Lines to preserve             |
+| Property        | Default   | Description                              |
+| --------------- | ----------| ---------------------------------------- |
+| correct         | `true`    | Corrects code                            |
+| force_attribute | `false`   | Indents HTML tag attributes to a newline |
+| preserve        | `2`       | Lines to preserve                        |
 
 </p>
 </details>
@@ -347,7 +304,7 @@ Below is the default code style formatting rules. You can include this using a `
 
 <p>Format rules for JavaScript code. This ruleset controls formatting for tags like the shopify section `{% javascript %}` tags. These rules will also be applied to HTML `<script></script>` tags and JavaScript files that use the `.js.liquid` extension name.</p>
 
-<p><strong>Currently liquid syntax contained within `<script></script>` tags and `.js.liquid` files will cause formatting to fail, so please avoid formatting JavaScript which contains Liquid or use the comment ignore tags.</strong></p>
+<p><strong>Currently liquid syntax contained within `<script></script>` tags and `.js.liquid` files will cause formatting to fail, so please avoid formatting JavaScript which contains Liquid.</strong></p>
 
 <p>
 
@@ -361,9 +318,9 @@ Below is the default code style formatting rules. You can include this using a `
 | format_object | `indent` | Format Object, Accepts `indent` or `newline`         |
 | comment_line  | `false`  | If a blank new line should be forced above comments. |
 | else_line     | `false`  | If keyword 'else' is forced onto a new line          |
-| no_semicolon | `false`   | Prevents semicons for being added |
+| no_semicolon  | `false`   | Prevents semicons for being added                   |
 | brace_block   | `true`   | Inserts newline before and after inner content.      |
-| tags         | `[]`      | An array of included tags     |
+| tags          | `[]`      | An array of included tags                           |
 
 </p>
 </details>
@@ -375,17 +332,17 @@ Below is the default code style formatting rules. You can include this using a `
 
 <p>Format rules for CSS code. This ruleset controls formatting for tags like the shopify `{% style %}` and shopify section `{% stylesheet %}` tags. These rules will also be applied to HTML `<style></style>` tags and files that use the `.css.liquid` extension name.</p>
 
-<p><strong>Currently liquid syntax contained within `<style></style>` tags and `.css.liquid` files will cause formatting to fail, so please avoid formatting CSS which contains Liquid or use the comment ignore tags.</strong></p>
+<p><strong>Currently liquid syntax contained within `<style></style>` tags and `.css.liquid` files will cause formatting to fail, so please avoid formatting CSS which contains Liquid.</strong></p>
 
 <p>
 
-| Property         | Default | Description                      |
-| ---------------- | ------- | -------------------------------- |
-| indent_size      | `2`     | Tab size / indentation           |
-| css_insert_lines | `true`  | Should use new lines in CSS/SCSS |
-| preserve         | `2`     | Lines to preserve                |
+| Property         | Default | Description                                     |
+| ---------------- | ------- | ----------------------------------------------- |
+| indent_size      | `2`     | Tab size / indentation                          |
+| css_insert_lines | `true`  | Should use new lines in CSS/SCSS                |
+| preserve         | `2`     | Lines to preserve                               |
 | brace_block      | `true`  | Inserts newline before and after inner content. |
-| tags         | `[]`      | An array of included tags     |
+| tags             | `[]`    | An array of included tags                       |
 
 </p>
 
@@ -399,7 +356,7 @@ Below is the default code style formatting rules. You can include this using a `
 
 <p>Format rules for SCSS and SASS code. This ruleset controls formatting for tags like the shopify section `{% stylesheet 'scss' %}` tag. These rules will also be applied to files that use the `.scss.liquid` or `sass.liquid` extension name.</p>
 
-<p><strong>Currently liquid syntax contained within `.scss.liquid` or `.sass.` files will cause formatting to fail, so please avoid formatting SCSS/SASS which contains Liquid or use the comment ignore tags.</strong></p>
+<p><strong>Currently liquid syntax contained within `.scss.liquid` or `.sass.` files will cause formatting to fail, so please avoid formatting SCSS/SASS which contains Liquid.</strong></p>
 
 <p>
 
@@ -409,7 +366,7 @@ Below is the default code style formatting rules. You can include this using a `
 | css_insert_lines | `true`  | Should use new lines in CSS/SCSS |
 | preserve         | `2`     | Lines to preserve                |
 | brace_block      | `true`  | Inserts newline before and after inner content. |
-| tags         | `[]`      | An array of included tags     |
+| tags             | `[]`    | An array of included tags     |
 
 </p>
 
@@ -465,7 +422,7 @@ Shopify `{% schema %}` section snippets are supported when using the `schema` pr
 
 # Support this extension!
 
-This extension brings sufficient support of the Liquid language to VS Code and aims to provide a well integrated IDE experience for developers using all variations of the language. Prior to the release of this extension, Liquid support in vscode and text editors in general was extremely limited with developers stuck using outdated and sometimes broken solutions.
+This extension brings sufficient support of the Liquid language to VS Code and aims to provide a well integrated IDE experience for developers using all variations of the language. Prior to the release of this extension Liquid support in vscode and text editors in general was extremely limited with developers stuck using outdated and sometimes broken solutions.
 
 Developing this extension has taken a considerable amount of time. If it has helped your development workflow and you would like to keep it free of cost then please consider supporting its growth and maintainance:
 
