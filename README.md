@@ -9,15 +9,16 @@
 
 # Liquid <small style="color:#999;">(vs code)</small>
 
-A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax support and highlighting for Liquid in HTML, JavaScript, CSS, SCSS and Markdown languages, Formatting and beautification, advanced snippet auto-completion, HTML Intellisense and more!
+A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support for Liquid in HTML, JavaScript, CSS, SCSS and Markdown (just to name a few). Ships with auto formatting and beautification, advanced snippet auto-completion and respects VS Codes native Intellisense, hover and diagnotics features.
 
 
 ### Key Features
 
-- Syntax support for Liquid in CSS, SCSS, JavaScript and Markdown languages
-- Auto formatting and beautification with the powerful [PrettyDiff](https://prettydiff.com/).
-- Snippet autocompletion for Liquid Tags, Filters, Shopify Schema and more!
+- Syntax support for Liquid in CSS, SCSS, JavaScript, Markdown  and more!
+- Auto formatting and beautification with the powerful [PrettyDiff](https://prettydiff.com/) compiler.
+- Snippet auto-completion for Liquid Tags, Filters, Shopify Schema and more!
 - Shopify [Sections](https://help.shopify.com/en/themes/development/sections) tag syntax support + formatting
+
 
 ### Showcase
 
@@ -30,14 +31,12 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 - [Workspace Settings](#workspace-setting)
 - [Syntax Support](#syntax-support)
   - [Template Literals](#template-literals)
-  - [Comment Injection Range](#comment-injection-range)
 - [Formatting](#formatting)
   - [Using .liquidrc rule file](#using-liquidrc-rule-file)
   - [Using the workspace setting option](#using-the-workspace-setting-option)
   - [Toggle and Status button](#toggle-and-status-button)
-  - [Include Tags](#include-tags)
+  - [Tag Associations](#tag-associations)
   - [Ignored Tags](#ignored-tags)
-  - [Global Ignores](#global-ignores)
   - [Key Binding](#key-bindind)
   - [Rules](#rules)
 - [Snippets](#snippets)
@@ -67,16 +66,23 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 
 # Syntax Support
 
-This extension provides liquid syntax support in various languages. To support Liquid in CSS, SCSS and/or JavaScript you must append a `.liquid` extension to the filename. Additionally, Liquid code contained in HTML `<script>` and/or `<style>` tags are also supported.
+This extension provides liquid syntax support in various languages. It leverages grammar injection, they payoff by using Grammar injections is that we don't loose any of  VS Codes awesome features like IntelliSense, Auto Complete, Hover and Diagnostics. Writing Liquid in CSS, SCSS and/or JavaScript is generally done by appending a `.liquid` extension to the filename, this is optional though, Liquid syntax is supported with or without the `.liquid` extension of files.
 
-| Language        | Extensions                    |
-| --------------- | ----------------------------- |
-| HTML            | `.html` `.jekyll` `.liquid`   |
-| Markdown        | `.md`                         |
-| CSS             | `.css.liquid`                 |
-| SCSS            | `.scss.liquid` `sass.liquid`  |
-| JavaScript      | `.js.liquid`                  |
+Additionally, Liquid code contained in HTML `<script>` and/or `<style>` tags also support liquid syntax highlighting.
 
+<strong>Supported Languages</strong>
+
+| Language        | Extensions                                     |
+| --------------- | ---------------------------------------------- |
+| HTML            | `.html` `.jekyll` `.liquid`                    |
+| Markdown        | `.md`                                          |
+| CSS             | `.css` `.css.liquid`                           |
+| SCSS            | `.scss` `.scss.liquid` `.sass` `sass.liquid`   |
+| JavaScript      | `.js` `.js.liquid`                             |
+| TypeScript      | `.ts` `.ts.liquid`                             |
+| JSX             | `.jsx`                                         |
+
+If you would like Liquid syntax support for a certain language or file extension please submit a feature request.
 
 <strong>HTML Validation</strong>
 Consider disabling HTML Validation in editor settings to prevent VS Code from validating `<style>` and `<script>` HTML tags that contain Liquid syntax:
@@ -103,28 +109,13 @@ liquid`
 `
 ```
 
-### Comment Injection Range
-Code located btween block comment tags `/* liquid */` and `/* endliquid */` will inject syntax highlighting support for Liquid between that range. Below is an example used in combination with ESLint.
-
-```js
-/* eslint-disable */
-/* liquid */
-
-{%- if condition -%}
-  {% assign foo = 'bar' %}
-{%- endif -%}
-
-/* endliquid */
-/* eslint-enable */
-```
-
 # Formatting
 Formatting can be enable/disabled via the command palette and will respect the `editor.formatOnSave` setting to avoid third party extension conflicts. When Liquid formatting is **enabled** the extension will format (beautify) any HTML, Liquid or Jekyll file in your workspace as it will assume these files contain Liquid syntax.
 
 Formatting uses a default set of style rules which enforce a consistent coding style. You can customize the format rules and overwrite the defaults using a `.liquidrc` file or alternatively use the `liquid.formatRules` workspace setting option.
 
 ### Using .liquidrc rule file
-Including a .liquid file in the root of your projects workspace is the **reccomended approach** for defining a custom set of formatting style rules.
+Including a .liquid file in the root of your projects workspace is the **reccomended approach** for defining a custom set of formatting style rules. This approach allows you to easily control formatting options to best fit your code style quirks.
 
 ### Using the workspace setting option
 Rules can also be applied in your User or Workspace settings using the `liquid.rules` option. Please note that if a `.liquidrc` is present in your projects root it will run precedence over rules defined in workspace settings.
@@ -135,9 +126,7 @@ When a HTML, Liquid and Jekyll file is open and active in the editor you will se
 <img src="https://github.com/panoply/vscode-liquid/blob/master/images/togglebutton.png?raw=true" width="150px">
 
 ### Tag Association
-The are some situations where you may want to apply language formatting to a specific tag. Using the `tags` property that's available to each ruleset will allow you to apply the formatting code style to the captured tag blocks.
-
-Behing these secenes this is how the extension applies formatting to the tag blocks `{% javascript %}`, `{% schema %}`, `{% stylesheet %}`, and `{% style %}` that are used in Shopify's Liquid variation.
+The are some situations where you may want to apply language formatting to a specific tag. Using the `tags` property that's available to each language ruleset will allow you to apply the formatting code style to tag blocks. Behing these secenes this is how the extension applies formatting to the tag blocks `{% javascript %}`, `{% schema %}`, `{% stylesheet %}`, and `{% style %}` that are used in Shopify's Liquid variation.
 
 <strong>Example</strong>
 
@@ -165,12 +154,7 @@ Behing these secenes this is how the extension applies formatting to the tag blo
 ```
 
 ### Ignoring Tags
-Sometimes you may wish to ignore/disable formatting for certain HTML or Liquid tags. The `ignore` ruleset accepts an array of tags you wish to exclude or alternatively you can leverage comment ignores which are written inline.
-
-By default the formatter will ignore HTML `<script>` and `<style>` tag blocks. If you require formatting for `<script>` tags which contain no liquid code you should consider using [eslint](<[https://eslint.org](https://eslint.org/)>) and the [eslint-plugin-html](https://github.com/BenoitZugmeyer/eslint-plugin-html) with [prettier](https://prettier.io/).
-
-#### Global Ignores
-Global ignores must have matching open and close definition tags and are defined using the `ignore` setting. The `ignore` setting which accepts an array of objects with each object representing the tag to ignore from formatting.
+Sometimes you may wish to ignore/disable formatting for certain HTML or Liquid tags. The `ignore` ruleset accepts an array of tags you wish to exclude. ignores must have matching open and close definition tags and are defined using the `ignore` setting. The `ignore` setting which accepts an array of objects with each object representing the tag to ignore from formatting.
 
 ```jsonc
 {
@@ -193,7 +177,11 @@ Global ignores must have matching open and close definition tags and are defined
   ]
 }
 ```
+
 > Do not include tag denotations (eg: `<`, `>`, `</`, `{%`, `%}`) when defining **begin** and **end** capture expressions. The `type` property defines the denotations of the tag.
+
+<strong>Please Note</strong><br>
+By default the formatter will ignore HTML `<script>` and `<style>` tag blocks. If you require formatting for `<script>` tags which contain _no liquid_ code you should consider using [eslint](<[https://eslint.org](https://eslint.org/)>) and the [eslint-plugin-html](https://github.com/BenoitZugmeyer/eslint-plugin-html) with [prettier](https://prettier.io/).
 
 # Rules
 Below is the default code style formatting rules. You can include this using a `.liquidrc` file in the root of your project or via the`"liquid.rules"` option in workspace settings.
@@ -263,7 +251,7 @@ Below is the default code style formatting rules. You can include this using a `
 
 <details>
 <summary>
-  <strong>Ignore</strong>
+  <strong>Ignore/Tag Associations</strong>
 </summary>
 
 <p>HTML or Liquid tags that the formatter will ignore. See [Ignoring Tags](#ignoring-tags) for more information.</p>
@@ -281,7 +269,7 @@ Below is the default code style formatting rules. You can include this using a `
 
 <details>
 <summary>
-  <strong>HTML</strong>
+  <strong>html</strong>
 </summary>
 
 <p>Format rules for HTML Liquid code.</p>
@@ -299,7 +287,7 @@ Below is the default code style formatting rules. You can include this using a `
 
 <details>
 <summary>
-  <strong>JS</strong>
+  <strong>js</strong>
 </summary>
 
 <p>Format rules for JavaScript code. This ruleset controls formatting for tags like the shopify section `{% javascript %}` tags. These rules will also be applied to HTML `<script></script>` tags and JavaScript files that use the `.js.liquid` extension name.</p>
@@ -327,7 +315,7 @@ Below is the default code style formatting rules. You can include this using a `
 
 <details>
 <summary>
-  <strong>CSS</strong>
+  <strong>css</strong>
 </summary>
 
 <p>Format rules for CSS code. This ruleset controls formatting for tags like the shopify `{% style %}` and shopify section `{% stylesheet %}` tags. These rules will also be applied to HTML `<style></style>` tags and files that use the `.css.liquid` extension name.</p>
@@ -351,7 +339,7 @@ Below is the default code style formatting rules. You can include this using a `
 
 <details>
 <summary>
-  <strong>SCSS/SASS</strong>
+  <strong>scss/sass</strong>
 </summary>
 
 <p>Format rules for SCSS and SASS code. This ruleset controls formatting for tags like the shopify section `{% stylesheet 'scss' %}` tag. These rules will also be applied to files that use the `.scss.liquid` or `sass.liquid` extension name.</p>
@@ -375,7 +363,7 @@ Below is the default code style formatting rules. You can include this using a `
 
 <details>
 <summary>
-  <strong>JSON</strong>
+  <strong>json</strong>
 </summary>
 
 <p>Format rules for JSON code. This ruleset controls formatting for tags like the shopify `{% schema %}` tag. These rules will also be applied to HTML `<script type="application/json"></script>` tags.</p>
