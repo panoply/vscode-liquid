@@ -1,15 +1,18 @@
-import { workspace, window } from 'vscode'
+import { workspace } from 'vscode'
 
 /**
- * Rule Defaults
- *
- * Below rulesets are the publically exposed
- * formatting rules. This object is used to
- * reset formatting options that are applied
- * on a per tag basis.
- *
- * @returns {object}
+ * The name of the extension
  */
+export const Name = 'sissel.shopify-liquid'
+
+/**
+ * Default formatting Rules used to reset options
+ * applied on a per tag basis to PrettyDiff.
+ *
+ * @see Formatter [PrettyDiff](http://prettydiff.com)
+ *
+ */
+
 export const defaults = {
 
   // PrettyDiff
@@ -34,9 +37,6 @@ export const defaults = {
  *
  * @returns {object}
  */
-
-const { tabSize } = workspace.getConfiguration('editor')
-
 export const Rules = {
 
   // Ignored Tags
@@ -70,7 +70,7 @@ export const Rules = {
     lexer: 'markup',
 
     // Editor Specific
-    indent_size: tabSize,
+    indent_size: workspace.getConfiguration('editor').tabSize,
 
     // Exposed Default Rules
     correct: true,
@@ -109,13 +109,14 @@ export const Rules = {
     lexer: 'script',
 
     // Editor Specific
-    indent_size: tabSize,
+    indent_size: workspace.getConfiguration('editor').tabSize,
 
     // Exposed Default Rules
     format_array: 'indent',
     preserve: 0,
     braces: true,
     no_semicolon: true,
+    quote_convert: 'double',
 
     // Custom Rules
     brace_block: false
@@ -143,7 +144,7 @@ export const Rules = {
     lexer: 'style',
 
     // Editor Specific
-    indent_size: tabSize,
+    indent_size: workspace.getConfiguration('editor').tabSize,
 
     // Exposed Default Rules
     css_insert_lines: true,
@@ -177,7 +178,7 @@ export const Rules = {
     language: 'css',
 
     // Editor Specific
-    indent_size: tabSize,
+    indent_size: workspace.getConfiguration('editor').tabSize,
 
     // Exposed Default Rules
     css_insert_lines: true,
@@ -209,7 +210,7 @@ export const Rules = {
     lexer: 'script',
 
     // Editor Specific
-    indent_size: tabSize,
+    indent_size: workspace.getConfiguration('editor').tabSize,
 
     // Exposed Default Rules
     preserve: 1,
@@ -226,10 +227,3 @@ export const Rules = {
   }
 
 }
-
-/**
- * Output Channel
- *
- * @returns {ui}
- */
-export const outputChannel = window.createOutputChannel('Liquid')

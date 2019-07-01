@@ -2,12 +2,19 @@ import { window, TextEdit, Range } from 'vscode'
 import prettydiff from 'prettydiff'
 import Pattern from './pattern'
 
+/**
+ * Applies formatting to the document
+ *
+ * @class Format
+ * @extends {Pattern}
+ */
 export default class Format extends Pattern {
 
   /**
-   * Fromatting Provider
+   * Formatting provider function
    *
-   * @returns
+   * @param {Object} document The VSCode document
+   * @memberof Format
    */
   provider (document) {
 
@@ -17,7 +24,8 @@ export default class Format extends Pattern {
 
     }
 
-    const { range, result } = this.apply(document)
+    const range = Format.range(document)
+    const result = this.apply(document.getText(range))
 
     return [
       TextEdit.replace(range, `${result.trim()}`)
@@ -26,28 +34,12 @@ export default class Format extends Pattern {
   }
 
   /**
-   * Range and Result
+   * Applies the formatting and beautification
    *
-   * @param {object} document
+   * @param {string} document The current document   *
+   * @memberof Format
    */
   apply (document) {
-
-    const range = Format.range(document)
-    const result = this.code(document.getText(range))
-
-    return {
-      range,
-      result
-    }
-
-  }
-
-  /**
- * Apply Formatting
- *
- * @param {object} document
- */
-  code (document) {
 
     if (document.match(this.frontmatter)) {
 
@@ -69,7 +61,7 @@ export default class Format extends Pattern {
 
       if (document.match(this.pattern.tags[i])) {
 
-        document = document.replace(this.pattern.tags[i], this.tagCaptures.bind(this))
+        document = document.replace(this.pattern.tags[i], this.tags.bind(this))
 
       }
 
@@ -77,11 +69,9 @@ export default class Format extends Pattern {
 
     document = this.beautify('html', document)
 
-    const remove = new RegExp(`(\n?<temp data-prettydiff-ignore>\n?|\n?</temp>\n?)`, 'g')
+    if (document.match(this.ignoreWrap)) {
 
-    if (document.match(remove)) {
-
-      document = document.replace(remove, '')
+      document = document.replace(this.ignoreWrap, '')
 
     }
 
@@ -90,13 +80,16 @@ export default class Format extends Pattern {
   }
 
   /**
-   * @param {string} code
-   * @param {string} open
-   * @param {string} name
-   * @param {string} source
-   * @param {string} close
+   * Applies formatting to captured tag blocks
+   *
+   * @param {"string"} code The full tag match
+   * @param {"string"} open the open tag (begin), eg: `<div>`
+   * @param {"string"} name the name of the tag, eg: `div`
+   * @param {"string"} source the inner conent of of the div.
+   * @param {"string"} close the close tag (end), eg: `</div>`
+   * @memberof Format
    */
-  tagCaptures (
+  tags (
     code,
     open,
     name,
@@ -113,6 +106,8 @@ export default class Format extends Pattern {
   }
 
   /**
+   * Executes formatting
+   *
    * @param {string} rule
    * @param {string} source
    */
@@ -141,11 +136,9 @@ export default class Format extends Pattern {
 
         return source
 
-      } else {
-
-        return content
-
       }
+
+      return content
 
     } catch (error) {
 
@@ -168,7 +161,38 @@ export default class Format extends Pattern {
   }
 
   /**
-   * @param {object} document
+   * Formats the entire document
+   *
+   * @memberof Format
+   */
+  completeDocument () {
+
+    const { document } = window.activeTextEditor
+    const { range, result } = this.provider(document)
+
+    window.activeTextEditor.edit(code => code.replace(range, result))
+
+  }
+
+  /**
+   * Format the selected (highlighted) text
+   *
+   * @memberof Format
+   */
+  selectedText () {
+
+    const { document, selection } = window.activeTextEditor
+    const format = this.code(document.getText(selection))
+
+    window.activeTextEditor.edit(code => code.replace(selection, format))
+
+  }
+
+  /**
+   * Get the formatting range
+   *
+   * @param {Object} document The vscode document
+   * @memberof Format
    */
   static range (document) {
 
@@ -181,49 +205,14 @@ export default class Format extends Pattern {
   }
 
   /**
-   * @param {string} code
-   */
-  static ignore (
-    code, open, name, source, close
-  ) {
-
-    if (name === 'liquid:disable' || name === 'liquid:enable') {
-
-      return `${open}\n<temp data-prettydiff-ignore>\n${source}\n</temp>\n${close}`
-
-    } else {
-
-      return `\n<temp data-prettydiff-ignore>\n${code}\n</temp>\n`
-
-    }
-
-  }
-
-  /**
-   * Document Formatting
+   * Apply ignore wrapper to code
    *
-   * @returns
+   * @param {"string"} code
+   * @memberof Format
    */
-  document () {
+  static ignore (code) {
 
-    const { document } = window.activeTextEditor
-    const { range, result } = this.apply(document)
-
-    window.activeTextEditor.edit(code => code.replace(range, result))
-
-  }
-
-  /**
-   * Selection Formatting
-   *
-   * @returns
-   */
-  selection () {
-
-    const { document, selection } = window.activeTextEditor
-    const format = this.code(document.getText(selection))
-
-    window.activeTextEditor.edit(code => code.replace(selection, format))
+    return `<temp data-prettydiff-ignore>${code}</temp>`
 
   }
 

@@ -1,64 +1,59 @@
-import { window, commands, StatusBarItem, StatusBarAlignment } from 'vscode'
-import { outputChannel } from './options'
+import { window, StatusBarItem, StatusBarAlignment } from 'vscode'
+import Config from './config'
+import Deprecations from './deprecations'
 
-export default class Utils {
+/**
+ * Utilities frequently used by the extension
+ *
+ * @export
+ * @class Utils
+ * @extends Deprecations
+ */
+export default class Utils extends Deprecations {
 
   constructor () {
+
+    super()
 
     this.barItem = StatusBarItem
     this.barError = window.createStatusBarItem(StatusBarAlignment.Right, -3)
     this.barItem = window.createStatusBarItem(StatusBarAlignment.Right, -2)
-    this.outputCommand = false
-
-  }
-
-  output () {
-
-    return outputChannel.show()
+    this.outputChannel = window.createOutputChannel('Liquid')
 
   }
 
   /**
-   * Status bar item state
+   * The status bar item functionality
    *
-   * @param {string} enabled, disabled or error
+   * @param {"string"} type the type of status bar item to show
+   * @param {"string"} [show] show/hide the status bar item (optional)
+   * @memberof Utils
    */
-  statusBarItem (type, show, count) {
+  statusBarItem (type, show) {
 
-    if (this.barItem === undefined) return
+    Object.assign(this.barItem, {
 
-    if (type === 'enabled') {
+      enabled: {
+        text: `💧Liquid: $(check)`,
+        tooltip: `Enable/Disable Liquid Formatting`,
+        command: 'liquid.disableFormatting'
+      },
+      disabled: {
+        text: `💧Liquid: $(x)`,
+        tooltip: `Enable Liquid Formatting`,
+        command: 'liquid.enableFormatting'
+      },
+      error: {
+        text: `⚠️ Liquid: $(x)`,
+        tooltip: `Errors detected! Toggle output`,
+        command: 'liquid.toggleOutput'
+      }
 
-      this.barItem.text = `💧Liquid: $(check)`
-      this.barItem.tooltip = `Enable/Disable Liquid Formatting`
-      this.barItem.command = 'liquid.disableFormatting'
+    }[type])
 
-    }
+    if (show !== undefined) {
 
-    if (type === 'disabled') {
-
-      this.barItem.text = `💧Liquid: $(x)`
-      this.barItem.command = 'liquid.enableFormatting'
-
-    }
-
-    if (type === 'error') {
-
-      this.barItem.text = `⚠️ Liquid: $(x)`
-      this.barItem.tooltip = `Errors`
-      this.barItem.command = 'liquid.toggleOutput'
-
-    }
-
-    if (show === undefined) return
-
-    if (show) {
-
-      this.barItem.show()
-
-    } else {
-
-      this.barItem.false()
+      return show ? this.barItem.show() : this.barItem.false()
 
     }
 
@@ -67,34 +62,17 @@ export default class Utils {
   outputLog ({ title, message, file, show }) {
 
     const date = new Date().toLocaleString()
-    const prefix = `[${date}] ${title}`
-    const msg = !file ? message : this.addFilePath(message, file)
 
     // Apply a date title to the output
-    outputChannel.appendLine(`${prefix}: ${msg}`)
+    this.outputChannel.appendLine(`[${date}] ${title}: ${message}`)
 
     if (show) {
 
       this.error = true
       this.statusBarItem('error')
-      outputChannel.show()
+      this.outputChannel.show()
 
     }
-
-  }
-
-  addFilePath (message, fileName) {
-
-    const lines = message.split('\n')
-
-    if (lines.length > 0) {
-
-      lines[0] = lines[0].replace(/(\d*):(\d*)/g, `${fileName}:$1:$2`)
-      return lines.join('\n')
-
-    }
-
-    return message
 
   }
 

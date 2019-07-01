@@ -1,18 +1,60 @@
 import Config from './config'
-import { outputChannel } from './options'
+
+/**
+ * Pattern Generator
+ *
+ * Generates regex patterns using the
+ * configuration rules. Generated patterns are
+ * used when fromatting.
+ *
+ * @class Pattern
+ * @extends {Config}
+ */
 
 export default class Pattern extends Config {
+
+  /**
+   * Regex pattern helper to generate tag pattern
+   * matches when formatting.
+   *
+   * @param {"string"} type The type of pattern to generate
+   * @param {"string"} [begin] The begin tag name (optional)
+   * @param {"string"} [end] The end tag name (optional)
+   * @returns RegExp regular expression
+   */
+  static captures (type, begin, end) {
+
+    const pattern = {
+
+      frontmatter: '---(?:[^]*?)---',
+      ignore: '(<temp data-prettydiff-ignore>|</temp>)',
+      denotations: '(?=(<|<\\/|{%-?|{{-?\\s+))',
+      html: `(<(${begin})>)([^]*?)(</${end}>)`,
+      liquid: `({%-?\\s*(${begin}).*?\\s*-?%})([^]*?)({%-?\\s*${end}\\s*-?%})`
+
+    }[type]
+
+    return new RegExp(pattern, 'g')
+
+  }
 
   constructor () {
 
     super()
 
     this.pattern = {}
-    this.frontmatter = new RegExp(/---(?:[^]*?)---/, 'g')
-    this.denotations = new RegExp(/(?=(<|<\/|{%-?|{{-?\s+))/, 'g')
+    this.frontmatter = Pattern.captures('frontmatter')
+    this.denotations = Pattern.captures('denotations')
+    this.ignoreWrap = Pattern.captures('ignore')
 
   }
 
+  /**
+   * Apply the required patterns used for formatting.
+   * Used to assign the `pattern{}` object.
+   *
+   * @memberof Pattern
+   */
   getPatterns () {
 
     this.getdocumentTagsPattern()
@@ -20,6 +62,10 @@ export default class Pattern extends Config {
 
   }
 
+  /**
+   * Assigns an array of regex pattern expressions
+   * that match `liquid` and `html` tags.
+   */
   getdocumentTagsPattern () {
 
     const language = []
@@ -66,6 +112,10 @@ export default class Pattern extends Config {
 
   }
 
+  /**
+   * Assigns an array of regex pattern expressions
+   * that are used to ignore tags when formatting
+   */
   getIgnoreTagsPattern () {
 
     const ignore = []
@@ -102,27 +152,7 @@ export default class Pattern extends Config {
 
     })
 
-    ignore.push(Pattern.captures('html_comment', `liquid:disable`, `liquid:enable`))
-    ignore.push(Pattern.captures('js_comment', `liquid:disable`, `liquid:enable`))
-
     this.pattern.ignored = ignore
-
-  }
-
-  static captures (type, begin, end) {
-
-    const pattern = {
-
-      html: `(<(${begin})>)([^]*?)(</${end}>)`,
-      liquid: `({%-?\\s*(${begin}).*?\\s*-?%})([^]*?)({%-?\\s*${end}\\s*-?%})`,
-      html_comment: `(<!--\\s*(${begin})\\s*-->)([^]*?)(<!--\\s*${end}\\s*-->)`,
-      js_comment: `(\\/\\*\\s*(${begin})\\s*\\*\\/)([^]*?)(\\/\\*\\s*${end}\\s*\\*\\/)`
-
-    }[type]
-
-    const expression = new RegExp(pattern, 'g')
-
-    return expression
 
   }
 

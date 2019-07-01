@@ -1,19 +1,21 @@
 import { window, workspace, commands } from 'vscode'
 import Document from './extension/document'
-import { outputChannel } from './extension/options'
-
-const { registerCommand } = commands
 
 /**
- * # ACTIVATE EXTENSION
+ * vscode-liquid
+ *
+ * @author Nikolas Savvidis
+ * @version 2.x.x
  */
 exports.activate = context => {
 
+  const { registerCommand } = commands
   const sub = context.subscriptions
   const active = window.activeTextEditor
 
   if (!active || !active.document) return
 
+  // Get Document
   const document = new Document()
 
   // Workspace
@@ -26,5 +28,7 @@ exports.activate = context => {
   sub.push(registerCommand('liquid.formatDocument', document.document.bind(document)))
   sub.push(registerCommand('liquid.formatSelection', document.selection.bind(document)))
   sub.push(registerCommand('liquid.toggleOutput', document.output.bind(document)))
+
+  console.log(context.globalState._id)
 
 }

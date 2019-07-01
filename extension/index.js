@@ -9,80 +9,6 @@ var path = _interopDefault(require('path'));
 var fs = _interopDefault(require('fs'));
 
 /**
- * Utilities frequently used by the extension
- *
- * @export
- * @class Utils
- * @extends Deprecations
- */
-class Utils {
-
-  constructor () {
-
-    this.barItem = vscode.StatusBarItem;
-    this.barError = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -3);
-    this.barItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -2);
-    this.outputChannel = vscode.window.createOutputChannel('Liquid');
-
-  }
-
-  /**
-   * The status bar item functionality
-   *
-   * @param {"string"} type the type of status bar item to show
-   * @param {"string"} [show] show/hide the status bar item (optional)
-   * @memberof Utils
-   */
-  statusBarItem (type, show) {
-
-    Object.assign(this.barItem, {
-
-      enabled: {
-        text: `💧Liquid: $(check)`,
-        tooltip: `Enable/Disable Liquid Formatting`,
-        command: 'liquid.disableFormatting'
-      },
-      disabled: {
-        text: `💧Liquid: $(x)`,
-        tooltip: `Enable Liquid Formatting`,
-        command: 'liquid.enableFormatting'
-      },
-      error: {
-        text: `⚠️ Liquid: $(x)`,
-        tooltip: `Errors detected! Toggle output`,
-        command: 'liquid.toggleOutput'
-      }
-
-    }[type]);
-
-    if (show !== undefined) {
-
-      return show ? this.barItem.show() : this.barItem.false()
-
-    }
-
-  }
-
-  outputLog ({ title, message, file, show }) {
-
-    const date = new Date().toLocaleString();
-
-    // Apply a date title to the output
-    this.outputChannel.appendLine(`[${date}] ${title}: ${message}`);
-
-    if (show) {
-
-      this.error = true;
-      this.statusBarItem('error');
-      this.outputChannel.show();
-
-    }
-
-  }
-
-}
-
-/**
  * Formatting Rules
  *
  * @returns {object}
@@ -166,6 +92,7 @@ const Rules = {
     preserve: 0,
     braces: true,
     no_semicolon: true,
+    quote_convert: 'double',
 
     // Custom Rules
     brace_block: false
@@ -277,12 +204,222 @@ const Rules = {
 
 };
 
+/*
+    window.showInformationMessage('Do you want to continue?', {
+      modal: true
+    }, 'Yes', 'No')
+
+*/
+
+/**
+ * Fixes deprecated settings in previous versions
+ *
+ * @class Deprecations
+ */
+class Deprecations {
+
+  greeting () {
+
+    vscode.window.showInformationMessage(`💧 Liquid Extension: Some settings have changed that need your attention, please proceed.`, 'Proceed').then((selected) => {
+
+      if (selected === 'Proceed') {
+
+        // this.liquid.update('formatIgnore', undefined, true)
+        return this.liquid.get('formatIgnore') ? this.fixIgnores() : this.fixRules()
+
+      } else {
+
+        vscode.window.showInformationMessage('💧 Are you sure?\n\nLiquid formatting will not work without proceeding\n', {
+          modal: true
+        }, 'Go Back').then(answer => {
+
+          if (answer === 'Go Back') {
+
+            return this.greeting()
+
+          }
+
+        });
+
+      }
+
+    });
+
+  }
+
+  fixIgnores () {
+
+    vscode.window.showInformationMessage(`The liquid.formatIgnore workspace setting has been deprecated. Please re-define your ignored tags using the new definition schema 💧`, 'Learn more', 'Next').then((selected) => {
+
+      if (selected === 'Next') {
+
+        // this.liquid.update('formatIgnore', undefined, true)
+
+        return this.fixRules()
+
+      }
+
+      if (selected === 'Learn more') {
+
+        vscode.env.openExternal(vscode.Uri.parse('https://github.com/panoply/vscode-liquid/tree/v2.0.0#ignoring-tags'));
+
+      }
+
+    });
+
+  }
+
+  fixRules () {
+
+    vscode.window.showInformationMessage(`Liquid formatting rules can now be defined using a .liquidrc file – would you like to generate one based on your current formatting ruleset?`,
+      'No', 'Yes (Recommended)').then((selected) => {
+
+      const content = {
+        ignore: this.liquid.rules.ignore,
+        html: this.liquid.beautify.html || this.liquid.rules.html,
+        js: this.liquid.beautify.javascript || this.liquid.rules.js,
+        scss: this.liquid.beautify.stylesheet || this.liquid.rules.scss,
+        css: this.liquid.beautify.stylesheet || this.liquid.rules.css,
+        json: this.liquid.beautify.schema || this.liquid.rules.json
+      };
+
+      if (selected === 'Yes (Recommended)') {
+
+        const json = JSON.stringify(content, null, 2);
+
+        fs.writeFile(this.rcfile, json, (error) => {
+
+          if (error) {
+
+            return this.outputLog({
+              title: 'Error generating rules',
+              file: this.rcfile,
+              message: error.message,
+              show: true
+            })
+
+          }
+
+          vscode.workspace.openTextDocument(this.rcfile).then((document) => {
+
+            vscode.window.showTextDocument(document, 1, false);
+
+          }, (error) => {
+
+            return console.error(error)
+
+          }).then(() => {
+
+            this.error = false;
+
+            return vscode.window.showInformationMessage(`👍 Success!`)
+
+          });
+
+        });
+
+      } else if (selected === 'No') {
+
+        this.liquid.update('rules', content, true).then(() => {
+
+          this.error = false;
+
+          return vscode.window.showInformationMessage(`👍 Success! The new configuration settings were applied to your workspace settings.`)
+
+        });
+
+      }
+
+      // liquid.update('beautify', undefined, true)
+
+    });
+
+  }
+
+}
+
+/**
+ * Utilities frequently used by the extension
+ *
+ * @export
+ * @class Utils
+ * @extends Deprecations
+ */
+class Utils extends Deprecations {
+
+  constructor () {
+
+    super();
+
+    this.barItem = vscode.StatusBarItem;
+    this.barError = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -3);
+    this.barItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -2);
+    this.outputChannel = vscode.window.createOutputChannel('Liquid');
+
+  }
+
+  /**
+   * The status bar item functionality
+   *
+   * @param {"string"} type the type of status bar item to show
+   * @param {"string"} [show] show/hide the status bar item (optional)
+   * @memberof Utils
+   */
+  statusBarItem (type, show) {
+
+    Object.assign(this.barItem, {
+
+      enabled: {
+        text: `💧Liquid: $(check)`,
+        tooltip: `Enable/Disable Liquid Formatting`,
+        command: 'liquid.disableFormatting'
+      },
+      disabled: {
+        text: `💧Liquid: $(x)`,
+        tooltip: `Enable Liquid Formatting`,
+        command: 'liquid.enableFormatting'
+      },
+      error: {
+        text: `⚠️ Liquid: $(x)`,
+        tooltip: `Errors detected! Toggle output`,
+        command: 'liquid.toggleOutput'
+      }
+
+    }[type]);
+
+    if (show !== undefined) {
+
+      return show ? this.barItem.show() : this.barItem.false()
+
+    }
+
+  }
+
+  outputLog ({ title, message, file, show }) {
+
+    const date = new Date().toLocaleString();
+
+    // Apply a date title to the output
+    this.outputChannel.appendLine(`[${date}] ${title}: ${message}`);
+
+    if (show) {
+
+      this.error = true;
+      this.statusBarItem('error');
+      this.outputChannel.show();
+
+    }
+
+  }
+
+}
+
 /**
  * Applies custom the cutom configuration
  * settings used by the extension.
  *
  * @class Config
- * @extends {Utils}
+ * @extends {Deprecations}
  *
  */
 
@@ -304,10 +441,30 @@ class Config extends Utils {
    * Defines where formatting rules are sourced.
    * Looks for rules defined in a `.liquirc` file and if
    * no file present will default to workspace settings.
+   *
+   * Example:
+   *
+   * Checks useRuleFile application scope setting, which has
+   * a`default` value set to `false`
+   *
    */
   setFormattingRules () {
 
     const liquid = vscode.workspace.getConfiguration('liquid');
+
+    // Check for `.liquidrc` rule file
+
+    if (!fs.existsSync(this.rcfile)) {
+
+      this.error = liquid.has('beautify');
+
+      if (this.error) {
+
+        return this.greeting()
+
+      }
+
+    }
 
     // Check if using rule file
     if (!liquid.get('useRuleFile')) {
@@ -320,7 +477,11 @@ class Config extends Utils {
     }
 
     // Check for `.liquidrc` rule file
-    if (!fs.existsSync(this.rcfile)) return
+    if (!fs.existsSync(this.rcfile)) {
+
+      return
+
+    }
 
     try {
 
@@ -422,6 +583,31 @@ class Config extends Utils {
  */
 
 class Pattern extends Config {
+
+  /**
+   * Regex pattern helper to generate tag pattern
+   * matches when formatting.
+   *
+   * @param {"string"} type The type of pattern to generate
+   * @param {"string"} [begin] The begin tag name (optional)
+   * @param {"string"} [end] The end tag name (optional)
+   * @returns RegExp regular expression
+   */
+  static captures (type, begin, end) {
+
+    const pattern = {
+
+      frontmatter: '---(?:[^]*?)---',
+      ignore: '(<temp data-prettydiff-ignore>|</temp>)',
+      denotations: '(?=(<|<\\/|{%-?|{{-?\\s+))',
+      html: `(<(${begin})>)([^]*?)(</${end}>)`,
+      liquid: `({%-?\\s*(${begin}).*?\\s*-?%})([^]*?)({%-?\\s*${end}\\s*-?%})`
+
+    }[type];
+
+    return new RegExp(pattern, 'g')
+
+  }
 
   constructor () {
 
@@ -538,31 +724,6 @@ class Pattern extends Config {
     });
 
     this.pattern.ignored = ignore;
-
-  }
-
-  /**
-   * Regex pattern helper to generate tag pattern
-   * matches when formatting.
-   *
-   * @param {"string"} type The type of pattern to generate
-   * @param {"string"} [begin] The begin tag name (optional)
-   * @param {"string"} [end] The end tag name (optional)
-   * @returns RegExp regular expression
-   */
-  static captures (type, begin, end) {
-
-    const pattern = {
-
-      frontmatter: '---(?:[^]*?)---',
-      ignore: '(<temp data-prettydiff-ignore>|</temp>)',
-      denotations: '(?=(<|<\\/|{%-?|{{-?\\s+))',
-      html: `(<(${begin})>)([^]*?)(</${end}>)`,
-      liquid: `({%-?\\s*(${begin}).*?\\s*-?%})([^]*?)({%-?\\s*${end}\\s*-?%})`
-
-    }[type];
-
-    return new RegExp(pattern, 'g')
 
   }
 
@@ -792,14 +953,12 @@ class Format extends Pattern {
  */
 class Document extends Format {
 
-  constructor (deprecations) {
+  constructor () {
 
     super();
 
     this.handler = {};
-    this.deprecate = deprecations;
     this.isFormat = this.liquid.format;
-    this.deprecate.check();
     this.setFormattingRules();
     this.getPatterns();
 
@@ -994,95 +1153,6 @@ class Document extends Format {
 }
 
 /**
- * Fixes deprecated settings in previous versions
- *
- * @class Deprecations
- * @extends Config
- */
-class Deprecations extends Config {
-
-  check () {
-
-    if (!fs.existsSync(this.rcfile) && this.liquid.get('beautify')) {
-
-      return this.liquid.get('formatIgnore') ? this.ignores() : this.rules()
-
-    }
-
-  }
-
-  ignores () {
-
-    vscode.window.showInformationMessage('Do you want to continue?', {
-      modal: true
-    }, 'Yes', 'No');
-
-    vscode.window.showInformationMessage(`The "liquid.formatIgnore" workspace setting has been deprecated. Ignored tags are now defined within the html.ignore formatting ruleset and use a new definition schema. Please re-define your ignored tags.`, 'Learn more', 'Next').then((selected) => {
-
-      if (selected === 'Next') {
-
-        this.liquid.update('formatIgnore', undefined, true);
-
-        return this.rules(liquid)
-
-      } else if (selected === 'Learn More') {
-
-        this.outputLog({
-          title: 'Ignored Tags',
-          show: true,
-          message: 'Ignored tags now use a new defintion schema. As of version 2.0.0 you should now define ignore rules to the "ignore" property.'
-        });
-
-      }
-
-    });
-
-  }
-
-  rules (liquid) {
-
-    vscode.window.showInformationMessage(`Liquid formatting rules can now be defined using a .liquidrc file. Would you like to generate one based on your current beautify ruleset?`,
-      'No', 'Yes, (Recommended)').then((selected) => {
-
-      const content = {
-        ignore: liquid.rules.ignore,
-        html: liquid.beautify.html || liquid.rules.html,
-        js: liquid.beautify.javascript || liquid.rules.js,
-        scss: liquid.beautify.stylesheet || liquid.rules.scss,
-        css: liquid.beautify.stylesheet || liquid.rules.css,
-        json: liquid.beautify.schema || liquid.rules.json
-      };
-
-      if (selected === 'Yes, (Recommended)') {
-
-        const json = JSON.stringify(content, null, 2);
-
-        fs.writeFile(this.rcfile, json, (error) => {
-
-          error && this.outputLog({
-            title: 'Error generating rules',
-            file: this.rcfile,
-            message: error.message,
-            show: true
-          });
-
-        });
-
-      } else if (selected === 'No') {
-
-        liquid.update('rules', content, true);
-
-      }
-
-      liquid.update('beautify', undefined, true);
-
-    });
-
-  }
-
-}
-
-/**
  * vscode-liquid
  *
  * @author Nikolas Savvidis
@@ -1096,11 +1166,8 @@ exports.activate = context => {
 
   if (!active || !active.document) return
 
-  // Fix Deprecations
-  const deprecations = new Deprecations();
-
   // Get Document
-  const document = new Document(deprecations);
+  const document = new Document();
 
   // Workspace
   sub.push(vscode.workspace.onDidChangeConfiguration(document.onConfigChanges.bind(document)));
@@ -1112,5 +1179,7 @@ exports.activate = context => {
   sub.push(registerCommand('liquid.formatDocument', document.document.bind(document)));
   sub.push(registerCommand('liquid.formatSelection', document.selection.bind(document)));
   sub.push(registerCommand('liquid.toggleOutput', document.output.bind(document)));
+
+  console.log(context.globalState._id);
 
 };

@@ -1,6 +1,12 @@
 import { workspace, languages, window, ConfigurationTarget } from 'vscode'
 import Format from './format'
 
+/**
+ * Document intializer class
+ *
+ * @class Document
+ * @extends {Format}
+ */
 export default class Document extends Format {
 
   constructor () {
@@ -8,14 +14,17 @@ export default class Document extends Format {
     super()
 
     this.handler = {}
-    this.liquidConfig = workspace.getConfiguration('liquid')
-    this.isFormat = this.liquidConfig.format
-    this.fixDeprecatedSettings()
+    this.isFormat = this.liquid.format
     this.setFormattingRules()
     this.getPatterns()
 
   }
 
+  /**
+   * Executes when configuration settings have changed
+   *
+   * @memberof Document
+   */
   onConfigChanges () {
 
     this.error = false
@@ -25,13 +34,18 @@ export default class Document extends Format {
 
   }
 
+  /**
+   * Prepares the opened text document for formatting
+   *
+   * @memberof Document
+   */
   onOpenTextDocument () {
 
     const { fileName, languageId } = window.activeTextEditor.document
 
     if (this.error) {
 
-      this.statusBarItem('error', true)
+      return this.statusBarItem('error', true)
 
     }
 
@@ -73,7 +87,11 @@ export default class Document extends Format {
 
     }
 
-    this.statusBarItem('enabled', true)
+    if (!this.error) {
+
+      this.statusBarItem('enabled', true)
+
+    }
 
     this.handler[fileName] = languages.registerDocumentFormattingEditProvider({
       scheme: 'file',
@@ -84,38 +102,11 @@ export default class Document extends Format {
 
   }
 
-  selection () {
-
-    try {
-
-      super.selection()
-      window.showInformationMessage('Selection Formatted 💧')
-
-    } catch (error) {
-
-      window.showInformationMessage('Format Failed! The selection is invalid or incomplete!')
-      throw outputChannel.appendLine(`💧Liquid: ${error}`)
-
-    }
-
-  }
-
-  document () {
-
-    try {
-
-      super.document()
-      window.showInformationMessage('Document Formatted 💧')
-
-    } catch (error) {
-
-      window.showInformationMessage('Document could not be formatted, check your code!')
-      throw outputChannel.appendLine(`💧Liquid: ${error}`)
-
-    }
-
-  }
-
+  /**
+   * Dispose of formatting handlers
+   *
+   * @memberof Document
+   */
   dispose () {
 
     for (const key in this.handler) {
@@ -130,21 +121,85 @@ export default class Document extends Format {
 
   }
 
+  /**
+   * Format the selected text area (command)
+   *
+   * @memberof Document
+   */
+  selection () {
+
+    try {
+
+      this.selectedText()
+      window.showInformationMessage('Selection Formatted 💧')
+
+    } catch (error) {
+
+      window.showInformationMessage('Format Failed! The selection is invalid or incomplete!')
+      throw outputChannel.appendLine(`💧Liquid: ${error}`)
+
+    }
+
+  }
+
+  /**
+   * Format the entire document (command)
+   *
+   * @memberof Document
+   */
+  document () {
+
+    try {
+
+      this.completeDocument()
+      window.showInformationMessage('Document Formatted 💧')
+
+    } catch (error) {
+
+      window.showInformationMessage('Document could not be formatted, check your code!')
+      throw outputChannel.appendLine(`💧Liquid: ${error}`)
+
+    }
+
+  }
+
+  /**
+   * Toggle the output panel
+   *
+   * @memberof Document
+   */
+  output () {
+
+    return this.outputChannel.show()
+
+  }
+
+  /**
+   * Enabled formatting (command)
+   *
+   * @memberof Document
+   */
   async enable () {
 
     this.isFormat = true
 
-    await this.liquidConfig.update('format', this.isFormat, ConfigurationTarget.Global)
+    await this.liquid.update('format', this.isFormat, ConfigurationTarget.Global)
     .then(() => this.onConfigChanges())
+    .then(() => this.onOpenTextDocument())
     .then(() => window.showInformationMessage('Formatting Enabled 💧'))
 
   }
 
+  /**
+   * Disable formatting (command)
+   *
+   * @memberof Document
+   */
   async disable () {
 
     this.isFormat = false
 
-    await this.liquidConfig.update('format', this.isFormat, ConfigurationTarget.Global)
+    await this.liquid.update('format', this.isFormat, ConfigurationTarget.Global)
     .then(() => this.dispose())
     .then(() => this.onConfigChanges())
     .then(() => window.showInformationMessage('Formatting Disabled 💧'))
