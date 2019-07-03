@@ -139,7 +139,7 @@ When a HTML, Liquid and Jekyll file is open and active in the editor you will se
 The are some situations where you may want to apply language formatting to a specific tag. Using the `tags` property available to each language rule will allow you to apply a formatting code style to a custom defined tag.
 
 <strong>Example</strong>
-The below example would apply SCSS formatting to content between `<style lang="scss"></style>` and JSON formatting to `<script type="application/json"><script></script>`.
+The below example would apply SCSS formatting to content between `<style lang="scss"></style>` and JSON formatting to `<script type="application/json"></script>`.
 
 ```jsonc
 {
