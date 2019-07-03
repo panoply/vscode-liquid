@@ -17,7 +17,7 @@ export default class Deprecations extends Utils {
 
         if (selected === 'Learn more') {
 
-          env.openExternal(Uri.parse('https://github.com/panoply/vscode-liquid/tree/v2.0.0#ignoring-tags'))
+          env.openExternal(Uri.parse('https://github.com/panoply/vscode-liquid#ignoring-tags'))
 
         }
 
