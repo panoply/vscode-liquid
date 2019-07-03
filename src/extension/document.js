@@ -26,13 +26,11 @@ export default class Document extends Format {
    */
   onConfigChanges () {
 
-    // Operation Condition
-    if (this.unconfigured) return
-
-    // Reset error
+    // Reset Error Condition
     this.error = false
 
     // Common Initializes
+    this.dispose()
     this.setFormattingRules()
     this.getPatterns()
     this.onOpenTextDocument()
@@ -47,12 +45,6 @@ export default class Document extends Format {
   onOpenTextDocument () {
 
     const { fileName, languageId } = window.activeTextEditor.document
-
-    if (this.unconfigured) {
-
-      return this.statusBarItem('unconfigured', true)
-
-    }
 
     if (this.error) {
 
@@ -168,6 +160,7 @@ export default class Document extends Format {
 
     } catch (error) {
 
+      console.log(error)
       window.showInformationMessage('Document could not be formatted, check your code!')
       throw outputChannel.appendLine(`💧Liquid: ${error}`)
 
@@ -208,7 +201,6 @@ export default class Document extends Format {
 
     this.format = false
     this.liquid.update('format', this.format, ConfigurationTarget.Global)
-    .then(() => this.dispose())
     .then(() => window.showInformationMessage('Formatting Disabled 💧'))
 
   }
