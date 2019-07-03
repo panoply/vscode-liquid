@@ -36,11 +36,10 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
   - [Using the workspace setting option](#using-the-workspace-setting-option)
   - [Toggle and Status button](#toggle-and-status-button)
   - [Tag Associations](#tag-associations)
-  - [Ignored Tags](#ignored-tags)
+  - [Ignored Tags](#ignoring-tags)
   - [Key Binding](#key-bindind)
   - [Rules](#rules)
 - [Snippets](#snippets)
-  - [Shopify Schema](#shopify-schema)
 - [Support](#support)
 - [Changelog](#changelog)
 
