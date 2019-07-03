@@ -2,7 +2,7 @@ import { workspace, window } from 'vscode'
 import assign from 'assign-deep'
 import path from 'path'
 import fs from 'fs'
-import { Rules } from './options'
+import { FormattingRules, TagAssociations } from './options'
 
 /**
  * Applies custom the cutom configuration
@@ -16,13 +16,19 @@ export default class Config {
 
   constructor () {
 
-    this.config = Rules
+    // Configuration
+    this.config = FormattingRules
+    this.tagAssociates = TagAssociations
+
+    // Applied Configuration
     this.liquid = workspace.getConfiguration('liquid')
-    this.rcfile = path.join(workspace.rootPath, '.liquidrc')
     this.format = this.liquid.get('format')
-    this.watching = false
+    this.rcfile = path.join(workspace.rootPath, '.liquidrc')
+
+    // Conditional Executors
+    this.watch = false
     this.error = false
-    this.unconfigured = false
+    this.reset = false
 
   }
 
@@ -34,11 +40,14 @@ export default class Config {
    */
   setFormattingRules () {
 
-    const liquid = workspace.getConfiguration('liquid')
-
     if (!fs.existsSync(this.rcfile)) {
 
-      this.config = assign(this.config, liquid.rules)
+      const liquid = workspace.getConfiguration('liquid')
+      const rules = liquid.get('rules')
+      const tags = this.setTagAssociates(rules)
+
+      // Assign custom configuration to options
+      this.config = assign(this.config, tags)
 
     } else {
 
@@ -46,14 +55,14 @@ export default class Config {
 
         // Read .liquidrc file
         const file = fs.readFileSync(this.rcfile, 'utf8')
-
-        // Parse contents, use html `indent_size` which uses `editor.tabSize`
         const json = JSON.parse(file, null, this.config.html.indent_size)
-
-        this.error = false
+        const tags = this.setTagAssociates(json)
 
         // Assign custom configuration to options
-        this.config = assign(this.config, json)
+        this.config = assign(this.config, tags)
+
+        // Reset Error Condition
+        this.error = false
 
       } catch (error) {
 
@@ -74,16 +83,54 @@ export default class Config {
 
   }
 
+  setTagAssociates (config) {
+
+    for (let lang in this.tagAssociates) {
+
+      if (
+        config[lang].hasOwnProperty('tags') &&
+        config[lang].tags.length > 0
+      ) {
+
+        for (let tag in this.tagAssociates[lang]) {
+
+          config[lang].tags.push(this.tagAssociates[lang][tag])
+
+        }
+
+      } else {
+
+        if (config.hasOwnProperty(lang)) {
+
+          assign(config[lang], {
+            tags: this.tagAssociates[lang]
+          })
+
+        }
+
+      }
+
+    }
+
+    return config
+
+  }
+
   rcfileWatcher () {
 
-    if (!this.watching) {
+    if (!this.watch) {
 
       const watch = workspace.createFileSystemWatcher(this.rcfile, true, false, false)
 
-      watch.onDidChange(() => this.setFormattingRules())
       watch.onDidDelete(() => this.setFormattingRules())
+      watch.onDidChange(() => {
 
-      this.watching = true
+        this.reset = true
+        this.setFormattingRules()
+
+      })
+
+      this.watch = true
 
     }
 
