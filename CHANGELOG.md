@@ -5,6 +5,32 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [2.0.1] – <small>03/07/2019</small>
+
+Minor fix upon release of v2.0.0
+
+### Changes
+
+- Removed the deprecations helper, no need for this.
+
+## [2.0.0] – <small>03/07/2019</small>
+
+Version 2.0.0 was a complete overhaul of the extension. Some breaking changes were applied and a new approach to grammars and formatting was implemented.
+
+### Added
+
+- Rules can now use a `.liquidrc` JSON file to define code style formatting rules
+- Errors will be published to output along with PrettyDiff parser errors.
+- Support for `.ts` and `.jsx` files
+- You can now associate tags to a formatting language rule
+
+### Changed
+
+- Grammar is now used as an injection, no longer overwriting languages.
+- Configuration rules now use `liquid.rules` opposed to `liquid.beautify`.
+- Deprecated `liquid.formatIgnore` in favor of using an `ignore` property in the `liquid.rules` setting object.
+- New apporach to formatting and changed the way the extension works.
+
 ## [1.8.3] – <small>17/06/2019</small>
 
 - Support Shopify section `schema` settings snippets
