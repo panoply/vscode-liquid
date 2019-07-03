@@ -61,7 +61,7 @@
       },
       {
         "command": "liquid.fixDeprecations",
-        "title": "Liquid: Fix Deprecations"
+        "title": "Liquid: Fix Deprecated Settings"
       }
     ],
     "keybindings": [

@@ -441,7 +441,7 @@ class Utils extends Config {
         command: 'liquid.enableFormatting'
       },
       error: {
-        text: `⚠️ Liquid: $(x)`,
+        text: `⚠️ Liquid: $(check)`,
         tooltip: `Errors detected! Toggle output`,
         command: 'liquid.toggleOutput'
       },
