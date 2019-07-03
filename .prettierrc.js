@@ -1,5 +1,5 @@
 module.exports = {
-  parser: 'flow',
+  parser: 'markdown',
   arrowParens: 'avoid',
   bracketSpacing: true,
   endOfLine: 'lf',
