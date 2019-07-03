@@ -28,30 +28,53 @@ export const defaults = {
 }
 
 /**
- * Formatting Rules
- *
- * @returns {object}
+ * Tag Associations (Enforced)
  */
-export const Rules = {
+export const TagAssociations = {
 
-  // Ignored Tags
-  ignore: [
+  css: [
     {
       type: 'liquid',
-      begin: 'comment',
-      end: 'endcomment'
+      begin: 'stylesheet',
+      end: 'endstylesheet'
     },
     {
-      type: 'html',
-      begin: 'script',
-      end: 'script'
-    },
-    {
-      type: 'html',
+      type: 'liquid',
       begin: 'style',
-      end: 'style'
+      end: 'endstyle'
     }
   ],
+  scss: [
+    {
+      type: 'liquid',
+      begin: 'stylesheet \'scss\'',
+      end: 'endstylesheet'
+    }
+  ],
+  js: [
+    {
+      type: 'liquid',
+      begin: 'javascript',
+      end: 'endjavascript'
+    }
+  ],
+  json: [
+    {
+      type: 'liquid',
+      begin: 'schema',
+      end: 'endschema'
+    }
+  ]
+
+}
+
+/**
+ * Formatting Rules (Enforced)
+ */
+export const FormattingRules = {
+
+  // Ignored Tags
+  ignore: [],
 
   // HTML + Liquid
   html: {
@@ -74,6 +97,7 @@ export const Rules = {
     force_attribute: false,
     braces: false,
     preserve: 1,
+    quote_convert: 'double',
 
     // Custom Rules
     brace_block: false
@@ -82,20 +106,6 @@ export const Rules = {
 
   // Schema Tag
   json: {
-
-    // Private Settings
-    tags: [
-      {
-        type: 'liquid',
-        begin: 'schema',
-        end: 'endschema'
-      },
-      {
-        type: 'html',
-        begin: 'script\\s+type="application\\/json"',
-        end: 'script'
-      }
-    ],
 
     // Enforced
     mode: 'beautify',
@@ -113,7 +123,6 @@ export const Rules = {
     preserve: 0,
     braces: true,
     no_semicolon: true,
-    quote_convert: 'double',
 
     // Custom Rules
     brace_block: false
@@ -122,15 +131,6 @@ export const Rules = {
 
   // StyleSheet Tag
   scss: {
-
-    // Settings
-    tags: [
-      {
-        type: 'liquid',
-        begin: 'stylesheet \'scss\'',
-        end: 'endstylesheet'
-      }
-    ],
 
     // Enforced
     mode: 'beautify',
@@ -156,20 +156,6 @@ export const Rules = {
   // Style Tag
   css: {
 
-    // Settings
-    tags: [
-      {
-        type: 'liquid',
-        begin: 'stylesheet',
-        end: 'endstylesheet'
-      },
-      {
-        type: 'liquid',
-        begin: 'style',
-        end: 'endstyle'
-      }
-    ],
-
     // Enforced
     language_name: 'CSS',
     language: 'css',
@@ -188,15 +174,6 @@ export const Rules = {
 
   // JavaScript Tag
   js: {
-
-    // Settings
-    tags: [
-      {
-        type: 'liquid',
-        begin: 'javascript',
-        end: 'endjavascript'
-      }
-    ],
 
     // Enforced
     mode: 'beautify',
