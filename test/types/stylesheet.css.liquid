@@ -14,6 +14,18 @@
   background: #000000;
 }
 
+  {% if condition %}
+    {{ current_tags.tag | link_to_remove_tag: taggg }}
+  {% endif %}
+
 .grid__item.clear {
   clear: both;
+
+    {% if condition %}
+    {{ current_tags.tag | link_to_remove_tag: taggg }}
+  {% endif %}
+
+  {%- comment -%}
+hello world
+{%- endcomment -%}
 }

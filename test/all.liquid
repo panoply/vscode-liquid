@@ -1,18 +1,48 @@
-<!-- CONTENT FOR -->
-{{ content_for_header }}
-{{ content_for_layout }}
-{{ content_for_index }}
+{% comment %}hello world
+{% endcomment %}
 
-<!-- SUPPORT CLASSES -->
-{{ article.content }}
-{{ product.description }}
-{{ collection.products }}
+<div>
+  <ul>
+    {%- for tag in collection.all_tags -%}
+      {%- if current_tags contains tag -%}
+        <li class="active">
+          {{ current_tags.tag | link_to_remove_tag: taggg }}
+        </li>
+      {%- else -%}
+        <li>
+          {{ current_tags.tag | link_to_add_tag: tag }}
+        </li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+</div>
 
-<!-- FILTERS -->
-{{ foo | replace: 'hello', 'world' }}
-{{ 'general.meta.page' | page: current_page | json  }}
-{{ 'general.meta.page' | t: page: current_page }}
-{{ collection.url | sort_by: 'price-ascending' }}
-{{ article.content | upcase }}
+<ul>
+  {%- for tag in collection.all_tags -%}
+    {%- if current_tags contains tag -%}
+      <li class="active">
+        {{ current_tags.tag | link_to_remove_tag: taggg }}
+      </li>
+    {%- else -%}
+      <li>
+        {{ current_tags.tag | link_to_add_tag: tag }}
+      </li>
+    {%- endif -%}
+  {%- endfor -%}
+</ul>
 
-{% assign foo = bar %}
+<div>
+  <ul>
+    {%- for tag in collection.all_tags -%}
+      {%- if current_tags contains tag -%}
+        <li class="active">
+          {{ current_tags.tag | link_to_remove_tag: taggg }}
+        </li>
+      {%- else -%}
+        <li>
+          {{ current_tags.tag | link_to_add_tag: tag }}
+        </li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+</div>

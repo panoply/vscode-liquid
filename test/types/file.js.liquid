@@ -1,56 +1,74 @@
 import Banner from "banner"
 import state from "state"
 
-{%- comment -%}
+{% - comment -%}
 
-{%- endcomment -%}
+{% - endcomment -%}
 
 const testt = {{ 'test.htel' | t }};
 
-// liquid
+const tt = liquid`
 
-{%- for taggg in collection.all_tags -%}
-{%- if current_tags contains taggg -%}
-{{ current_tags.tag | link_to_remove_tag: taggg }}
-{%- else -%}
-{{ current_tags.tag | link_to_add_tag: tag }}
-{%- endif -%}
-{%- endfor -%}
+  {%- for taggg in collection.all_tags -%}
+  {%- if current_tags contains taggg -%}
+  {{ current_tags.tag | link_to_remove_tag: taggg }}
+  {%- else -%}
+  {{ current_tags.tag | link_to_add_tag: tag }}
+  {%- endif -%}
+  {%- endfor -%}
 
+`
+
+{% - for taggg in collection.all_tags -%}
+{% - if current_tags contains taggg -%}
+{ { current_tags.tag | link_to_remove_tag: taggg } }
+{% - else -%}
+{ { current_tags.tag | link_to_add_tag: tag } }
+{% - endif -%}
+{% - endfor -%}
 
 const test = {
-  foo:  {{ foo | replace: 'hello', 'world' }},
-  bar: {{ 'general.meta.page' | page: current_page | json }}
+  foo: {{ foo | replace: 'hello', 'world' }},
+bar: { { 'general.meta.page' | page: current_page | json } }
 }
+
+/*
+comments
+
+*/
+
+// comments
+
 
 
 
 export default {
   onLoad() {
 
+
     this.banner = this.container.querySelector("#banner")
-      m.mount(banner, {
+    m.mount(banner, {
       view: () => {
         m(Banner, {
           banner: state.data.header.banner
-            })
-            }
-          })
-        },
-      state: {
-      navbar: {
+        })
+      }
+    })
+  },
+  state: {
+    navbar: {
       active: null
     }
   }
 }
 
-  {%- for taggg in collection.all_tags -%}
+{% - for taggg in collection.all_tags -%}
 
-  {%- if current_tags contains taggg -%}
-    {{ current_tags.tag | link_to_remove_tag: taggg }}
-  {%- else -%}
-    {{ current_tags.tag | link_to_add_tag: tag }}
+{% - if current_tags contains taggg -%}
+{ { current_tags.tag | link_to_remove_tag: taggg } }
+{% - else -%}
+{ { current_tags.tag | link_to_add_tag: tag } }
 
-  {%- endif -%}
+{% - endif -%}
 
-  {%- endfor -%}
+{% - endfor -%}

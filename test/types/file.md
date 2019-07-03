@@ -13,7 +13,7 @@ foo:
 
 {%- for taggg in collection.all_tags -%}
   {%- if current_tags contains taggg -%}
-    {{ current_tags.tag | link_to_remove_tag: taggg }}
+    {{ current_tags.tag | link_to_remove_tag: tagg }}
   {%- else -%}
     {{ current_tags.tag | link_to_add_tag: tag }}
   {%- endif -%}

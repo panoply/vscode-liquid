@@ -1,52 +1,52 @@
 {% for product in collection.products %}
-  {{ product.title }}
+{{ product.title }}
 {% endfor %}
 
 {% for product in collection.products %}
-  {{ product.title }}
+{{ product.title }}
 {% else %}
-  The collection is empty.
+The collection is empty.
 {% endfor %}
 
 {% for i in (1..5) %}
-  {% if i == 4 %}
-    {% break %}
-  {% else %}
-    {{ i }}
-  {% endif %}
+{% if i == 4 %}
+{% break %}
+{% else %}
+{{ i }}
+{% endif %}
 {% endfor %}
 
 {% for i in (1..5) %}
-  {% if i == 4 %}
-    {% continue %}
-  {% else %}
-    {{ i }}
-  {% endif %}
+{% if i == 4 %}
+{% continue %}
+{% else %}
+{{ i }}
+{% endif %}
 {% endfor %}
 
 {% for item in numbers limit: 2 %}
-  {{ item }}
+{{ item }}
 {% endfor %}
 
-{% for item in numbers offset: 2 %}
-  {{ item }}
+{%- for item in numbers offset: 2 %}
+{{ item }}
 {% endfor %}
 
 {% for i in (3..5) %}
-  {{ i }}
+{{ i }}
 {% endfor %}
 
-{% assign my_limit = 4 %}
+{%- assign my_limit = 4 -%}
 {% for i in (1..my_limit) %}
-  {{ i }}
-{% endfor %}
+{{ i }}
+{%- endfor -%}
 
 {% for fff in (1..my_limit) %}
-  {{ fff  }}
+{{ fff  }}
 {% endfor %}
 
 {% for item in array reversed %}
-  {{ item }}
+{{ item }}
 {% endfor %}
 
 {% cycle 'one', 'two', 'three' %}
@@ -55,7 +55,7 @@
 {% cycle 'one', 'two', 'three' %}
 
 {% paginate collection.products by 5 %}
-  {% for product in collection.products %}
-    <!--show product details here -->
-  {% endfor %}
+{% for product in collection.products %}
+<!--show product details here -->
+{% endfor %}
 {% endpaginate %}
