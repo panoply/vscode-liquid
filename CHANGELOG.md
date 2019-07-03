@@ -4,6 +4,13 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [2.1.1] – <small>03/07/2019</small>
+
+### Changes
+
+- Fixes Typo in `JSON` language default configuration
+- Minor improvement on documentation
+
 ## [2.1.0] – <small>03/07/2019</small>
 
 ### Changes

@@ -27,7 +27,6 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 - [Commands](#commands)
 - [Workspace Settings](#workspace-setting)
 - [Syntax Support](#syntax-support)
-  - [Template Literals](#template-literals)
 - [Formatting](#formatting)
   - [Using .liquidrc rule file](#using-liquidrc-rule-file)
   - [Using the workspace setting option](#using-the-workspace-setting-option)
@@ -177,18 +176,26 @@ Be careful overiding the default ignore tags. For example, if you have liquid co
 
 The whitespace `{%- comment -%}` tags have trouble parsing if you're not applying whitespace equally, e.g:
 
+<!-- prettier-ignore -->
 ```html
-<!-- Formats Correctly -->
-{%- comment -%} Hello World {%- endcomment -%} {% comment %} Hello World {%
-endcomment %}
+<!-- ✅ THIS WILL FORMAT CORRECTLY -->
+{%- comment -%}
+  Hello World
+{%- endcomment -%}
 
-<!-- Breaks Formatting -->
-{%- comment %} Hello World {% endcomment -%}
+{% comment %}
+  Hello World
+{% endcomment %}
+
+<!-- ❌ THIS WILL BREAK FORMATTING -->
+{%- comment %}
+  Hello World
+{% endcomment -%}
 ```
 
-Notice in the above example the liquid commment tags using whitespace dash `-` only once either the left or right side would break formatting. If you decide to remove comments from ignore, then you must write all comments with equal whitespace dashes.
+Notice in the above example the liquid commment tags using whitespace dash `-`. When the whitespace dash is only used once on either the left or right side it will break formatting. If you decide to remove comments from ignore then you must write all comments with equal whitespace dashes, like the above example.
 
-Please remove these 3 tags from the `ignore` array with extereme caution, be aware of what you're doing and how it might effect your code.
+Please remove the default tags from the `ignore` array with extereme caution, be aware of what you're doing and how it might effect your code.
 
 <strong>Default Ignores</strong>
 
@@ -272,7 +279,7 @@ Below is the default code style formatting rules. You can include this using a `
     "brace_block": true
   },
   "json": {
-    "perserve": 0,
+    "preserve": 0,
     "format_array": "indent",
     "braces": true,
     "no_semicolon": true,
