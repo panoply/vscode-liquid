@@ -1,18 +1,13 @@
 import { window, StatusBarItem, StatusBarAlignment } from 'vscode'
-import Config from './config'
 
 /**
  * Utilities frequently used by the extension
  *
- * @export
  * @class Utils
- * @extends Deprecations
  */
-export default class Utils extends Config {
+export default class Utils {
 
   constructor () {
-
-    super()
 
     this.barItem = StatusBarItem
     this.barItem = window.createStatusBarItem(StatusBarAlignment.Right, -2)
@@ -45,13 +40,7 @@ export default class Utils extends Config {
         text: `⚠️ Liquid: $(check)`,
         tooltip: `Errors detected! Toggle output`,
         command: 'liquid.toggleOutput'
-      },
-      unconfigured: {
-        text: `⚠️ Liquid`,
-        tooltip: `Unconfigured! Formatting disabled`,
-        command: 'liquid.fixDeprecations'
       }
-
     }
 
     Object.assign(this.barItem, types[type])

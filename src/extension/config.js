@@ -2,19 +2,22 @@ import { workspace, window } from 'vscode'
 import assign from 'assign-deep'
 import path from 'path'
 import fs from 'fs'
+import Utils from './utils'
 import { FormattingRules, TagAssociations } from './options'
 
 /**
- * Applies custom the cutom configuration
- * settings used by the extension.
+ * Applies custom configuration settings used
+ * by the extension.
  *
  * @class Config
- *
+ * @extends Utils
  */
 
-export default class Config {
+export default class Config extends Utils {
 
   constructor () {
+
+    super()
 
     // Configuration
     this.config = FormattingRules
@@ -35,13 +38,15 @@ export default class Config {
   /**
    * Defines where formatting rules are sourced.
    * Looks for rules defined in a `.liquirc` file and if
-   * no file present will default to workspace settings.
+   * no file present will default to workspace settings configuration.
    *
    */
   setFormattingRules () {
 
+    // Look for `liquidrc` file
     if (!fs.existsSync(this.rcfile)) {
 
+      // Get latest config option of Liquid
       const liquid = workspace.getConfiguration('liquid')
       const rules = liquid.get('rules')
       const tags = this.setTagAssociates(rules)
@@ -83,6 +88,11 @@ export default class Config {
 
   }
 
+  /**
+   * Sets custom and native tag associations.
+   *
+   * @param {object} config the current configuration source
+   */
   setTagAssociates (config) {
 
     for (let lang in this.tagAssociates) {
@@ -116,6 +126,11 @@ export default class Config {
 
   }
 
+  /**
+   * Watches `.liquidrc` file for changes
+   *
+   * @memberof Config
+   */
   rcfileWatcher () {
 
     if (!this.watch) {
@@ -136,6 +151,13 @@ export default class Config {
 
   }
 
+  /**
+   * Generates a `.liquidrc` file to root of the projects
+   * directory.
+   *
+   * @returns
+   * @memberof Config
+   */
   rcfileGenerate () {
 
     if (fs.existsSync(this.rcfile)) {

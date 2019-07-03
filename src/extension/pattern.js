@@ -1,4 +1,4 @@
-import Utils from './utils'
+import Config from './config'
 
 /**
  * Pattern Generator
@@ -11,7 +11,7 @@ import Utils from './utils'
  * @extends {Utils}
  */
 
-export default class Pattern extends Utils {
+export default class Pattern extends Config {
 
   /**
    * Regex pattern helper to generate tag pattern

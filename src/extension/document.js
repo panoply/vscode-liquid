@@ -140,6 +140,11 @@ export default class Document extends Format {
 
   }
 
+  /**
+   * Handles the Generate `.liquidrc` file command
+   *
+   * @memberof Document
+   */
   liquidrc () {
 
     return this.rcfileGenerate()

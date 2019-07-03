@@ -107,6 +107,8 @@ export default class Format extends Pattern {
   ) {
 
     const format = this.beautify(name, source)
+
+    // Applies the brace_block custom ruleset
     const newline = prettydiff.options.brace_block ? `\n\n` : `\n`
     const output = open + newline + format + newline + close
 
