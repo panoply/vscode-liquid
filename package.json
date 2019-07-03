@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "keywords": [
     "liquid",
     "shopify",
@@ -57,11 +57,7 @@
       },
       {
         "command": "liquid.liquidrc",
-        "title": "Liquid: Generate .liquidrc rule file"
-      },
-      {
-        "command": "liquid.fixDeprecations",
-        "title": "Liquid: Fix Deprecated Settings"
+        "title": "Liquid: Generate a .liquidrc rule file"
       }
     ],
     "keybindings": [

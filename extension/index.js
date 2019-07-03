@@ -4,9 +4,9 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var vscode = require('vscode');
 var prettydiff = _interopDefault(require('prettydiff'));
-var fs = _interopDefault(require('fs'));
 var assign = _interopDefault(require('assign-deep'));
 var path = _interopDefault(require('path'));
+var fs = _interopDefault(require('fs'));
 
 /**
  * Formatting Rules
@@ -209,7 +209,6 @@ const Rules = {
  * settings used by the extension.
  *
  * @class Config
- * @extends {Deprecations}
  *
  */
 
@@ -239,15 +238,7 @@ class Config {
 
     if (!fs.existsSync(this.rcfile)) {
 
-      if (liquid.beautify) {
-
-        return this.fixRules()
-
-      } else {
-
-        this.config = assign(this.config, liquid.rules);
-
-      }
+      this.config = assign(this.config, liquid.rules);
 
     } else {
 
@@ -348,6 +339,8 @@ class Config {
         return console.error(error)
 
       }).then(() => {
+
+        this.rcfileWatcher();
 
         return vscode.window.showInformationMessage('You are now using a .liquidrc file to define formatting rules 👍')
 
@@ -483,106 +476,6 @@ class Utils extends Config {
 }
 
 /**
- * Fixes deprecated settings in previous versions
- *
- * @class Deprecations
- */
-class Deprecations extends Utils {
-
-  fixIgnores () {
-
-    this.liquid.update('formatIgnore', undefined, true).then(() => {
-
-      vscode.window.showInformationMessage(`💧liquid.formatIgnore was deprecated.`, 'Learn more').then((selected) => {
-
-        if (selected === 'Learn more') {
-
-          vscode.env.openExternal(vscode.Uri.parse('https://github.com/panoply/vscode-liquid#ignoring-tags'));
-
-        }
-
-      });
-
-    });
-
-  }
-
-  fixRules () {
-
-    this.unconfigured = true;
-
-    vscode.window.showInformationMessage('Liquid formatting rules can now be defined using a .liquidrc file. Would you like to generate a .liquidrc file using your exisiting liquid formatting rules or just use the default configuration?',
-      'Use default', 'Use .liquidrc file').then((selected) => {
-
-      const content = {
-        ignore: this.liquid.rules.ignore,
-        html: this.liquid.beautify.html || this.liquid.rules.html,
-        js: this.liquid.beautify.javascript || this.liquid.rules.js,
-        scss: this.liquid.beautify.stylesheet || this.liquid.rules.scss,
-        css: this.liquid.beautify.stylesheet || this.liquid.rules.css,
-        json: this.liquid.beautify.schema || this.liquid.rules.json
-      };
-
-      if (selected === 'Use .liquidrc file') {
-
-        const json = JSON.stringify(content, null, 2);
-
-        fs.writeFile(this.rcfile, json, (error) => {
-
-          if (error) {
-
-            return this.outputLog({
-              title: 'Error generating rules',
-              file: this.rcfile,
-              message: error.message,
-              show: true
-            })
-
-          }
-
-          vscode.workspace.openTextDocument(this.rcfile).then((document) => {
-
-            vscode.window.showTextDocument(document, 1, false);
-
-          }, (error) => {
-
-            return console.error(error)
-
-          }).then(() => {
-
-            this.liquid.update('beautify', undefined, true).then(() => {
-
-              this.fixIgnores();
-              this.unconfigured = false;
-
-            });
-
-            vscode.window.showInformationMessage('You are now using a .liquidrc file to define formatting rules 👍');
-
-          });
-
-        });
-
-      } else if (selected === 'Use default') {
-
-        vscode.window.showInformationMessage('Settings were updated successfully 👍');
-
-        this.liquid.update('beautify', undefined, true).then(() => {
-
-          this.fixIgnores();
-          this.unconfigured = false;
-
-        });
-
-      }
-
-    });
-
-  }
-
-}
-
-/**
  * Pattern Generator
  *
  * Generates regex patterns using the
@@ -590,10 +483,10 @@ class Deprecations extends Utils {
  * used when fromatting.
  *
  * @class Pattern
- * @extends {Config}
+ * @extends {Utils}
  */
 
-class Pattern extends Deprecations {
+class Pattern extends Utils {
 
   /**
    * Regex pattern helper to generate tag pattern
@@ -1200,6 +1093,5 @@ exports.activate = context => {
   sub.push(registerCommand('liquid.formatSelection', document.selection.bind(document)));
   sub.push(registerCommand('liquid.toggleOutput', document.output.bind(document)));
   sub.push(registerCommand('liquid.liquidrc', document.liquidrc.bind(document)));
-  sub.push(registerCommand('liquid.fixDeprecations', document.fixRules.bind(document)));
 
 };
