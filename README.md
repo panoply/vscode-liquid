@@ -214,7 +214,8 @@ Below is the default code style formatting rules. You can include this using a `
   "html": {
     "correct": true,
     "force_attribute": false,
-    "preserve": 2
+    "preserve": 2,
+    "unformatted": true
   },
   "js": {
     "preserve": 1,
@@ -280,6 +281,7 @@ Below is the default code style formatting rules. You can include this using a `
 | correct         | `true`    | Corrects code                            |
 | force_attribute | `false`   | Indents HTML tag attributes to a newline |
 | preserve        | `2`       | Lines to preserve                        |
+| unformatted        | `true`       |  Should HTML tags (like attributes) have their insides preserved.                    |
 
 </p>
 </details>

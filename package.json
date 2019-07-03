@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "keywords": [
     "liquid",
     "shopify",
@@ -186,7 +186,8 @@
               "correct": false,
               "force_attribute": false,
               "braces": false,
-              "preserve": 2
+              "preserve": 2,
+              "unformatted": true
             },
             "js": {
               "preserve": 1,

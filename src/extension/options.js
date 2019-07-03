@@ -70,6 +70,7 @@ export const Rules = {
 
     // Exposed Default Rules
     correct: false,
+    unformatted: true,
     force_attribute: false,
     braces: false,
     preserve: 1,
