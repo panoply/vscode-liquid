@@ -29,6 +29,5 @@ exports.activate = context => {
   sub.push(registerCommand('liquid.formatSelection', document.selection.bind(document)))
   sub.push(registerCommand('liquid.toggleOutput', document.output.bind(document)))
   sub.push(registerCommand('liquid.liquidrc', document.liquidrc.bind(document)))
-  sub.push(registerCommand('liquid.fixDeprecations', document.fixRules.bind(document)))
 
 }
