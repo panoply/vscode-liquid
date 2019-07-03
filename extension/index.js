@@ -232,11 +232,6 @@ class Config {
    * Looks for rules defined in a `.liquirc` file and if
    * no file present will default to workspace settings.
    *
-   * Example:
-   *
-   * Checks useRuleFile application scope setting, which has
-   * a`default` value set to `false`
-   *
    */
   setFormattingRules () {
 
@@ -502,7 +497,7 @@ class Deprecations extends Utils {
 
         if (selected === 'Learn more') {
 
-          vscode.env.openExternal(vscode.Uri.parse('https://github.com/panoply/vscode-liquid/tree/v2.0.0#ignoring-tags'));
+          vscode.env.openExternal(vscode.Uri.parse('https://github.com/panoply/vscode-liquid#ignoring-tags'));
 
         }
 
