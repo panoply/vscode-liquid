@@ -9,7 +9,6 @@ import { Rules } from './options'
  * settings used by the extension.
  *
  * @class Config
- * @extends {Deprecations}
  *
  */
 
@@ -39,15 +38,7 @@ export default class Config {
 
     if (!fs.existsSync(this.rcfile)) {
 
-      if (liquid.beautify) {
-
-        return this.fixRules()
-
-      } else {
-
-        this.config = assign(this.config, liquid.rules)
-
-      }
+      this.config = assign(this.config, liquid.rules)
 
     } else {
 
@@ -148,6 +139,8 @@ export default class Config {
         return console.error(error)
 
       }).then(() => {
+
+        this.rcfileWatcher()
 
         return window.showInformationMessage('You are now using a .liquidrc file to define formatting rules 👍')
 

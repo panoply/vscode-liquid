@@ -1,4 +1,4 @@
-import Deprecations from './deprecations'
+import Utils from './utils'
 
 /**
  * Pattern Generator
@@ -8,10 +8,10 @@ import Deprecations from './deprecations'
  * used when fromatting.
  *
  * @class Pattern
- * @extends {Config}
+ * @extends {Utils}
  */
 
-export default class Pattern extends Deprecations {
+export default class Pattern extends Utils {
 
   /**
    * Regex pattern helper to generate tag pattern
