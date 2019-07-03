@@ -9,6 +9,78 @@ var path = _interopDefault(require('path'));
 var fs = _interopDefault(require('fs'));
 
 /**
+ * Utilities frequently used by the extension
+ *
+ * @class Utils
+ */
+class Utils {
+
+  constructor () {
+
+    this.barItem = vscode.StatusBarItem;
+    this.barItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -2);
+    this.outputChannel = vscode.window.createOutputChannel('Liquid');
+
+  }
+
+  /**
+   * The status bar item functionality
+   *
+   * @param {"string"} type the type of status bar item to show
+   * @param {"string"} [show] show/hide the status bar item (optional)
+   * @memberof Utils
+   */
+  statusBarItem (type, show) {
+
+    const types = {
+
+      enabled: {
+        text: `💧Liquid: $(check)`,
+        tooltip: `Enable/Disable Liquid Formatting`,
+        command: 'liquid.disableFormatting'
+      },
+      disabled: {
+        text: `💧Liquid: $(x)`,
+        tooltip: `Enable Liquid Formatting`,
+        command: 'liquid.enableFormatting'
+      },
+      error: {
+        text: `⚠️ Liquid: $(check)`,
+        tooltip: `Errors detected! Toggle output`,
+        command: 'liquid.toggleOutput'
+      }
+    };
+
+    Object.assign(this.barItem, types[type]);
+
+    if (show !== undefined) {
+
+      return show ? this.barItem.show() : this.barItem.false()
+
+    }
+
+  }
+
+  outputLog ({ title, message, file, show }) {
+
+    const date = new Date().toLocaleString();
+
+    // Apply a date title to the output
+    this.outputChannel.appendLine(`[${date}] ${title}: ${message}`);
+
+    if (show) {
+
+      this.error = true;
+      this.statusBarItem('error');
+      this.outputChannel.show();
+
+    }
+
+  }
+
+}
+
+/**
  * Tag Associations (Enforced)
  */
 const TagAssociations = {
@@ -184,16 +256,18 @@ const FormattingRules = {
 };
 
 /**
- * Applies custom the cutom configuration
- * settings used by the extension.
+ * Applies custom configuration settings used
+ * by the extension.
  *
  * @class Config
- *
+ * @extends Utils
  */
 
-class Config {
+class Config extends Utils {
 
   constructor () {
+
+    super();
 
     // Configuration
     this.config = FormattingRules;
@@ -214,13 +288,15 @@ class Config {
   /**
    * Defines where formatting rules are sourced.
    * Looks for rules defined in a `.liquirc` file and if
-   * no file present will default to workspace settings.
+   * no file present will default to workspace settings configuration.
    *
    */
   setFormattingRules () {
 
+    // Look for `liquidrc` file
     if (!fs.existsSync(this.rcfile)) {
 
+      // Get latest config option of Liquid
       const liquid = vscode.workspace.getConfiguration('liquid');
       const rules = liquid.get('rules');
       const tags = this.setTagAssociates(rules);
@@ -262,6 +338,11 @@ class Config {
 
   }
 
+  /**
+   * Sets custom and native tag associations.
+   *
+   * @param {object} config the current configuration source
+   */
   setTagAssociates (config) {
 
     for (let lang in this.tagAssociates) {
@@ -295,6 +376,11 @@ class Config {
 
   }
 
+  /**
+   * Watches `.liquidrc` file for changes
+   *
+   * @memberof Config
+   */
   rcfileWatcher () {
 
     if (!this.watch) {
@@ -315,6 +401,13 @@ class Config {
 
   }
 
+  /**
+   * Generates a `.liquidrc` file to root of the projects
+   * directory.
+   *
+   * @returns
+   * @memberof Config
+   */
   rcfileGenerate () {
 
     if (fs.existsSync(this.rcfile)) {
@@ -420,88 +513,6 @@ class Config {
 }
 
 /**
- * Utilities frequently used by the extension
- *
- * @export
- * @class Utils
- * @extends Deprecations
- */
-class Utils extends Config {
-
-  constructor () {
-
-    super();
-
-    this.barItem = vscode.StatusBarItem;
-    this.barItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -2);
-    this.outputChannel = vscode.window.createOutputChannel('Liquid');
-
-  }
-
-  /**
-   * The status bar item functionality
-   *
-   * @param {"string"} type the type of status bar item to show
-   * @param {"string"} [show] show/hide the status bar item (optional)
-   * @memberof Utils
-   */
-  statusBarItem (type, show) {
-
-    const types = {
-
-      enabled: {
-        text: `💧Liquid: $(check)`,
-        tooltip: `Enable/Disable Liquid Formatting`,
-        command: 'liquid.disableFormatting'
-      },
-      disabled: {
-        text: `💧Liquid: $(x)`,
-        tooltip: `Enable Liquid Formatting`,
-        command: 'liquid.enableFormatting'
-      },
-      error: {
-        text: `⚠️ Liquid: $(check)`,
-        tooltip: `Errors detected! Toggle output`,
-        command: 'liquid.toggleOutput'
-      },
-      unconfigured: {
-        text: `⚠️ Liquid`,
-        tooltip: `Unconfigured! Formatting disabled`,
-        command: 'liquid.fixDeprecations'
-      }
-
-    };
-
-    Object.assign(this.barItem, types[type]);
-
-    if (show !== undefined) {
-
-      return show ? this.barItem.show() : this.barItem.false()
-
-    }
-
-  }
-
-  outputLog ({ title, message, file, show }) {
-
-    const date = new Date().toLocaleString();
-
-    // Apply a date title to the output
-    this.outputChannel.appendLine(`[${date}] ${title}: ${message}`);
-
-    if (show) {
-
-      this.error = true;
-      this.statusBarItem('error');
-      this.outputChannel.show();
-
-    }
-
-  }
-
-}
-
-/**
  * Pattern Generator
  *
  * Generates regex patterns using the
@@ -512,7 +523,7 @@ class Utils extends Config {
  * @extends {Utils}
  */
 
-class Pattern extends Utils {
+class Pattern extends Config {
 
   /**
    * Regex pattern helper to generate tag pattern
@@ -764,6 +775,8 @@ class Format extends Pattern {
   ) {
 
     const format = this.beautify(name, source);
+
+    // Applies the brace_block custom ruleset
     const newline = prettydiff.options.brace_block ? `\n\n` : `\n`;
     const output = open + newline + format + newline + close;
 
@@ -1025,6 +1038,11 @@ class Document extends Format {
 
   }
 
+  /**
+   * Handles the Generate `.liquidrc` file command
+   *
+   * @memberof Document
+   */
   liquidrc () {
 
     return this.rcfileGenerate()

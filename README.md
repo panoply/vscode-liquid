@@ -2,13 +2,9 @@
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/banner.gif"  atl="Liquid Logo"  width="100%">
 
-#### IMPORTANT
+# 💧 Liquid <small style="color:#999;">(vs code)</small>
 
-**If you're using the [Liquid Language Support](https://github.com/GingerBear/vscode-liquid) and/or the [Shopify Liquid Template Snippets](https://github.com/killalau/vscode-liquid-snippets) then it's highly recommended that you either uninstall or disable both of these before using this extension.**
-
-# Liquid <small style="color:#999;">(vs code)</small>
-
-A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support for Liquid in HTML, JavaScript CSS, SCSS, Markdown and more. Ships with auto formatting code beautification, advanced snippet auto-completion resolution and respects VS Codes native Intellisense, hover and diagnostic features.
+A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support for Liquid code used in HTML, JavaScript CSS, SCSS, Markdown and more. Ships with auto formatting code beautification, advanced snippet auto-completion resolution and respects VS Codes native Intellisense, hover and diagnostic features.
 
 ### Key Features
 
@@ -16,7 +12,11 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 - Auto formatting and beautification with the powerful [PrettyDiff](https://prettydiff.com/).
 - Snippet auto-completion for liquid tags, filters, shopify schema and more!
 - Focused support for Jekyll and Shopify liquid variations
-- Support Shopify [Sections](https://help.shopify.com/en/themes/development/sections)
+- Supports Shopify [Section](https://help.shopify.com/en/themes/development/sections) code blocks.
+
+#### IMPORTANT
+
+**If you're using the [Liquid Language Support](https://github.com/GingerBear/vscode-liquid) and/or the [Shopify Liquid Template Snippets](https://github.com/killalau/vscode-liquid-snippets) then it's highly recommended that you either uninstall or disable both of these before using this extension.**
 
 ### Showcase
 
@@ -24,8 +24,9 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 
 # Table of Contents
 
+- [Quickstart](#quickstart)
 - [Commands](#commands)
-- [Workspace Settings](#workspace-setting)
+- [Workspace Settings](#workspace-settings)
 - [Syntax Support](#syntax-support)
 - [Formatting](#formatting)
   - [Using .liquidrc rule file](#using-liquidrc-rule-file)
@@ -33,11 +34,15 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
   - [Toggle and Status button](#toggle-and-status-button)
   - [Tag Associations](#tag-associations)
   - [Ignored Tags](#ignoring-tags)
-  - [Key Binding](#key-bindind)
   - [Rules](#rules)
+  - [Key Binding](#key-binding)
 - [Snippets](#snippets)
-- [Support](#support)
+- [Support](#support-this-extension)
 - [Changelog](#changelog)
+
+# Quickstart
+
+After installing this extension run the `Liquid: Generate .liquidrc File` command to create a `.liquirc` rule file in your projects root directory. This file will be used to enforce your code formatting style. Open any `.html`, `.liquid` or `.jekyll` file and you're ready to go!
 
 # Commands
 
@@ -168,8 +173,7 @@ The below example would apply SCSS formatting to content between `<style lang="s
 
 Sometimes you may wish to ignore/disable formatting for certain HTML or Liquid tags. The `ignore` ruleset accepts an array of tags you wish to exclude. Ignored tags must have matching open and close definition tags and are defined using the `ignore` setting which accepts an array of objects with each object representing the tag to ignore from formatting.
 
-<strong>Deprecations in version 2.0</strong><br>
-In previous versions of this extension ignored tags were defined using the `liquid.formatIgnore` setting. This has been deprecated and you must use the new configuration.
+> In previous versions of this extension ignored tags were defined using the `liquid.formatIgnore` setting. This has been deprecated and you must use the new configuration.
 
 <strong>IMPORTANT</strong><br>
 Be careful overiding the default ignore tags. For example, if you have liquid code contained in `<script>` or `<style>` tags formatting will fail, hence why these tags are ignored by default.
@@ -223,13 +227,9 @@ Please remove the default tags from the `ignore` array with extereme caution, be
 
 > Do not include tag denotations (eg: `<`, `>`, `</`, `{%`, `%}`) when defining **begin** and **end** capture expressions. The `type` property defines the denotations of the tag.
 
-<strong>Please Note</strong><br>
-
-If you require formatting for `<script>` tags which contain _no liquid_ code you should consider using [eslint](<[https://eslint.org](https://eslint.org/)>) and the [eslint-plugin-html](https://github.com/BenoitZugmeyer/eslint-plugin-html) with [prettier](https://prettier.io/).
-
 # Rules
 
-Below is the default code style formatting rules. You can include this using a `.liquidrc` file in the root of your project or via the`"liquid.rules"` option in workspace settings.
+Below is the default code style formatting rules. Generate this file using the `Liquid: Generate .liquidrc File` command and a file in the root of your project will be created. Alternatively you can use the `"liquid.rules"` option in your workspace or user settings.
 
 ```jsonc
 {
