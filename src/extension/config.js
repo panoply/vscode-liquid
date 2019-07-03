@@ -1,127 +1,201 @@
-import { workspace } from 'vscode'
+import { workspace, window } from 'vscode'
+import assign from 'assign-deep'
+import path from 'path'
+import fs from 'fs'
+import { Rules } from './options'
 
 /**
- * Tag Presets
+ * Applies custom the cutom configuration
+ * settings used by the extension.
+ *
+ * @class Config
+ * @extends {Deprecations}
+ *
  */
-export const preset = [
-  'javascript',
-  'stylesheet',
-  'schema',
-  'style'
-]
 
-/**
- * Ignored Tags
- */
-export const ignore = [
-  'comment',
-  'script'
-].concat(workspace.getConfiguration('liquid').formatIgnore || [])
+export default class Config {
 
-/**
- * PrettyDiff Formatting Rules
- */
-export const rules = {
-  html: {
-    mode: 'beautify',
-    language_name: 'Liquid',
-    language: 'html',
-    lexer: 'markup',
-    end_quietly: 'log',
-    node_error: true,
-    brace_block: false,
+  constructor () {
 
-    // Inherited
-    indent_size: workspace.getConfiguration('editor').tabSize,
+    this.config = Rules
+    this.liquid = workspace.getConfiguration('liquid')
+    this.rcfile = path.join(workspace.rootPath, '.liquidrc')
+    this.format = this.liquid.get('format')
+    this.watching = false
+    this.error = false
+    this.unconfigured = false
 
-    // Exposed Options
-    correct: true,
-    force_attribute: false,
-    braces: false,
-    preserve: 1
-  },
-  schema: {
-    mode: 'beautify',
-    language: 'JSON',
-    language_name: 'json',
-    lexer: 'script',
-
-    // Inherited
-    indent_size: workspace.getConfiguration('editor').tabSize,
-
-    // Exposed Default Rules
-    format_array: 'indent',
-    preserve: 0,
-    braces: true,
-    no_semicolon: true,
-    brace_block: false
-  },
-  stylesheet: {
-    mode: 'beautify',
-    language_name: 'SASS',
-    language: 'scss',
-    lexer: 'style',
-
-    // Inherited
-    indent_size: workspace.getConfiguration('editor').tabSize,
-
-    // Exposed Default Rules
-    css_insert_lines: true,
-    preserve: 2,
-    braces: false,
-    brace_block: false
-  },
-  javascript: {
-    mode: 'beautify',
-    language_name: 'JavaScript',
-    language: 'javascript',
-    lexer: 'script',
-
-    // Inherited
-    indent_size: workspace.getConfiguration('editor').tabSize,
-
-    // Exposed Rules
-    preserve: 1,
-    method_chain: 0,
-    quote_convert: 'none',
-    format_array: 'indent',
-    format_object: 'indent',
-    braces: false,
-    no_semicolon: false,
-    brace_block: false
   }
-}
 
-/**
- * HTML/Liquid Tag Parser
- */
-export const matches = {
-  frontmatter: [
-    '---',
-    '(?:[^]*?)',
-    '---'
-  ],
-  tags: [
-    '(',
-    '(?:<|{%-?)\\s*',
-    `\\b(${preset.concat(ignore).join('|')})\\b`,
-    '(?:.|\\n)*?\\s*',
-    '(?:>|-?%})\\s*',
-    ')',
-    '(',
-    '(?:.|\\n)*?',
-    ')',
-    '(',
-    '(?:</|{%-?)\\s*',
-    '\\b(?:(?:|end)\\2)\\b',
-    '\\s*(?:>|-?%})',
-    ')'
-  ],
-  ignore: [
-    '(',
-    '<temp data-prettydiff-ignore>',
-    '|',
-    '</temp>',
-    ')'
-  ]
+  /**
+   * Defines where formatting rules are sourced.
+   * Looks for rules defined in a `.liquirc` file and if
+   * no file present will default to workspace settings.
+   *
+   */
+  setFormattingRules () {
+
+    const liquid = workspace.getConfiguration('liquid')
+
+    if (!fs.existsSync(this.rcfile)) {
+
+      if (liquid.beautify) {
+
+        return this.fixRules()
+
+      } else {
+
+        this.config = assign(this.config, liquid.rules)
+
+      }
+
+    } else {
+
+      try {
+
+        // Read .liquidrc file
+        const file = fs.readFileSync(this.rcfile, 'utf8')
+
+        // Parse contents, use html `indent_size` which uses `editor.tabSize`
+        const json = JSON.parse(file, null, this.config.html.indent_size)
+
+        this.error = false
+
+        // Assign custom configuration to options
+        this.config = assign(this.config, json)
+
+      } catch (error) {
+
+        this.outputLog({
+          title: 'Error reading formatting rules',
+          file: this.rcfile,
+          message: error.message,
+          show: true
+        })
+
+      } finally {
+
+        this.rcfileWatcher()
+
+      }
+
+    }
+
+  }
+
+  rcfileWatcher () {
+
+    if (!this.watching) {
+
+      const watch = workspace.createFileSystemWatcher(this.rcfile, true, false, false)
+
+      watch.onDidChange(() => this.setFormattingRules())
+      watch.onDidDelete(() => this.setFormattingRules())
+
+      this.watching = true
+
+    }
+
+  }
+
+  rcfileGenerate () {
+
+    if (fs.existsSync(this.rcfile)) {
+
+      return window.showErrorMessage('.liquidrc file already exists!', 'Open')
+      .then(answer => {
+
+        if (answer === 'Open') {
+
+          workspace.openTextDocument(this.rcfile).then((document) => {
+
+            window.showTextDocument(document, 1, false)
+
+          }, (error) => {
+
+            return console.error(error)
+
+          })
+
+        }
+
+      })
+
+    }
+
+    const liquid = workspace.getConfiguration('liquid')
+    const rules = JSON.stringify(liquid.rules, null, 2)
+
+    fs.writeFile(this.rcfile, rules, (error) => {
+
+      if (error) {
+
+        return this.outputLog({
+          title: 'Error generating rules',
+          file: this.rcfile,
+          message: error.message,
+          show: true
+        })
+
+      }
+
+      workspace.openTextDocument(this.rcfile).then((document) => {
+
+        window.showTextDocument(document, 1, false)
+
+      }, (error) => {
+
+        return console.error(error)
+
+      }).then(() => {
+
+        return window.showInformationMessage('You are now using a .liquidrc file to define formatting rules 👍')
+
+      })
+
+    })
+
+  }
+
+  /**
+   * Returns formatting rules based on
+   * matching `liquid_tags` value
+   *
+   * @param {string} tag
+   */
+  getRuleByTagName (tag) {
+
+    // skip iteration if tag equals html
+    if (tag === 'html') {
+
+      return this.config.html
+
+    }
+
+    let rules
+
+    // loop over each language prop
+    for (let lang in this.config) {
+
+      if (lang !== 'ignore' || lang !== 'html') {
+
+        // filters out object without a `tags` prop, eg: `html`
+        this.config[lang].hasOwnProperty('tags') && this.config[lang].tags.map(i => {
+
+          if (i.begin === tag) {
+
+            rules = this.config[lang]
+
+          }
+
+        })
+
+      }
+
+    }
+
+    return rules
+
+  }
+
 }

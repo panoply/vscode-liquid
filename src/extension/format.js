@@ -1,176 +1,220 @@
-import { languages, window, TextEdit, Range } from 'vscode'
-import { preset, rules, ignore } from './config'
+import { window, TextEdit, Range } from 'vscode'
 import prettydiff from 'prettydiff'
-import pattern from './pattern'
+import Pattern from './pattern'
 
-export default class Format {
+/**
+ * Applies formatting to the document
+ *
+ * @class Format
+ * @extends {Pattern}
+ */
+export default class Format extends Pattern {
 
   /**
+   * Formatting provider function
+   *
+   * @param {Object} document The VSCode document
+   * @memberof Format
+   */
+  provider (document) {
+
+    if (!this.error && this.format) {
+
+      this.statusBarItem('enabled')
+
+    }
+
+    const range = Format.range(document)
+    const result = this.apply(document.getText(range))
+
+    return [
+      TextEdit.replace(range, `${result.trim()}`)
+    ]
+
+  }
+
+  /**
+   * Applies the formatting and beautification
+   *
+   * @param {string} document The current document   *
+   * @memberof Format
+   */
+  apply (document) {
+
+    if (document.match(this.frontmatter)) {
+
+      document = document.replace(this.frontmatter, Format.ignore)
+
+    }
+
+    for (let i = 0; i < this.pattern.ignored.length; i++) {
+
+      if (document.match(this.pattern.ignored[i])) {
+
+        document = document.replace(this.pattern.ignored[i], Format.ignore)
+
+      }
+
+    }
+
+    for (let i = 0; i < this.pattern.tags.length; i++) {
+
+      if (document.match(this.pattern.tags[i])) {
+
+        document = document.replace(this.pattern.tags[i], this.tags.bind(this))
+
+      }
+
+    }
+
+    document = this.beautify('html', document)
+
+    if (document.match(this.ignoreWrap)) {
+
+      document = document.replace(this.ignoreWrap, '')
+
+    }
+
+    return document
+
+  }
+
+  /**
+   * Applies formatting to captured tag blocks
+   *
+   * @param {"string"} code The full tag match
+   * @param {"string"} open the open tag (begin), eg: `<div>`
+   * @param {"string"} name the name of the tag, eg: `div`
+   * @param {"string"} source the inner conent of of the div.
+   * @param {"string"} close the close tag (end), eg: `</div>`
+   * @memberof Format
+   */
+  tags (
+    code,
+    open,
+    name,
+    source,
+    close
+  ) {
+
+    const format = this.beautify(name, source)
+    const newline = prettydiff.options.brace_block ? `\n\n` : `\n`
+    const output = open + newline + format + newline + close
+
+    return Format.ignore(output)
+
+  }
+
+  /**
+   * Executes formatting
+   *
    * @param {string} rule
    * @param {string} source
    */
-  static beautify (rule, source) {
+  beautify (name, source) {
 
-    // Inherit stylesheet ruleset for `{% style %}` tags
-    if (rule === 'style') {
+    let content = ''
 
-      rule = 'stylesheet'
+    try {
 
-    }
+      let rules = this.getRuleByTagName(name)
 
-    prettydiff.options = Object.assign(prettydiff.options, rules[rule], {
-      source
-    })
+      prettydiff.options = Object.assign(prettydiff.options, rules, {
+        source
+      })
 
-    return prettydiff()
+      content = prettydiff()
 
-  }
+      if (prettydiff.sparser.parseerror.length > 0) {
 
-  /**
-   * @param {object} document
-   */
-  static range (document) {
+        this.statusBarItem('error')
 
-    const first = document.positionAt(0)
-    const last = document.positionAt(document.getText().length - 1)
+        this.outputLog({
+          title: 'PrettyDiff',
+          message: `${prettydiff.sparser.parseerror}`
+        })
 
-    return new Range(first, last)
-
-  }
-
-  /**
-   * @param {string} code
-   */
-  static ignores (code) {
-
-    return `<temp data-prettydiff-ignore>${code}</temp>`
-
-  }
-
-  /**
-   * @param {string} code
-   * @param {string} open
-   * @param {string} name
-   * @param {string} source
-   * @param {string} close
-   */
-  static tags (code, open, name, source, close) {
-
-    if (ignore.includes(name)) {
-
-      return Format.ignores(`${code.trim()}`)
-
-    }
-
-    const format = Format.beautify(name, source)
-    const pad = prettydiff.options.brace_block ? `\n\n` : `\n`
-    const output = `${open.trim()}${pad}${format.trim()}${pad}${close.trim()}`
-
-    return Format.ignores(output.trim())
-
-  }
-
-  /**
-   * @param {object} document
-   */
-  static code (document) {
-
-    if (document.match(pattern.frontmatter)) {
-
-      document = document.replace(pattern.frontmatter, Format.ignores)
-
-    }
-
-    // Beautification
-    const source = document.replace(pattern.tags, Format.tags)
-    const output = Format.beautify('html', source)
-    const result = output.replace(pattern.ignore, '')
-
-    return result
-
-  }
-
-  /**
-   * @param {object} document
-   */
-  static apply (document) {
-
-    const range = Format.range(document)
-    const result = Format.code(document.getText(range))
-
-    return {
-      range,
-      result
-    }
-
-  }
-
-  /**
-   * Constructor
-   */
-  constructor () {
-
-    this.scheme = {
-      scheme: 'file',
-      language: 'html'
-    }
-
-  }
-
-  /**
-   * @param {object} liquid
-   */
-  rules (liquid) {
-
-    preset.map(language => {
-
-      if (liquid.beautify[language]) {
-
-        Object.assign(rules[language], liquid.beautify[language])
+        return source
 
       }
 
-    })
+      return content
 
-  }
+    } catch (error) {
 
-  /**
-   * @returns
-   */
-  register () {
+      if (prettydiff.sparser.parseerror.length > 0) {
 
-    return languages.registerDocumentFormattingEditProvider(this.scheme, {
-      provideDocumentFormattingEdits (document) {
-
-        const { range, result } = Format.apply(document)
-        return [ TextEdit.replace(range, `${result.trim()}`) ]
+        this.outputLog({
+          title: 'PrettyDiff',
+          message: `${prettydiff.sparser.parseerror}`
+        })
 
       }
-    })
+
+      return this.outputLog({
+        title: 'Error',
+        message: `${error.message}`
+      })
+
+    }
 
   }
 
   /**
-   * @returns
+   * Formats the entire document
+   *
+   * @memberof Format
    */
-  document () {
+  completeDocument () {
 
     const { document } = window.activeTextEditor
-    const { range, result } = Format.apply(document)
+
+    const range = Format.range(document)
+    const result = this.apply(document.getText(range))
 
     window.activeTextEditor.edit(code => code.replace(range, result))
 
   }
 
   /**
-   * @returns
+   * Format the selected (highlighted) text
+   *
+   * @memberof Format
    */
-  selection () {
+  selectedText () {
 
     const { document, selection } = window.activeTextEditor
-    const format = Format.code(document.getText(selection))
+    const format = this.apply(document.getText(selection))
 
     window.activeTextEditor.edit(code => code.replace(selection, format))
+
+  }
+
+  /**
+   * Get the formatting range
+   *
+   * @param {Object} document The vscode document
+   * @memberof Format
+   */
+  static range (document) {
+
+    const range = document.getText().length - 1
+    const first = document.positionAt(0)
+    const last = document.positionAt(range)
+
+    return new Range(first, last)
+
+  }
+
+  /**
+   * Apply ignore wrapper to code
+   *
+   * @param {"string"} code
+   * @memberof Format
+   */
+  static ignore (code) {
+
+    return `<temp data-prettydiff-ignore>${code}</temp>`
 
   }
 

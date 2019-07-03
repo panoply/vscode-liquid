@@ -13,22 +13,43 @@
     "sourceType": "module"
   },
   "rules": {
+    "no-undef":"off",
+    "indent": [
+      "error",
+      2,
+      {
+        "MemberExpression": 0
+      }
+    ],
+    "implicit-arrow-linebreak": "off",
     "class-methods-use-this": 0,
     "guard-for-in": 0,
-    "allowElseIf": true,
-    "allowAllPropertiesOnSameLine": false,
+    "allowElseIf": 0,
+    "key-spacing": [
+      2,
+      {
+        "singleLine": {
+          "beforeColon": false,
+          "afterColon": true
+        }
+      }
+    ],
     "function-paren-newline": [
       "error",
-      "consistent"
+      {
+        "minItems": 5
+      }
     ],
     "array-element-newline": [
       "error",
-      "always"
+      {
+        "minItems": 1
+      }
     ],
     "array-bracket-newline": [
       "error",
       {
-        "multiline": true
+        "minItems": 1
       }
     ],
     "array-bracket-spacing": [
@@ -52,15 +73,37 @@
     "newline-per-chained-call": [
       "error",
       {
-        "ignoreChainWithDepth": 2
+        "ignoreChainWithDepth": 4
       }
     ],
     "object-curly-spacing": [
       "error",
       "always"
     ],
-    "object-curly-newline": "off",
-    "object-property-newline": 2,
+    "object-curly-newline": [
+      "error",
+      {
+        "ObjectExpression": {
+            "multiline": true,
+            "minProperties": 1
+        },
+        "ObjectPattern": {
+          "multiline": true,
+          "minProperties": 7
+        },
+        "ImportDeclaration": "never",
+        "ExportDeclaration": {
+          "multiline": true,
+          "minProperties": 3
+        }
+      }
+    ],
+    "object-property-newline": [
+      "error",
+      {
+        "allowAllPropertiesOnSameLine": false
+      }
+    ],
     "padded-blocks": [
       1,
       {

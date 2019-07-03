@@ -1,112 +1,118 @@
-import { workspace, window, ConfigurationTarget, StatusBarItem, StatusBarAlignment } from 'vscode'
-
+import { workspace, languages, window, ConfigurationTarget } from 'vscode'
 import Format from './format'
 
+/**
+ * Document intializer class
+ *
+ * @class Document
+ * @extends {Format}
+ */
 export default class Document extends Format {
-
-  static notify (message) {
-
-    return window.showInformationMessage(`Liquid ${message}`)
-
-  }
 
   constructor () {
 
     super()
+
     this.handler = {}
-    this.run = workspace.getConfiguration('liquid').format
-    this.bar = StatusBarItem
-    this.bar = window.createStatusBarItem(StatusBarAlignment.Right, -2)
-    this.rules = super.rules(workspace.getConfiguration('liquid'))
+    this.setFormattingRules()
+    this.getPatterns()
 
   }
 
-  format () {
+  /**
+   * Executes when configuration settings have changed
+   *
+   * @memberof Document
+   */
+  onConfigChanges () {
+
+    // Operation Condition
+    if (this.unconfigured) return
+
+    // Reset error
+    this.error = false
+
+    // Common Initializes
+    this.setFormattingRules()
+    this.getPatterns()
+    this.onOpenTextDocument()
+
+  }
+
+  /**
+   * Prepares the opened text document for formatting
+   *
+   * @memberof Document
+   */
+  onOpenTextDocument () {
 
     const { fileName, languageId } = window.activeTextEditor.document
 
+    if (this.unconfigured) {
+
+      return this.statusBarItem('unconfigured', true)
+
+    }
+
+    if (this.error) {
+
+      this.statusBarItem('error', true)
+
+    }
+
+    // Hide status bar item if not HTML and return the provider early
+    if (languageId !== 'html') {
+
+      this.dispose()
+      this.barItem.hide()
+
+      return
+
+    }
+
+    // If formatOnSave editor option is false, apply its state to Liquid formatter
     if (!workspace.getConfiguration('editor').formatOnSave) {
 
-      this.run = false
-
-      return this.run
+      this.format = false
 
     }
 
-    if (this.run) {
+    // Formatter is set to false, skip it
+    if (!this.format) {
 
-      try {
-
-        if (fileName && this.handler.hasOwnProperty(fileName)) {
-
-          this.handler[fileName].dispose()
-
-        }
-
-        this.handler[fileName] = super.register()
-
-        Object.assign(this.bar, {
-          text: `💧Liquid: $(check)`,
-          command: 'liquid.disableFormatting'
-        })
-
-      } catch (error) {
-
-        console.error(error)
-        Document.notify('Error registering the formatter, re-open the file 💧')
-
-      }
-
-    }
-    if (!this.run) {
-
-      Object.assign(this.bar, {
-        text: `💧Liquid: $(x)`,
-        command: 'liquid.enableFormatting'
-      })
-
-    }
-    if (languageId === 'html') {
-
-      this.bar.show()
-
-    } else {
-
-      this.bar.hide()
+      // Show disabled formatter status bar
+      this.dispose()
+      return this.statusBarItem('disabled', true)
 
     }
 
-  }
-  selection () {
+    // Disposal of match filename handler
+    if (this.handler.hasOwnProperty(fileName)) {
 
-    try {
-
-      super.selection()
-      Document.notify('Selection Formatted 💧')
-
-    } catch (error) {
-
-      Document.notify('Format Failed! The selection is invalid or incomplete!')
+      this.handler[fileName].dispose()
 
     }
 
-  }
-  document () {
+    if (!this.error && this.format) {
 
-    try {
-
-      super.document()
-      Document.notify('Document Formatted 💧')
-
-    } catch (error) {
-
-      console.log(error)
-      Document.notify('Document could not be formatted, check your code!')
+      this.statusBarItem('enabled', true)
 
     }
+
+    this.handler[fileName] = languages.registerDocumentFormattingEditProvider({
+      scheme: 'file',
+      language: 'html'
+    }, {
+      provideDocumentFormattingEdits: this.provider.bind(this)
+    })
 
   }
 
+  /**
+   * Dispose of formatting handlers
+   *
+   * @memberof Document
+   */
   dispose () {
 
     for (const key in this.handler) {
@@ -121,24 +127,89 @@ export default class Document extends Format {
 
   }
 
-  async enable () {
+  /**
+   * Format the selected text area (command)
+   *
+   * @memberof Document
+   */
+  selection () {
 
-    this.run = true
-    await workspace
-      .getConfiguration('liquid')
-      .update('format', this.run, ConfigurationTarget.Global)
-      .then(() => this.format())
-      .then(() => Document.notify('Formatting Enabled 💧'))
+    try {
+
+      this.selectedText()
+      window.showInformationMessage('Selection Formatted 💧')
+
+    } catch (error) {
+
+      window.showInformationMessage('Format Failed! The selection is invalid or incomplete!')
+      throw outputChannel.appendLine(`💧Liquid: ${error}`)
+
+    }
 
   }
-  async disable () {
 
-    this.run = false
-    await workspace
-      .getConfiguration('liquid')
-      .update('format', this.run, ConfigurationTarget.Global)
-      .then(() => this.dispose())
-      .then(() => Document.notify('Formatting Disabled 💧'))
+  liquidrc () {
+
+    return this.rcfileGenerate()
+
+  }
+
+  /**
+   * Format the entire document (command)
+   *
+   * @memberof Document
+   */
+  document () {
+
+    try {
+
+      this.completeDocument()
+      window.showInformationMessage('Document Formatted 💧')
+
+    } catch (error) {
+
+      window.showInformationMessage('Document could not be formatted, check your code!')
+      throw outputChannel.appendLine(`💧Liquid: ${error}`)
+
+    }
+
+  }
+
+  /**
+   * Toggle the output panel
+   *
+   * @memberof Document
+   */
+  output () {
+
+    return this.outputChannel.show()
+
+  }
+
+  /**
+   * Enabled formatting (command)
+   *
+   * @memberof Document
+   */
+  enable () {
+
+    this.format = true
+    this.liquid.update('format', this.format, ConfigurationTarget.Global)
+    .then(() => window.showInformationMessage('Formatting Enabled 💧'))
+
+  }
+
+  /**
+   * Disable formatting (command)
+   *
+   * @memberof Document
+   */
+  disable () {
+
+    this.format = false
+    this.liquid.update('format', this.format, ConfigurationTarget.Global)
+    .then(() => this.dispose())
+    .then(() => window.showInformationMessage('Formatting Disabled 💧'))
 
   }
 
