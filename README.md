@@ -243,14 +243,7 @@ Below is the default code style formatting rules. You can include this using a `
     "format_array": "indent",
     "braces": true,
     "no_semicolon": true,
-    "brace_block": false,
-    "tags": [
-      {
-        "type": "html",
-        "begin": "script\\s+type=\"application\\/json\"",
-        "end": "script"
-      }
-    ]
+    "brace_block": false
   }
 }
 ```

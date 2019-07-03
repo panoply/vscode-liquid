@@ -5,6 +5,13 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [2.0.2] – <small>03/07/2019</small>
+
+
+### Changes
+
+- Enforce `false` on for HTML language formatting tag sorting
+
 ## [2.0.1] – <small>03/07/2019</small>
 
 Minor fix upon release of v2.0.0

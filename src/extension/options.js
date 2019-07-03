@@ -63,12 +63,13 @@ export const Rules = {
     language_name: 'Liquid',
     language: 'html',
     lexer: 'markup',
+    tag_sort: false,
 
     // Editor Specific
     indent_size: workspace.getConfiguration('editor').tabSize,
 
     // Exposed Default Rules
-    correct: true,
+    correct: false,
     force_attribute: false,
     braces: false,
     preserve: 1,
