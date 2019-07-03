@@ -32,11 +32,6 @@ export default class Config {
    * Looks for rules defined in a `.liquirc` file and if
    * no file present will default to workspace settings.
    *
-   * Example:
-   *
-   * Checks useRuleFile application scope setting, which has
-   * a`default` value set to `false`
-   *
    */
   setFormattingRules () {
 
