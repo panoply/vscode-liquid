@@ -9,30 +9,53 @@ var path = _interopDefault(require('path'));
 var fs = _interopDefault(require('fs'));
 
 /**
- * Formatting Rules
- *
- * @returns {object}
+ * Tag Associations (Enforced)
  */
-const Rules = {
+const TagAssociations = {
 
-  // Ignored Tags
-  ignore: [
+  css: [
     {
       type: 'liquid',
-      begin: 'comment',
-      end: 'endcomment'
+      begin: 'stylesheet',
+      end: 'endstylesheet'
     },
     {
-      type: 'html',
-      begin: 'script',
-      end: 'script'
-    },
-    {
-      type: 'html',
+      type: 'liquid',
       begin: 'style',
-      end: 'style'
+      end: 'endstyle'
     }
   ],
+  scss: [
+    {
+      type: 'liquid',
+      begin: 'stylesheet \'scss\'',
+      end: 'endstylesheet'
+    }
+  ],
+  js: [
+    {
+      type: 'liquid',
+      begin: 'javascript',
+      end: 'endjavascript'
+    }
+  ],
+  json: [
+    {
+      type: 'liquid',
+      begin: 'schema',
+      end: 'endschema'
+    }
+  ]
+
+};
+
+/**
+ * Formatting Rules (Enforced)
+ */
+const FormattingRules = {
+
+  // Ignored Tags
+  ignore: [],
 
   // HTML + Liquid
   html: {
@@ -55,6 +78,7 @@ const Rules = {
     force_attribute: false,
     braces: false,
     preserve: 1,
+    quote_convert: 'double',
 
     // Custom Rules
     brace_block: false
@@ -63,20 +87,6 @@ const Rules = {
 
   // Schema Tag
   json: {
-
-    // Private Settings
-    tags: [
-      {
-        type: 'liquid',
-        begin: 'schema',
-        end: 'endschema'
-      },
-      {
-        type: 'html',
-        begin: 'script\\s+type="application\\/json"',
-        end: 'script'
-      }
-    ],
 
     // Enforced
     mode: 'beautify',
@@ -94,7 +104,6 @@ const Rules = {
     preserve: 0,
     braces: true,
     no_semicolon: true,
-    quote_convert: 'double',
 
     // Custom Rules
     brace_block: false
@@ -103,15 +112,6 @@ const Rules = {
 
   // StyleSheet Tag
   scss: {
-
-    // Settings
-    tags: [
-      {
-        type: 'liquid',
-        begin: 'stylesheet \'scss\'',
-        end: 'endstylesheet'
-      }
-    ],
 
     // Enforced
     mode: 'beautify',
@@ -137,20 +137,6 @@ const Rules = {
   // Style Tag
   css: {
 
-    // Settings
-    tags: [
-      {
-        type: 'liquid',
-        begin: 'stylesheet',
-        end: 'endstylesheet'
-      },
-      {
-        type: 'liquid',
-        begin: 'style',
-        end: 'endstyle'
-      }
-    ],
-
     // Enforced
     language_name: 'CSS',
     language: 'css',
@@ -169,15 +155,6 @@ const Rules = {
 
   // JavaScript Tag
   js: {
-
-    // Settings
-    tags: [
-      {
-        type: 'liquid',
-        begin: 'javascript',
-        end: 'endjavascript'
-      }
-    ],
 
     // Enforced
     mode: 'beautify',
@@ -218,13 +195,19 @@ class Config {
 
   constructor () {
 
-    this.config = Rules;
+    // Configuration
+    this.config = FormattingRules;
+    this.tagAssociates = TagAssociations;
+
+    // Applied Configuration
     this.liquid = vscode.workspace.getConfiguration('liquid');
-    this.rcfile = path.join(vscode.workspace.rootPath, '.liquidrc');
     this.format = this.liquid.get('format');
-    this.watching = false;
+    this.rcfile = path.join(vscode.workspace.rootPath, '.liquidrc');
+
+    // Conditional Executors
+    this.watch = false;
     this.error = false;
-    this.unconfigured = false;
+    this.reset = false;
 
   }
 
@@ -236,11 +219,14 @@ class Config {
    */
   setFormattingRules () {
 
-    const liquid = vscode.workspace.getConfiguration('liquid');
-
     if (!fs.existsSync(this.rcfile)) {
 
-      this.config = assign(this.config, liquid.rules);
+      const liquid = vscode.workspace.getConfiguration('liquid');
+      const rules = liquid.get('rules');
+      const tags = this.setTagAssociates(rules);
+
+      // Assign custom configuration to options
+      this.config = assign(this.config, tags);
 
     } else {
 
@@ -248,14 +234,14 @@ class Config {
 
         // Read .liquidrc file
         const file = fs.readFileSync(this.rcfile, 'utf8');
-
-        // Parse contents, use html `indent_size` which uses `editor.tabSize`
         const json = JSON.parse(file, null, this.config.html.indent_size);
-
-        this.error = false;
+        const tags = this.setTagAssociates(json);
 
         // Assign custom configuration to options
-        this.config = assign(this.config, json);
+        this.config = assign(this.config, tags);
+
+        // Reset Error Condition
+        this.error = false;
 
       } catch (error) {
 
@@ -276,16 +262,54 @@ class Config {
 
   }
 
+  setTagAssociates (config) {
+
+    for (let lang in this.tagAssociates) {
+
+      if (
+        config[lang].hasOwnProperty('tags') &&
+        config[lang].tags.length > 0
+      ) {
+
+        for (let tag in this.tagAssociates[lang]) {
+
+          config[lang].tags.push(this.tagAssociates[lang][tag]);
+
+        }
+
+      } else {
+
+        if (config.hasOwnProperty(lang)) {
+
+          assign(config[lang], {
+            tags: this.tagAssociates[lang]
+          });
+
+        }
+
+      }
+
+    }
+
+    return config
+
+  }
+
   rcfileWatcher () {
 
-    if (!this.watching) {
+    if (!this.watch) {
 
       const watch = vscode.workspace.createFileSystemWatcher(this.rcfile, true, false, false);
 
-      watch.onDidChange(() => this.setFormattingRules());
       watch.onDidDelete(() => this.setFormattingRules());
+      watch.onDidChange(() => {
 
-      this.watching = true;
+        this.reset = true;
+        this.setFormattingRules();
+
+      });
+
+      this.watch = true;
 
     }
 
@@ -657,6 +681,15 @@ class Format extends Pattern {
 
     }
 
+    if (this.reset) {
+
+      this.getPatterns();
+
+      // Reset Conditional Executor
+      this.reset = false;
+
+    }
+
     const range = Format.range(document);
     const result = this.apply(document.getText(range));
 
@@ -878,13 +911,11 @@ class Document extends Format {
    */
   onConfigChanges () {
 
-    // Operation Condition
-    if (this.unconfigured) return
-
-    // Reset error
+    // Reset Error Condition
     this.error = false;
 
     // Common Initializes
+    this.dispose();
     this.setFormattingRules();
     this.getPatterns();
     this.onOpenTextDocument();
@@ -899,12 +930,6 @@ class Document extends Format {
   onOpenTextDocument () {
 
     const { fileName, languageId } = vscode.window.activeTextEditor.document;
-
-    if (this.unconfigured) {
-
-      return this.statusBarItem('unconfigured', true)
-
-    }
 
     if (this.error) {
 
@@ -1020,6 +1045,7 @@ class Document extends Format {
 
     } catch (error) {
 
+      console.log(error);
       vscode.window.showInformationMessage('Document could not be formatted, check your code!');
       throw outputChannel.appendLine(`💧Liquid: ${error}`)
 
@@ -1060,7 +1086,6 @@ class Document extends Format {
 
     this.format = false;
     this.liquid.update('format', this.format, vscode.ConfigurationTarget.Global)
-    .then(() => this.dispose())
     .then(() => vscode.window.showInformationMessage('Formatting Disabled 💧'));
 
   }

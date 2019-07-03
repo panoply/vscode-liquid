@@ -1,9 +1,14 @@
 # Change Log
 
-
 All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
+
+## [2.1.0] – <small>03/07/2019</small>
+
+### Changes
+
+- Fixes Tag Association implementation. Tag associations were removing enforced tag formats, this version fixes this new integration.
 
 ## [2.0.3] – <small>03/07/2019</small>
 
@@ -12,7 +17,6 @@ All notable changes are listed below.
 - Expose and enforce `false` on the `unformatted` rule which sorts tag attributes in html and have their insides preserved. This is a HTML rule item.
 
 ## [2.0.2] – <small>03/07/2019</small>
-
 
 ### Changes
 
@@ -95,18 +99,14 @@ Version 2.0.0 was a complete overhaul of the extension. Some breaking changes we
 - Make new literal string highlighting injection more sane
 - Format tmLanguage, bring sanity to the ever growing file.
 
-
 ## [1.6.4] – <small>08/05/2019</small>
 
 - Added support for literal string injection syntax highlighting, applying liquid syntax to HTML tag attributes inject highlights, partial close for https://github.com/panoply/vscode-liquid/issues/10.
-
 
 ## [1.6.3] – <small>26/04/2019</small>
 
 - Revert and re-open https://github.com/panoply/vscode-liquid/issues/7 comment tags formatting issue caused by PrettyDiff. Issue still not resolved within the PrettyDiff Sparser.
 - Updated readme to include the specifics regarding enforced ignore tags.
-
-
 
 ## [1.6.2] – <small>25/04/2019</small>
 
@@ -118,13 +118,11 @@ Version 2.0.0 was a complete overhaul of the extension. Some breaking changes we
 - Added Frontmatter snippet, enabled when doublde dash is detected, eg: `--`
 - Accepts any word following underscore case for `{% include_* %}` tags. This is to help with plugins like Jekyll Cached which will use `{% include_cached %}`.
 
-
 ## [1.6.0] – <small>14/04/2019</small>
 
 - Exposed ignore tags option to configuration settings. Allows for tags to be ignored when formatting.
 - Various bug fixes
 - Better Documentation
-
 
 ## [1.5.4] – <small>13/04/2019</small>
 
@@ -136,12 +134,10 @@ Version 2.0.0 was a complete overhaul of the extension. Some breaking changes we
 
 - Added `block` and `item` to support syntax class
 
-
 ## [1.5.1] – <small>12/04/2019</small>
 
 - Fix disable
 - Add status bar icon
-
 
 ## [1.5.0] – <small>12/04/2019</small>
 
