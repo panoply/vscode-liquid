@@ -215,7 +215,7 @@ Below is the default code style formatting rules. You can include this using a `
     "correct": true,
     "force_attribute": false,
     "preserve": 2,
-    "unformatted": true
+    "unformatted": false
   },
   "js": {
     "preserve": 1,

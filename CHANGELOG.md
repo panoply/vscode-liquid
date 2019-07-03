@@ -9,7 +9,7 @@ All notable changes are listed below.
 
 ### Changes
 
-- Expose and enforce `true` on the `unformatted` rule which sorts tag attributes in html and have their insides preserved. This is a HTML rule item.
+- Expose and enforce `false` on the `unformatted` rule which sorts tag attributes in html and have their insides preserved. This is a HTML rule item.
 
 ## [2.0.2] – <small>03/07/2019</small>
 

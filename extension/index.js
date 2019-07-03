@@ -51,7 +51,7 @@ const Rules = {
 
     // Exposed Default Rules
     correct: false,
-    unformatted: true,
+    unformatted: false,
     force_attribute: false,
     braces: false,
     preserve: 1,
