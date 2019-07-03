@@ -14,7 +14,6 @@ export default class Document extends Format {
     super()
 
     this.handler = {}
-    this.isFormat = this.liquid.format
     this.setFormattingRules()
     this.getPatterns()
 
@@ -27,7 +26,13 @@ export default class Document extends Format {
    */
   onConfigChanges () {
 
+    // Operation Condition
+    if (this.unconfigured) return
+
+    // Reset error
     this.error = false
+
+    // Common Initializes
     this.setFormattingRules()
     this.getPatterns()
     this.onOpenTextDocument()
@@ -43,14 +48,17 @@ export default class Document extends Format {
 
     const { fileName, languageId } = window.activeTextEditor.document
 
-    if (this.error) {
+    if (this.unconfigured) {
 
-      return this.statusBarItem('error', true)
+      return this.statusBarItem('unconfigured', true)
 
     }
 
-    // Skip if log
-    if (languageId === 'Log') return
+    if (this.error) {
+
+      this.statusBarItem('error', true)
+
+    }
 
     // Hide status bar item if not HTML and return the provider early
     if (languageId !== 'html') {
@@ -65,18 +73,16 @@ export default class Document extends Format {
     // If formatOnSave editor option is false, apply its state to Liquid formatter
     if (!workspace.getConfiguration('editor').formatOnSave) {
 
-      this.isFormat = false
+      this.format = false
 
     }
 
     // Formatter is set to false, skip it
-    if (!this.isFormat) {
+    if (!this.format) {
 
       // Show disabled formatter status bar
       this.dispose()
-      this.statusBarItem('disabled', true)
-
-      return
+      return this.statusBarItem('disabled', true)
 
     }
 
@@ -87,7 +93,7 @@ export default class Document extends Format {
 
     }
 
-    if (!this.error) {
+    if (!this.error && this.format) {
 
       this.statusBarItem('enabled', true)
 
@@ -142,6 +148,12 @@ export default class Document extends Format {
 
   }
 
+  liquidrc () {
+
+    return this.rcfileGenerate()
+
+  }
+
   /**
    * Format the entire document (command)
    *
@@ -179,13 +191,10 @@ export default class Document extends Format {
    *
    * @memberof Document
    */
-  async enable () {
+  enable () {
 
-    this.isFormat = true
-
-    await this.liquid.update('format', this.isFormat, ConfigurationTarget.Global)
-    .then(() => this.onConfigChanges())
-    .then(() => this.onOpenTextDocument())
+    this.format = true
+    this.liquid.update('format', this.format, ConfigurationTarget.Global)
     .then(() => window.showInformationMessage('Formatting Enabled 💧'))
 
   }
@@ -195,13 +204,11 @@ export default class Document extends Format {
    *
    * @memberof Document
    */
-  async disable () {
+  disable () {
 
-    this.isFormat = false
-
-    await this.liquid.update('format', this.isFormat, ConfigurationTarget.Global)
+    this.format = false
+    this.liquid.update('format', this.format, ConfigurationTarget.Global)
     .then(() => this.dispose())
-    .then(() => this.onConfigChanges())
     .then(() => window.showInformationMessage('Formatting Disabled 💧'))
 
   }

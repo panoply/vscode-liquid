@@ -1,6 +1,5 @@
 import { window, StatusBarItem, StatusBarAlignment } from 'vscode'
 import Config from './config'
-import Deprecations from './deprecations'
 
 /**
  * Utilities frequently used by the extension
@@ -9,14 +8,13 @@ import Deprecations from './deprecations'
  * @class Utils
  * @extends Deprecations
  */
-export default class Utils extends Deprecations {
+export default class Utils extends Config {
 
   constructor () {
 
     super()
 
     this.barItem = StatusBarItem
-    this.barError = window.createStatusBarItem(StatusBarAlignment.Right, -3)
     this.barItem = window.createStatusBarItem(StatusBarAlignment.Right, -2)
     this.outputChannel = window.createOutputChannel('Liquid')
 
@@ -31,7 +29,7 @@ export default class Utils extends Deprecations {
    */
   statusBarItem (type, show) {
 
-    Object.assign(this.barItem, {
+    const types = {
 
       enabled: {
         text: `💧Liquid: $(check)`,
@@ -47,9 +45,16 @@ export default class Utils extends Deprecations {
         text: `⚠️ Liquid: $(x)`,
         tooltip: `Errors detected! Toggle output`,
         command: 'liquid.toggleOutput'
+      },
+      unconfigured: {
+        text: `⚠️ Liquid`,
+        tooltip: `Unconfigured! Formatting disabled`,
+        command: 'liquid.fixDeprecations'
       }
 
-    }[type])
+    }
+
+    Object.assign(this.barItem, types[type])
 
     if (show !== undefined) {
 

@@ -1,4 +1,4 @@
-import Config from './config'
+import Deprecations from './deprecations'
 
 /**
  * Pattern Generator
@@ -11,7 +11,7 @@ import Config from './config'
  * @extends {Config}
  */
 
-export default class Pattern extends Config {
+export default class Pattern extends Deprecations {
 
   /**
    * Regex pattern helper to generate tag pattern

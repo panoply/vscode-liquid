@@ -1,11 +1,6 @@
 import { workspace } from 'vscode'
 
 /**
- * The name of the extension
- */
-export const Name = 'sissel.shopify-liquid'
-
-/**
  * Default formatting Rules used to reset options
  * applied on a per tag basis to PrettyDiff.
  *

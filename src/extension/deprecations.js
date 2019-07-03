@@ -1,66 +1,27 @@
 import { window, env, Uri, workspace } from 'vscode'
 import fs from 'fs'
-
-/*
-    window.showInformationMessage('Do you want to continue?', {
-      modal: true
-    }, 'Yes', 'No')
-
-*/
+import Utils from './utils'
 
 /**
  * Fixes deprecated settings in previous versions
  *
  * @class Deprecations
  */
-export default class Deprecations {
-
-  greeting () {
-
-    window.showInformationMessage(`💧 Liquid Extension: Some settings have changed that need your attention, please proceed.`, 'Proceed').then((selected) => {
-
-      if (selected === 'Proceed') {
-
-        // this.liquid.update('formatIgnore', undefined, true)
-        return this.liquid.get('formatIgnore') ? this.fixIgnores() : this.fixRules()
-
-      } else {
-
-        window.showInformationMessage('💧 Are you sure?\n\nLiquid formatting will not work without proceeding\n', {
-          modal: true
-        }, 'Go Back').then(answer => {
-
-          if (answer === 'Go Back') {
-
-            return this.greeting()
-
-          }
-
-        })
-
-      }
-
-    })
-
-  }
+export default class Deprecations extends Utils {
 
   fixIgnores () {
 
-    window.showInformationMessage(`The liquid.formatIgnore workspace setting has been deprecated. Please re-define your ignored tags using the new definition schema 💧`, 'Learn more', 'Next').then((selected) => {
+    this.liquid.update('formatIgnore', undefined, true).then(() => {
 
-      if (selected === 'Next') {
+      window.showInformationMessage(`💧liquid.formatIgnore was deprecated.`, 'Learn more').then((selected) => {
 
-        // this.liquid.update('formatIgnore', undefined, true)
+        if (selected === 'Learn more') {
 
-        return this.fixRules()
+          env.openExternal(Uri.parse('https://github.com/panoply/vscode-liquid/tree/v2.0.0#ignoring-tags'))
 
-      }
+        }
 
-      if (selected === 'Learn more') {
-
-        env.openExternal(Uri.parse('https://github.com/panoply/vscode-liquid/tree/v2.0.0#ignoring-tags'))
-
-      }
+      })
 
     })
 
@@ -68,8 +29,10 @@ export default class Deprecations {
 
   fixRules () {
 
-    window.showInformationMessage(`Liquid formatting rules can now be defined using a .liquidrc file – would you like to generate one based on your current formatting ruleset?`,
-      'No', 'Yes (Recommended)').then((selected) => {
+    this.unconfigured = true
+
+    window.showInformationMessage('Liquid formatting rules can now be defined using a .liquidrc file. Would you like to generate a .liquidrc file using your exisiting liquid formatting rules or just use the default configuration?',
+      'Use default', 'Use .liquidrc file').then((selected) => {
 
       const content = {
         ignore: this.liquid.rules.ignore,
@@ -80,7 +43,7 @@ export default class Deprecations {
         json: this.liquid.beautify.schema || this.liquid.rules.json
       }
 
-      if (selected === 'Yes (Recommended)') {
+      if (selected === 'Use .liquidrc file') {
 
         const json = JSON.stringify(content, null, 2)
 
@@ -107,27 +70,31 @@ export default class Deprecations {
 
           }).then(() => {
 
-            this.error = false
+            this.liquid.update('beautify', undefined, true).then(() => {
 
-            return window.showInformationMessage(`👍 Success!`)
+              this.fixIgnores()
+              this.unconfigured = false
+
+            })
+
+            window.showInformationMessage('You are now using a .liquidrc file to define formatting rules 👍')
 
           })
 
         })
 
-      } else if (selected === 'No') {
+      } else if (selected === 'Use default') {
 
-        this.liquid.update('rules', content, true).then(() => {
+        window.showInformationMessage('Settings were updated successfully 👍')
 
-          this.error = false
+        this.liquid.update('beautify', undefined, true).then(() => {
 
-          return window.showInformationMessage(`👍 Success! The new configuration settings were applied to your workspace settings.`)
+          this.fixIgnores()
+          this.unconfigured = false
 
         })
 
       }
-
-      // liquid.update('beautify', undefined, true)
 
     })
 

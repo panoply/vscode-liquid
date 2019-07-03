@@ -1,9 +1,8 @@
-import { workspace } from 'vscode'
+import { workspace, window } from 'vscode'
 import assign from 'assign-deep'
 import path from 'path'
 import fs from 'fs'
-import { Rules, Name } from './options'
-import Utils from './utils'
+import { Rules } from './options'
 
 /**
  * Applies custom the cutom configuration
@@ -14,17 +13,17 @@ import Utils from './utils'
  *
  */
 
-export default class Config extends Utils {
+export default class Config {
 
   constructor () {
-
-    super()
 
     this.config = Rules
     this.liquid = workspace.getConfiguration('liquid')
     this.rcfile = path.join(workspace.rootPath, '.liquidrc')
+    this.format = this.liquid.get('format')
     this.watching = false
     this.error = false
+    this.unconfigured = false
 
   }
 
@@ -43,62 +42,47 @@ export default class Config extends Utils {
 
     const liquid = workspace.getConfiguration('liquid')
 
-    // Check for `.liquidrc` rule file
-
     if (!fs.existsSync(this.rcfile)) {
 
-      this.error = liquid.has('beautify')
+      if (liquid.beautify) {
 
-      if (this.error) {
+        return this.fixRules()
 
-        return this.greeting()
+      } else {
+
+        this.config = assign(this.config, liquid.rules)
 
       }
 
-    }
+    } else {
 
-    // Check if using rule file
-    if (!liquid.get('useRuleFile')) {
+      try {
 
-      // Deep assignment
-      this.config = assign(this.config, liquid.rules)
+        // Read .liquidrc file
+        const file = fs.readFileSync(this.rcfile, 'utf8')
 
-      return true
+        // Parse contents, use html `indent_size` which uses `editor.tabSize`
+        const json = JSON.parse(file, null, this.config.html.indent_size)
 
-    }
+        this.error = false
 
-    // Check for `.liquidrc` rule file
-    if (!fs.existsSync(this.rcfile)) {
+        // Assign custom configuration to options
+        this.config = assign(this.config, json)
 
-      return
+      } catch (error) {
 
-    }
+        this.outputLog({
+          title: 'Error reading formatting rules',
+          file: this.rcfile,
+          message: error.message,
+          show: true
+        })
 
-    try {
+      } finally {
 
-      // Read .liquidrc file
-      const file = fs.readFileSync(this.rcfile, 'utf8')
+        this.rcfileWatcher()
 
-      // Parse contents, use html `indent_size` which uses `editor.tabSize`
-      const json = JSON.parse(file, null, this.config.html.indent_size)
-
-      this.error = false
-
-      // Assign custom configuration to options
-      this.config = assign(this.config, json)
-
-    } catch (error) {
-
-      this.outputLog({
-        title: 'Error reading formatting rules',
-        file: this.rcfile,
-        message: error.message,
-        show: true
-      })
-
-    } finally {
-
-      this.rcfileWatcher()
+      }
 
     }
 
@@ -116,6 +100,65 @@ export default class Config extends Utils {
       this.watching = true
 
     }
+
+  }
+
+  rcfileGenerate () {
+
+    if (fs.existsSync(this.rcfile)) {
+
+      return window.showErrorMessage('.liquidrc file already exists!', 'Open')
+      .then(answer => {
+
+        if (answer === 'Open') {
+
+          workspace.openTextDocument(this.rcfile).then((document) => {
+
+            window.showTextDocument(document, 1, false)
+
+          }, (error) => {
+
+            return console.error(error)
+
+          })
+
+        }
+
+      })
+
+    }
+
+    const liquid = workspace.getConfiguration('liquid')
+    const rules = JSON.stringify(liquid.rules, null, 2)
+
+    fs.writeFile(this.rcfile, rules, (error) => {
+
+      if (error) {
+
+        return this.outputLog({
+          title: 'Error generating rules',
+          file: this.rcfile,
+          message: error.message,
+          show: true
+        })
+
+      }
+
+      workspace.openTextDocument(this.rcfile).then((document) => {
+
+        window.showTextDocument(document, 1, false)
+
+      }, (error) => {
+
+        return console.error(error)
+
+      }).then(() => {
+
+        return window.showInformationMessage('You are now using a .liquidrc file to define formatting rules 👍')
+
+      })
+
+    })
 
   }
 

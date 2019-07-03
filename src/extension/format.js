@@ -18,7 +18,7 @@ export default class Format extends Pattern {
    */
   provider (document) {
 
-    if (!this.error) {
+    if (!this.error && this.format) {
 
       this.statusBarItem('enabled')
 
@@ -168,7 +168,9 @@ export default class Format extends Pattern {
   completeDocument () {
 
     const { document } = window.activeTextEditor
-    const { range, result } = this.provider(document)
+
+    const range = Format.range(document)
+    const result = this.apply(document.getText(range))
 
     window.activeTextEditor.edit(code => code.replace(range, result))
 
@@ -182,7 +184,7 @@ export default class Format extends Pattern {
   selectedText () {
 
     const { document, selection } = window.activeTextEditor
-    const format = this.code(document.getText(selection))
+    const format = this.apply(document.getText(selection))
 
     window.activeTextEditor.edit(code => code.replace(selection, format))
 
