@@ -1,9 +1,0 @@
-
-{% if condition %}
-  {{ current_tags.tag | link_to_remove_tag: taggg }}
-{% endif %}
-
-
-.foo {
-  background-color: antiquewhite;
-}

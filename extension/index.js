@@ -4,9 +4,9 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var vscode = require('vscode');
 var prettydiff = _interopDefault(require('prettydiff'));
+var fs = _interopDefault(require('fs'));
 var assign = _interopDefault(require('assign-deep'));
 var path = _interopDefault(require('path'));
-var fs = _interopDefault(require('fs'));
 
 /**
  * Formatting Rules
@@ -204,216 +204,6 @@ const Rules = {
 
 };
 
-/*
-    window.showInformationMessage('Do you want to continue?', {
-      modal: true
-    }, 'Yes', 'No')
-
-*/
-
-/**
- * Fixes deprecated settings in previous versions
- *
- * @class Deprecations
- */
-class Deprecations {
-
-  greeting () {
-
-    vscode.window.showInformationMessage(`💧 Liquid Extension: Some settings have changed that need your attention, please proceed.`, 'Proceed').then((selected) => {
-
-      if (selected === 'Proceed') {
-
-        // this.liquid.update('formatIgnore', undefined, true)
-        return this.liquid.get('formatIgnore') ? this.fixIgnores() : this.fixRules()
-
-      } else {
-
-        vscode.window.showInformationMessage('💧 Are you sure?\n\nLiquid formatting will not work without proceeding\n', {
-          modal: true
-        }, 'Go Back').then(answer => {
-
-          if (answer === 'Go Back') {
-
-            return this.greeting()
-
-          }
-
-        });
-
-      }
-
-    });
-
-  }
-
-  fixIgnores () {
-
-    vscode.window.showInformationMessage(`The liquid.formatIgnore workspace setting has been deprecated. Please re-define your ignored tags using the new definition schema 💧`, 'Learn more', 'Next').then((selected) => {
-
-      if (selected === 'Next') {
-
-        // this.liquid.update('formatIgnore', undefined, true)
-
-        return this.fixRules()
-
-      }
-
-      if (selected === 'Learn more') {
-
-        vscode.env.openExternal(vscode.Uri.parse('https://github.com/panoply/vscode-liquid/tree/v2.0.0#ignoring-tags'));
-
-      }
-
-    });
-
-  }
-
-  fixRules () {
-
-    vscode.window.showInformationMessage(`Liquid formatting rules can now be defined using a .liquidrc file – would you like to generate one based on your current formatting ruleset?`,
-      'No', 'Yes (Recommended)').then((selected) => {
-
-      const content = {
-        ignore: this.liquid.rules.ignore,
-        html: this.liquid.beautify.html || this.liquid.rules.html,
-        js: this.liquid.beautify.javascript || this.liquid.rules.js,
-        scss: this.liquid.beautify.stylesheet || this.liquid.rules.scss,
-        css: this.liquid.beautify.stylesheet || this.liquid.rules.css,
-        json: this.liquid.beautify.schema || this.liquid.rules.json
-      };
-
-      if (selected === 'Yes (Recommended)') {
-
-        const json = JSON.stringify(content, null, 2);
-
-        fs.writeFile(this.rcfile, json, (error) => {
-
-          if (error) {
-
-            return this.outputLog({
-              title: 'Error generating rules',
-              file: this.rcfile,
-              message: error.message,
-              show: true
-            })
-
-          }
-
-          vscode.workspace.openTextDocument(this.rcfile).then((document) => {
-
-            vscode.window.showTextDocument(document, 1, false);
-
-          }, (error) => {
-
-            return console.error(error)
-
-          }).then(() => {
-
-            this.error = false;
-
-            return vscode.window.showInformationMessage(`👍 Success!`)
-
-          });
-
-        });
-
-      } else if (selected === 'No') {
-
-        this.liquid.update('rules', content, true).then(() => {
-
-          this.error = false;
-
-          return vscode.window.showInformationMessage(`👍 Success! The new configuration settings were applied to your workspace settings.`)
-
-        });
-
-      }
-
-      // liquid.update('beautify', undefined, true)
-
-    });
-
-  }
-
-}
-
-/**
- * Utilities frequently used by the extension
- *
- * @export
- * @class Utils
- * @extends Deprecations
- */
-class Utils extends Deprecations {
-
-  constructor () {
-
-    super();
-
-    this.barItem = vscode.StatusBarItem;
-    this.barError = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -3);
-    this.barItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -2);
-    this.outputChannel = vscode.window.createOutputChannel('Liquid');
-
-  }
-
-  /**
-   * The status bar item functionality
-   *
-   * @param {"string"} type the type of status bar item to show
-   * @param {"string"} [show] show/hide the status bar item (optional)
-   * @memberof Utils
-   */
-  statusBarItem (type, show) {
-
-    Object.assign(this.barItem, {
-
-      enabled: {
-        text: `💧Liquid: $(check)`,
-        tooltip: `Enable/Disable Liquid Formatting`,
-        command: 'liquid.disableFormatting'
-      },
-      disabled: {
-        text: `💧Liquid: $(x)`,
-        tooltip: `Enable Liquid Formatting`,
-        command: 'liquid.enableFormatting'
-      },
-      error: {
-        text: `⚠️ Liquid: $(x)`,
-        tooltip: `Errors detected! Toggle output`,
-        command: 'liquid.toggleOutput'
-      }
-
-    }[type]);
-
-    if (show !== undefined) {
-
-      return show ? this.barItem.show() : this.barItem.false()
-
-    }
-
-  }
-
-  outputLog ({ title, message, file, show }) {
-
-    const date = new Date().toLocaleString();
-
-    // Apply a date title to the output
-    this.outputChannel.appendLine(`[${date}] ${title}: ${message}`);
-
-    if (show) {
-
-      this.error = true;
-      this.statusBarItem('error');
-      this.outputChannel.show();
-
-    }
-
-  }
-
-}
-
 /**
  * Applies custom the cutom configuration
  * settings used by the extension.
@@ -423,17 +213,17 @@ class Utils extends Deprecations {
  *
  */
 
-class Config extends Utils {
+class Config {
 
   constructor () {
-
-    super();
 
     this.config = Rules;
     this.liquid = vscode.workspace.getConfiguration('liquid');
     this.rcfile = path.join(vscode.workspace.rootPath, '.liquidrc');
+    this.format = this.liquid.get('format');
     this.watching = false;
     this.error = false;
+    this.unconfigured = false;
 
   }
 
@@ -452,62 +242,47 @@ class Config extends Utils {
 
     const liquid = vscode.workspace.getConfiguration('liquid');
 
-    // Check for `.liquidrc` rule file
-
     if (!fs.existsSync(this.rcfile)) {
 
-      this.error = liquid.has('beautify');
+      if (liquid.beautify) {
 
-      if (this.error) {
+        return this.fixRules()
 
-        return this.greeting()
+      } else {
+
+        this.config = assign(this.config, liquid.rules);
 
       }
 
-    }
+    } else {
 
-    // Check if using rule file
-    if (!liquid.get('useRuleFile')) {
+      try {
 
-      // Deep assignment
-      this.config = assign(this.config, liquid.rules);
+        // Read .liquidrc file
+        const file = fs.readFileSync(this.rcfile, 'utf8');
 
-      return true
+        // Parse contents, use html `indent_size` which uses `editor.tabSize`
+        const json = JSON.parse(file, null, this.config.html.indent_size);
 
-    }
+        this.error = false;
 
-    // Check for `.liquidrc` rule file
-    if (!fs.existsSync(this.rcfile)) {
+        // Assign custom configuration to options
+        this.config = assign(this.config, json);
 
-      return
+      } catch (error) {
 
-    }
+        this.outputLog({
+          title: 'Error reading formatting rules',
+          file: this.rcfile,
+          message: error.message,
+          show: true
+        });
 
-    try {
+      } finally {
 
-      // Read .liquidrc file
-      const file = fs.readFileSync(this.rcfile, 'utf8');
+        this.rcfileWatcher();
 
-      // Parse contents, use html `indent_size` which uses `editor.tabSize`
-      const json = JSON.parse(file, null, this.config.html.indent_size);
-
-      this.error = false;
-
-      // Assign custom configuration to options
-      this.config = assign(this.config, json);
-
-    } catch (error) {
-
-      this.outputLog({
-        title: 'Error reading formatting rules',
-        file: this.rcfile,
-        message: error.message,
-        show: true
-      });
-
-    } finally {
-
-      this.rcfileWatcher();
+      }
 
     }
 
@@ -525,6 +300,65 @@ class Config extends Utils {
       this.watching = true;
 
     }
+
+  }
+
+  rcfileGenerate () {
+
+    if (fs.existsSync(this.rcfile)) {
+
+      return vscode.window.showErrorMessage('.liquidrc file already exists!', 'Open')
+      .then(answer => {
+
+        if (answer === 'Open') {
+
+          vscode.workspace.openTextDocument(this.rcfile).then((document) => {
+
+            vscode.window.showTextDocument(document, 1, false);
+
+          }, (error) => {
+
+            return console.error(error)
+
+          });
+
+        }
+
+      })
+
+    }
+
+    const liquid = vscode.workspace.getConfiguration('liquid');
+    const rules = JSON.stringify(liquid.rules, null, 2);
+
+    fs.writeFile(this.rcfile, rules, (error) => {
+
+      if (error) {
+
+        return this.outputLog({
+          title: 'Error generating rules',
+          file: this.rcfile,
+          message: error.message,
+          show: true
+        })
+
+      }
+
+      vscode.workspace.openTextDocument(this.rcfile).then((document) => {
+
+        vscode.window.showTextDocument(document, 1, false);
+
+      }, (error) => {
+
+        return console.error(error)
+
+      }).then(() => {
+
+        return vscode.window.showInformationMessage('You are now using a .liquidrc file to define formatting rules 👍')
+
+      });
+
+    });
 
   }
 
@@ -572,6 +406,188 @@ class Config extends Utils {
 }
 
 /**
+ * Utilities frequently used by the extension
+ *
+ * @export
+ * @class Utils
+ * @extends Deprecations
+ */
+class Utils extends Config {
+
+  constructor () {
+
+    super();
+
+    this.barItem = vscode.StatusBarItem;
+    this.barItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, -2);
+    this.outputChannel = vscode.window.createOutputChannel('Liquid');
+
+  }
+
+  /**
+   * The status bar item functionality
+   *
+   * @param {"string"} type the type of status bar item to show
+   * @param {"string"} [show] show/hide the status bar item (optional)
+   * @memberof Utils
+   */
+  statusBarItem (type, show) {
+
+    const types = {
+
+      enabled: {
+        text: `💧Liquid: $(check)`,
+        tooltip: `Enable/Disable Liquid Formatting`,
+        command: 'liquid.disableFormatting'
+      },
+      disabled: {
+        text: `💧Liquid: $(x)`,
+        tooltip: `Enable Liquid Formatting`,
+        command: 'liquid.enableFormatting'
+      },
+      error: {
+        text: `⚠️ Liquid: $(x)`,
+        tooltip: `Errors detected! Toggle output`,
+        command: 'liquid.toggleOutput'
+      },
+      unconfigured: {
+        text: `⚠️ Liquid`,
+        tooltip: `Unconfigured! Formatting disabled`,
+        command: 'liquid.fixDeprecations'
+      }
+
+    };
+
+    Object.assign(this.barItem, types[type]);
+
+    if (show !== undefined) {
+
+      return show ? this.barItem.show() : this.barItem.false()
+
+    }
+
+  }
+
+  outputLog ({ title, message, file, show }) {
+
+    const date = new Date().toLocaleString();
+
+    // Apply a date title to the output
+    this.outputChannel.appendLine(`[${date}] ${title}: ${message}`);
+
+    if (show) {
+
+      this.error = true;
+      this.statusBarItem('error');
+      this.outputChannel.show();
+
+    }
+
+  }
+
+}
+
+/**
+ * Fixes deprecated settings in previous versions
+ *
+ * @class Deprecations
+ */
+class Deprecations extends Utils {
+
+  fixIgnores () {
+
+    this.liquid.update('formatIgnore', undefined, true).then(() => {
+
+      vscode.window.showInformationMessage(`💧liquid.formatIgnore was deprecated.`, 'Learn more').then((selected) => {
+
+        if (selected === 'Learn more') {
+
+          vscode.env.openExternal(vscode.Uri.parse('https://github.com/panoply/vscode-liquid/tree/v2.0.0#ignoring-tags'));
+
+        }
+
+      });
+
+    });
+
+  }
+
+  fixRules () {
+
+    this.unconfigured = true;
+
+    vscode.window.showInformationMessage('Liquid formatting rules can now be defined using a .liquidrc file. Would you like to generate a .liquidrc file using your exisiting liquid formatting rules or just use the default configuration?',
+      'Use default', 'Use .liquidrc file').then((selected) => {
+
+      const content = {
+        ignore: this.liquid.rules.ignore,
+        html: this.liquid.beautify.html || this.liquid.rules.html,
+        js: this.liquid.beautify.javascript || this.liquid.rules.js,
+        scss: this.liquid.beautify.stylesheet || this.liquid.rules.scss,
+        css: this.liquid.beautify.stylesheet || this.liquid.rules.css,
+        json: this.liquid.beautify.schema || this.liquid.rules.json
+      };
+
+      if (selected === 'Use .liquidrc file') {
+
+        const json = JSON.stringify(content, null, 2);
+
+        fs.writeFile(this.rcfile, json, (error) => {
+
+          if (error) {
+
+            return this.outputLog({
+              title: 'Error generating rules',
+              file: this.rcfile,
+              message: error.message,
+              show: true
+            })
+
+          }
+
+          vscode.workspace.openTextDocument(this.rcfile).then((document) => {
+
+            vscode.window.showTextDocument(document, 1, false);
+
+          }, (error) => {
+
+            return console.error(error)
+
+          }).then(() => {
+
+            this.liquid.update('beautify', undefined, true).then(() => {
+
+              this.fixIgnores();
+              this.unconfigured = false;
+
+            });
+
+            vscode.window.showInformationMessage('You are now using a .liquidrc file to define formatting rules 👍');
+
+          });
+
+        });
+
+      } else if (selected === 'Use default') {
+
+        vscode.window.showInformationMessage('Settings were updated successfully 👍');
+
+        this.liquid.update('beautify', undefined, true).then(() => {
+
+          this.fixIgnores();
+          this.unconfigured = false;
+
+        });
+
+      }
+
+    });
+
+  }
+
+}
+
+/**
  * Pattern Generator
  *
  * Generates regex patterns using the
@@ -582,7 +598,7 @@ class Config extends Utils {
  * @extends {Config}
  */
 
-class Pattern extends Config {
+class Pattern extends Deprecations {
 
   /**
    * Regex pattern helper to generate tag pattern
@@ -745,7 +761,7 @@ class Format extends Pattern {
    */
   provider (document) {
 
-    if (!this.error) {
+    if (!this.error && this.format) {
 
       this.statusBarItem('enabled');
 
@@ -895,7 +911,9 @@ class Format extends Pattern {
   completeDocument () {
 
     const { document } = vscode.window.activeTextEditor;
-    const { range, result } = this.provider(document);
+
+    const range = Format.range(document);
+    const result = this.apply(document.getText(range));
 
     vscode.window.activeTextEditor.edit(code => code.replace(range, result));
 
@@ -909,7 +927,7 @@ class Format extends Pattern {
   selectedText () {
 
     const { document, selection } = vscode.window.activeTextEditor;
-    const format = this.code(document.getText(selection));
+    const format = this.apply(document.getText(selection));
 
     vscode.window.activeTextEditor.edit(code => code.replace(selection, format));
 
@@ -958,7 +976,6 @@ class Document extends Format {
     super();
 
     this.handler = {};
-    this.isFormat = this.liquid.format;
     this.setFormattingRules();
     this.getPatterns();
 
@@ -971,7 +988,13 @@ class Document extends Format {
    */
   onConfigChanges () {
 
+    // Operation Condition
+    if (this.unconfigured) return
+
+    // Reset error
     this.error = false;
+
+    // Common Initializes
     this.setFormattingRules();
     this.getPatterns();
     this.onOpenTextDocument();
@@ -987,14 +1010,17 @@ class Document extends Format {
 
     const { fileName, languageId } = vscode.window.activeTextEditor.document;
 
-    if (this.error) {
+    if (this.unconfigured) {
 
-      return this.statusBarItem('error', true)
+      return this.statusBarItem('unconfigured', true)
 
     }
 
-    // Skip if log
-    if (languageId === 'Log') return
+    if (this.error) {
+
+      this.statusBarItem('error', true);
+
+    }
 
     // Hide status bar item if not HTML and return the provider early
     if (languageId !== 'html') {
@@ -1009,18 +1035,16 @@ class Document extends Format {
     // If formatOnSave editor option is false, apply its state to Liquid formatter
     if (!vscode.workspace.getConfiguration('editor').formatOnSave) {
 
-      this.isFormat = false;
+      this.format = false;
 
     }
 
     // Formatter is set to false, skip it
-    if (!this.isFormat) {
+    if (!this.format) {
 
       // Show disabled formatter status bar
       this.dispose();
-      this.statusBarItem('disabled', true);
-
-      return
+      return this.statusBarItem('disabled', true)
 
     }
 
@@ -1031,7 +1055,7 @@ class Document extends Format {
 
     }
 
-    if (!this.error) {
+    if (!this.error && this.format) {
 
       this.statusBarItem('enabled', true);
 
@@ -1086,6 +1110,12 @@ class Document extends Format {
 
   }
 
+  liquidrc () {
+
+    return this.rcfileGenerate()
+
+  }
+
   /**
    * Format the entire document (command)
    *
@@ -1123,13 +1153,10 @@ class Document extends Format {
    *
    * @memberof Document
    */
-  async enable () {
+  enable () {
 
-    this.isFormat = true;
-
-    await this.liquid.update('format', this.isFormat, vscode.ConfigurationTarget.Global)
-    .then(() => this.onConfigChanges())
-    .then(() => this.onOpenTextDocument())
+    this.format = true;
+    this.liquid.update('format', this.format, vscode.ConfigurationTarget.Global)
     .then(() => vscode.window.showInformationMessage('Formatting Enabled 💧'));
 
   }
@@ -1139,13 +1166,11 @@ class Document extends Format {
    *
    * @memberof Document
    */
-  async disable () {
+  disable () {
 
-    this.isFormat = false;
-
-    await this.liquid.update('format', this.isFormat, vscode.ConfigurationTarget.Global)
+    this.format = false;
+    this.liquid.update('format', this.format, vscode.ConfigurationTarget.Global)
     .then(() => this.dispose())
-    .then(() => this.onConfigChanges())
     .then(() => vscode.window.showInformationMessage('Formatting Disabled 💧'));
 
   }
@@ -1179,7 +1204,7 @@ exports.activate = context => {
   sub.push(registerCommand('liquid.formatDocument', document.document.bind(document)));
   sub.push(registerCommand('liquid.formatSelection', document.selection.bind(document)));
   sub.push(registerCommand('liquid.toggleOutput', document.output.bind(document)));
-
-  console.log(context.globalState._id);
+  sub.push(registerCommand('liquid.liquidrc', document.liquidrc.bind(document)));
+  sub.push(registerCommand('liquid.fixDeprecations', document.fixRules.bind(document)));
 
 };
