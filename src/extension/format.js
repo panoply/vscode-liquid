@@ -24,6 +24,15 @@ export default class Format extends Pattern {
 
     }
 
+    if (this.reset) {
+
+      this.getPatterns()
+
+      // Reset Conditional Executor
+      this.reset = false
+
+    }
+
     const range = Format.range(document)
     const result = this.apply(document.getText(range))
 
