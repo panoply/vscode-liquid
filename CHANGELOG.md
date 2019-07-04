@@ -4,6 +4,12 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [2.1.3] – <small>03/07/2019</small>
+
+### Changes
+
+- Documentation improvement.
+
 ## [2.1.2] – <small>03/07/2019</small>
 
 ### Changes

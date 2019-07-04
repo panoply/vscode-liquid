@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/banner.gif"  atl="Liquid Logo"  width="100%">
 
-# 💧 Liquid <small style="color:#999;">(vs code)</small>
+# Liquid <small style="color:#999;">(vs code)</small>
 
 A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support for Liquid code used in HTML, JavaScript CSS, SCSS, Markdown and more. Ships with auto formatting code beautification, advanced snippet auto-completion resolution and respects VS Codes native Intellisense, hover and diagnostic features.
 
@@ -14,7 +14,7 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 - Focused support for Jekyll and Shopify liquid variations
 - Supports Shopify [Section](https://help.shopify.com/en/themes/development/sections) code blocks.
 
-#### IMPORTANT
+#### Avoiding extension conflicts
 
 **If you're using the [Liquid Language Support](https://github.com/GingerBear/vscode-liquid) and/or the [Shopify Liquid Template Snippets](https://github.com/killalau/vscode-liquid-snippets) then it's highly recommended that you either uninstall or disable both of these before using this extension.**
 
@@ -31,7 +31,7 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 - [Formatting](#formatting)
   - [Using .liquidrc rule file](#using-liquidrc-rule-file)
   - [Using the workspace setting option](#using-the-workspace-setting-option)
-  - [Toggle and Status button](#toggle-and-status-button)
+  - [Toggle and Status button](#status-bar-button)
   - [Tag Associations](#tag-associations)
   - [Ignored Tags](#ignoring-tags)
   - [Rules](#rules)
@@ -42,7 +42,7 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 
 # Quickstart
 
-After installing this extension run the `Liquid: Generate .liquidrc File` command to create a `.liquirc` rule file in your projects root directory. This file will be used to enforce your code formatting style. Open any `.html`, `.liquid` or `.jekyll` file and you're ready to go!
+After installing this extension run the `Liquid: Generate .liquidrc File` command to create a `.liquirc` rule file in your projects root directory. This file will be used to enforce your code formatting style, refer to the [Formatting](#formatting) and [Rules](#rules) section for additional information for customization options. Open any `.html`, `.liquid` or `.jekyll` file and starting coding your project.
 
 # Commands
 
@@ -123,8 +123,6 @@ Formatting can be enable/disabled via the command palette and will respect the `
 
 Formatting uses a default set of style rules which enforce a consistent coding style. You can customize the format rules and overwrite the defaults using a `.liquidrc` file or alternatively use the `liquid.rules` workspace setting option.
 
-> Currently, formatting is only supports Liquid in HTML. There are plans to support more languages in future versions, please be patient.
-
 ### Using .liquidrc rule file
 
 Including a .liquid file in the root of your projects workspace is the **recommended approach** for defining a custom set of formatting code style rules. This approach allows you to easily control formatting options to best fit your code style quirks and share this ruleset across projects and collaborations.
@@ -133,11 +131,16 @@ Including a .liquid file in the root of your projects workspace is the **recomme
 
 Rules can also be applied in your User or Workspace settings using the `liquid.rules` configuration option. Please note that if a `.liquidrc` is present in your projects root it will run precedence over rules defined in workspace settings. Again, it's recommended you use a `.liquidrc` file for setting custom rules.
 
-### Toggle and Status button
+### Status bar button
 
 When a HTML, Liquid and Jekyll file is open and active in the editor you will see the Liquid toggle/status button appear on the bottom right hand side of the VS Code status bar. The toggle button will allow you to enable/disable liquid formatting and will notify you when the parser encounters any code errors.
 
-<img src="https://github.com/panoply/vscode-liquid/blob/master/images/togglebutton.png?raw=true" width="150px">
+<!-- prettier-ignore -->
+| Status Bar Item  | Function | Description |
+|--|--|--|
+| <img  src="https://raw.githubusercontent.com/panoply/vscode-liquid/master/images/status-enabled.jpg"  width="140px"> | Formatting is enabled | Clicking this status bar in this state will disable formatting |
+| <img  src="https://raw.githubusercontent.com/panoply/vscode-liquid/master/images/status-disabled.png"  width="140px"> | Formatting is disabled |  Clicking the status bar item in this state will enable formatting |
+| <img  src="https://raw.githubusercontent.com/panoply/vscode-liquid/master/images/status-error.png"  width="140px"> | Parsing error was detected  | Opens the output panel and provides a hint were error occured (formatting is still enabled in this state)
 
 ### Tag Association
 
@@ -303,6 +306,8 @@ Below is the default code style formatting rules. Generate this file using the `
 | begin    | Regular Expression | A regular expression match for the begin tag. |
 | end      | Regular Expression | A regular expression match for the end tag.   |
 
+> If you're applying a regex expression for tag matching for the begin and end captures you must escape some characters with the backslash
+
 </p>
 </details>
 
@@ -450,7 +455,7 @@ Shopify `{% schema %}` section snippets are supported when using the `schema` pr
 
 This extension brings sufficient support of the Liquid language to VS Code and aims to provide a well integrated IDE experience for developers using all variations of the language. Prior to the release of this extension Liquid support in vscode and text editors in general was extremely limited with developers stuck using outdated and sometimes broken solutions.
 
-Developing this extension has taken a considerable amount of time. If it has helped your development workflow and you would like to keep it free of cost then please consider supporting its growth and maintainance:
+Developing this extension has taken a considerable amount of time. For now, this extension is available free of cost but will require a small license fee in the future. To help keep this extension free and open source for as long as possible, please consider supporting its growth and maintainance:
 
 **PayPal**: [Donate](https://www.paypal.me/paynicos)<br>
 **BTC**: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
