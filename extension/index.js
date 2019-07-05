@@ -210,6 +210,9 @@ const FormattingRules = {
   css: {
 
     // Enforced
+    mode: 'beautify',
+    end_quietly: 'log',
+    node_error: true,
     language_name: 'CSS',
     language: 'css',
 
@@ -539,7 +542,7 @@ class Pattern extends Config {
     const pattern = {
 
       frontmatter: '---(?:[^]*?)---',
-      ignore: '(<temp data-prettydiff-ignore>|</temp>)',
+      ignore: '(<temp data-prettydiff-ignore>\n|\n</temp>)',
       denotations: '(?=(<|<\\/|{%-?|{{-?\\s+))',
       html: `(<(${begin})>)([^]*?)(</${end}>)`,
       liquid: `({%-?\\s*(${begin}).*?\\s*-?%})([^]*?)({%-?\\s*${end}\\s*-?%})`
@@ -730,6 +733,8 @@ class Format extends Pattern {
 
         document = document.replace(this.pattern.ignored[i], Format.ignore);
 
+        console.log(document);
+
       }
 
     }
@@ -792,8 +797,6 @@ class Format extends Pattern {
    */
   beautify (name, source) {
 
-    let content = '';
-
     try {
 
       let rules = this.getRuleByTagName(name);
@@ -802,7 +805,7 @@ class Format extends Pattern {
         source
       });
 
-      content = prettydiff();
+      let content = prettydiff();
 
       if (prettydiff.sparser.parseerror.length > 0) {
 
@@ -893,7 +896,7 @@ class Format extends Pattern {
    */
   static ignore (code) {
 
-    return `<temp data-prettydiff-ignore>${code}</temp>`
+    return `<temp data-prettydiff-ignore>\n${code}\n</temp>`
 
   }
 
