@@ -62,6 +62,8 @@ export default class Format extends Pattern {
 
         document = document.replace(this.pattern.ignored[i], Format.ignore)
 
+        console.log(document)
+
       }
 
     }
@@ -124,8 +126,6 @@ export default class Format extends Pattern {
    */
   beautify (name, source) {
 
-    let content = ''
-
     try {
 
       let rules = this.getRuleByTagName(name)
@@ -134,7 +134,7 @@ export default class Format extends Pattern {
         source
       })
 
-      content = prettydiff()
+      let content = prettydiff()
 
       if (prettydiff.sparser.parseerror.length > 0) {
 
@@ -225,7 +225,7 @@ export default class Format extends Pattern {
    */
   static ignore (code) {
 
-    return `<temp data-prettydiff-ignore>${code}</temp>`
+    return `<temp data-prettydiff-ignore>\n${code}\n</temp>`
 
   }
 
