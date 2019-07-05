@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Liquid",
   "scopeName": "source.liquid",
-  "injectionSelector": "R:text.html, L: source.css -comment, L:source.js -comment -string, L:source.jsx -comment -string, L:source.js.jsx -comment -string, L:source.ts -comment -string, text.html.markdown -comment",
+  "injectionSelector": "R:text.html -comment, L: source.css -comment, L:source.js -comment -string, L:source.jsx -comment -string, L:source.js.jsx -comment -string, L:source.ts -comment -string, text.html.markdown -comment",
   "fileTypes": [
     "html",
     "liquid",
