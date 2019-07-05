@@ -157,6 +157,9 @@ export const FormattingRules = {
   css: {
 
     // Enforced
+    mode: 'beautify',
+    end_quietly: 'log',
+    node_error: true,
     language_name: 'CSS',
     language: 'css',
 
