@@ -27,7 +27,7 @@ export default class Pattern extends Config {
     const pattern = {
 
       frontmatter: '---(?:[^]*?)---',
-      ignore: '(<temp data-prettydiff-ignore>|</temp>)',
+      ignore: '(<temp data-prettydiff-ignore>\n|\n</temp>)',
       denotations: '(?=(<|<\\/|{%-?|{{-?\\s+))',
       html: `(<(${begin})>)([^]*?)(</${end}>)`,
       liquid: `({%-?\\s*(${begin}).*?\\s*-?%})([^]*?)({%-?\\s*${end}\\s*-?%})`
