@@ -62,8 +62,6 @@ export default class Format extends Pattern {
 
         document = document.replace(this.pattern.ignored[i], Format.ignore)
 
-        console.log(document)
-
       }
 
     }
