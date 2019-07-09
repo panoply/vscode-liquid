@@ -16,7 +16,7 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 
 #### Avoiding extension conflicts
 
-**If you're using the [Liquid Language Support](https://github.com/GingerBear/vscode-liquid) and/or the [Shopify Liquid Template Snippets](https://github.com/killalau/vscode-liquid-snippets) then it's highly recommended that you either uninstall or disable both of these before using this extension.**
+If you're using the [Liquid Language Support](https://github.com/GingerBear/vscode-liquid) and/or the [Shopify Liquid Template Snippets](https://github.com/killalau/vscode-liquid-snippets) then it's highly recommended that you either uninstall or disable both of these before using this extension.
 
 ### Showcase
 
@@ -178,8 +178,8 @@ Sometimes you may wish to ignore/disable formatting for certain HTML or Liquid t
 
 > In previous versions of this extension ignored tags were defined using the `liquid.formatIgnore` setting. This has been deprecated and you must use the new configuration.
 
-<strong>IMPORTANT</strong><br>
-Be careful overiding the default ignore tags. For example, if you have liquid code contained in `<script>` or `<style>` tags formatting will fail, hence why these tags are ignored by default.
+<strong>Known Issues</strong><br>
+Be careful overiding the default ignore tags. Liquid code contained in `<script>` or `<style>` tags will cause formatting to fail, hence why these tags are ignored by default.
 
 The whitespace `{%- comment -%}` tags have trouble parsing if you're not applying whitespace equally, e.g:
 
