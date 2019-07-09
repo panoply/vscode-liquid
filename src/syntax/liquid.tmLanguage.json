@@ -100,6 +100,9 @@
           "include": "#entity-other-attribute-name"
         },
         {
+          "include": "#include-tag"
+        },
+        {
           "include": "#invalid-ampersand"
         },
         {
@@ -244,6 +247,10 @@
           "include": "source.yaml"
         }
       ]
+    },
+    "include-tag":{
+      "name": "string.quoted.liquid",
+      "match": "((?<=include)|(?<=include_relative))\\s[^{,'\"]+?\\s+"
     },
     "invalid-ampersand": {
       "match": "&",
