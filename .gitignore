@@ -4,6 +4,8 @@ node_modules
 yarn.lock
 test/components/*.html
 .vscode/settings.json
+versions
+docs
 
 ### OSX ###
 # General
