@@ -7,9 +7,12 @@ All notable changes are listed below.
 ## [2.1.5] – <small>09/07/2019</small>
 
 ### Changes
+- Minify and bundle the extension with rollup (includes prettydiff in output)
+- Fixes .vscodeignore extension packinging, was previously includeing node_modules and other files.
+
+### Updates
 
 - String highlighting `{% include dir/src.ext %}` when no single or double commas are used in `include` and/or `include_relative` tag is used.
-
 
 ## [2.1.4] – <small>05/07/2019</small>
 
