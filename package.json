@@ -31,7 +31,11 @@
   ],
   "activationEvents": [
     "onLanguage:html",
-    "onCommand:liquid.liquidrc"
+    "onCommand:liquid.liquidrc",
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact"
   ],
   "main": "./extension/index",
   "contributes": {
@@ -138,7 +142,8 @@
           "source.js.jsx",
           "source.jsx",
           "source.ts",
-          "source.tsx"
+          "source.tsx",
+          "text.html.basic"
         ],
         "embeddedLanguages": {
           "source.liquid": "liquid",
@@ -227,11 +232,17 @@
           "deprecationMessage": "DEPRECATED!\nDefine beautification formatting rules using a .liquidrc file or use the \"liquid.rules\" workspace setting."
         }
       }
-    }
+    },
+    "typescriptServerPlugins": [
+      {
+        "name": "typescript-lit-html-plugin",
+        "enableForWorkspaceTypeScriptVersions": true
+      }
+    ]
   },
   "scripts": {
     "build": "rollup -c",
-    "watch": "rollup -c -w --dev"
+    "watch": "rollup -c -w --env=dev"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.6",
@@ -261,6 +272,7 @@
     "align-yaml": "^0.1.8",
     "assign-deep": "^1.0.1",
     "chalk": "^2.4.2",
-    "prettydiff": "^101.1.7"
+    "prettydiff": "^101.1.7",
+    "typescript-lit-html-plugin": "^0.9.0"
   }
 }

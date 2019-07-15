@@ -4,6 +4,38 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [2.2.0] – <small>16/07/2019</small>
+
+### Added
+- HTML syntax highlighting within Template Literals.
+- HTML Intellisense supported in Template Literals.
+- JavaScript Template literal `export` support keyword.
+
+Example of new Liquid template literals:
+
+```javascript
+
+// Basic
+liquid`
+<div>
+  {{ foo }}
+</div>
+`
+
+// Includes export and path, uses backets)
+// Supports the `rollup-liquid-export` plugin
+liquid`export path/file {
+  <div>
+    {{ foo }}
+  </div>
+}
+
+```
+
+### Updates
+
+- Minor grammar adjustments for literal support
+
 ## [2.1.5] – <small>09/07/2019</small>
 
 ### Changes
