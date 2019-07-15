@@ -1,5 +1,6 @@
 import { window, workspace, commands } from 'vscode'
 import Document from './extension/document'
+import Literal from './extension/literal'
 
 /**
  * vscode-liquid
@@ -7,7 +8,9 @@ import Document from './extension/document'
  * @author Nikolas Savvidis
  * @version 2.x.x
  */
-exports.activate = context => {
+exports.activate = async context => {
+
+  await Literal()
 
   const { registerCommand } = commands
   const sub = context.subscriptions
