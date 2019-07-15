@@ -116,11 +116,10 @@ If your `<style>` and `<script>` HTML tags contain Liquid syntax consider disabl
 }
 ```
 
+<img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/sass-javascript.png"  atl="Liquid SCSS and Liquid JavaScript"  width="100%">
+
 ### Template Literals
 Liquid template literal strings are available within JavaScript and Typescript languages. Using the `liquid`` ` tag will provide HTML/Liquid syntax highlighting and Intellisense support.
-
-
-<img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/sass-javascript.png"  atl="Liquid SCSS and Liquid JavaScript"  width="100%">
 
 # Formatting
 
