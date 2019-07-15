@@ -6,7 +6,7 @@
     "tsx"
   ],
   "scopeName": "js.literal.liquid",
-  "injectionSelector": "L:source.js -comment -string, L:source.jsx -comment -string, L:source.js.jsx -comment -string, L:source.ts -comment -string, L:source.js (string.quoted.double.html, string.quoted.single.html), L:source.jsx (string.quoted.double.html, string.quoted.single.html), L:source.js.jsx (string.quoted.double.html, string.quoted.single.html), L:source.ts (string.quoted.double.html, string.quoted.single.html), L:source.tsx (string.quoted.double.html, string.quoted.single.html)",
+  "injectionSelector": "L:source.js -comment -(string -meta.embedded), L:source.jsx -comment -(string -meta.embedded),  L:source.js.jsx -comment -(string -meta.embedded), L:source.ts -comment -(string -meta.embedded), L:source.tsx -comment -(string -meta.embedded)",
   "injections": {
     "L:source": {
       "patterns": [
@@ -19,14 +19,15 @@
   },
   "patterns": [
     {
+      "name": "string.js.taggedTemplate",
       "contentName": "meta.embedded.block.html",
-      "begin": "(?x)(\\s+?(\\w+\\.)?(?:liquid|\/\\*\\s*liquid\\s*\\*\/)\\s*)(`)",
+      "begin": "(\\s*?(\\w+\\.)?(?:liquid|\/\\*\\s*liquid\\s*\\*\/)\\s*)(`)",
       "beginCaptures": {
         "0": {
           "name": "string.template.ts, punctuation.definition.string.template.begin.ts"
         },
         "1": {
-          "name": "entity.name.function.tagged-template.ts"
+          "name": "entity.name.tag.ts"
         }
       },
       "end": "(`)",
@@ -37,18 +38,23 @@
       },
       "patterns": [
         {
+          "match": "(?<=liquid`)(export)\\s*?(.+)\\s*{",
+          "captures": {
+            "1": {
+              "name": "support.function.with-args.ts"
+            },
+            "2": {
+              "name": "string.ts"
+            }
+          }
+        },
+        {
           "include": "source.ts#template-substitution-element"
         },
         {
-          "include": "source.liquid#template-tags"
-        },
-        {
-          "include": "source.liquid#template-vars"
+          "include": "text.html.basic"
         }
       ]
-    },
-    {
-      "include": "source.ts#template-substitution-element"
     }
   ]
 }
