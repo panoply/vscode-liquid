@@ -19,15 +19,14 @@
   },
   "patterns": [
     {
-      "name": "string.js.taggedTemplate",
       "contentName": "meta.embedded.block.html",
-      "begin": "(\\s*?(\\w+\\.)?(?:liquid|\/\\*\\s*liquid\\s*\\*\/)\\s*)(`)",
+      "begin": "(?x)(\\b(?:\\w+\\.)*(?:liquid)\\s*)(`)",
       "beginCaptures": {
-        "0": {
-          "name": "string.template.ts, punctuation.definition.string.template.begin.ts"
-        },
         "1": {
           "name": "entity.name.tag.ts"
+        },
+        "2": {
+          "name": "string.template.ts, punctuation.definition.string.template.start.ts"
         }
       },
       "end": "(`)",
