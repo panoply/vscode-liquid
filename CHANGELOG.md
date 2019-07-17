@@ -4,6 +4,13 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [2.2.1] – <small>16/07/2019</small>
+
+### Updates
+- Fix incorrect categorey typo in snippets.
+- Fix denotation highlighting in template literal.
+
+
 ## [2.2.0] – <small>16/07/2019</small>
 
 ### Added

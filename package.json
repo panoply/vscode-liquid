@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "keywords": [
     "liquid",
     "shopify",
@@ -269,10 +269,11 @@
     "vscode": "^1.1.35"
   },
   "dependencies": {
-    "align-yaml": "^0.1.8",
     "assign-deep": "^1.0.1",
     "chalk": "^2.4.2",
     "prettydiff": "^101.1.7",
-    "typescript-lit-html-plugin": "^0.9.0"
+    "typescript": "^3.5.3",
+    "typescript-lit-html-plugin": "^0.9.0",
+    "typescript-styled-plugin": "^0.14.0"
   }
 }
