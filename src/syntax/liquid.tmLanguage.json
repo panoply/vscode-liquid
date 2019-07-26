@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Liquid",
   "scopeName": "source.liquid",
-  "injectionSelector": "R:text.html -comment, L: source.css -comment, L:source.js -comment, L:source.jsx -comment, L:source.js.jsx -comment, L:source.ts -comment, text.html.markdown -comment",
+  "injectionSelector": "R:text.html -comment -meta.embedded, L:source.css -comment, L:source.js -string -comment, L:source.jsx -string -comment, L:source.js.jsx -string -comment, L:source.ts -string -comment, text.html.markdown -comment",
   "fileTypes": [
     "html",
     "liquid",
@@ -19,7 +19,7 @@
   "foldingStartMarker": "(?x){%-?\\s*(if|unless|for|paginate|capture|form|case|tablerow|raw|comment|block|paginate|schema|stylesheet|javascript)[^(%})]+-?%}",
   "foldingStopMarker": "(?x){%-?\\s*(endif|endunless|endfor|endpaginate|endcapture|endform|endcase|endtablerow|endraw|endcomment|endblock|endpaginate|endschema|endstylesheet|endjavascript)[^(%})]+-?%}",
   "injections": {
-    "L:string - (string.quoted.*.html, string.quoted.*.html, string.quoted.*.js, string.quoted.*.js)": {
+    "L:string - (string.quoted.*.html, string.quoted.*.html, string.quoted.*.js, string.quoted.*.js, string.quoted.*.json)": {
       "patterns": [
         {
           "include": "#template-tags"
