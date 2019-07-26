@@ -4,7 +4,14 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
-## [2.2.1] – <small>16/07/2019</small>
+## [2.2.2] – <small>26/07/2019</small>
+
+### Updates
+- Fix yaml frontmatter grammar injections in JS, TS and JSX files.
+- Fix embedded block yaml frontmatter injections in JSON schema.
+- Drop template literal support. Grammar injections now handle this by default. Use [Lit HTML](https://github.com/mjbvz/vscode-lit-html) or other string literal extensions.
+
+## [2.2.1] – <small>17/07/2019</small>
 
 ### Updates
 - Fix incorrect categorey typo in snippets.
