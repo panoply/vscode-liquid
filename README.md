@@ -28,7 +28,6 @@ If you're using the [Liquid Language Support](https://github.com/GingerBear/vsco
 - [Commands](#commands)
 - [Workspace Settings](#workspace-settings)
 - [Syntax Support](#syntax-support)
-  - [Template Literals](#template-literals)
 - [Formatting](#formatting)
   - [Using .liquidrc rule file](#using-liquidrc-rule-file)
   - [Using the workspace setting option](#using-the-workspace-setting-option)
@@ -117,9 +116,6 @@ If your `<style>` and `<script>` HTML tags contain Liquid syntax consider disabl
 ```
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/sass-javascript.png"  atl="Liquid SCSS and Liquid JavaScript"  width="100%">
-
-### Template Literals
-Liquid template literal strings are available within JavaScript and Typescript languages. Using the `liquid`` ` tag will provide HTML/Liquid syntax highlighting and Intellisense support.
 
 # Formatting
 
