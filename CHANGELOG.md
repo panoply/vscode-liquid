@@ -4,7 +4,12 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
-## [2.2.2] – <small>26/07/2019</small>
+## [2.2.3] – <small>26/07/2019</small>
+
+### Updates
+- Remove typescript server reference in package.json
+
+## [2.2.2 – 2.2.3] – <small>26/07/2019</small>
 
 ### Updates
 - Fix yaml frontmatter grammar injections in JS, TS and JSX files.
