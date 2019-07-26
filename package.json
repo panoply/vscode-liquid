@@ -215,13 +215,7 @@
           "deprecationMessage": "DEPRECATED!\nDefine beautification formatting rules using a .liquidrc file or use the \"liquid.rules\" workspace setting."
         }
       }
-    },
-    "typescriptServerPlugins": [
-      {
-        "name": "typescript-lit-html-plugin",
-        "enableForWorkspaceTypeScriptVersions": true
-      }
-    ]
+    }
   },
   "scripts": {
     "build": "rollup -c",
