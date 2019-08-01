@@ -4,6 +4,16 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [2.2.4] – <small>01/08/2019</small>
+
+### Added
+- Liquid in JSON is now supported, Liquid syntax contained within `application/json`, `application/ld+json` is now highlighted. Syntax contained within JSON property value strings is also supported, eg: `"prop": "{{ code }}"`
+
+### Updates
+- Liquid Object Property values are no consistently highlighted.
+- Grammar injection modifications
+- Front matter captures modification which prevents syntax breaking when tripple dash is used.
+
 ## [2.2.3] – <small>26/07/2019</small>
 
 ### Updates

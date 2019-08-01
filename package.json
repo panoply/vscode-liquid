@@ -130,6 +130,7 @@
           "source.jsx",
           "source.ts",
           "source.tsx",
+          "source.json",
           "source.css",
           "source.css.scss"
         ]

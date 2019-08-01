@@ -2,13 +2,14 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Liquid",
   "scopeName": "source.liquid",
-  "injectionSelector": "R:text.html -comment -meta.embedded, L:source.css -comment, L:source.js -string -comment, L:source.jsx -string -comment, L:source.js.jsx -string -comment, L:source.ts -string -comment, text.html.markdown -comment",
+  "injectionSelector": "L:text.html -meta.embedded -comment, L:source.css -comment -string -meta.embedded, L:source.js -string.quoted.*.js -comment -string, L:source.jsx -comment -string -string.quoted.*.jsx, L:source.js.jsx -comment -string, L:source.ts -string -comment -string.quoted.*.ts, L:source.json -string.quoted.*.json, text.html.markdown -comment",
   "fileTypes": [
     "html",
     "liquid",
     "jekyll",
     "js",
     "jsx",
+    "json",
     "ts",
     "tsx",
     "md",
@@ -18,18 +19,6 @@
   ],
   "foldingStartMarker": "(?x){%-?\\s*(if|unless|for|paginate|capture|form|case|tablerow|raw|comment|block|paginate|schema|stylesheet|javascript)[^(%})]+-?%}",
   "foldingStopMarker": "(?x){%-?\\s*(endif|endunless|endfor|endpaginate|endcapture|endform|endcase|endtablerow|endraw|endcomment|endblock|endpaginate|endschema|endstylesheet|endjavascript)[^(%})]+-?%}",
-  "injections": {
-    "L:string - (string.quoted.*.html, string.quoted.*.html, string.quoted.*.js, string.quoted.*.js, string.quoted.*.json)": {
-      "patterns": [
-        {
-          "include": "#template-tags"
-        },
-        {
-          "include": "#template-vars"
-        }
-      ]
-    }
-  },
   "patterns": [
     {
       "include": "#comments"
@@ -174,6 +163,9 @@
           "include": "#constant-characters"
         },
         {
+          "include": "#object-properties"
+        },
+        {
           "include": "#string-quoted-double"
         },
         {
@@ -239,9 +231,20 @@
       }
     },
     "frontmatter": {
-      "name": "punctuation.tag.liquid",
-      "begin": "---",
-      "end": "---",
+      "contentName": "source.yaml",
+      "name": "meta.embedded.block.frontmatter.liquid",
+      "begin": "---(?=\\s*\\n)",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.tag.begin.liquid"
+        }
+      },
+      "end": "---(?=\\s*\\n)",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.tag.end.liquid"
+        }
+      },
       "patterns": [
         {
           "include": "source.yaml"
@@ -294,6 +297,15 @@
       "match": "/=",
       "name": "keyword.operator.assignment.augmented.liquid"
     },
+
+
+    "object-properties": {
+      "match": "(?<=\\w.)(?<=\\w.)\\b\\w+?\\b\\s+?",
+      "name": "variable.parameter.liquid"
+
+    },
+
+
     "string-quoted-single": {
       "name": "string.quoted.single.liquid",
       "begin": "'",
