@@ -2,6 +2,8 @@ import { window, TextEdit, Range } from 'vscode'
 import prettydiff from 'prettydiff'
 import Pattern from './pattern'
 
+const Options = Object.assign({}, prettydiff.options)
+
 /**
  * Applies formatting to the document
  *
@@ -9,6 +11,17 @@ import Pattern from './pattern'
  * @extends {Pattern}
  */
 export default class Format extends Pattern {
+
+  constructor () {
+
+    super()
+    this.tags = this.tags.bind(this)
+    this.blocks = this.blocks.bind(this)
+    this.ignore = this.ignore.bind(this)
+    this.comments = this.comments.bind(this)
+    this.comment = []
+
+  }
 
   /**
    * Formatting provider function
@@ -50,41 +63,108 @@ export default class Format extends Pattern {
    */
   apply (document) {
 
-    if (document.match(this.frontmatter)) {
+    this.comment.length = 0
 
-      document = document.replace(this.frontmatter, Format.ignore)
+    // JEKYLL FRONTMATTER
+    if (this.frontmatter.test(document)) {
+
+      document = document.replace(this.frontmatter, this.ignore)
 
     }
 
+    // IGNORED TAGS
     for (let i = 0; i < this.pattern.ignored.length; i++) {
 
-      if (document.match(this.pattern.ignored[i])) {
+      if (this.pattern.ignored[i].test(document)) {
 
-        document = document.replace(this.pattern.ignored[i], Format.ignore)
+        document = document.replace(this.pattern.ignored[i], this.ignore)
 
       }
 
     }
 
+    // IGNORE COMMENTS
+    if (this.htmlComments.test(document)) {
+
+      document = document.replace(this.htmlComments, this.comments)
+
+    }
+
+    // CUSTOM TAGS
     for (let i = 0; i < this.pattern.tags.length; i++) {
 
-      if (document.match(this.pattern.tags[i])) {
+      if (this.pattern.tags[i].test(document)) {
 
-        document = document.replace(this.pattern.tags[i], this.tags.bind(this))
+        document = document.replace(this.pattern.tags[i], this.tags)
 
       }
 
     }
 
+    // SPECIFIC BLOCKS
+    for (let i = 0; i < this.pattern.blocks.length; i++) {
+
+      if (this.pattern.blocks[i].test(document)) {
+
+        document = document.replace(this.pattern.blocks[i], this.blocks)
+
+      }
+
+    }
+
+    // REST OF DOCUMENT
     document = this.beautify('html', document)
 
-    if (document.match(this.ignoreWrap)) {
+    // REMOVE IGNORE WRAPPERS
+    if (this.ignoreWrap.test(document)) {
 
       document = document.replace(this.ignoreWrap, '')
 
     }
 
+    // PUT BACK COMMENTS
+    if (this.comment.length > 0) {
+
+      for (let i = 0; i < this.comment.length; i++) {
+
+        document = document.replace(`comment_${i}`, this.comment[i])
+
+      }
+
+    }
+
     return document
+
+  }
+
+  /**
+   * Creates record of comment when `ignore_comments` option is
+   * enabled. Comments are replaced upon parsing.
+   *
+   *
+   * @param {"string"} code The full tag match
+   * @memberof Format
+   */
+  comments (code) {
+
+    this.comment.push(code)
+
+    return `comment_${this.comment.length - 1}`
+
+  }
+
+  /**
+   * Applies formatting to captured tag blocks
+   *
+   * @param {"string"} code The full tag match
+   * @param {"string"} name the name of the tag, eg: `div`
+   * @memberof Format
+   */
+  tags (code, indent, source, name) {
+
+    const format = this.beautify(name, source, indent)
+
+    return this.ignore(format)
 
   }
 
@@ -98,7 +178,7 @@ export default class Format extends Pattern {
    * @param {"string"} close the close tag (end), eg: `</div>`
    * @memberof Format
    */
-  tags (
+  blocks (
     code,
     open,
     name,
@@ -106,13 +186,13 @@ export default class Format extends Pattern {
     close
   ) {
 
-    const format = this.beautify(name, source)
+    const format = this.beautify(name, source, false)
 
     // Applies the brace_block custom ruleset
     const newline = prettydiff.options.brace_block ? `\n\n` : `\n`
-    const output = open + newline + format + newline + close
+    const customs = open.trim() + newline + format + newline + close.trim()
 
-    return Format.ignore(output)
+    return this.ignore(customs.trim())
 
   }
 
@@ -122,17 +202,23 @@ export default class Format extends Pattern {
    * @param {string} rule
    * @param {string} source
    */
-  beautify (name, source) {
+  beautify (name, source, indent) {
 
     try {
 
-      let rules = this.getRuleByTagName(name)
+      const rules = this.getRuleByTagName(name)
 
-      prettydiff.options = Object.assign(prettydiff.options, rules, {
+      if (indent && indent.length > 0) {
+
+        rules.indent_size = indent.length + rules.indent_size
+
+      }
+
+      Object.assign(prettydiff.options, rules, {
         source
       })
 
-      let content = prettydiff()
+      const output = prettydiff()
 
       if (prettydiff.sparser.parseerror.length > 0) {
 
@@ -147,7 +233,7 @@ export default class Format extends Pattern {
 
       }
 
-      return content
+      return output
 
     } catch (error) {
 
@@ -164,6 +250,10 @@ export default class Format extends Pattern {
         title: 'Error',
         message: `${error.message}`
       })
+
+    } finally {
+
+      Object.assign(prettydiff.options, Options)
 
     }
 
@@ -221,9 +311,9 @@ export default class Format extends Pattern {
    * @param {"string"} code
    * @memberof Format
    */
-  static ignore (code) {
+  ignore (code) {
 
-    return `<temp data-prettydiff-ignore>\n${code}\n</temp>`
+    return `<temp data-prettydiff-ignore>${code}</temp>`
 
   }
 
