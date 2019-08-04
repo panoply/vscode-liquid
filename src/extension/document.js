@@ -79,7 +79,7 @@ export default class Document extends Format {
     }
 
     // Disposal of match filename handler
-    if (this.handler.hasOwnProperty(fileName)) {
+    if (this.handler[fileName]) {
 
       this.handler[fileName].dispose()
 
@@ -109,7 +109,7 @@ export default class Document extends Format {
 
     for (const key in this.handler) {
 
-      if (this.handler.hasOwnProperty(key)) {
+      if (this.handler[key]) {
 
         this.handler[key].dispose()
 
