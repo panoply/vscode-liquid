@@ -9,13 +9,14 @@ export default [
       file: 'extension/index.js',
       format: 'cjs',
       external: [
-        'vscode'
+        'vscode',
+        'prettydiff'
       ]
     },
     plugins: [
       nodeResolve(),
       commonjs(),
-      !process.env.dev && terser()
+      terser()
     ]
   }
 ]
