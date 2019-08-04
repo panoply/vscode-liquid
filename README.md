@@ -147,10 +147,20 @@ When a HTML, Liquid and Jekyll file is open and active in the editor you will se
 The are some situations where you may want to apply language formatting to a specific tag. Using the `tags` property available to each language rule will allow you to apply a formatting code style to a custom defined tag.
 
 <strong>Example</strong>
-The below example would apply SCSS formatting to content between `<style lang="scss"></style>` and JSON formatting to `<script type="application/json"></script>`.
+The below example would apply singluar tag formatting to `<source>` HTML tags which are used within `<picture>` elements. The SCSS tag association would apply formatting to content between `<style lang="scss"></style>` tags.
 
 ```jsonc
 {
+  "html": {
+    "tags": [
+      {
+        "tag": "source",
+        "rules": {
+          "force_attribute": true
+        }
+      }
+    ]
+  },
   "scss": {
     "tags": [
       {
@@ -160,15 +170,6 @@ The below example would apply SCSS formatting to content between `<style lang="s
       }
     ]
   },
-  "json": {
-    "tags": [
-      {
-        "type": "html",
-        "begin": "script type=\"application/json\"", // <script type="application/json">
-        "end": "script" // </script>
-      }
-    ]
-  }
 }
 ```
 
@@ -227,6 +228,9 @@ Please remove the default tags from the `ignore` array with extereme caution, be
   ]
 }
 ```
+
+**All HTML comments (`<!-- -->`) are ignored by default.**
+
 
 > Do not include tag denotations (eg: `<`, `>`, `</`, `{%`, `%}`) when defining **begin** and **end** capture expressions. The `type` property defines the denotations of the tag.
 
@@ -306,6 +310,15 @@ Below is the default code style formatting rules. Generate this file using the `
 | begin    | Regular Expression | A regular expression match for the begin tag. |
 | end      | Regular Expression | A regular expression match for the end tag.   |
 
+<strong>Singular Tag Associations</strong>
+Available to the HTML `tags` property, you can enforce a specific formatting rules to singular tags.
+
+| Property | Accepts            | Description                                   |
+| -------- | ------------------ | --------------------------------------------- |
+| tag      | `string` | The name of the tag, eg: `source`, `img` `iframe`    |
+| rules    | `object` | The formatting rules to apply to this tag. |
+
+
 > If you're applying a regex expression for tag matching for the begin and end captures you must escape some characters with the backslash
 
 </p>
@@ -320,12 +333,14 @@ Below is the default code style formatting rules. Generate this file using the `
 
 <p>
 
-| Property        | Default | Description                                                      |
-| --------------- | ------- | ---------------------------------------------------------------- |
-| correct         | `true`  | Corrects code                                                    |
-| force_attribute | `false` | Indents HTML tag attributes to a newline                         |
-| preserve        | `2`     | Lines to preserve                                                |
-| unformatted     | `true`  | Should HTML tags (like attributes) have their insides preserved. |
+| Property          | Default  | Description                                          |
+| ----------------- | -------- | ---------------------------------------------------- |
+| correct           | `true`   | Fixes sloppy code                                    |
+| force_attribute   | `false`  | indents HTML attributes to newline                   |
+| preserve          | `1`      | Lines to preserve.                                   |
+| ignore_comments   | `true`   | Ignore formatting HTML comments                      |
+| wrap              | `0`      | Wrap before newline formatting                       |
+| tags              | `[]`     | An array of included singluar tags                   |
 
 </p>
 </details>

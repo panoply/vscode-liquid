@@ -4,6 +4,18 @@ All notable changes are listed below.
 
 > Documentation of the Change log started at version 0.3.1. All version prior 0.3.1 were beta variations.
 
+## [2.3.0] – <small>04/08/2019</small>
+
+### Added
+- Tag associations can now be applied to singular HTML tags.
+- All HTML comments are forcefully ignored from formatting. PrettyDiff has issues parsing nested comments, it is better to avoid HTML comment formatting all together, you can override this by setting `ignore_comments: false` in the HTML language ruleset.
+- JSON `<script type="application/json">` and `<script type="application/ld+json">` tags are now formatted by default.
+
+### Updates
+- Cleaned up the configuration and pattern object builders
+- Parser defaults are now reset on every format
+
+
 ## [2.2.4] – <small>01/08/2019</small>
 
 ### Added
