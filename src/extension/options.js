@@ -23,7 +23,8 @@ export const defaults = {
   quote_convert: 'none',
 
   // Custom
-  brace_block: false
+  brace_block: false,
+  ignore_comments: false
 
 }
 
@@ -32,6 +33,7 @@ export const defaults = {
  */
 export const TagAssociations = {
 
+  html: [],
   css: [
     {
       type: 'liquid',
@@ -63,10 +65,26 @@ export const TagAssociations = {
       type: 'liquid',
       begin: 'schema',
       end: 'endschema'
+    },
+    {
+      type: 'html',
+      begin: 'script type="application/json"',
+      end: 'script'
+    },
+    {
+      type: 'html',
+      begin: 'script type="application/ld\\+json"',
+      end: 'script'
     }
   ]
 
 }
+
+export const customRules = [
+  'brace_block',
+  'tags',
+  'ignore_comments'
+]
 
 /**
  * Formatting Rules (Enforced)
@@ -100,7 +118,8 @@ export const FormattingRules = {
     quote_convert: 'double',
 
     // Custom Rules
-    brace_block: false
+    brace_block: false,
+    ignore_comments: false
 
   },
 
@@ -125,7 +144,8 @@ export const FormattingRules = {
     no_semicolon: true,
 
     // Custom Rules
-    brace_block: false
+    brace_block: false,
+    ignore_comments: false
 
   },
 
@@ -149,7 +169,8 @@ export const FormattingRules = {
     braces: false,
 
     // Custom Rules
-    brace_block: false
+    brace_block: false,
+    ignore_comments: false
 
   },
 
@@ -162,6 +183,7 @@ export const FormattingRules = {
     node_error: true,
     language_name: 'CSS',
     language: 'css',
+    lexer: 'style',
 
     // Editor Specific
     indent_size: workspace.getConfiguration('editor').tabSize,
@@ -172,7 +194,9 @@ export const FormattingRules = {
     braces: false,
 
     // Custom Rules
-    brace_block: false
+    brace_block: false,
+    ignore_comments: false
+
   },
 
   // JavaScript Tag
@@ -199,7 +223,8 @@ export const FormattingRules = {
     no_semicolon: false,
 
     // Custom Rules
-    brace_block: false
+    brace_block: false,
+    ignore_comments: false
 
   }
 
