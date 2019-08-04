@@ -95,22 +95,25 @@ export default class Config extends Utils {
    */
   setTagAssociates (config) {
 
-    for (let lang in this.tagAssociates) {
+    // Gets the keys in the tagAssiciates object
+    // The keys denote the the language
+    for (const lang in this.tagAssociates) {
 
-      if (
-        config[lang].hasOwnProperty('tags') &&
-        config[lang].tags.length > 0
-      ) {
+      // If the current configuration language has a 'tags'
+      // property and exisiting values
+      if (config[lang]['tags'] && config[lang].tags.length > 0) {
 
-        for (let tag in this.tagAssociates[lang]) {
+        // Loops over the tag associations by language
+        for (const tag in this.tagAssociates[lang]) {
 
+          // Applies associate tags to the tags property
           config[lang].tags.push(this.tagAssociates[lang][tag])
 
         }
 
       } else {
 
-        if (config.hasOwnProperty(lang)) {
+        if (config[lang]) {
 
           assign(config[lang], {
             tags: this.tagAssociates[lang]
@@ -234,29 +237,41 @@ export default class Config extends Utils {
 
     }
 
-    let rules
-
     // loop over each language prop
-    for (let lang in this.config) {
+    for (const lang in this.config) {
 
-      if (lang !== 'ignore' || lang !== 'html') {
+      const config = this.config[lang]
+
+      if (lang !== 'ignore') {
 
         // filters out object without a `tags` prop, eg: `html`
-        this.config[lang].hasOwnProperty('tags') && this.config[lang].tags.map(i => {
+        if (config.tags) {
 
-          if (i.begin === tag) {
+          for (let i = 0; i < config.tags.length; i++) {
 
-            rules = this.config[lang]
+            const element = config.tags[i]
+
+            if (element.begin === tag) {
+
+              return config
+
+            }
+
+            if (element.tag === tag) {
+
+              const copy = Object.assign({}, config, element.rules)
+
+              return copy
+
+            }
 
           }
 
-        })
+        }
 
       }
 
     }
-
-    return rules
 
   }
 
