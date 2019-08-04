@@ -20,7 +20,9 @@
     "correct": true,
     "force_attribute": false,
     "braces": false,
-    "preserve": 2
+    "preserve": 2,
+    "wrap": 80,
+    "tag_sort": false
   },
   "js": {
     "preserve": 1,
