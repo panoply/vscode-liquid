@@ -10,24 +10,35 @@ import Document from './extension/document'
 exports.activate = context => {
 
   const { registerCommand } = commands
-  const sub = context.subscriptions
+  const subscribe = context.subscriptions
   const active = window.activeTextEditor
+  const document = new Document()
+  const {
+    liquidrc,
+    onConfigChanges,
+    onOpenTextDocument,
+    disable,
+    enable,
+    formatDoc,
+    selection,
+    output
+  } = document
 
+  // Can create a liquidrc file
+  subscribe.push(registerCommand('liquid.liquidrc', liquidrc.bind(document)))
+
+  // Only init on active document
   if (!active || !active.document) return
 
-  // Get Document
-  const document = new Document()
-
   // Workspace
-  sub.push(workspace.onDidChangeConfiguration(document.onConfigChanges.bind(document)))
-  sub.push(workspace.onDidOpenTextDocument(document.onOpenTextDocument.bind(document)))
+  subscribe.push(workspace.onDidChangeConfiguration(onConfigChanges.bind(document)))
+  subscribe.push(workspace.onDidOpenTextDocument(onOpenTextDocument.bind(document)))
 
   // Commands
-  sub.push(registerCommand('liquid.disableFormatting', document.disable.bind(document)))
-  sub.push(registerCommand('liquid.enableFormatting', document.enable.bind(document)))
-  sub.push(registerCommand('liquid.formatDocument', document.document.bind(document)))
-  sub.push(registerCommand('liquid.formatSelection', document.selection.bind(document)))
-  sub.push(registerCommand('liquid.toggleOutput', document.output.bind(document)))
-  sub.push(registerCommand('liquid.liquidrc', document.liquidrc.bind(document)))
+  subscribe.push(registerCommand('liquid.disableFormatting', disable.bind(document)))
+  subscribe.push(registerCommand('liquid.enableFormatting', enable.bind(document)))
+  subscribe.push(registerCommand('liquid.formatDocument', formatDoc.bind(document)))
+  subscribe.push(registerCommand('liquid.formatSelection', selection.bind(document)))
+  subscribe.push(registerCommand('liquid.toggleOutput', output.bind(document)))
 
 }
