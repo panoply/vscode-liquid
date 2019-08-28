@@ -1,3 +1,7 @@
+# Why is this extension unpublished?
+
+For the time being this extension will remain unpublished and not recieve updates due to remarks and comments left by a user within the vscode marketplace.
+
 [![install](https://img.shields.io/badge/vscode-install-blue.svg?style=popout-square)](https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid) &nbsp; ![](https://img.shields.io/visual-studio-marketplace/v/sissel.shopify-liquid.svg?style=popout-square) &nbsp; ![install](https://vsmarketplacebadge.apphb.com/downloads-short/sissel.shopify-liquid.svg?style=popout-square)
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/banner.gif"  atl="Liquid Logo"  width="100%">
@@ -169,7 +173,7 @@ The below example would apply singluar tag formatting to `<source>` HTML tags wh
         "end": "style" // </style>
       }
     ]
-  },
+  }
 }
 ```
 
@@ -230,7 +234,6 @@ Please remove the default tags from the `ignore` array with extereme caution, be
 ```
 
 **All HTML comments (`<!-- -->`) are ignored by default.**
-
 
 > Do not include tag denotations (eg: `<`, `>`, `</`, `{%`, `%}`) when defining **begin** and **end** capture expressions. The `type` property defines the denotations of the tag.
 
@@ -313,11 +316,10 @@ Below is the default code style formatting rules. Generate this file using the `
 <strong>Singular Tag Associations</strong>
 Available to the HTML `tags` property, you can enforce a specific formatting rules to singular tags.
 
-| Property | Accepts            | Description                                   |
-| -------- | ------------------ | --------------------------------------------- |
-| tag      | `string` | The name of the tag, eg: `source`, `img` `iframe`    |
-| rules    | `object` | The formatting rules to apply to this tag. |
-
+| Property | Accepts  | Description                                       |
+| -------- | -------- | ------------------------------------------------- |
+| tag      | `string` | The name of the tag, eg: `source`, `img` `iframe` |
+| rules    | `object` | The formatting rules to apply to this tag.        |
 
 > If you're applying a regex expression for tag matching for the begin and end captures you must escape some characters with the backslash
 
@@ -333,14 +335,14 @@ Available to the HTML `tags` property, you can enforce a specific formatting rul
 
 <p>
 
-| Property          | Default  | Description                                          |
-| ----------------- | -------- | ---------------------------------------------------- |
-| correct           | `true`   | Fixes sloppy code                                    |
-| force_attribute   | `false`  | indents HTML attributes to newline                   |
-| preserve          | `1`      | Lines to preserve.                                   |
-| ignore_comments   | `true`   | Ignore formatting HTML comments                      |
-| wrap              | `0`      | Wrap before newline formatting                       |
-| tags              | `[]`     | An array of included singluar tags                   |
+| Property        | Default | Description                        |
+| --------------- | ------- | ---------------------------------- |
+| correct         | `true`  | Fixes sloppy code                  |
+| force_attribute | `false` | indents HTML attributes to newline |
+| preserve        | `1`     | Lines to preserve.                 |
+| ignore_comments | `true`  | Ignore formatting HTML comments    |
+| wrap            | `0`     | Wrap before newline formatting     |
+| tags            | `[]`    | An array of included singluar tags |
 
 </p>
 </details>
