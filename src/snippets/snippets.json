@@ -118,6 +118,16 @@
     "description": "Theme tag: include with parameters",
     "body": ["{% include '${1:snippet}', ${2:variable}: ${3:value} %}"]
   },
+  "Tag render": {
+    "prefix": "render",
+    "description": "Theme tag: render",
+    "body": ["{% render '${1:snippet}' %}"]
+  },
+  "Tag render with parameters": {
+    "prefix": "renderwith",
+    "description": "Theme tag: render with parameters",
+    "body": ["{% render '${1:snippet}', ${2:variable}: ${3:value} %}"]
+  },
   "Tag section": {
     "prefix": "section",
     "description": "Theme tag: section",
