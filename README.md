@@ -2,6 +2,11 @@
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/banner.gif"  atl="Liquid Logo"  width="100%">
 
+### 🚨New Version Coming
+
+For all users of this extension. The next major release is on its way and for now it's currently unpublished from the marketplace, you can read a little more as to why [here](https://github.com/panoply/vscode-liquid/issues/45#issuecomment-582969319). The next version will ship many additional features and fix any current issues submitted here in the repository. The new features coming will empower the way you work with Liquid and additionally it will be released under a different name (Liquify). This repository name and the name within the marketplace will also change. More information about this release will be given once the build concludes. Thanks for your patience and for everyone who has submitted issues and given feedback. 
+
+
 # Liquid <small style="color:#999;">(vs code)</small>
 
 A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support for Liquid code used in HTML, JavaScript CSS, SCSS, Markdown and more. Ships with auto formatting code beautification, advanced snippet auto-completion resolution and respects VS Codes native Intellisense, hover and diagnostic features.
