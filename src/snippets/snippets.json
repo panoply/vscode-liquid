@@ -151,12 +151,7 @@
   "Liquid Tag stylesheet": {
     "prefix": "stylesheet",
     "description": "Stylesheet tag: stylesheet",
-    "body": ["{% stylesheet %}", "\t$1", "{% endstylesheet %}"]
-  },
-  "Liquid Tag stylesheet for scss": {
-    "prefix": "stylesheet_scss",
-    "description": "Stylesheet tag: stylesheet for scss",
-    "body": ["{% stylesheet '${1:scss}' %}", "\t$2", "{% endstylesheet %}"]
+    "body": ["{% style %}", "\t$1", "{% endstyle %}"]
   },
   "Liquid Tag javascript": {
     "prefix": "javascript",
