@@ -675,16 +675,17 @@
       "}${5:,}$0"
     ]
   },
-  "Schema, checkbox": {
-    "description": "Schema input setting: \"checkbox\"",
+  "Schema input setting: \"checkbox\"": {
     "prefix": "schema: checkbox",
     "body": [
       "{",
-      "\t\"type\": \"checkbox\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"${4:true}\"}${5:,\n\t\"info\": \"$6\"}",
-      "}${7:,}"
-    ]
+      "  \"type\": \"checkbox\",",
+      "  \"id\": \"${1:id}\",",
+      "  \"label\": \"${2:label}\",",
+      "  \"default\": ${3|true,false|}",
+      "}"
+    ],
+    "description": "Schema input setting: \"checkbox\""
   },
   "Schema, range": {
     "description": "Schema input setting: \"range\"",
