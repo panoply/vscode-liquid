@@ -15,7 +15,7 @@ Thanks for your patience!
 
 <hr>
 
-# Liquid <small style="color:#999;">(vs code)</small>
+# Liquid <small style="color:#999;">(VS Code)</small>
 
 A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support for Liquid code used in HTML, JavaScript CSS, SCSS, Markdown and more. Ships with auto formatting code beautification, advanced snippet auto-completion resolution and respects VS Codes native Intellisense, hover and diagnostic features.
 
