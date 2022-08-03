@@ -143,6 +143,11 @@
     "description": "Theme tag: layout none",
     "body": ["{% layout none %}"]
   },
+  "Tag form": {
+    "prefix": "form",
+    "description": "Theme tag: form",
+    "body": ["{% form '${1:product}', ${2:product} %}$3{% endform %}"]
+  },
   "Tag paginate": {
     "prefix": "paginate",
     "description": "Theme tag: paginate",
