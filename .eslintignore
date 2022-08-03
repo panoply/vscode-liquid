@@ -1,4 +1,0 @@
-*.html
-*.liquid
-./test/errors/issue-1.liquid
-extension/index.js
