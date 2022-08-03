@@ -2,14 +2,15 @@
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/banner.gif"  atl="Liquid Logo"  width="100%">
 
-### 🚨 New Version Coming 🚨 
+### 🚨 Liquify Release Approaching
 
-For all users of this extension. The next major release is on its way. The next version will ship many additional features and fix any current issues submitted here in the repository. The new features coming will empower the way you work with Liquid and additionally it will be released under a different name ([Liquify](https://liquify.dev)). This repository name and the name within the marketplace will also change. 
+For quite some time users of this extension have been waiting for the next release (Liquify). After a lot of work, I will begin moving the towards publishing the pre-release/beta.
 
 For more information, please see:
 
-- [Liquify and the future of this extension – #56](https://github.com/panoply/vscode-liquid/issues/56) 
-- [Project Shiplist](https://github.com/panoply/vscode-liquid/projects/6) 
+- [Liquify and the future of this extension – #56](https://github.com/panoply/vscode-liquid/issues/56)
+- [Project Shiplist](https://github.com/panoply/vscode-liquid/projects/6)
+- [Join the Discord](https://discord.gg/eUNEsxMuWt)
 
 Thanks for your patience!
 
