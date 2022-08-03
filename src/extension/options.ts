@@ -1,4 +1,4 @@
-import { workspace } from 'vscode'
+import { workspace } from 'vscode';
 
 /**
  * Default formatting Rules used to reset options
@@ -26,7 +26,7 @@ export const defaults = {
   brace_block: false,
   ignore_comments: false
 
-}
+};
 
 /**
  * Tag Associations (Enforced)
@@ -78,13 +78,7 @@ export const TagAssociations = {
     }
   ]
 
-}
-
-export const customRules = [
-  'brace_block',
-  'tags',
-  'ignore_comments'
-]
+};
 
 /**
  * Formatting Rules (Enforced)
@@ -228,4 +222,4 @@ export const FormattingRules = {
 
   }
 
-}
+};
