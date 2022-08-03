@@ -108,6 +108,11 @@
     "description": "Variable tag: capture",
     "body": ["{% capture ${1:variable} %}$2{% endcapture %}"]
   },
+  "Tag render": {
+    "prefix": "render",
+    "description": "Theme tag: render",
+    "body": ["{% render '${1:snippet}' %}"]
+  },
   "Tag include": {
     "prefix": "include",
     "description": "Theme tag: include",
@@ -146,12 +151,7 @@
   "Liquid Tag stylesheet": {
     "prefix": "stylesheet",
     "description": "Stylesheet tag: stylesheet",
-    "body": ["{% stylesheet %}", "\t$1", "{% endstylesheet %}"]
-  },
-  "Liquid Tag stylesheet for scss": {
-    "prefix": "stylesheet_scss",
-    "description": "Stylesheet tag: stylesheet for scss",
-    "body": ["{% stylesheet '${1:scss}' %}", "\t$2", "{% endstylesheet %}"]
+    "body": ["{% style %}", "\t$1", "{% endstyle %}"]
   },
   "Liquid Tag javascript": {
     "prefix": "javascript",
@@ -675,16 +675,17 @@
       "}${5:,}$0"
     ]
   },
-  "Schema, checkbox": {
-    "description": "Schema input setting: \"checkbox\"",
+  "Schema input setting: \"checkbox\"": {
     "prefix": "schema: checkbox",
     "body": [
       "{",
-      "\t\"type\": \"checkbox\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"${4:true}\"}${5:,\n\t\"info\": \"$6\"}",
-      "}${7:,}"
-    ]
+      "  \"type\": \"checkbox\",",
+      "  \"id\": \"${1:id}\",",
+      "  \"label\": \"${2:label}\",",
+      "  \"default\": ${3|true,false|}",
+      "}"
+    ],
+    "description": "Schema input setting: \"checkbox\""
   },
   "Schema, range": {
     "description": "Schema input setting: \"range\"",
