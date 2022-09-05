@@ -10,6 +10,25 @@
           "title": "Fix Sloppy Code",
           "description": "Automatically attempts to correct some sloppiness in code. Use this option with care, it may wreak havoc in some cases."
         },
+        "attributeCasing": {
+          "type": "string",
+          "default": "preserve",
+          "description": "Control the casing of attributes",
+          "oneOf": [
+            {
+              "enum": ["preserve"]
+            },
+            {
+              "enum": ["lowercase"]
+            },
+            {
+              "enum": ["lowercase-name"]
+            },
+            {
+              "enum": ["lowercase-value"]
+            }
+          ]
+        },
         "attributeSort": {
           "type": "boolean",
           "default": false,
@@ -26,9 +45,9 @@
           "markdownDescription": "A list of HTML attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires `attribute_sort` have a value of `true` and does not accept Liquid tag names, only HTML names are applicable."
         },
         "attributeValues": {
-          "default": "inline",
+          "default": "preserve",
           "type": "string",
-          "description": "How attribute values should be handled. By default, Prettify strips extraneous whitespaces from HTML attribute values but preserves newlines. You can control how attribute values should be processed",
+          "description": "How attribute values should be handled. By default, Prettify strips extraneous whitespaces from HTML attribute values but preserves newlines. You can control how attribute values should be processed.\\n\\nPlease note that this option is experimental and may not fully work as intended.",
           "oneOf": [
             {
               "enum": ["preserve"]
@@ -68,7 +87,7 @@
         "forceAttribute": {
           "type": ["boolean", "number"],
           "default": false,
-          "description": "If all document attributes should be indented each onto their own line.\n\nBefore:\n\n\t<div id=\"a\" class=\"b\" data-attr=\"c\">\n\nAfter:\n\n\t<div\n\t    id=\"a\"\n\t    class=\"b\"\n\t    data-attr=\"c\">"
+          "description": "If all document attributes should be indented each onto their own line."
         },
         "preserveText": {
           "type": "boolean",
@@ -110,7 +129,7 @@
     },
     "style": {
       "properties": {
-       "correct": {
+        "correct": {
           "type": "boolean",
           "default": false,
           "title": "Fix Sloppy Code",
@@ -127,11 +146,15 @@
           "default": false,
           "description": "This will determine whether comments should always start at position 0 of each line or if comments should be indented according to the code"
         },
-        "compressedCSS": {
+        "sortSelectors": {
           "type": "boolean",
           "default": false,
-          "title": "Compressed CSS",
-          "description": "If CSS should be beautified in a style where the properties and values are minifed for faster reading of selectors."
+          "description": "Sort Selectors"
+        },
+        "sortProperties": {
+          "type": "boolean",
+          "default": false,
+          "description": "Sort Selectors"
         },
         "classPadding": {
           "type": "boolean",
@@ -155,7 +178,7 @@
     },
     "script": {
       "properties": {
-       "correct": {
+        "correct": {
           "type": "boolean",
           "default": false,
           "title": "Fix Sloppy Code",
@@ -399,6 +422,26 @@
     },
     "json": {
       "properties": {
+        "arrayFormat": {
+          "type": "string",
+          "default": "default",
+          "title": "Formatting Arrays",
+          "description": "Determines if all array indexes should be indented, never indented, or left to the default.",
+          "oneOf": [
+            {
+              "enum": ["default"],
+              "description": "Default formatting"
+            },
+            {
+              "enum": ["indent"],
+              "description": "Always indent each index of an array"
+            },
+            {
+              "enum": ["inline"],
+              "description": "Ensure all array indexes appear on a single line"
+            }
+          ]
+        },
         "braceAllman": {
           "type": "boolean",
           "default": false,
@@ -503,7 +546,7 @@
           "description": "The level of indentation to be applied to HTML and Liquid syntax. This option does not apply to embedded regions."
         },
         "commentIndent": {
-          "type": "string",
+          "type": "boolean",
           "default": false,
           "description": "If a blank new line should be forced above comments."
         },
@@ -519,7 +562,7 @@
           "description": "Prevent comment reformatting due to option wrap."
         },
         "endNewLine": {
-          "type": "string",
+          "type": "boolean",
           "default": false,
           "description": "Whether or not to insert a final line. When this rule is undefined in a `.liquidrc` file the Text Editors settings will be used, in vscode that is `*.endWithNewline` where `*` is a language name.  If an `.editorconfig` file is found present in root, those rules will be applied in **precedence** over Text Editor"
         },
