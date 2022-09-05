@@ -176,7 +176,7 @@
     "splitting": false,
     "format": "cjs"
   },
-  "prettier": "@liquify/eslint-config",
+  "prettier": "@liquify/prettier-config",
   "eslintConfig": {
     "extends": "@liquify/eslint-config"
   },
