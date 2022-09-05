@@ -32,11 +32,7 @@
   "bundledDependencies": true,
   "activationEvents": [
     "onLanguage:html",
-    "onCommand:liquid.liquidrc",
-    "onLanguage:javascript",
-    "onLanguage:javascriptreact",
-    "onLanguage:typescript",
-    "onLanguage:typescriptreact"
+    "onCommand:liquid.liquidrc"
   ],
   "main": "./extension/extension",
   "contributes": {
@@ -134,15 +130,7 @@
         "scopeName": "source.liquid",
         "path": "./src/syntax/liquid.tmLanguage.json",
         "injectTo": [
-          "text.html",
-          "source.js",
-          "source.js.jsx",
-          "source.jsx",
-          "source.ts",
-          "source.tsx",
-          "source.json",
-          "source.css",
-          "source.css.scss"
+          "text.html"
         ]
       }
     ],
