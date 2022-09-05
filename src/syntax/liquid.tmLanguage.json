@@ -21,7 +21,10 @@
   "foldingStopMarker": "(?x){%-?\\s*(endif|endunless|endfor|endpaginate|endcapture|endform|endcase|endtablerow|endraw|endcomment|endblock|endpaginate|endschema|endstylesheet|endjavascript)[^(%})]+-?%}",
   "patterns": [
     {
-      "include": "#comments"
+      "include": "#block-comments"
+    },
+    {
+      "include": "#line-comments"
     },
     {
       "include": "#frontmatter"
@@ -197,10 +200,15 @@
         }
       ]
     },
-    "comments": {
+    "block-comments": {
       "name": "comment.block.liquid",
       "begin": "{%-?\\s*comment\\s*-?%}",
       "end": "{%-?\\s*endcomment\\s*-?%}"
+    },
+    "line-comments": {
+      "name": "comment.line.liquid",
+      "begin": "{%-?\\s*#",
+      "end": "-?%}"
     },
     "constant-characters": {
       "name": "constant.character.entity.liquid",
@@ -223,7 +231,7 @@
       "match": "(-|\\+)?\\s*[0-9]+(\\.[0-9]+)?"
     },
     "entity-name-tag": {
-      "match": "(((?<={%)|(?<={%-))\\s*(\\w+))",
+      "match": "(((?<={\\%)|(?<={\\%-))\\s*(\\w+))",
       "captures": {
         "1":{
           "name": "entity.name.tag.liquid"
@@ -231,25 +239,14 @@
       }
     },
     "frontmatter": {
-      "contentName": "source.yaml",
-      "name": "meta.embedded.block.frontmatter.liquid",
-      "begin": "---(?=\\s*\\n)",
-      "beginCaptures": {
-        "0": {
-          "name": "punctuation.definition.tag.begin.liquid"
-        }
-      },
-      "end": "---(?=\\s*\\n)",
-      "endCaptures": {
-        "0": {
-          "name": "punctuation.definition.tag.end.liquid"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.yaml"
-        }
-      ]
+     "contentName": "meta.embedded.block.frontmatter",
+      "begin": "\\A-{3}\\s*$",
+			"patterns": [
+				{
+					"include": "source.yaml"
+				}
+			],
+			"end": "(^|\\G)-{3}|\\.{3}\\s*$"
     },
     "include-tag":{
       "name": "string.quoted.liquid",
@@ -297,15 +294,11 @@
       "match": "/=",
       "name": "keyword.operator.assignment.augmented.liquid"
     },
-
-
     "object-properties": {
       "match": "(?<=\\w.)(?<=\\w.)\\b\\w+?\\b\\s+?",
       "name": "variable.parameter.liquid"
 
     },
-
-
     "string-quoted-single": {
       "name": "string.quoted.single.liquid",
       "begin": "'",
