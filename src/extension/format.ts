@@ -30,16 +30,17 @@ export default class Format extends Config {
 
     } catch (error) {
 
-      this.outputLog({ title: 'Prettify', message: `${error}` });
+      this.outputLog({
+        title: 'Prettify',
+        message: `${error}`
+      });
     }
-
   }
 
   /**
    * Format the selected (highlighted) text
    */
   async selectedText () {
-
     if (window.activeTextEditor === undefined) return;
 
     const { activeTextEditor } = window;
@@ -47,28 +48,26 @@ export default class Format extends Config {
     const input = document.getText(selection);
 
     try {
-
       const output = await prettify.format(input);
-      await activeTextEditor.edit(code => code.replace(selection, output));
-
+      await activeTextEditor.edit(code =>
+        code.replace(selection, output));
     } catch (error) {
-
-      this.outputLog({ title: 'Prettify', message: `${error}` });
+      this.outputLog({
+        title: 'Prettify',
+        message: `${error}`
+      });
     }
-
   }
 
   /**
    * Get the formatting range
    */
   static range (document: TextDocument) {
-
     const range = document.getText().length - 1;
     const first = document.positionAt(0);
     const last = document.positionAt(range);
 
     return new Range(first, last);
-
   }
 
 }
