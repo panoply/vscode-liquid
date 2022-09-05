@@ -36,6 +36,7 @@ export default class Config extends Utils {
     if (workspace.workspaceFolders !== undefined) {
       this.rcfile = path.join(workspace.workspaceFolders[0].uri.fsPath, '.liquidrc');
     }
+
     // Conditional Executors
     this.watch = false;
     this.error = false;
@@ -108,6 +109,7 @@ export default class Config extends Utils {
       const watch = workspace.createFileSystemWatcher(this.rcfile, true, false, false);
 
       watch.onDidDelete(() => this.setFormattingRules());
+
       watch.onDidChange(() => {
         this.reset = true;
         this.setFormattingRules();
@@ -134,16 +136,41 @@ export default class Config extends Utils {
 
       if (answer === 'Open') {
         workspace.openTextDocument(this.rcfile).then((document) => {
+
           window.showTextDocument(document, 1, false);
+
         }, (error) => {
+
           return console.error(error);
+
         });
       }
 
     }
 
-    const liquid = workspace.getConfiguration('liquid');
-    const rules = JSON.stringify(liquid.rules, null, 2);
+    const defaults = Object.assign({}, prettify.options.rules);
+
+    delete defaults.lexer;
+    delete defaults.language;
+    delete defaults.languageName;
+    delete defaults.mode;
+    delete defaults.indentLevel;
+    delete defaults.grammar;
+
+    delete defaults.script.commentNewline;
+    delete defaults.script.objectSort;
+    delete defaults.script.vertical;
+    delete defaults.script.variableList;
+
+    delete defaults.style.forceValue;
+    delete defaults.style.quoteConvert;
+    delete defaults.style.compressCSS;
+
+    delete defaults.json.objectSort;
+
+    defaults.indentSize = workspace.getConfiguration('editor').get('tabSize');
+
+    const rules = JSON.stringify({ prettify: defaults }, null, 2);
 
     fs.writeFile(this.rcfile, rules, (error) => {
 
