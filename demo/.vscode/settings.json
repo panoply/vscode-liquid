@@ -1,0 +1,105 @@
+{
+  /* -------------------------------------------- */
+  /* VSCODE NATIVES                               */
+  /* -------------------------------------------- */
+
+  //"[liquid]": {},
+  //"[liquid-css]": {},
+  //"[liquid-scss]": {},
+  //"[liquid-javascript]": {},
+  //"[liquid-json]": {},
+  //"[liquid-yaml]": {},
+
+  /* -------------------------------------------- */
+  /* FORMATTING OPTIONS                           */
+  /* -------------------------------------------- */
+
+  "liquid.format.enable": true,
+
+  /* -------------------------------------------- */
+  /* ENABLED LANGUAGES                            */
+  /* -------------------------------------------- */
+
+  "liquid.format.languages": {
+    ".liquid": true,
+    ".css.liquid": true,
+    ".js.liquid": true,
+    ".json.liquid": true,
+    ".scss.liquid": true,
+    ".html": true,
+    ".css": false,
+    ".js": false,
+    ".json": false
+  },
+
+  /* -------------------------------------------- */
+  /* IGNORED FILES                                */
+  /* -------------------------------------------- */
+
+  "liquid.format.ignore": ["ignore.liquid"],
+
+  /* -------------------------------------------- */
+  /* PRETTIFY RULES                               */
+  /* -------------------------------------------- */
+
+  "liquid.format.rules": {
+    "crlf": false,
+    "commentIndent": true,
+    "endNewline": false,
+    "indentChar": " ",
+    "indentSize": 2,
+    "preserveComment": false,
+    "preserveLine": 2,
+    "wrap": 0,
+    "markup": {
+      "correct": false,
+      "commentNewline": false,
+      "attributeCasing": "preserve",
+      "attributeValues": "preserve",
+      "attributeSort": false,
+      "attributeSortList": [],
+      "forceAttribute": false,
+      "forceLeadAttribute": false,
+      "forceIndent": false,
+      "preserveText": false,
+      "preserveAttributes": false,
+      "selfCloseSpace": false,
+      "quoteConvert": "none"
+    },
+    "style": {
+      "correct": false,
+      "classPadding": false,
+      "noLeadZero": false,
+      "sortSelectors": false,
+      "sortProperties": false
+    },
+    "script": {
+      "correct": false,
+      "braceNewline": false,
+      "bracePadding": false,
+      "braceStyle": "none",
+      "braceAllman": false,
+      "caseSpace": false,
+      "inlineReturn": true,
+      "elseNewline": false,
+      "endComma": "never",
+      "arrayFormat": "default",
+      "objectIndent": "default",
+      "functionNameSpace": false,
+      "functionSpace": false,
+      "styleGuide": "none",
+      "ternaryLine": false,
+      "methodChain": 4,
+      "neverFlatten": false,
+      "noCaseIndent": false,
+      "noSemicolon": false,
+      "quoteConvert": "none"
+    },
+    "json": {
+      "arrayFormat": "default",
+      "braceAllman": false,
+      "bracePadding": false,
+      "objectIndent": "default"
+    }
+  }
+}
