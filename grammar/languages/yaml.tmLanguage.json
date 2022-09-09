@@ -1,0 +1,20 @@
+{
+  "name": "Liquid Yaml",
+  "scopeName": "source.yaml.liquid",
+  "fileTypes": ["liquid"],
+  "injectionSelector": "L:source.yaml -meta.embedded -comment",
+  "injections": {
+    "L:string - (string.quoted.*.yaml)": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    }
+  },
+  "patterns": [
+    { "include": "source.liquid#comments" },
+    { "include": "source.liquid#tags" },
+    { "include": "source.liquid#output" },
+    { "include": "source.yaml" }
+  ]
+}
