@@ -1,0 +1,20 @@
+{
+  "name": "Liquid SCSS",
+  "scopeName": "source.scss.liquid",
+  "fileTypes": ["liquid"],
+  "injectionSelector": "L:source.scss -meta.embedded -comment",
+  "injections": {
+    "L:string - (string.quoted.*.scss)": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    }
+  },
+  "patterns": [
+    { "include": "source.liquid#comments" },
+    { "include": "source.liquid#tags" },
+    { "include": "source.liquid#output" },
+    { "include": "source.scss" }
+  ]
+}
