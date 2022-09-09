@@ -1,6 +1,7 @@
-import { window, Range, TextDocument } from 'vscode';
+import { window } from 'vscode';
 import prettify from '@liquify/prettify';
-import Config from './config';
+import { Config } from './config';
+import { getRange } from './utils';
 
 /**
  * Applies formatting to the document
@@ -8,39 +9,33 @@ import Config from './config';
  * @class Format
  * @extends {Pattern}
  */
-export default class Format extends Config {
+export class Format extends Config {
 
   /**
    * Formats the entire document
    */
-  async completeDocument () {
+  async formatDocument () {
 
     if (window.activeTextEditor === undefined) return;
 
     const { activeTextEditor } = window;
     const { document } = activeTextEditor;
-    const range = Format.range(document);
+    const range = getRange(document);
     const input = document.getText(range);
 
     try {
-
       const output = await prettify.format(input, { language: document.languageId });
-
-      await activeTextEditor.edit(code => code.replace(range, output));
-
-    } catch (error) {
-
-      this.outputLog({
-        title: 'Prettify',
-        message: `${error}`
-      });
+      return activeTextEditor.edit(code => code.replace(range, output));
+    } catch (message) {
+      this.outputLog({ title: 'Prettify', message });
     }
   }
 
   /**
    * Format the selected (highlighted) text
    */
-  async selectedText () {
+  async formatSelection () {
+
     if (window.activeTextEditor === undefined) return;
 
     const { activeTextEditor } = window;
@@ -49,25 +44,10 @@ export default class Format extends Config {
 
     try {
       const output = await prettify.format(input);
-      await activeTextEditor.edit(code =>
-        code.replace(selection, output));
-    } catch (error) {
-      this.outputLog({
-        title: 'Prettify',
-        message: `${error}`
-      });
+      return activeTextEditor.edit(code => code.replace(selection, output));
+    } catch (message) {
+      this.outputLog({ title: 'Prettify', message });
     }
-  }
-
-  /**
-   * Get the formatting range
-   */
-  static range (document: TextDocument) {
-    const range = document.getText().length - 1;
-    const first = document.positionAt(0);
-    const last = document.positionAt(range);
-
-    return new Range(first, last);
   }
 
 }

@@ -13,8 +13,10 @@ exports.activate = context => {
   const subscribe = context.subscriptions;
   const active = window.activeTextEditor;
   const document = new Document();
+
   const {
     liquidrc,
+    onConnect,
     onConfigChanges,
     onOpenTextDocument,
     disable,
@@ -22,6 +24,8 @@ exports.activate = context => {
     selection,
     output
   } = document;
+
+  onConnect();
 
   // Can create a liquidrc file
   subscribe.push(registerCommand('liquid.liquidrc', liquidrc.bind(document)));

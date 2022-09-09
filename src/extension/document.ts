@@ -1,6 +1,8 @@
-import { workspace, languages, window, ConfigurationTarget, Disposable, TextEdit } from 'vscode';
-import Format from './format';
+import { workspace, languages, window, ConfigurationTarget, TextEdit, TextDocument, FormattingOptions } from 'vscode';
+import { Format } from './format';
 import prettify from '@liquify/prettify';
+import { getRange, matchLanguage, Status } from './utils';
+import { has } from 'rambda';
 
 /**
  * Document intializer class
@@ -10,16 +12,11 @@ import prettify from '@liquify/prettify';
  */
 export default class Document extends Format {
 
-  format: boolean;
-  handler: { [filename: string]: Disposable };
+  async onConnect () {
 
-  constructor () {
+    await this.getConfigFile();
 
-    super();
-
-    this.handler = {};
-    this.setFormattingRules();
-
+    console.log(this);
   }
 
   /**
@@ -28,7 +25,7 @@ export default class Document extends Format {
   onConfigChanges () {
 
     // Reset Error Condition
-    this.error = false;
+    this.hasError = false;
 
     // Common Initializes
     this.dispose();
@@ -46,60 +43,64 @@ export default class Document extends Format {
 
     const { fileName, languageId } = window.activeTextEditor.document;
 
-    if (this.error) this.statusBarItem('error', true);
+    if (this.hasError) this.statusBarItem(Status.Error, true);
 
     // Hide status bar item if not HTML and return the provider early
-    if (languageId !== 'html') {
+    if (!has(languageId, this.format)) {
       this.dispose();
       this.barItem.hide();
       return;
     }
 
     // If formatOnSave editor option is false, apply its state to Liquid formatter
-    if (!workspace.getConfiguration('editor').formatOnSave) {
-      this.format = false;
-    }
+    this.format[languageId] = workspace.getConfiguration('editor').get('formatOnSave');
 
     // Formatter is set to false, skip it
-    if (!this.format) {
-
+    if (!this.format[languageId]) {
       // Show disabled formatter status bar
       this.dispose();
-      this.statusBarItem('disabled', true);
+      this.statusBarItem(Status.Disabled, true);
       return;
     }
 
     // Disposal of match filename handler
-    if (fileName in this.handler) this.handler[fileName].dispose();
+    if (fileName in this.documents) {
+      this.documents[fileName].dispose();
+    }
 
-    if (!this.error && this.format) this.statusBarItem('enabled', true);
+    if (!this.hasError && this.format[languageId]) {
+      this.statusBarItem(Status.Enabled, true);
+    }
 
-    this.handler[fileName] = languages.registerDocumentFormattingEditProvider({
-      scheme: 'file',
-      language: 'html'
-    }, {
-      async provideDocumentFormattingEdits (document, options, provider) {
-
-        const range = Format.range(document);
-        const input = document.getText(range);
-
-        try {
-
-          const output = await prettify.format(input, { language: document.languageId });
-
-          return [
-            TextEdit.replace(range, output)
-          ];
-
-        } catch (error) {
-
-          this.outputLog({ title: 'Prettify', message: `${error}` });
-        }
-
-      }
-    });
+    this.documents[fileName] = languages.registerDocumentFormattingEditProvider(
+      this.formatProviders,
+      { provideDocumentFormattingEdits: this.formatEdits }
+    );
 
   }
+
+  formatEdits = async (document: TextDocument, options: FormattingOptions) => {
+
+    const range = getRange(document);
+    const input = document.getText(range);
+    const language = matchLanguage(document.languageId);
+
+    try {
+
+      const output = await prettify.format(input, {
+        language,
+        indentSize: options.tabSize,
+        indentChar: options.insertSpaces ? ' ' : '\t'
+      });
+
+      return [ TextEdit.replace(range, output) ];
+
+    } catch (error) {
+
+      this.outputLog({ title: 'Prettify', message: `${error}` });
+    }
+
+  };
 
   /**
    * Dispose of formatting handlers
@@ -108,8 +109,11 @@ export default class Document extends Format {
    */
   dispose () {
 
-    for (const key in this.handler) if (key in this.handler) this.handler[key].dispose();
-
+    for (const key in this.documents) {
+      if (key in this.documents) {
+        this.documents[key].dispose();
+      }
+    }
   }
 
   /**
@@ -121,12 +125,14 @@ export default class Document extends Format {
 
     try {
 
-      this.selectedText();
+      this.formatSelection();
+
       window.showInformationMessage('Selection Formatted 💧');
 
     } catch (error) {
 
       window.showInformationMessage('Format Failed! The selection is invalid or incomplete!');
+
       this.outputChannel.appendLine(`💧 Liquid: ${error}`);
 
     }
@@ -153,14 +159,14 @@ export default class Document extends Format {
 
     try {
 
-      await this.completeDocument();
+      await this.formatDocument();
       window.showInformationMessage('Document Formatted 💧');
 
     } catch (error) {
 
       console.log(error);
       window.showInformationMessage('Document could not be formatted, check your code!');
-      this.outputChannel.appendLine(`💧 Liquid: ${error}`);
+      this.outputChannel.appendLine(`💧 Liquid ${error}`);
 
     }
 
@@ -184,10 +190,13 @@ export default class Document extends Format {
    */
   async enable () {
 
-    this.format = true;
-
-    await this.liquid.update('format', this.format, ConfigurationTarget.Global);
-    return await window.showInformationMessage('Liquid Formatting Enabled 💧');
+    if (this.formatSupport) {
+      this.feature.format = true;
+      await this.settings.update('feature.format', true, ConfigurationTarget.Global);
+      return window.showInformationMessage('Liquid Formatting Enabled 💧');
+    } else {
+      return window.showInformationMessage(`You need to enable formatting for ${this.languageId.toUpperCase()}`);
+    }
 
   }
 
@@ -198,9 +207,13 @@ export default class Document extends Format {
    */
   async disable () {
 
-    this.format = false;
-    await this.liquid.update('format', this.format, ConfigurationTarget.Global);
-    return await window.showInformationMessage('Liquid Formatting Disabled 💧');
+    if (this.formatSupport) {
+      this.feature.format = false;
+      await this.settings.update('feature.format', false, ConfigurationTarget.Global);
+      return window.showInformationMessage('Liquid Formatting Disabled 💧');
+    } else {
+      return window.showInformationMessage(`You need to enable formatting for ${this.languageId.toUpperCase()}`);
+    }
 
   }
 

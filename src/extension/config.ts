@@ -1,8 +1,12 @@
 import { workspace, window } from 'vscode';
 import prettify, { Options } from '@liquify/prettify';
-import path from 'path';
-import fs from 'fs';
-import Utils from './utils';
+import { join } from 'node:path';
+import { pathExists, readJSON, writeJSON } from 'fs-extra';
+import { UI } from './editor';
+import { omitRules } from './utils';
+import { has } from 'rambda';
+import { ConfigType } from './model';
+import anymatch from 'anymatch';
 
 /**
  * Applies custom configuration settings used
@@ -12,35 +16,52 @@ import Utils from './utils';
  * @extends Utils
  */
 
-export default class Config extends Utils {
+export class Config extends UI {
 
-  liquid = workspace.getConfiguration('liquid');
-  config: Options;
-  format: boolean = false;
-  watch: boolean = false;
-  error: boolean = false;
-  reset: boolean = false;
-  rcfile: string;
+  async getConfigFile () {
 
-  constructor () {
+    // Lets look for a liquirc file
+    for (const fileName of [
+      '.liquidrc',
+      '.liquid',
+      '.liquidrc.json'
+    ]) {
 
-    super();
+      const path = join(this.rootPath, fileName);
+      const exists = await pathExists(path);
 
-    // Configuration
-    this.config = {};
-
-    // Applied Configuration
-    this.liquid = workspace.getConfiguration('liquid');
-    this.format = this.liquid.get('format') as boolean;
-
-    if (workspace.workspaceFolders !== undefined) {
-      this.rcfile = path.join(workspace.workspaceFolders[0].uri.fsPath, '.liquidrc');
+      if (exists) {
+        this.configType = ConfigType.rcfile;
+        this.rcfile = path;
+        break;
+      }
     }
 
-    // Conditional Executors
-    this.watch = false;
-    this.error = false;
-    this.reset = false;
+    // if no liquidrc file found, lets check package.json
+    if (this.configType === ConfigType.pkgjson) {
+
+      const path = join(this.rootPath, 'package.json');
+      const exists = await pathExists(path);
+
+      if (exists) {
+
+        try {
+
+          const read = await readJSON(path, { throws: true });
+
+          if (has('liquify', read)) {
+            this.configType = ConfigType.pkgjson;
+          }
+
+        } catch (error) {
+
+          console.error(error);
+
+        }
+
+      }
+
+    }
 
   }
 
@@ -49,34 +70,43 @@ export default class Config extends Utils {
    * Looks for rules defined in a `.liquirc` file and if
    * no file present will default to workspace settings configuration.
    */
-  setFormattingRules () {
+  async setFormattingRules () {
 
     // Look for `liquidrc` file
-    if (!fs.existsSync(this.rcfile)) {
+    if (this.configType === ConfigType.workspace) {
 
-      // Get latest config option of Liquid
-      const liquid = workspace.getConfiguration('liquid');
-      const config = liquid.get('rules');
+      const exclude = this.settings.get<string[]>('format.ignore');
+
+      if (Array.isArray(exclude)) {
+        const files = exclude.map((path: string) => join(this.rootPath, path));
+        this.exclude = anymatch(files);
+      }
+
+      const config = this.settings.get<Options>('format.rules');
 
       // Assign custom configuration to options
       prettify.options(config);
-
-      this.config = prettify.options?.rules;
 
     } else {
 
       try {
 
         // Read .liquidrc file
-        const file = fs.readFileSync(this.rcfile, 'utf8');
-        const json = JSON.parse(file);
+        const file = await readJSON(this.rcfile, { throws: true });
 
-        prettify.options(json.prettify);
+        if (has('exclude', file) && Array.isArray(file.exclude)) {
+          const exclude = file.exclude.map((path: string) => join(this.rootPath, path));
+          this.exclude = anymatch(exclude);
+        }
 
-        this.outputLog({ title: 'Prettify', message: 'Updated Formatting Rules' });
+        prettify.options(file.prettify);
+
+        this.outputLog({ title: 'Prettify', message: 'Updated Prettify Rules' });
+
+        console.log(this);
 
         // Reset Error Condition
-        this.error = false;
+        this.hasError = false;
 
       } catch (error) {
 
@@ -89,7 +119,7 @@ export default class Config extends Utils {
 
       } finally {
 
-        this.rcfileWatcher();
+        this.rcfileWatch();
 
       }
 
@@ -102,20 +132,16 @@ export default class Config extends Utils {
    *
    * @memberof Config
    */
-  rcfileWatcher () {
+  rcfileWatch () {
 
-    if (!this.watch) {
+    if (!this.rcwatch) {
 
       const watch = workspace.createFileSystemWatcher(this.rcfile, true, false, false);
 
       watch.onDidDelete(() => this.setFormattingRules());
+      watch.onDidChange(() => this.setFormattingRules());
 
-      watch.onDidChange(() => {
-        this.reset = true;
-        this.setFormattingRules();
-      });
-
-      this.watch = true;
+      this.rcwatch = true;
 
     }
 
@@ -130,51 +156,80 @@ export default class Config extends Utils {
    */
   async rcfileGenerate () {
 
-    if (fs.existsSync(this.rcfile)) {
+    const exists = await pathExists(this.rcfile);
 
-      const answer = await window.showErrorMessage('.liquidrc file already exists!', 'Open');
+    if (exists) {
 
-      if (answer === 'Open') {
-        workspace.openTextDocument(this.rcfile).then((document) => {
+      const current = await readJSON(this.rcfile);
 
-          window.showTextDocument(document, 1, false);
+      if (has('html', current)) {
 
-        }, (error) => {
+        const answer = await window.showErrorMessage('.liquidrc using deprecated configuration', 'Update');
 
-          return console.error(error);
+        if (answer === 'Update') {
 
-        });
+          try {
+
+            const document = await workspace.openTextDocument(this.rcfile);
+
+            window.showTextDocument(document, 1, false);
+
+          } catch (error) {
+
+            console.error(error);
+
+          }
+        }
+
+      } else {
+
+        const answer = await window.showErrorMessage('.liquidrc file already exists!', 'Open', 'Reset');
+
+        if (answer === 'Open') {
+
+          try {
+
+            const document = await workspace.openTextDocument(this.rcfile);
+
+            window.showTextDocument(document, 1, false);
+
+          } catch (error) {
+
+            console.error(error);
+
+          }
+        } else if (answer === 'Reset') {
+          try {
+
+            const document = await workspace.openTextDocument(this.rcfile);
+
+            window.showTextDocument(document, 1, false);
+
+          } catch (error) {
+
+            console.error(error);
+
+          }
+        }
       }
 
-    }
+    } else {
 
-    const defaults = Object.assign({}, prettify.options.rules);
+      const rules = omitRules();
 
-    delete defaults.lexer;
-    delete defaults.language;
-    delete defaults.languageName;
-    delete defaults.mode;
-    delete defaults.indentLevel;
-    delete defaults.grammar;
+      try {
 
-    delete defaults.script.commentNewline;
-    delete defaults.script.objectSort;
-    delete defaults.script.vertical;
-    delete defaults.script.variableList;
+        await writeJSON(this.rcfile, rules, { spaces: rules.indentSize });
 
-    delete defaults.style.forceValue;
-    delete defaults.style.quoteConvert;
-    delete defaults.style.compressCSS;
+        const document = await workspace.openTextDocument(this.rcfile);
 
-    delete defaults.json.objectSort;
+        window.showTextDocument(document, 1, false);
 
-    defaults.indentSize = workspace.getConfiguration('editor').get('tabSize');
+        this.rcfileWatch();
 
-    const rules = JSON.stringify({ prettify: defaults }, null, 2);
+        return window.showInformationMessage('You are now using a .liquidrc file to define formatting rules 👍');
 
-    fs.writeFile(this.rcfile, rules, (error) => {
-
-      if (error) {
+      } catch (error) {
 
         return this.outputLog({
           title: 'Error generating rules',
@@ -182,27 +237,8 @@ export default class Config extends Utils {
           message: error.message,
           show: true
         });
-
       }
-
-      workspace.openTextDocument(this.rcfile).then((document) => {
-
-        window.showTextDocument(document, 1, false);
-
-      }, (error) => {
-
-        return console.error(error);
-
-      }).then(() => {
-
-        this.rcfileWatcher();
-
-        return window.showInformationMessage('You are now using a .liquidrc file to define formatting rules 👍');
-
-      });
-
-    });
-
+    }
   }
 
 }

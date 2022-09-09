@@ -1,72 +1,108 @@
-import { window, StatusBarAlignment } from 'vscode';
+/* eslint-disable no-unused-vars */
+
+import { LiteralUnion } from 'type-fest';
+import prettify, { Options, LanguageNames } from '@liquify/prettify';
+import { mergeRight } from 'rambda';
+import { Range, workspace, TextDocument } from 'vscode';
+
+/* -------------------------------------------- */
+/* ENUMS                                        */
+/* -------------------------------------------- */
+
+export const enum Status {
+  Enabled = 1,
+  Disabled,
+  Error
+}
+
+type LanguageIDs = LiteralUnion<(
+  | 'html'
+  | 'liquid'
+  | 'liquid-javascript'
+  | 'liquid-css'
+  | 'liquid-scss'
+  | 'liquid-json'
+), string>
+
+/* -------------------------------------------- */
+/* FUNCTIONS                                    */
+/* -------------------------------------------- */
+
+export function matchLanguage (language: LanguageIDs): LanguageNames {
+
+  switch (language) {
+    case 'liquid':
+    case 'html': return language;
+    case 'liquid-javascript': return 'javascript';
+    case 'liquid-css':
+    case 'liquid-scss': return 'css';
+    case 'liquid-json': return 'json';
+  }
+
+}
 
 /**
+ * Get the full document formatting range
+ */
+export function getRange (document: TextDocument) {
 
-  - Utilities frequently used by the extension
-  -
-  - @class Utils
-  */
-export default class Utils {
+  const range = document.getText().length - 1;
+  const first = document.positionAt(0);
+  const last = document.positionAt(range);
 
-  error: boolean = false;
-  barItem = window.createStatusBarItem(StatusBarAlignment.Right, -2);
-  outputChannel = window.createOutputChannel('Liquid');
+  return new Range(first, last);
 
-  /**
-   *  The status bar item functionality
-   *
-   *  @param {"string"} type the type of status bar item to show
-   *  @param {"string"} [show] show/hide the status bar item (optional)
-   *  @memberof Utils
-  */
-  statusBarItem (type: string, show?: boolean) {
+}
 
-    const types = {
-      enabled: {
-        text: '💧 Liquid: $(check)',
-        tooltip: 'Enable/Disable Liquid Formatting',
-        command: 'liquid.disableFormatting'
-      },
-      disabled: {
-        text: '💧 Liquid: $(x)',
-        tooltip: 'Enable Liquid Formatting',
-        command: 'liquid.enableFormatting'
-      },
-      error: {
-        text: '⚠️ Liquid: $(check)',
-        tooltip: 'Errors detected! Toggle output',
-        command: 'liquid.toggleOutput'
-      }
-    };
+/**
+ * Merges User settings with Prettify beautification options.
+ */
+export function mergePreferences (options: Options): Options {
 
-    Object.assign(this.barItem, types[type]);
+  const defaults = prettify.options.rules;
+  const editor = workspace.getConfiguration('editor');
 
-    if (show !== undefined) return show ? this.barItem.show() : this.barItem.hide();
+  return mergeRight(options, {
+    wrap: editor.get<number>('wordWrapColumn') || defaults.wrap,
+    indentSize: editor.get<number>('tabSize') || defaults.indentSize,
+    endNewline: editor.get<boolean>('renderFinalNewline') || defaults.endNewline
+  });
 
-  }
+}
 
-  outputLog ({
-    title,
-    message,
-    show = false
-  }:{
-    title: string,
-    message: string,
-    file?: string,
-    show?: boolean
-  }) {
+/**
+ * Omits certain prettify beautification rules from
+ * formatting.
+ */
+export function omitRules (options: Options = prettify.options.rules) {
 
-    const date = new Date().toLocaleString();
+  const defaults = Object.assign({}, options);
 
-    // Apply a date title to the output
-    this.outputChannel.appendLine(`[${date}] ${title}: ${message}`);
+  // OMITTED BASE RULES
+  delete defaults.lexer;
+  delete defaults.language;
+  delete defaults.languageName;
+  delete defaults.mode;
+  delete defaults.indentLevel;
+  delete defaults.grammar;
 
-    if (show) {
-      this.error = true;
-      this.statusBarItem('error');
-      this.outputChannel.show();
-    }
+  // OMITTED SCRIPT RULES
+  delete defaults.script.commentNewline;
+  delete defaults.script.objectSort;
+  delete defaults.script.vertical;
+  delete defaults.script.variableList;
 
-  }
+  // OMITTED CSS RULES
+  delete defaults.style.forceValue;
+  delete defaults.style.quoteConvert;
+  delete defaults.style.compressCSS;
+
+  // OMITTED JSON RULES
+  delete defaults.json.objectSort;
+
+  const preferences = mergePreferences(defaults);
+
+  // RETURN
+  return mergeRight(options, preferences);
 
 }
