@@ -1,0 +1,20 @@
+{
+  "name": "Liquid JavaScript",
+  "scopeName": "source.js.liquid",
+  "fileTypes": ["liquid"],
+  "injectionSelector": "L:source.js",
+  "injections": {
+    "L:string - (string.quoted.*.js)": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    }
+  },
+  "patterns": [
+    { "include": "source.liquid#comments" },
+    { "include": "source.liquid#tags" },
+    { "include": "source.liquid#output" },
+    { "include": "source.js" }
+  ]
+}
