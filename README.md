@@ -1,36 +1,33 @@
+<pre><code><strong>🩸 <i>LIQUIFY ~ THE NEXT RELEASE</i></strong>
+<p>
+<i>For quite some time users of this extension have been waiting for the next release (Liquify). Liquify
+will supersede this extension and facilitate advanced features and capabilities. Liquify is a big project
+which I began developing in 2020. This extension will continue to be maintained and supported, it will.
+will exist and help users progressively prepare for the next generation of this project. Stay tuned :)</i>
+</p>
+   <a href="https://github.com/panoply/vscode-liquid/issues/56"><i>Liquify and the future of this extension</i></a>
+   <a href="https://github.com/panoply/vscode-liquid/projects/6"><i>Project Overview and what to expect</i></a>
+   <a href="https://discord.gg/eUNEsxMuWt"><i>Join the Discord and collaborate on the project</i></a>
+
+</code></pre>
+
+<hr>
+
 [![install](https://img.shields.io/badge/vscode-install-blue.svg?style=popout-square)](https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid) &nbsp; ![](https://img.shields.io/visual-studio-marketplace/v/sissel.shopify-liquid.svg?style=popout-square) &nbsp; ![install](https://vsmarketplacebadge.apphb.com/downloads-short/sissel.shopify-liquid.svg?style=popout-square)
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/banner.gif"  atl="Liquid Logo"  width="100%">
 
-### 🚨 Liquify Release Approaching
-
-For quite some time users of this extension have been waiting for the next release (Liquify). After a lot of work, I will begin moving the towards publishing the pre-release/beta.
-
-For more information, please see:
-
-- [Liquify and the future of this extension – #56](https://github.com/panoply/vscode-liquid/issues/56)
-- [Project Shiplist](https://github.com/panoply/vscode-liquid/projects/6)
-- [Join the Discord](https://discord.gg/eUNEsxMuWt)
-
-Thanks for your patience!
-
-<hr>
-
 # Liquid <small style="color:#999;">(VS Code)</small>
 
-A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support for Liquid code used in HTML, JavaScript CSS, SCSS, Markdown and more. Ships with auto formatting code beautification, advanced snippet auto-completion resolution and respects VS Codes native Intellisense, hover and diagnostic features.
+A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support for Liquid code, snippet auto-completion and auto formatting code beautification. Respects VS Codes native Intellisense and hover features.
 
 ### Key Features
 
 - Syntax support for Liquid in CSS, SCSS, JavaScript, Markdown and more!
-- Auto formatting and beautification with the powerful [PrettyDiff](https://prettydiff.com/).
+- Auto formatting and beautification with the powerful [Prettify](https://github.com/panoply/prettify).
 - Snippet auto-completion for liquid tags, filters, shopify schema and more!
 - Focused support for Jekyll and Shopify liquid variations
 - Supports Shopify [Section](https://help.shopify.com/en/themes/development/sections) code blocks.
-
-#### Avoiding extension conflicts
-
-If you're using the [Liquid Language Support](https://github.com/GingerBear/vscode-liquid) and/or the [Shopify Liquid Template Snippets](https://github.com/killalau/vscode-liquid-snippets) then it's highly recommended that you either uninstall or disable both of these before using this extension.
 
 ### Showcase
 
@@ -456,7 +453,7 @@ Available to the HTML `tags` property, you can enforce a specific formatting rul
 You can use the Liquid formatter by using the below key binding.
 
 ```
-cmd + shift + L -> Format Document
+cmd + L -> Format Document
 ```
 
 > Use `ctrl` for windows
