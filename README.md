@@ -1,9 +1,9 @@
 <pre><code><strong>🩸 <i>LIQUIFY ~ THE NEXT RELEASE</i></strong>
 <p>
-<i>For quite some time users of this extension have been waiting for the next release (Liquify). Liquify
-will supersede this extension and facilitate advanced features and capabilities. Liquify is a big project
-which I began developing in 2020. This extension will continue to be maintained and supported, it will.
-will exist and help users progressively prepare for the next generation of this project. Stay tuned :)</i>
+<i>For quite some time users of this extension have been waiting for the next release
+(Liquify). Liquify will supersede this extension and facilitate advanced features and
+capabilities. Liquify is a big project which I began developing in 2020. This extension
+will continue to be maintained and progressively transition to Liquify.</i>
 </p>
    <a href="https://github.com/panoply/vscode-liquid/issues/56"><i>Liquify and the future of this extension</i></a>
    <a href="https://github.com/panoply/vscode-liquid/projects/6"><i>Project Overview and what to expect</i></a>
@@ -19,7 +19,7 @@ will exist and help users progressively prepare for the next generation of this 
 
 # Liquid <small style="color:#999;">(VS Code)</small>
 
-A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support for Liquid code, snippet auto-completion and auto formatting code beautification. Respects VS Codes native Intellisense and hover features.
+A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support, snippet auto-completion, auto formatting (code beautification) and more! Respects VS Codes native Intellisense and hover features.
 
 ### Key Features
 
@@ -70,26 +70,18 @@ After installing this extension run the `Liquid: Generate .liquidrc File` comman
 ```jsonc
 {
   // Controls whether formatting is enabled or disabled
-  "liquid.format": true,
+  "liquid.format.enable": true,
+  // Glob paths to exclude from formatting
+  "liquid.format.ignore": [],
   // Formatting code style rules
-  "liquid.rules": {
-    // Ignored tags
-    "ignore": [
-      {
-        "type": "", // Accepts html or liquid
-        "begin": "", // The start tag pattern
-        "end": "" // the ending tag pattern/name
-      }
-    ],
-    // HTML code style
-    "html": {},
-    // JavaScript code style (applied to the {% javascript %} tag)
-    "js": {},
-    // CSS code style (appled to {% style %} and {% stylesheet %} tags)
-    "css": {},
-    // SCSS code style (applied to the {% stylesheet 'scss' %} tag)
-    "scss": {},
-    // JSON code style (applied to the {% schema %} tag)
+  "liquid.format.rules": {
+    // HTML, Liquid + HTML code style
+    "markup": {},
+    // JavaScript code style
+    "script": {},
+    // CSS/SCSS code style
+    "style": {},
+    // JSON code style
     "json": {}
   }
 }
@@ -103,15 +95,14 @@ Additionally, Liquid code contained in HTML `<script>` and/or `<style>` tags als
 
 <strong>Supported Languages</strong>
 
-| Language   | Extensions                               |
-| ---------- | ---------------------------------------- |
-| HTML       | .html, .jekyll, .liquid                  |
-| Markdown   | .md                                      |
-| CSS        | .css, .css.liquid                        |
-| SCSS       | .scss, .scss.liquid, .sass, .sass.liquid |
-| JavaScript | .js, .js.liquid                          |
-| TypeScript | .ts, .ts.liquid                          |
-| JSX        | .jsx                                     |
+| Language   | Extensions                 |
+| ---------- | -------------------------- |
+| HTML       | .html, .jekyll, .liquid    |
+| CSS        | .css.liquid                |
+| SCSS       | .scss.liquid, .sass.liquid |
+| JavaScript | .js.liquid                 |
+| TypeScript | .ts.liquid                 |
+| Markdown   | .md                        |
 
 If you would like Liquid syntax support for a certain language or file extension please submit a feature request.
 
@@ -130,17 +121,17 @@ If your `<style>` and `<script>` HTML tags contain Liquid syntax consider disabl
 
 # Formatting
 
-Formatting can be enable/disabled via the command palette and will respect the `editor.formatOnSave` setting. When Liquid formatting is **enabled** the extension will format (beautify) any HTML, Liquid or Jekyll file in your workspace as it will assume these files contain Liquid syntax.
+Formatting can be enable/disabled via the command palette and will respect the `editor.formatOnSave` setting. When Liquid formatting is **enabled** the extension will format (beautify) HTML, Liquid or Jekyll files in your workspace as it will assume these files contain Liquid syntax.
 
-Formatting uses a default set of style rules which enforce a consistent coding style. You can customize the format rules and overwrite the defaults using a `.liquidrc` file or alternatively use the `liquid.rules` workspace setting option.
+Formatting uses a default set of style rules which enforce a consistent coding style. You can customize the format rules and overwrite the defaults using a `.liquidrc` file or alternatively use the `liquid.format.rules` workspace setting option.
 
 ### Using .liquidrc rule file
 
-Including a .liquid file in the root of your projects workspace is the **recommended approach** for defining a custom set of formatting code style rules. This approach allows you to easily control formatting options to best fit your code style quirks and share this ruleset across projects and collaborations.
+Including a .liquid file in the root of your projects workspace is the **recommended approach** for defining a custom set of formatting code style rules. This approach allows you to easily control formatting options to best fit your code style quirks and share this rules across projects and collaborations.
 
 ### Using the workspace setting option
 
-Rules can also be applied in your User or Workspace settings using the `liquid.rules` configuration option. Please note that if a `.liquidrc` is present in your projects root it will run precedence over rules defined in workspace settings. Again, it's recommended you use a `.liquidrc` file for setting custom rules.
+Rules can also be applied in your User or Workspace settings using the `liquid.format.rules` configuration option. Please note that if a `.liquidrc` is present in your projects root it will run precedence over rules defined in workspace settings. Again, it's recommended you use a `.liquidrc` file for setting custom rules.
 
 ### Status bar button
 
@@ -151,302 +142,77 @@ When a HTML, Liquid and Jekyll file is open and active in the editor you will se
 |--|--|--|
 | <img  src="https://raw.githubusercontent.com/panoply/vscode-liquid/master/images/status-enabled.jpg"  width="140px"> | Formatting is enabled | Clicking this status bar in this state will disable formatting |
 | <img  src="https://raw.githubusercontent.com/panoply/vscode-liquid/master/images/status-disabled.png"  width="140px"> | Formatting is disabled |  Clicking the status bar item in this state will enable formatting |
-| <img  src="https://raw.githubusercontent.com/panoply/vscode-liquid/master/images/status-error.png"  width="140px"> | Parsing error was detected  | Opens the output panel and provides a hint were error occured (formatting is still enabled in this state)
+| <img  src="https://raw.githubusercontent.com/panoply/vscode-liquid/master/images/status-error.png"  width="140px"> | Parsing error was detected  | Opens the output panel and provides a hint were error occurred (formatting is still enabled in this state)
 
-### Tag Association
+# Configure
 
-The are some situations where you may want to apply language formatting to a specific tag. Using the `tags` property available to each language rule will allow you to apply a formatting code style to a custom defined tag.
-
-<strong>Example</strong>
-The below example would apply singluar tag formatting to `<source>` HTML tags which are used within `<picture>` elements. The SCSS tag association would apply formatting to content between `<style lang="scss"></style>` tags.
+Below is the default configuration used by the extension. You can Generate this file using the `Liquid: Generate .liquidrc File` command and a file in the root of your project will be created. Alternatively you can use the `"liquid.format.rules"` option in your workspace or user settings.
 
 ```jsonc
 {
-  "html": {
-    "tags": [
-      {
-        "tag": "source",
-        "rules": {
-          "force_attribute": true
-        }
-      }
-    ]
-  },
-  "scss": {
-    "tags": [
-      {
-        "type": "html",
-        "begin": "style lang=\"scss\"", // <style lang="scss">
-        "end": "style" // </style>
-      }
-    ]
+  "ignore": [],
+  "prettify": {
+    "crlf": false,
+    "commentIndent": true,
+    "endNewline": false,
+    "indentChar": " ",
+    "indentSize": 2,
+    "preserveComment": false,
+    "preserveLine": 2,
+    "wrap": 0,
+    "markup": {
+      "correct": false,
+      "commentNewline": false,
+      "attributeCasing": "preserve",
+      "attributeValues": "preserve",
+      "attributeSort": false,
+      "attributeSortList": [],
+      "forceAttribute": false,
+      "forceLeadAttribute": false,
+      "forceIndent": false,
+      "preserveText": false,
+      "preserveAttributes": false,
+      "selfCloseSpace": false,
+      "quoteConvert": "none"
+    },
+    "style": {
+      "correct": false,
+      "classPadding": false,
+      "noLeadZero": false,
+      "sortSelectors": false,
+      "sortProperties": false
+    },
+    "script": {
+      "correct": false,
+      "braceNewline": false,
+      "bracePadding": false,
+      "braceStyle": "none",
+      "braceAllman": false,
+      "caseSpace": false,
+      "inlineReturn": true,
+      "elseNewline": false,
+      "endComma": "never",
+      "arrayFormat": "default",
+      "objectIndent": "default",
+      "functionNameSpace": false,
+      "functionSpace": false,
+      "styleGuide": "none",
+      "ternaryLine": false,
+      "methodChain": 4,
+      "neverFlatten": false,
+      "noCaseIndent": false,
+      "noSemicolon": false,
+      "quoteConvert": "none"
+    },
+    "json": {
+      "arrayFormat": "default",
+      "braceAllman": false,
+      "bracePadding": false,
+      "objectIndent": "default"
+    }
   }
 }
 ```
-
-### Ignoring Tags
-
-Sometimes you may wish to ignore/disable formatting for certain HTML or Liquid tags. The `ignore` ruleset accepts an array of tags you wish to exclude. Ignored tags must have matching open and close definition tags and are defined using the `ignore` setting which accepts an array of objects with each object representing the tag to ignore from formatting.
-
-> In previous versions of this extension ignored tags were defined using the `liquid.formatIgnore` setting. This has been deprecated and you must use the new configuration.
-
-<strong>Known Issues</strong><br>
-Be careful overiding the default ignore tags. Liquid code contained in `<script>` or `<style>` tags will cause formatting to fail, hence why these tags are ignored by default.
-
-The whitespace `{%- comment -%}` tags have trouble parsing if you're not applying whitespace equally, e.g:
-
-<!-- prettier-ignore -->
-```html
-<!-- ✅ THIS WILL FORMAT CORRECTLY -->
-{%- comment -%}
-  Hello World
-{%- endcomment -%}
-
-{% comment %}
-  Hello World
-{% endcomment %}
-
-<!-- ❌ THIS WILL BREAK FORMATTING -->
-{%- comment %}
-  Hello World
-{% endcomment -%}
-```
-
-Notice in the above example the liquid commment tags using whitespace dash `-`. When the whitespace dash is only used once on either the left or right side it will break formatting. If you decide to remove comments from ignore then you must write all comments with equal whitespace dashes, like the above example.
-
-Please remove the default tags from the `ignore` array with extereme caution, be aware of what you're doing and how it might effect your code.
-
-<strong>Default Ignores</strong>
-
-```jsonc
-{
-  "ignore": [
-    {
-      "type": "liquid",
-      "begin": "comment", // {% comment %} or {%- comment -%}
-      "end": "endcomment" // {% endcomment %} or {%- endcomment -%}
-    },
-    {
-      "type": "html",
-      "begin": "script", // <script>
-      "end": "script" // </script>
-    },
-    {
-      "type": "html",
-      "begin": "style", // <style>
-      "end": "style" // <style>
-    }
-  ]
-}
-```
-
-**All HTML comments (`<!-- -->`) are ignored by default.**
-
-> Do not include tag denotations (eg: `<`, `>`, `</`, `{%`, `%}`) when defining **begin** and **end** capture expressions. The `type` property defines the denotations of the tag.
-
-# Rules
-
-Below is the default code style formatting rules. Generate this file using the `Liquid: Generate .liquidrc File` command and a file in the root of your project will be created. Alternatively you can use the `"liquid.rules"` option in your workspace or user settings.
-
-```jsonc
-{
-  "ignore": [
-    {
-      "type": "liquid",
-      "begin": "comment",
-      "end": "endcomment"
-    },
-    {
-      "type": "html",
-      "begin": "script",
-      "end": "script"
-    },
-    {
-      "type": "html",
-      "begin": "style",
-      "end": "style"
-    }
-  ],
-  "html": {
-    "correct": true,
-    "force_attribute": false,
-    "preserve": 2,
-    "unformatted": false
-  },
-  "js": {
-    "preserve": 1,
-    "method_chain": 0,
-    "quote_convert": "none",
-    "format_array": "indent",
-    "format_object": "indent",
-    "braces": false,
-    "no_semicolon": false,
-    "brace_block": true
-  },
-  "scss": {
-    "css_insert_lines": true,
-    "preserve": 2,
-    "braces": false,
-    "brace_block": true
-  },
-  "css": {
-    "css_insert_lines": true,
-    "preserve": 2,
-    "braces": false,
-    "brace_block": true
-  },
-  "json": {
-    "preserve": 0,
-    "format_array": "indent",
-    "braces": true,
-    "no_semicolon": true,
-    "brace_block": false
-  }
-}
-```
-
-<details>
-<summary>
-  <strong>Ignore and Tag Associations</strong>
-</summary>
-
-<p>HTML or Liquid tags that the formatter will ignore. See [Ignoring Tags](#ignoring-tags) for more information.</p>
-
-<p>
-
-| Property | Accepts            | Description                                   |
-| -------- | ------------------ | --------------------------------------------- |
-| type     | `liquid` or `html` | The type of language this tags belongs to.    |
-| begin    | Regular Expression | A regular expression match for the begin tag. |
-| end      | Regular Expression | A regular expression match for the end tag.   |
-
-<strong>Singular Tag Associations</strong>
-Available to the HTML `tags` property, you can enforce a specific formatting rules to singular tags.
-
-| Property | Accepts  | Description                                       |
-| -------- | -------- | ------------------------------------------------- |
-| tag      | `string` | The name of the tag, eg: `source`, `img` `iframe` |
-| rules    | `object` | The formatting rules to apply to this tag.        |
-
-> If you're applying a regex expression for tag matching for the begin and end captures you must escape some characters with the backslash
-
-</p>
-</details>
-
-<details>
-<summary>
-  <strong>HTML</strong>
-</summary>
-
-<p>Format rules for HTML Liquid code.</p>
-
-<p>
-
-| Property        | Default | Description                        |
-| --------------- | ------- | ---------------------------------- |
-| correct         | `true`  | Fixes sloppy code                  |
-| force_attribute | `false` | indents HTML attributes to newline |
-| preserve        | `1`     | Lines to preserve.                 |
-| ignore_comments | `true`  | Ignore formatting HTML comments    |
-| wrap            | `0`     | Wrap before newline formatting     |
-| tags            | `[]`    | An array of included singluar tags |
-
-</p>
-</details>
-
-<details>
-<summary>
-  <strong>JavaScript</strong>
-</summary>
-
-<p>Format rules for JavaScript code. This ruleset controls formatting for tags like the shopify section `{% javascript %}` tags. These rules will also be applied to HTML `<script></script>` tags and JavaScript files that use the `.js.liquid` extension name.</p>
-
-<p><strong>Currently liquid syntax contained within `<script></script>` tags and `.js.liquid` files will cause formatting to fail, so please avoid formatting JavaScript which contains Liquid.</strong></p>
-
-<p>
-
-| Property      | Default  | Description                                          |
-| ------------- | -------- | ---------------------------------------------------- |
-| indent_size   | `2`      | Tab size / indentation                               |
-| preserve      | `1`      | Lines to preserve                                    |
-| method_chain  | `0`      | Newline chaining of function.                        |
-| quote_convert | `none`   | Use single or double quotes.                         |
-| format_array  | `indent` | Format Array, Accepts `indent` or `newline`          |
-| format_object | `indent` | Format Object, Accepts `indent` or `newline`         |
-| comment_line  | `false`  | If a blank new line should be forced above comments. |
-| else_line     | `false`  | If keyword 'else' is forced onto a new line          |
-| no_semicolon  | `false`  | Prevents semicons for being added                    |
-| brace_block   | `true`   | Inserts newline before and after inner content.      |
-| tags          | `[]`     | An array of included tags                            |
-
-</p>
-</details>
-
-<details>
-<summary>
-  <strong>CSS</strong>
-</summary>
-
-<p>Format rules for CSS code. This ruleset controls formatting for tags like the shopify `{% style %}` and shopify section `{% stylesheet %}` tags. These rules will also be applied to HTML `<style></style>` tags and files that use the `.css.liquid` extension name.</p>
-
-<p><strong>Currently liquid syntax contained within `<style></style>` tags and `.css.liquid` files will cause formatting to fail, so please avoid formatting CSS which contains Liquid.</strong></p>
-
-<p>
-
-| Property         | Default | Description                                     |
-| ---------------- | ------- | ----------------------------------------------- |
-| indent_size      | `2`     | Tab size / indentation                          |
-| css_insert_lines | `true`  | Should use new lines in CSS/SCSS                |
-| preserve         | `2`     | Lines to preserve                               |
-| brace_block      | `true`  | Inserts newline before and after inner content. |
-| tags             | `[]`    | An array of included tags                       |
-
-</p>
-
-</details>
-
-<details>
-<summary>
-  <strong>SCSS and SASS</strong>
-</summary>
-
-<p>Format rules for SCSS and SASS code. This ruleset controls formatting for tags like the shopify section `{% stylesheet 'scss' %}` tag. These rules will also be applied to files that use the `.scss.liquid` or `sass.liquid` extension name.</p>
-
-<p><strong>Currently liquid syntax contained within `.scss.liquid` or `.sass.` files will cause formatting to fail, so please avoid formatting SCSS/SASS which contains Liquid.</strong></p>
-
-<p>
-
-| Property         | Default | Description                                     |
-| ---------------- | ------- | ----------------------------------------------- |
-| indent_size      | `2`     | Tab size / indentation                          |
-| css_insert_lines | `true`  | Should use new lines in CSS/SCSS                |
-| preserve         | `2`     | Lines to preserve                               |
-| brace_block      | `true`  | Inserts newline before and after inner content. |
-| tags             | `[]`    | An array of included tags                       |
-
-</p>
-
-</details>
-
-<details>
-<summary>
-  <strong>JSON</strong>
-</summary>
-
-<p>Format rules for JSON code. This ruleset controls formatting for tags like the shopify `{% schema %}` tag. These rules will also be applied to HTML `<script type="application/json"></script>` tags.</p>
-
-<p>
-
-| Property     | Default  | Description                                     |
-| ------------ | -------- | ----------------------------------------------- |
-| indent_size  | `2`      | Tab size / indentation                          |
-| format_array | `indent` | Format Array, Accepts `indent` or `newline`.    |
-| no_semicolon | `true`   | Prevents semicons for being added.              |
-| brace_block  | `false`  | Inserts newline before and after inner content. |
-| tags         | `[]`     | An array of included tags                       |
-
-</p>
-</details>
 
 # Key binding
 
