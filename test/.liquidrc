@@ -1,0 +1,65 @@
+{
+  "ignore": ["ignore.liquid"],
+  "prettify": {
+    "crlf": false,
+    "commentIndent": true,
+    "endNewline": false,
+    "indentChar": " ",
+    "indentSize": 2,
+    "preserveComment": false,
+    "preserveLine": 2,
+    "wrap": 0,
+    "markup": {
+      "correct": false,
+      "delimiterSpacing": true,
+      "commentNewline": false,
+      "attributeCasing": "preserve",
+      "attributeValues": "preserve",
+      "attributeSort": false,
+      "attributeSortList": [],
+      "forceAttribute": 2,
+      "forceLeadAttribute": false,
+      "forceIndent": false,
+      "preserveText": false,
+      "preserveAttributes": false,
+      "selfCloseSpace": false,
+      "quoteConvert": "none"
+    },
+    "style": {
+      "correct": false,
+      "classPadding": false,
+      "noLeadZero": false,
+      "sortSelectors": false,
+      "sortProperties": false
+
+    },
+    "script": {
+      "correct": false,
+      "braceNewline": false,
+      "bracePadding": false,
+      "braceStyle": "none",
+      "braceAllman": false,
+      "caseSpace": false,
+      "inlineReturn": true,
+      "elseNewline": false,
+      "endComma": "never",
+      "arrayFormat": "indent",
+      "objectIndent": "default",
+      "functionNameSpace": false,
+      "functionSpace": false,
+      "styleGuide": "none",
+      "ternaryLine": false,
+      "methodChain": 4,
+      "neverFlatten": false,
+      "noCaseIndent": false,
+      "noSemicolon": false,
+      "quoteConvert": "none"
+    },
+    "json": {
+      "arrayFormat": "indent",
+      "braceAllman": true,
+      "bracePadding": false,
+      "objectIndent": "indent"
+    }
+  }
+}
