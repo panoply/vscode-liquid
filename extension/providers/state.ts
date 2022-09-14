@@ -120,7 +120,7 @@ export class State {
       rules.indentSize = this.editorSettings.get<number>('tabSize');
     }
 
-    if (this.editorSettings.has('tabSize')) {
+    if (this.editorSettings.has('renderFinalNewline')) {
       rules.endNewline = this.editorSettings.get<boolean>('renderFinalNewline');
     }
 
