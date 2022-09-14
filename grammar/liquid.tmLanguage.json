@@ -1,7 +1,6 @@
 {
   "name": "Liquid",
   "scopeName": "source.liquid",
-  "fileTypes": ["liquid"],
   "injectionSelector": "L:text.html",
   "injections": {
     "L:string - (string.quoted.*.html)": {
@@ -15,8 +14,7 @@
     { "include": "#comment-block" },
     { "include": "#comment-line" },
     { "include": "#tags" },
-    { "include": "#output" },
-    { "include": "text.html" }
+    { "include": "#output" }
   ],
   "repository": {
     "comment-block": {
