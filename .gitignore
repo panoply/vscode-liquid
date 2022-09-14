@@ -6,6 +6,7 @@ test/components/*.html
 .vscode/settings.json
 versions
 docs
+dist
 
 ### OSX ###
 # General
