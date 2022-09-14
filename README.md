@@ -58,16 +58,16 @@ After installing this extension run the `Liquid: Generate .liquidrc File` comman
 
 # Commands
 
-| Command                         | Description                                                  |
-| ------------------------------- | ------------------------------------------------------------ |
-| Liquid: Format File             | Formats the current file                                     |
-| Liquid: Format Selection        | Formats the selected code                                    |
-| Liquid: Enable Formatting       | Enable formatting from `.html`, `.liquid` or `.jekyll` files |
-| Liquid: Disable Formatting      | Disable formatting                                           |
-| Liquid: Enable Extension        | Enable the extension extended capabilities                   |
-| Liquid: Disable Extension       | Disable the extensions extended capabilities                 |
-| Liquid: Restart Extension       | Restart the extension, dispose of cache refs                 |
-| Liquid: Generate .liquidrc File | Generates a `.liquidrc` rule file                            |
+| Command                    | Description                                    |
+| -------------------------- | ---------------------------------------------- |
+| Liquid: Format File        | _Formats the current file_                     |
+| Liquid: Format Selection   | _Formats the selected code_                    |
+| Liquid: Enable Formatting  | _Enable Prettify formatting_                   |
+| Liquid: Disable Formatting | _Disable Prettify formatting_                  |
+| Liquid: Enable Extension   | _Enable the extension extended capabilities_   |
+| Liquid: Disable Extension  | _Disable the extensions extended capabilities_ |
+| Liquid: Restart Extension  | _Restart the extension, dispose of cache refs_ |
+| Liquid: Generate .liquidrc | _Generates a `.liquidrc` config file_          |
 
 # Workspace Settings
 
@@ -102,7 +102,34 @@ After installing this extension run the `Liquid: Generate .liquidrc File` comman
   // Use Windows (CRLF) format, Unix (LF) format is the default.
    "liquid.format.crlf": false,
   // HTML, Liquid + HTML code style
-  "liquid.format.markup": {},
+  "liquid.format.markup": {
+    // Automatically attempts to correct some sloppiness in code
+    "correct": false,
+    // Control the casing of attributes.
+    "attributeCasing": "preserve",
+    // Alphanumerically sort HTML attributes from A to Z.
+    "attributeSort": false,
+    // Sort attributes according to this list, requires attributeSort  to be true
+    "attributeSortList": [],
+    // Strip extraneous spacing from Liquid delimiters
+    "delimiterSpacing": false,
+    // Whether comments should always start at position 0 or indented to code
+    "commentNewline":  false,
+    // Force leading attributes onto a newline when using wrap
+    "forceLeadAttribute": false,
+    // Will force indentation upon content
+    "forceIndent": false,
+    // Whether attributes should be indented each onto their own line
+    "forceAttribute": false,
+    // If text in the provided document code should be preserved
+    "preserveText": true,
+    // self-closing tags end will end with ' />' instead of '/>'
+    "selfCloseSpace": false,
+    // Whether attributes should be preserved
+    "preserveAttributes": false,
+    // Quotation character conversion
+    "quoteConvert": "none",
+  },
   // JavaScript, TypeScript code style
   "liquid.format.script": {},
   // CSS/SCSS code style
@@ -115,27 +142,27 @@ After installing this extension run the `Liquid: Generate .liquidrc File` comman
 
 # Syntax Support
 
-Liquid syntax support in HTML and JSON languages are applied using injection grammars so intelliSense capabilities like code completions, hover descriptions, diagnostics and embedded code regions are fully supported. Syntax highlighting for Liquid contained in JavaScript, TypeScript, CSS/SCSS, JSON and other supported languages are made possible by appending a `.liquid` extension suffix to files, or alternatively using vscode's [file associations](https://code.visualstudio.com/docs/languages/identifiers) option.
+Liquid syntax highlighting support with HTML, JSON and Markdown languages are applied using vscode's injection grammar feature. IntelliSense capabilities like code completions, hover descriptions, diagnostics and embedded code regions are fully supported using this approach. Liquid syntax contained in JavaScript, TypeScript, CSS/SCSS, JSON and other supported languages are supported by appending a `.liquid` extension suffix to file names (eg: _js.liquid_, css.liquid etc) or alternatively use the vscode [file associations](https://code.visualstudio.com/docs/languages/identifiers) setting.
 
-<strong>Language Grammars</strong>
+<strong>Supported Languages</strong>
 
-| Language Identifier | Extensions                 |
-| ------------------- | -------------------------- |
-| HTML                | .liquid, .jekyll, .html    |
-| Liquid CSS          | .css.liquid                |
-| Liquid SCSS         | .scss.liquid, .sass.liquid |
-| Liquid JavaScript   | .js.liquid                 |
-| Liquid TypeScript   | .ts.liquid                 |
-| Liquid JSON         | .json.liquid               |
-| Liquid Yaml         | .json.liquid               |
-| Liquid TypeScript   | .ts.liquid                 |
-| Liquid Markdown     | .md.liquid                 |
+| Language Identifier | Supported Extensions | Grammar Scope |
+| ------------------- | -------------------- | ------------- |
+| HTML                | .liquid              | text.html     |
+| Markdown            | .md                  | source.md     |
+| JSON                | .json                | source.json   |
+| Liquid JSON         | .json.liquid         | source.json   |
+| Liquid CSS          | .css.liquid          | source.css    |
+| Liquid SCSS         | .scss.liquid         | source.scss   |
+| Liquid JavaScript   | .js.liquid           | source.ts     |
+| Liquid TypeScript   | .ts.liquid           | source.ts     |
+| Liquid Yaml         | .yaml.liquid         | source.yaml   |
 
-> **Please Note:** You can prevent the vscode-liquid from extending its capabilities into HTML and JSON by setting `liquid.enable` to `false` in your workspace.
+> **Please Note:** You can stop vscode-liquid from extending its capabilities into HTML and JSON by setting `liquid.enable` to `false` in your workspace. This will prevent the extension from assuming `.html` and `.json` files contain Liquid code.
 
 <strong>HTML Validation</strong><br>
 
-If your `<style>` and `<script>` HTML tags contain Liquid syntax consider disabling HTML Validation in editor settings to prevent VS Code from validating these tags and throwing errors:
+If your `<style>` and `<script>` HTML tags contain Liquid syntax consider disabling HTML Validations. This will to prevent VS Code from validating these tags and throwing errors:
 
 ```json
 {
@@ -144,13 +171,47 @@ If your `<style>` and `<script>` HTML tags contain Liquid syntax consider disabl
 }
 ```
 
+<strong>Markdown Codeblock</strong><br>
+
+Embedded code blocks regions are supported in markdown files:
+
+````md
+```liquid
+
+{% if x == 0 %}
+  {{- x -}}
+{% endif %}
+
+``
+```
+````
+
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/sass-javascript.png"  atl="Liquid SCSS and Liquid JavaScript"  width="100%">
 
 # Formatting
 
-Formatting can be enable/disabled via the command palette and will respects `editor.formatOnSave` setting. When Liquid formatting is **enabled** the extension will format HTML, JSON and all suffixed `.liquid` file names that is supported. You can **disabled** beautification at any time and also define a set of ignored directories and/or files. Formatting uses a default set of style rules which will enforce a consistent coding style. You can customize and overwrite the defaults within `.liquidrc` file or alternatively use the `liquid.format.*` workspace setting option.
+Formatting can be enable/disabled via the command palette and will respects native vscode settings like `editor.formatOnSave` and `defaultFormatter`. When Liquid formatting is **enabled** the extension will format HTML, JSON and all suffixed `*.liquid` file is supported by [Prettify](https://github.com/panoply/prettify). You can **disabled** beautification at any time, define a set of directories and/or files to exclude from handling or leverage inline ignore comments. Formatting options to control code output can be provided within a `.liquidrc` file or alternatively use the workspace setting options.
 
-Code beautification uses [Prettify](https://github.com/panoply/prettify) to facilitate formatting capabilities. Prettify uses the late are powerful Sparser lexing algorithm and have been specifically development for Liquid contained in Markup, Scripts and Styles. Prettify exposes a granular set of beautification rules, so take a peek at the [playground](https://liquify.dev/prettify).
+### Prettify Beautification
+
+Code beautification uses [Prettify](https://github.com/panoply/prettify) to facilitate formatting capabilities. Prettify is built atop of the late but powerful Sparser lexing algorithm and has since been adapted for refined usage by this extension. It exposes a granular set of beautification rules and supports Liquid code contained in markup, scripts and style languages. s
+
+Take a peek at the [playground](https://liquify.dev/prettify) for some additional context.
+
+### Key Binding
+
+For folks who prefer formatting via key-binding, you can trigger document beautification using:
+
+```
+cmd + L -> Format Document
+```
+
+> Use `ctrl` for windows
+
+<br>
+
+<strong>Custom keybindings</strong><br>
+_If you don't like the defaults then rebind editor.action.formatDocument in the keyboard shortcuts menu of vscode._
 
 ### Using .liquidrc rule file
 
@@ -171,7 +232,7 @@ When a HTML, Liquid and Jekyll file is open and active in the editor you will se
 | <img  src="https://raw.githubusercontent.com/panoply/vscode-liquid/master/images/status-disabled.png"  width="140px"> | Formatting is disabled |  Clicking the status bar item in this state will enable formatting |
 | <img  src="https://raw.githubusercontent.com/panoply/vscode-liquid/master/images/status-error.png"  width="140px"> | Parsing error was detected  | Opens the output panel and provides a hint were error occurred (formatting is still enabled in this state)
 
-# Configure
+# Configuration
 
 Below is the default configuration used by the extension. You can Generate this file using the `Liquid: Generate .liquidrc File` command and a file in the root of your project will be created. Alternatively you can use the `"liquid.format.rules"` option in your workspace or user settings.
 
@@ -240,21 +301,6 @@ Below is the default configuration used by the extension. You can Generate this 
   }
 }
 ```
-
-# Key binding
-
-You can use the Liquid formatter by using the below key binding.
-
-```
-cmd + L -> Format Document
-```
-
-> Use `ctrl` for windows
-
-<br>
-
-<strong>Custom keybindings</strong><br>
-_If you don't like the defaults then rebind editor.action.formatDocument in the keyboard shortcuts menu of vscode._
 
 # Snippets
 
