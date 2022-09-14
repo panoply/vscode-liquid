@@ -19,15 +19,16 @@ will continue to be maintained and progressively transition to Liquify.</i>
 
 # Liquid <small style="color:#999;">(VS Code)</small>
 
-A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support, snippet auto-completion, auto formatting (code beautification) and more! Respects VS Codes native Intellisense and hover features.
+A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support, snippet auto-completion, auto formatting (code beautification), validations and more! Respects VS Codes native Intellisense and provides hover capabilities and various other essentials.
 
 ### Key Features
 
 - Syntax support for Liquid in CSS, SCSS, JavaScript, Markdown and more!
-- Auto formatting and beautification with the powerful [Prettify](https://github.com/panoply/prettify).
+- Auto formatting and beautification using[Prettify](https://github.com/panoply/prettify).
 - Snippet auto-completion for liquid tags, filters, shopify schema and more!
 - Focused support for Jekyll and Shopify liquid variations
 - Supports Shopify [Section](https://help.shopify.com/en/themes/development/sections) code blocks.
+- Integrated JSON schema stores that provide intellisense capabilities.
 
 ### Showcase
 
@@ -53,7 +54,7 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 
 # Quickstart
 
-After installing this extension run the `Liquid: Generate .liquidrc File` command to create a `.liquirc` rule file in your projects root directory. This file will be used to enforce your code formatting style, refer to the [Formatting](#formatting) and [Rules](#rules) section for additional information for customization options. Open any `.html`, `.liquid` or `.jekyll` file and starting coding your project.
+After installing this extension run the `Liquid: Generate .liquidrc File` command to create a `.liquirc` rule file in your projects root directory. This file will be used to configure the formatting style and various other capabilities, refer to the [Formatting](#formatting) and [Rules](#rules) section for additional information and customization options.
 
 # Commands
 
@@ -63,48 +64,74 @@ After installing this extension run the `Liquid: Generate .liquidrc File` comman
 | Liquid: Format Selection        | Formats the selected code                                    |
 | Liquid: Enable Formatting       | Enable formatting from `.html`, `.liquid` or `.jekyll` files |
 | Liquid: Disable Formatting      | Disable formatting                                           |
+| Liquid: Enable Extension        | Enable the extension extended capabilities                   |
+| Liquid: Disable Extension       | Disable the extensions extended capabilities                 |
+| Liquid: Restart Extension       | Restart the extension, dispose of cache refs                 |
 | Liquid: Generate .liquidrc File | Generates a `.liquidrc` rule file                            |
 
 # Workspace Settings
 
 ```jsonc
 {
+  // Disable the extended features of the extension
+  "liquid.enable": true,
+  // Validate shopify schema tag blocks
+  "liquid.validate.schema": true,
+  // Validate shopify layout JSON files
+  "liquid.validate.layouts": true,
+  // Control completion capabilities of shopify layout JSON files
+  "liquid.completion.layouts": true,
+  // Control hover capabilities of shopify layout JSON files
+  "liquid.hover.layouts": true,
   // Controls whether formatting is enabled or disabled
   "liquid.format.enable": true,
   // Glob paths to exclude from formatting
   "liquid.format.ignore": [],
-  // Formatting code style rules
-  "liquid.format.rules": {
-    // HTML, Liquid + HTML code style
-    "markup": {},
-    // JavaScript code style
-    "script": {},
-    // CSS/SCSS code style
-    "style": {},
-    // JSON code style
-    "json": {}
+  // Word wrap limit, defaults to the vscode wordWrapColumn
+  "liquid.format.wrap": 0,
+  // indentation level, defaults to the vscode tabSize
+  "liquid.format.indentSize": 2,
+  // Whether or not documents end with newline, defaults to the vscode renderFinalNewline
+  "liquid.format.endNewLine": false,
+  // If a blank new line should be forced above comments
+  "liquid.format.commentIndent": false,
+  // The maximum number of consecutive empty lines to retain
+  "liquid.format.preserveLine": 3,
+  // Prevent comment reformatting due to option wrap
+  "liquid.format.preserveComment": false,
+  // Use Windows (CRLF) format, Unix (LF) format is the default.
+   "liquid.format.crlf": false,
+  // HTML, Liquid + HTML code style
+  "liquid.format.markup": {},
+  // JavaScript, TypeScript code style
+  "liquid.format.script": {},
+  // CSS/SCSS code style
+  "liquid.format.style": {},
+  // JSON code style
+  "liquid.format.json": {},
   }
 }
 ```
 
 # Syntax Support
 
-This extension provides liquid syntax support in various languages by leveraging VS Codes powerful grammar injections feature. Liquid is a template language and thus its grammar should be treated as such and by using grammar injections we don't loose any of VS Codes awesome features like IntelliSense, Auto Complete, Hover and Diagnostics.
+Liquid syntax support in HTML and JSON languages are applied using injection grammars so intelliSense capabilities like code completions, hover descriptions, diagnostics and embedded code regions are fully supported. Syntax highlighting for Liquid contained in JavaScript, TypeScript, CSS/SCSS, JSON and other supported languages are made possible by appending a `.liquid` extension suffix to files, or alternatively using vscode's [file associations](https://code.visualstudio.com/docs/languages/identifiers) option.
 
-Additionally, Liquid code contained in HTML `<script>` and/or `<style>` tags also support liquid syntax highlighting.
+<strong>Language Grammars</strong>
 
-<strong>Supported Languages</strong>
+| Language Identifier | Extensions                 |
+| ------------------- | -------------------------- |
+| HTML                | .liquid, .jekyll, .html    |
+| Liquid CSS          | .css.liquid                |
+| Liquid SCSS         | .scss.liquid, .sass.liquid |
+| Liquid JavaScript   | .js.liquid                 |
+| Liquid TypeScript   | .ts.liquid                 |
+| Liquid JSON         | .json.liquid               |
+| Liquid Yaml         | .json.liquid               |
+| Liquid TypeScript   | .ts.liquid                 |
+| Liquid Markdown     | .md.liquid                 |
 
-| Language   | Extensions                 |
-| ---------- | -------------------------- |
-| HTML       | .html, .jekyll, .liquid    |
-| CSS        | .css.liquid                |
-| SCSS       | .scss.liquid, .sass.liquid |
-| JavaScript | .js.liquid                 |
-| TypeScript | .ts.liquid                 |
-| Markdown   | .md                        |
-
-If you would like Liquid syntax support for a certain language or file extension please submit a feature request.
+> **Please Note:** You can prevent the vscode-liquid from extending its capabilities into HTML and JSON by setting `liquid.enable` to `false` in your workspace.
 
 <strong>HTML Validation</strong><br>
 
@@ -121,9 +148,9 @@ If your `<style>` and `<script>` HTML tags contain Liquid syntax consider disabl
 
 # Formatting
 
-Formatting can be enable/disabled via the command palette and will respect the `editor.formatOnSave` setting. When Liquid formatting is **enabled** the extension will format (beautify) HTML, Liquid or Jekyll files in your workspace as it will assume these files contain Liquid syntax.
+Formatting can be enable/disabled via the command palette and will respects `editor.formatOnSave` setting. When Liquid formatting is **enabled** the extension will format HTML, JSON and all suffixed `.liquid` file names that is supported. You can **disabled** beautification at any time and also define a set of ignored directories and/or files. Formatting uses a default set of style rules which will enforce a consistent coding style. You can customize and overwrite the defaults within `.liquidrc` file or alternatively use the `liquid.format.*` workspace setting option.
 
-Formatting uses a default set of style rules which enforce a consistent coding style. You can customize the format rules and overwrite the defaults using a `.liquidrc` file or alternatively use the `liquid.format.rules` workspace setting option.
+Code beautification uses [Prettify](https://github.com/panoply/prettify) to facilitate formatting capabilities. Prettify uses the late are powerful Sparser lexing algorithm and have been specifically development for Liquid contained in Markup, Scripts and Styles. Prettify exposes a granular set of beautification rules, so take a peek at the [playground](https://liquify.dev/prettify).
 
 ### Using .liquidrc rule file
 
@@ -131,7 +158,7 @@ Including a .liquid file in the root of your projects workspace is the **recomme
 
 ### Using the workspace setting option
 
-Rules can also be applied in your User or Workspace settings using the `liquid.format.rules` configuration option. Please note that if a `.liquidrc` is present in your projects root it will run precedence over rules defined in workspace settings. Again, it's recommended you use a `.liquidrc` file for setting custom rules.
+Rules can also be applied in your User or Workspace settings using the `liquid.format.*` configuration option. Please note that if a `.liquidrc` is present in your projects root it will run precedence over rules defined in workspace settings. Again, it's recommended you use a `.liquidrc` file for setting custom rules.
 
 ### Status bar button
 
@@ -231,7 +258,7 @@ _If you don't like the defaults then rebind editor.action.formatDocument in the 
 
 # Snippets
 
-Liquid snippets are supported in this extension. The Filter and Tag snippets which have been included were forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). The reason for forking this extension is to avoid conflicts due to the extension dependency it relies on, however additionally the extension includes over 50+ snippet helpers for both Jekyll and Shopify development.
+Liquid snippets are supported in this extension. The Filter and Tag snippets included were originally forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). The reason for forking this extension is to avoid conflicts due to the extension dependency it relies on, however additionally the extension includes over 50+ snippet helpers for both Jekyll and Shopify development.
 
 ### Schema Snippets <small>(Shopify Liquid Variation)</small>
 
