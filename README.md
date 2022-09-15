@@ -37,10 +37,14 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 # Table of Contents
 
 - [Quickstart](#quickstart)
-  - [Updating](#updating-v230-to-v300)
+  - [Upgrading v2.3 to 3.0](#updating-v230-to-v300)
 - [Commands](#commands)
 - [Workspace Settings](#workspace-settings)
 - [Syntax Support](#syntax-support)
+  - [Supported Languages](#supported-languages)
+  - [Grammar Injections](#grammar-injections)
+  - [HTML Validations](#html-validations)
+  - [Markdown Codeblock](#markdown-codeblock)
 - [Formatting](#formatting)
   - [Prettify](#prettify)
   - [Key Binding](#key-binding)
@@ -50,14 +54,20 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
   - [Using the workspace setting option](#using-the-workspace-setting-option)
   - [Using package.json prettify](#status-bar-button)
 - [Snippets](#snippets)
-- [Support](#support-this-extension)
+- [Contributing](#contributing)
+  - [Requirements](#requirements)
+  - [Support](#support)
 - [Changelog](#changelog)
 
 # Quickstart
 
 After installing this extension run the `Liquid: Generate .liquidrc File` command to create a `.liquidrc` configuration file in your projects root directory. This file will be used to configure the formatting style and control various other capabilities provided by the extension. Refer to the [Formatting](#formatting) and [Rules](#rules) section for additional information and customization options.
 
-### Updating v2.3.0 to v3.0.0
+### Updating v2.3 to v3.0
+
+Users who were upgraded to version 3.0.0 will need to align their configurations. As of 3.0 the `.liquidrc` configuration file structure provided in 2.4 is not supported. Both the `ignore` tags and `associate` tags formatting options are deprecated and will have no effect.
+
+Take a look at the [changelog](/changelog.md) and [release notes](/release-notes.md).
 
 # Commands
 
@@ -149,27 +159,31 @@ The extension provides various workspace settings. Most the available options ca
 
 # Syntax Support
 
-Liquid syntax highlighting support within HTML, JSON and Markdown languages are applied using vscode's injection grammar feature. Grammar injections allow the native intelliSense capabilities like code completions, hover descriptions, diagnostics and embedded code regions to persist. Liquid syntax contained in JavaScript, TypeScript, CSS/SCSS, JSON and other supported languages are supported by appending a `.liquid` extension suffix to file names (eg: _js.liquid_, _css.liquid_ etc) but do not _yet_ provide intellisense capabilities.
+Liquid syntax highlighting support within HTML, JSON and YAML languages are applied using vscode's injection grammar feature. Grammar injections allow intelliSense capabilities provided by vscode to persist and work without interruption despite containing Liquid code. Liquid syntax contained in JavaScript, TypeScript, CSS/SCSS, JSON and other supported languages require an `.liquid` extension suffix be applied to file names (eg: _js.liquid_, _css.liquid_ etc).
 
 > Alternatively, you can use the vscode [file associations](https://code.visualstudio.com/docs/languages/identifiers).
 
-<strong>Supported Languages</strong>
+### Supported Languages
 
-| Language Identifier | Supported Extensions | Grammar Scope |
-| ------------------- | -------------------- | ------------- |
-| HTML                | .liquid              | text.html     |
-| Markdown            | .md                  | source.md     |
-| JSON                | .json                | source.json   |
-| Liquid JSON         | .json.liquid         | source.json   |
-| Liquid CSS          | .css.liquid          | source.css    |
-| Liquid SCSS         | .scss.liquid         | source.scss   |
-| Liquid JavaScript   | .js.liquid           | source.ts     |
-| Liquid TypeScript   | .ts.liquid           | source.ts     |
-| Liquid Yaml         | .yaml.liquid         | source.yaml   |
+| Language Identifier | Supported Extensions | Grammar Scope        | Grammar Injection |
+| ------------------- | -------------------- | -------------------- | ----------------- |
+| HTML                | .liquid _or_ .html   | text.html.derivative | ✓                 |
+| JSON                | .json                | source.json          | ✓                 |
+| Yaml                | .yaml                | source.yaml          | ✓                 |
+| Liquid              | .liquid              | source.liquid        | 𐄂                 |
+| Liquid Markdown     | .md.liquid           | text.html.markdown   | 𐄂                 |
+| Liquid CSS          | .css.liquid          | source.css           | 𐄂                 |
+| Liquid SCSS         | .scss.liquid         | source.scss          | 𐄂                 |
+| Liquid JavaScript   | .js.liquid           | source.ts            | 𐄂                 |
+| Liquid TypeScript   | .ts.liquid           | source.ts            | 𐄂                 |
 
-> **Please Note:** You can stop vscode-liquid from extending its capabilities into HTML and JSON by setting `liquid.enable` to `false` in your workspace. This will prevent the extension from assuming file that use `.html` and `.json` extension contain Liquid code.
+### Grammar Injections
 
-<strong>HTML Validation</strong><br>
+In previous versions of this extension, the applied injections would cause otherwise valid syntax to be invalidated in the many languages being extended. As of version 3.0 the vast majority of those issues were fixed and no interference outside of Liquid contained structures will apply highlighting.
+
+**Please Note** If you choose `Liquid` as a language then HTML intelliSense features will not work. In order for HTML intelliSense features to persist, you should choose `HTML` as a language. This applies to all grammars applying injections.
+
+### HTML Validations
 
 If your `<style>` and `<script>` HTML tags contain Liquid syntax consider disabling HTML Validations. This will to prevent VS Code from validating these tags and throwing errors:
 
@@ -180,9 +194,9 @@ If your `<style>` and `<script>` HTML tags contain Liquid syntax consider disabl
 }
 ```
 
-<strong>Markdown Codeblock</strong><br>
+### Markdown Codeblock
 
-Embedded code blocks regions are supported in markdown files:
+Embedded code blocks regions are supported in markdown (_.md_) files:
 
 ````md
 ```liquid
@@ -198,9 +212,7 @@ Formatting can be enabled/disabled via the command palette and will respect nati
 
 ### Prettify
 
-[Prettify](https://github.com/panoply/prettify) is used to facilitate formatting capabilities. Prettify is built atop of the late but powerful Sparser lexing algorithm and has since been adapted for refined usage by this extension and will be used in the future Liquify release. It exposes a granular set of beautification rules and supports Liquid code contained in markup, script and style languages.
-
-I actively maintain Prettify and though the is in its infancy stages the ambition is to eventually have the tool be a competitive alternative to Prettier in this specific nexus with the goal of eliminating "opinionated" conventions at the formatting level.
+[Prettify](https://github.com/panoply/prettify) is used to facilitate formatting capabilities. Prettify is built atop of the late but powerful Sparser lexing algorithm and has since been adapted for refined usage by this extension and will be used in the future Liquify release. It exposes a granular set of beautification rules and supports Liquid code contained in markup, script and style languages. I actively maintain Prettify and though the is in its infancy stages the ambition is to eventually have the tool be a competitive alternative to Prettier in this specific nexus with the goal of eliminating "opinionated" conventions at the formatting level.
 
 Take a look at Prettify [playground](https://liquify.dev/prettify).
 
@@ -227,7 +239,7 @@ When the extension is enabled and a supported file is open and active in your ed
 | <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-ignored.png?raw=true"  width="50px"> | **Ignoring**  | _Clicking the status bar item removes the file from ignore list and enables formatting_
 | <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-error.png?raw=true"  width="50px"> | **Errors**  | _Click the status bar item in this state opens the output panel for error information_
 
-> When extended features have been disabled (ie: `liquid.enable` is `false`) then the status bar will not be displayed.
+> When extended features have been disabled (ie: `liquid.enable` is `false`) then the status bar will not be displayed and formatting will not applied.
 
 # Configuration
 
@@ -338,19 +350,17 @@ Below is the defaults configuration applied when using a `.liquidrc` file.
 
 Liquid snippets are supported in this extension. The Filter and Tag snippets included were originally forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). The reason for forking this extension is to avoid conflicts due to the extension dependency it relies on, however additionally the extension includes over 50+ snippet helpers for both Jekyll and Shopify development.
 
-### Schema Snippets <small>(Shopify Liquid Variation)</small>
-
-Shopify `{% schema %}` section snippets are supported when using the `schema` prefix followed by the input type setting name. The schema snippets inject complete input types and allow you to quickly apply the schema setting.
-
 <br>
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/schema-snippets.png"  atl="Shopify Schema Snippets"  width="100%">
 
-# Support this extension!
+# Contributing
 
-This extension brings sufficient support of the Liquid language to VS Code and aims to provide a well integrated IDE experience for developers using all variations of the language. Prior to the release of this extension Liquid support in vscode and text editors in general was extremely limited with developers stuck using outdated and sometimes broken solutions.
+TODO
 
-Developing this extension has taken a considerable amount of time. For now, this extension is available free of cost but will require a small license fee in the future. To help keep this extension free and open source for as long as possible, please consider supporting its growth and maintainance:
+### Requirements
+
+### Support
 
 **PayPal**: [Donate](https://www.paypal.me/paynicos)<br>
 **BTC**: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
@@ -362,11 +372,3 @@ Refer to the [Changelog](https://github.com/panoply/vscode-liquid/blob/master/CH
 <br>
 
 Currently made with 🖤 by Nikolas Savvidis
-
-```
-
-```
-
-```
-
-```
