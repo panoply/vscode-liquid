@@ -73,7 +73,7 @@ Below are the available commands exposed to the vscode command palette (`cmd + s
 
 # Workspace Settings
 
-The extension provides various workspace settings. Most the available options can be controlled within a `.liquidrc` configuration file.
+The extension provides various workspace settings. Most the available options can be controlled within a `.liquidrc` configuration file. Take a look at the [configuration](#configuration) section for information and other setting options.
 
 ```jsonc
 {
@@ -193,39 +193,28 @@ Embedded code blocks regions are supported in markdown files:
 
 Formatting can be enabled/disabled via the command palette and will respect native vscode settings like `editor.formatOnSave` and `defaultFormatter`. When Liquid formatting is **enabled** the extension will format HTML, JSON and all suffixed `*.liquid` files supported by [Prettify](https://github.com/panoply/prettify). You can **disabled** beautification at any time, define a set of directories and/or files to exclude from handling or leverage `@prettify-ignore` inline ignore comments. Formatting options to control code output can be provided within a `.liquidrc` file or alternatively you can use the workspace setting options.
 
-### Prettify
+### Prettify Formatter
 
-[Prettify](https://github.com/panoply/prettify) is used to facilitate formatting capabilities. Prettify is built atop of the late but powerful Sparser lexing algorithm and has since been adapted for refined usage by this extension. It exposes a granular set of beautification rules and supports Liquid code contained in markup, script and style languages. I actively maintain this tool and though still in its infancy, Prettify aims to eventually compete along side alternatives like Prettier with the goal of eliminating "opinionated" conventions at the formatting level.
+[Prettify](https://github.com/panoply/prettify) is used to facilitate formatting capabilities. Prettify is built atop of the late but powerful Sparser lexing algorithm and has since been adapted for refined usage by this extension and will be used in the future Liquify release. It exposes a granular set of beautification rules and supports Liquid code contained in markup, script and style languages.
+
+I actively maintain Prettify and though the is in its infancy stages the ambition is to eventually have the tool be a competitive alternative to Prettier in this specific nexus with the goal of eliminating "opinionated" conventions at the formatting level.
 
 Take a look at Prettify [playground](https://liquify.dev/prettify).
 
 ### Key Binding
 
-For folks who prefer formatting via key-binding can trigger document beautification using:
+For folks who prefer formatting via key-binding can trigger full document beautification using:
 
 ```bash
-cmd + L
+cmd  + L  # mac
+ctrl + L  # windows
 ```
 
-> Use `ctrl` for windows
+_You can configure a different key-binding via `editor.action.formatDocument` keyboard shortcuts menu in vscode._
 
-<br>
+### Status Bar Item
 
-<strong>Custom keybindings</strong><br>
-
-_If you don't like the defaults then rebind `editor.action.formatDocument` via the keyboard shortcuts menu of vscode._
-
-### Using .liquidrc rule file
-
-Including a .liquid file in the root of your projects workspace is the **recommended approach** for defining a custom set of formatting code style rules. This approach allows you to easily control formatting options to best fit your code style quirks and share this rules across projects and collaborations.
-
-### Using the workspace setting option
-
-Rules can also be applied in your User or Workspace settings using the `liquid.format.*` configuration option. Please note that if a `.liquidrc` is present in your projects root it will run precedence over rules defined in workspace settings. Again, it's recommended you use a `.liquidrc` file for setting custom rules.
-
-### Status bar button
-
-When a HTML, Liquid and Jekyll file is open and active in the editor you will see the Liquid toggle/status button appear on the bottom right hand side of the VS Code status bar. The toggle button will allow you to enable/disable liquid formatting and will notify you when the parser encounters any code errors.
+When the extension is enabled and a supported file is open and active in your editor a toggle/status button will appear in the bottom right hand side of the VSCode status bar. The toggle button will allow you to enable/disable formatting programmatically, inform upon ignored files and will notify you when the parser encounters any code errors.
 
 <!-- prettier-ignore -->
 | Status  | Command | Action |
@@ -235,14 +224,49 @@ When a HTML, Liquid and Jekyll file is open and active in the editor you will se
 | <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-ignored.png?raw=true"  width="50px"> | **Ignoring**  | _Clicking the status bar item removes the file from ignore list and enables formatting_
 | <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-error.png?raw=true"  width="50px"> | **Errors**  | _Click the status bar item in this state opens the output panel for error information_
 
+> When extended features have been disabled (ie: `liquid.enable` is `false`) then the status bar will not be displayed.
+
 # Configuration
 
 Below is the default configuration used by the extension. You can Generate this file using the `Liquid: Generate .liquidrc File` command and a file in the root of your project will be created. Alternatively you can use the `"liquid.format.rules"` option in your workspace or user settings.
 
+### Using the workspace setting option
+
+Rules can also be applied in your User or Workspace settings using the `liquid.format.*` configuration option. Please note that if a `.liquidrc` is present in your projects root it will run precedence over rules defined in workspace settings. Again, it's recommended you use a `.liquidrc` file for setting custom rules.
+
+### Using .liquidrc rule file
+
+Including a `.liquidrc` file in the root of your projects workspace is the **recommended approach** for defining a custom set of formatting code style rules and editor specific options. This approach allows you to easily control options to best fit your project.
+
+> The `.liquidrc` file will be an essential requirement in Liquify (the future release) and the point of control for the Liquify parser, Language Server and the multiple features it provides.
+
+<strong>Supported Files</strong><br>
+
+Currently, the extension only supports 2 JSON (with comments) file types.
+
+- `.liquidrc`
+- `.liquidrc.json`
+
+<strong>Option Defaults</strong><br>
+
+Below is the defaults configuration applied when using a `.liquidrc` file.
+
 ```jsonc
 {
-  "ignore": [],
-  "prettify": {
+  "completions": {
+    "schema": true,
+    "layouts": false,
+    "settings": true,
+    "locales": true
+  },
+  "validate": {
+    "schema": true,
+    "layouts": true,
+    "settings": true,
+    "locales": false
+  },
+  "format": {
+    "ignore": [],
     "crlf": false,
     "commentIndent": true,
     "endNewline": false,
@@ -304,6 +328,8 @@ Below is the default configuration used by the extension. You can Generate this 
   }
 }
 ```
+
+> Don't get too married to the schema structures as they are likely to change when the extension is superseded.
 
 # Snippets
 
