@@ -44,23 +44,23 @@
       },
       {
         "fileMatch": [
-          "index.json",
-          "index.*.json",
-          "404.json",
-          "article.json",
-          "blog.json",
-          "cart.json",
-          "cart.*.json",
-          "collection.json",
-          "collection.*.json",
-          "list-collection.json",
-          "page.*.json",
-          "page.json",
-          "password.json",
-          "search.json",
-          "search.*.json",
-          "product.json",
-          "product.*.json"
+          "**/index.json",
+          "**/index.*.json",
+          "**/404.json",
+          "**/article.json",
+          "**/blog.json",
+          "**/cart.json",
+          "**/cart.*.json",
+          "**/collection.json",
+          "**/collection.*.json",
+          "**/list-collection.json",
+          "**/page.*.json",
+          "**/page.json",
+          "**/password.json",
+          "**/search.json",
+          "**/search.*.json",
+          "**/product.json",
+          "**/product.*.json"
         ],
         "url": "./schema/layouts.json"
       }
@@ -138,6 +138,17 @@
         ]
       },
       {
+        "id": "liquid-json",
+        "configuration": "./language/liquid.configuration.json",
+        "extensions": [
+          ".json",
+          ".json.liquid"
+        ],
+        "aliases": [
+          "Liquid JSON"
+        ]
+      },
+      {
         "id": "liquid-javascript",
         "configuration": "./language/liquid.configuration.json",
         "extensions": [
@@ -145,16 +156,6 @@
         ],
         "aliases": [
           "Liquid JavaScript"
-        ]
-      },
-      {
-        "id": "liquid-json",
-        "configuration": "./language/liquid.configuration.json",
-        "extensions": [
-          ".json.liquid"
-        ],
-        "aliases": [
-          "Liquid JSON"
         ]
       },
       {
@@ -177,8 +178,24 @@
         "language": "liquid",
         "scopeName": "source.liquid",
         "path": "./grammar/liquid.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.schema.liquid": "json",
+          "meta.embedded.block.javascript.liquid": "javascript",
+          "meta.embedded.block.stylesheet.liquid": "css",
+          "meta.embedded.block.style.liquid": "liquid-css",
+          "meta.embedded.block.stylesheet.scss.liquid": "liquid-scss"
+        },
         "injectTo": [
-          "text.html.derivative"
+          "text.html.derivative",
+          "text.html.markdown"
+        ]
+      },
+      {
+        "language": "liquid-json",
+        "scopeName": "source.json.liquid",
+        "path": "./grammar/languages/json.tmLanguage.json",
+        "injectTo": [
+          "source.json"
         ]
       },
       {
@@ -195,11 +212,6 @@
         "language": "liquid-javascript",
         "scopeName": "source.js.liquid",
         "path": "./grammar/languages/javascript.tmLanguage.json"
-      },
-      {
-        "language": "liquid-json",
-        "scopeName": "source.json.liquid",
-        "path": "./grammar/languages/json.tmLanguage.json"
       },
       {
         "language": "liquid-yaml",
@@ -224,21 +236,6 @@
         ],
         "embeddedLanguages": {
           "meta.embedded.block.liquid": "liquid"
-        }
-      },
-      {
-        "scopeName": "source.liquid.embedded",
-        "path": "./grammar/injections/embedded.tmLanguage.json",
-        "injectTo": [
-          "source.liquid",
-          "text.html.derivative"
-        ],
-        "embeddedLanguages": {
-          "meta.embedded.block.javascript.liquid": "javascript",
-          "meta.embedded.block.schema.liquid": "json",
-          "meta.embedded.block.stylesheet.liquid": "css",
-          "meta.embedded.block.style.liquid": "liquid-css",
-          "meta.embedded.block.stylesheet.scss.liquid": "liquid-scss"
         }
       }
     ],
