@@ -2,7 +2,7 @@
   "name": "Liquid Yaml",
   "scopeName": "source.yaml.liquid",
   "fileTypes": ["liquid"],
-  "injectionSelector": "L:source.yaml -meta.embedded -comment",
+  "injectionSelector": "L:source.yaml -meta -comment",
   "injections": {
     "L:string - (string.quoted.*.yaml)": {
       "patterns": [
