@@ -1,13 +1,32 @@
-<div class="">
+<!-- TEST: Liquid String Injections -->
+<div class="{{ object.prop | filter: 'string' }}">
 
-  <div id=""></div>
+  <!-- TEST: Liquid Attribute Injections -->
+  <div id="test" {% if condition == false %} data-id="{{ x }}" {% endif %}></div>
+
 </div>
 
+<!-- @prettify-ignore-start -->
 
-{%- schema -%}
+{%- liquid
+  if
+    foo == bar
+  elsif
+    'foo'
+  endif
+  assign name = 'bar' | filter: 100
+-%}
+
+<!-- @prettify-ignore-end -->
+
+
+{% # TEST: Liquid Schema Tag Block Validations %}
+
+<!-- TEST: Shopify Schema Tag Block -->
+{% schema %}
   {
     "name": "string",
-    "blocks": [$1],
+    "blocks": "",
     "class": "$1",
     "tag": $1,
     "defaults": [$1],
@@ -15,4 +34,4 @@
       $1
     }
   }
-{%- endschema -%}
+{% endschema %}
