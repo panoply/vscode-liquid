@@ -51,7 +51,7 @@ export class Editor extends State {
 
     } else if (type === Status.Error) {
 
-      this.barItem.text = '💧 $(x)';
+      this.barItem.text = '💧 $(warning)';
       this.barItem.tooltip = 'Errors detected! Toggle output';
       this.barItem.command = 'liquid.toggleOutput';
 
