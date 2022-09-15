@@ -228,11 +228,11 @@ Rules can also be applied in your User or Workspace settings using the `liquid.f
 When a HTML, Liquid and Jekyll file is open and active in the editor you will see the Liquid toggle/status button appear on the bottom right hand side of the VS Code status bar. The toggle button will allow you to enable/disable liquid formatting and will notify you when the parser encounters any code errors.
 
 <!-- prettier-ignore -->
-| Status Bar Item  | Function | Description |
+| Item  | Status | Action |
 |--|--|--|
 | <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-enabled.png?raw=true"  width="50px"> | Formatting Enabled | _Clicking this status bar in this state will disable formatting_ |
 | <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-disabled.png?raw=true"  width="50px"> | Formatting Disabled |  _Clicking the status bar item in this state will enable formatting_ |
-| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-ignored.png?raw=true"  width="50px"> | Formatting Ignored  | _Click the status bar item will remove the from ignored list and enable formatting_
+| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-ignored.png?raw=true"  width="50px"> | Formatting Ignored  | _Clicking the status bar item removes the file from ignore list and enables formatting_
 | <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-error.png?raw=true"  width="50px"> | Formatting Errors  | _Click the status bar item in this state opens the output panel for error information_
 
 # Configuration
