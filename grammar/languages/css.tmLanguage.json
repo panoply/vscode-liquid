@@ -1,10 +1,9 @@
 {
   "name": "Liquid CSS",
   "scopeName": "source.css.liquid",
-  "fileTypes": ["liquid"],
   "injectionSelector": "L:source.css",
   "injections": {
-    "L:string - (string.quoted.*.css)": {
+    "L:string": {
       "patterns": [
         { "include": "source.liquid#tags" },
         { "include": "source.liquid#output" }
@@ -12,7 +11,8 @@
     }
   },
   "patterns": [
-    { "include": "source.liquid#comments" },
+    { "include": "source.liquid#comment-inline" },
+    { "include": "source.liquid#comment-block" },
     { "include": "source.liquid#tags" },
     { "include": "source.liquid#output" },
     { "include": "source.css" }

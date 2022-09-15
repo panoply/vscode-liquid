@@ -44,23 +44,23 @@
       },
       {
         "fileMatch": [
-          "**/index.json",
-          "**/index.*.json",
-          "**/404.json",
-          "**/article.json",
-          "**/blog.json",
-          "**/cart.json",
-          "**/cart.*.json",
-          "**/collection.json",
-          "**/collection.*.json",
-          "**/list-collection.json",
-          "**/page.*.json",
-          "**/page.json",
-          "**/password.json",
-          "**/search.json",
-          "**/search.*.json",
-          "**/product.json",
-          "**/product.*.json"
+          "index.json",
+          "index.*.json",
+          "404.json",
+          "article.json",
+          "blog.json",
+          "cart.json",
+          "cart.*.json",
+          "collection.json",
+          "collection.*.json",
+          "list-collection.json",
+          "page.*.json",
+          "page.json",
+          "password.json",
+          "search.json",
+          "search.*.json",
+          "product.json",
+          "product.*.json"
         ],
         "url": "./schema/layouts.json"
       }
@@ -141,7 +141,6 @@
         "id": "liquid-json",
         "configuration": "./language/liquid.configuration.json",
         "extensions": [
-          ".json",
           ".json.liquid"
         ],
         "aliases": [
@@ -161,6 +160,9 @@
       {
         "id": "liquid-yaml",
         "configuration": "./language/liquid.configuration.json",
+        "extensions": [
+          ".yaml.liquid"
+        ],
         "aliases": [
           "Liquid YAML"
         ]
@@ -191,6 +193,11 @@
         ]
       },
       {
+        "language": "liquid-yaml",
+        "scopeName": "source.yaml.liquid",
+        "path": "./grammar/languages/yaml.tmLanguage.json"
+      },
+      {
         "language": "liquid-json",
         "scopeName": "source.json.liquid",
         "path": "./grammar/languages/json.tmLanguage.json",
@@ -212,11 +219,6 @@
         "language": "liquid-javascript",
         "scopeName": "source.js.liquid",
         "path": "./grammar/languages/javascript.tmLanguage.json"
-      },
-      {
-        "language": "liquid-yaml",
-        "scopeName": "source.yaml.liquid",
-        "path": "./grammar/languages/yaml.tmLanguage.json"
       },
       {
         "scopeName": "source.liquid.frontmatter",
@@ -736,17 +738,14 @@
     "prettier": "^2.7.1",
     "tsup": "^6.2.3",
     "type-fest": "^2.19.0",
-    "vscode": "^1.1.37",
-    "vscode-languageserver-types": "^3.17.2"
+    "vscode": "^1.1.37"
   },
   "dependencies": {
     "@liquify/prettify": "0.1.0-beta.1",
     "anymatch": "^3.1.2",
-    "fs-extra": "^10.1.0",
     "rambda": "^7.2.1",
     "strip-json-comments": "^5.0.0",
     "vscode-json-languageservice": "^5.1.0",
-    "vscode-languageserver-textdocument": "^1.0.7",
-    "vscode-nls": "^5.2.0"
+    "vscode-languageserver-textdocument": "^1.0.7"
   }
 }

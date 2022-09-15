@@ -1,11 +1,6 @@
 --- # yaml document beginning
 
-# comment syntax
 
-# basic syntax - key and value separated by colon and space before the value
-key: value
-
-# Scalar data types
 integerValue: 1                   # integer value
 floatingValue: 1                  # floating vale
 
@@ -13,7 +8,8 @@ stringValue: "456"                # string with double quotes
 stringValue: 'abc'                # string with single quotes
 stringValue: wer                  # string without quotes
 
-booleanValue:true                 # boolean values - true or false
+
+booleanValue: true                 # boolean values - true or false
 
 
 # Multiline string with literal block syntax -preserved new lines

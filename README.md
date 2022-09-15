@@ -159,7 +159,7 @@ The extension provides various workspace settings. Most the available options ca
 
 # Syntax Support
 
-Liquid syntax highlighting support within HTML, JSON and YAML languages are applied using vscode's injection grammar feature. Grammar injections allow intelliSense capabilities provided by vscode to persist and work without interruption despite containing Liquid code. Liquid syntax contained in JavaScript, TypeScript, CSS/SCSS, JSON and other supported languages require an `.liquid` extension suffix be applied to file names (eg: _js.liquid_, _css.liquid_ etc).
+Liquid syntax highlighting support within HTML and JSON languages are applied using vscode's injection grammar feature. Grammar injections allow intelliSense capabilities provided by vscode to persist and work without interruption despite containing Liquid code. Liquid syntax contained in JavaScript, TypeScript, CSS/SCSS, JSON and other supported languages require an `.liquid` extension suffix be applied to file names (eg: _js.liquid_, _css.liquid_ etc).
 
 > Alternatively, you can use the vscode [file associations](https://code.visualstudio.com/docs/languages/identifiers).
 
@@ -169,8 +169,8 @@ Liquid syntax highlighting support within HTML, JSON and YAML languages are appl
 | ------------------- | -------------------- | -------------------- | ----------------- |
 | HTML                | .liquid _or_ .html   | text.html.derivative | ✓                 |
 | JSON                | .json                | source.json          | ✓                 |
-| Yaml                | .yaml                | source.yaml          | ✓                 |
 | Liquid              | .liquid              | source.liquid        | 𐄂                 |
+| Liquid Yaml         | .yaml.liquid         | source.yaml          | 𐄂                 |
 | Liquid Markdown     | .md.liquid           | text.html.markdown   | 𐄂                 |
 | Liquid CSS          | .css.liquid          | source.css           | 𐄂                 |
 | Liquid SCSS         | .scss.liquid         | source.scss          | 𐄂                 |
