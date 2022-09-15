@@ -230,10 +230,10 @@ When a HTML, Liquid and Jekyll file is open and active in the editor you will se
 <!-- prettier-ignore -->
 | Status Bar Item  | Function | Description |
 |--|--|--|
-| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-enabled.png?raw=true"  width="80px"> | Formatting Enabled | _Clicking this status bar in this state will disable formatting_ |
-| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-disabled.png?raw=true"  width="80px"> | Formatting Disabled |  _Clicking the status bar item in this state will enable formatting_ |
-| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-ignored.png?raw=true"  width="80px"> | Formatting Ignored  | _Click the status bar item will remove the from ignored list and enable formatting_
-| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-error.png?raw=true"  width="80px"> | Formatting Errors  | _Click the status bar item in this state opens the output panel for error information_
+| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-enabled.png?raw=true"  width="50px"> | Formatting Enabled | _Clicking this status bar in this state will disable formatting_ |
+| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-disabled.png?raw=true"  width="50px"> | Formatting Disabled |  _Clicking the status bar item in this state will enable formatting_ |
+| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-ignored.png?raw=true"  width="50px"> | Formatting Ignored  | _Click the status bar item will remove the from ignored list and enable formatting_
+| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-error.png?raw=true"  width="50px"> | Formatting Errors  | _Click the status bar item in this state opens the output panel for error information_
 
 # Configuration
 
