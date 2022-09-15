@@ -24,11 +24,11 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 ### Key Features
 
 - Syntax support for Liquid in CSS, SCSS, JavaScript, Markdown and more!
-- Auto formatting and beautification using[Prettify](https://github.com/panoply/prettify).
-- Snippet auto-completion for liquid tags, filters, shopify schema and more!
-- Focused support for Jekyll and Shopify liquid variations
+- Auto formatting and beautification using [Prettify](https://github.com/panoply/prettify).
+- Snippet auto-completion for Liquid tags, filters and more!
 - Supports Shopify [Section](https://help.shopify.com/en/themes/development/sections) code blocks.
-- Integrated JSON schema stores that provide intellisense capabilities.
+- Integrated JSON Schema stores that provide IntelliSense capabilities in Shopify Theme files.
+- Preserves VSCode HTML IntelliSense capabilities in `.liquid` markup files.
 
 ### Showcase
 
@@ -37,17 +37,18 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 # Table of Contents
 
 - [Quickstart](#quickstart)
+  - [Updating](#updating-v230-to-v300)
 - [Commands](#commands)
 - [Workspace Settings](#workspace-settings)
 - [Syntax Support](#syntax-support)
 - [Formatting](#formatting)
+  - [Prettify](#prettify)
+  - [Key Binding](#key-binding)
+  - [Status Bar](#key-binding)
+- [Configuration](#configuration)
   - [Using .liquidrc rule file](#using-liquidrc-rule-file)
   - [Using the workspace setting option](#using-the-workspace-setting-option)
-  - [Toggle and Status button](#status-bar-button)
-  - [Tag Associations](#tag-associations)
-  - [Ignored Tags](#ignoring-tags)
-  - [Rules](#rules)
-  - [Key Binding](#key-binding)
+  - [Using package.json prettify](#status-bar-button)
 - [Snippets](#snippets)
 - [Support](#support-this-extension)
 - [Changelog](#changelog)
@@ -55,6 +56,8 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 # Quickstart
 
 After installing this extension run the `Liquid: Generate .liquidrc File` command to create a `.liquidrc` configuration file in your projects root directory. This file will be used to configure the formatting style and control various other capabilities provided by the extension. Refer to the [Formatting](#formatting) and [Rules](#rules) section for additional information and customization options.
+
+### Updating v2.3.0 to v3.0.0
 
 # Commands
 
@@ -193,7 +196,7 @@ Embedded code blocks regions are supported in markdown files:
 
 Formatting can be enabled/disabled via the command palette and will respect native vscode settings like `editor.formatOnSave` and `defaultFormatter`. When Liquid formatting is **enabled** the extension will format HTML, JSON and all suffixed `*.liquid` files supported by [Prettify](https://github.com/panoply/prettify). You can **disabled** beautification at any time, define a set of directories and/or files to exclude from handling or leverage `@prettify-ignore` inline ignore comments. Formatting options to control code output can be provided within a `.liquidrc` file or alternatively you can use the workspace setting options.
 
-### Prettify Formatter
+### Prettify
 
 [Prettify](https://github.com/panoply/prettify) is used to facilitate formatting capabilities. Prettify is built atop of the late but powerful Sparser lexing algorithm and has since been adapted for refined usage by this extension and will be used in the future Liquify release. It exposes a granular set of beautification rules and supports Liquid code contained in markup, script and style languages.
 
@@ -212,7 +215,7 @@ ctrl + L  # windows
 
 _You can configure a different key-binding via `editor.action.formatDocument` keyboard shortcuts menu in vscode._
 
-### Status Bar Item
+### Status Bar
 
 When the extension is enabled and a supported file is open and active in your editor a toggle/status button will appear in the bottom right hand side of the VSCode status bar. The toggle button will allow you to enable/disable formatting programmatically, inform upon ignored files and will notify you when the parser encounters any code errors.
 
