@@ -47,8 +47,10 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
   - [Markdown Codeblock](#markdown-codeblock)
 - [Formatting](#formatting)
   - [Prettify](#prettify)
+  - [Setting Default Formatter](#setting-default-formatter)
   - [Key Binding](#key-binding)
   - [Status Bar](#key-binding)
+  - [Ignoring Code and/or Files](#ignoring-code-andor-files)
 - [Configuration](#configuration)
   - [Using .liquidrc rule file](#using-liquidrc-rule-file)
   - [Using the workspace setting option](#using-the-workspace-setting-option)
@@ -203,7 +205,7 @@ Embedded code blocks regions are supported in markdown (_.md_) files:
 
 # Formatting
 
-Formatting can be enabled/disabled via the command palette and respects vscode settings like `editor.formatOnSave` and `defaultFormatter`. When Liquid formatting is **enabled** the extension will format Liquid, JSON and all suffixed `*.liquid` files supported by [Prettify](https://github.com/panoply/prettify). You can **disable** beautification by clicking the 💧 emoji icon in the status bar or define a set of directories/files to exclude from handling using the `format.ignore[]` option. Formatting options for controlling code output style can be provided within a .liquidrc file or alternatively you can use the workspace setting options.
+Formatting can be enabled/disabled via the command palette and respects `editor.formatOnSave`. When Liquid formatting is **enabled** the extension will format Liquid, JSON and all suffixed `*.liquid` files supported by [Prettify](https://github.com/panoply/prettify). You can **disable** beautification by clicking the 💧 emoji icon in the status bar or define a set of directories/files to exclude from handling using the `format.ignore` option. Formatting options for controlling code output style can be provided within a .liquidrc file or alternatively you can use the workspace setting options.
 
 ### Prettify 🎀
 
@@ -217,7 +219,7 @@ In some situations you may have already configured another extension to handle b
 
 > **Note**
 >
-> Be sure to select only the languages which you wish to have formatted by Prettify. If you don't want Prettify to handle formatting then set `liquid.format.enable` to `false`.
+> _Be sure to select only the languages which you wish to have formatted by Prettify. If you don't want Prettify to handle formatting then set `liquid.format.enable` to `false`._
 
 ```jsonc
 {
@@ -227,6 +229,10 @@ In some situations you may have already configured another extension to handle b
   },
   // Enables formatting of all .json files
   "[json]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid"
+  },
+  // Enables formatting of all .jsonc files
+  "[jsonc]": {
     "editor.defaultFormatter": "sissel.shopify-liquid"
   },
   // Enables formatting of all .js.liquid files
@@ -287,8 +293,7 @@ You can skip formatting on files, directories and code a few different ways. If 
 - `<!-- @prettify-ignore -->`
 - `{% comment %} @prettify-ignore {% endcomment %}`
 
-> **Warning**
->
+> **Warning** \\n
 > **Inline ignore made possible via Prettify are not yet fully operational.**
 
 # Configuration
