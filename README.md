@@ -293,8 +293,8 @@ You can skip formatting on files, directories and code a few different ways. If 
 - `<!-- @prettify-ignore -->`
 - `{% comment %} @prettify-ignore {% endcomment %}`
 
-> **Warning** \\n
-> **Inline ignore made possible via Prettify are not yet fully operational.**
+> **Warning**
+> Inline ignore made possible via Prettify are not yet fully operational.
 
 # Configuration
 
