@@ -12,5 +12,10 @@
       "block_order": []
     }
   },
-  "order": ["main", "foo"]
+
+
+  "order": [
+    "main",
+    "foo"
+  ]
 }
