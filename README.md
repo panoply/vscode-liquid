@@ -37,7 +37,7 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 # Table of Contents
 
 - [Quickstart](#quickstart)
-  - [Upgrading v2.3 to 3.0](#updating-v230-to-v300)
+  - [Upgrading v3.0](#upgrading-v30)
 - [Commands](#commands)
 - [Workspace Settings](#workspace-settings)
 - [Syntax Support](#syntax-support)
@@ -63,11 +63,14 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 
 After installing this extension run the `Liquid: Generate .liquidrc File` command to create a `.liquidrc` configuration file in your projects root directory. This file will be used to configure the formatting style and control various other capabilities provided by the extension. Refer to the [Formatting](#formatting) and [Rules](#rules) section for additional information and customization options.
 
-### Updating v2.3 to v3.0
+### Upgrading v3.0
 
-Users who were upgraded to version 3.0.0 will need to align their configurations. As of 3.0 the `.liquidrc` configuration file structure provided in 2.4 is not supported. Both the `ignore` tags and `associate` tags formatting options are deprecated and will have no effect.
+Users who were upgraded to version **3.0.0** will need to align their configurations. As of **v3.0.0** the `.liquidrc` configuration file schema does not support the schema used in version **v2.3.0**. Both the `ignore` tags and `associate` tags formatting options are deprecated and will have no effect. The validations will inform about the changes.
 
-Take a look at the [changelog](/changelog.md) and [release notes](/release-notes.md).
+- [v3.0.0 Release Notes](/release-notes.md)
+- [Changelog](/changelog.md)
+
+If you do not wish to upgrade then you can continue using the old version. Search for the extension "liquid" and clicking the gear icon. Select "Install Another Version" then select **2.3.0**. You can find the old readme in the [v2.3.0](https://github.com/panoply/vscode-liquid/tree/v2.3.0) branch.
 
 # Commands
 
@@ -93,13 +96,7 @@ The extension provides various workspace settings. Most the available options ca
   // Disable the extended features of the extension
   "liquid.enable": true,
   // Validate shopify schema tag blocks
-  "liquid.validate.schema": true,
-  // Validate shopify layout JSON files
-  "liquid.validate.layouts": true,
-  // Control completion capabilities of shopify layout JSON files
-  "liquid.completion.layouts": true,
-  // Control hover capabilities of shopify layout JSON files
-  "liquid.hover.layouts": true,
+  "liquid.validate.shopifySchemaTag": true,
   // Controls whether formatting is enabled or disabled
   "liquid.format.enable": true,
   // Glob paths to exclude from formatting
@@ -159,9 +156,7 @@ The extension provides various workspace settings. Most the available options ca
 
 # Syntax Support
 
-Liquid syntax highlighting support within HTML and JSON languages are applied using vscode's injection grammar feature. Grammar injections allow intelliSense capabilities provided by vscode to persist and work without interruption despite containing Liquid code. Liquid syntax contained in JavaScript, TypeScript, CSS/SCSS, JSON and other supported languages require an `.liquid` extension suffix be applied to file names (eg: _js.liquid_, _css.liquid_ etc).
-
-> Alternatively, you can use the vscode [file associations](https://code.visualstudio.com/docs/languages/identifiers).
+Liquid syntax highlighting support within HTML and JSON languages are applied using vscode injection grammars. Grammar injections allow intelliSense capabilities provided by vscode to persist and work without interruption. Liquid syntax contained in JavaScript, TypeScript, CSS/SCSS, JSON and other supported languages require an `.liquid` extension suffix be applied on file names (eg: _js.liquid_, _css.liquid_ etc) or alternatively, you can use the vscode [file associations](https://code.visualstudio.com/docs/languages/identifiers).
 
 ### Supported Languages
 
@@ -181,7 +176,7 @@ Liquid syntax highlighting support within HTML and JSON languages are applied us
 
 In previous versions of this extension, the applied injections would cause otherwise valid syntax to be invalidated in the many languages being extended. As of version 3.0 the vast majority of those issues were fixed and no interference outside of Liquid contained structures will apply highlighting.
 
-**Please Note** If you choose `Liquid` as a language then HTML intelliSense features will not work. In order for HTML intelliSense features to persist, you should choose `HTML` as a language. This applies to all grammars applying injections.
+**Files using a `.liquid` extension will be automatically associated to HTML.**
 
 ### HTML Validations
 
@@ -200,7 +195,7 @@ Embedded code blocks regions are supported in markdown (_.md_) files:
 
 ````md
 ```liquid
-{% # highlighting will be applied for Liquid %}
+
 ```
 ````
 
@@ -208,13 +203,49 @@ Embedded code blocks regions are supported in markdown (_.md_) files:
 
 # Formatting
 
-Formatting can be enabled/disabled via the command palette and will respect native vscode settings like `editor.formatOnSave` and `defaultFormatter`. When Liquid formatting is **enabled** the extension will format HTML, JSON and all suffixed `*.liquid` files supported by [Prettify](https://github.com/panoply/prettify). You can **disabled** beautification at any time, define a set of directories and/or files to exclude from handling or leverage `@prettify-ignore` inline ignore comments. Formatting options to control code output can be provided within a `.liquidrc` file or alternatively you can use the workspace setting options.
+Formatting can be enabled/disabled via the command palette and respects vscode settings like `editor.formatOnSave` and `defaultFormatter`. When Liquid formatting is **enabled** the extension will format Liquid, JSON and all suffixed `*.liquid` files supported by [Prettify](https://github.com/panoply/prettify). You can **disable** beautification by clicking the 💧 emoji icon in the status bar or define a set of directories/files to exclude from handling using the `format.ignore[]` option. Formatting options for controlling code output style can be provided within a `.liquidrc` file or alternatively you can use the workspace setting options.
 
-### Prettify
+### Prettify 🎀
 
-[Prettify](https://github.com/panoply/prettify) is used to facilitate formatting capabilities. Prettify is built atop of the late but powerful Sparser lexing algorithm and has since been adapted for refined usage by this extension and will be used in the future Liquify release. It exposes a granular set of beautification rules and supports Liquid code contained in markup, script and style languages. I actively maintain Prettify and though the is in its infancy stages the ambition is to eventually have the tool be a competitive alternative to Prettier in this specific nexus with the goal of eliminating "opinionated" conventions at the formatting level.
+[Prettify](https://github.com/panoply/prettify) is used to facilitate formatting capabilities. Prettify is built atop of the late but powerful Sparser + PrettyDiff lexing algorithm and has since been adapted for refined usage by this extension. Prettify exposes a granular set of beautification rules that supports Liquid code contained in markup, script and style languages and will be used in the future Liquify release. I actively maintain Prettify and though it exists in its infancy stages the ambition is to eventually have the tool be a competitive alternative to Prettier with the goal of eliminating the "opinionated" conventions imposed.
 
-Take a look at Prettify [playground](https://liquify.dev/prettify).
+- [Playground](https://liquify.dev/prettify)
+
+### Setting Default Formatter
+
+In some situations you may have already configured another extension to handle beautification and might prevent vscode from forwarding documents to Prettify. Depending on your preferences, you may need to explicitly define a `defaultFormatter` in your vscode workspace/user settings.
+
+> **Note**
+> Be sure to select only the languages which you wish to have formatted by Prettify. If you don't want Prettify to handle formatting then set `liquid.format.enable` to `false`.
+
+```jsonc
+{
+  // Enables formatting of .liquid files
+  "[liquid]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid"
+  },
+  // Enables formatting of all .json files
+  "[json]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid"
+  },
+  // Enables formatting of all .js.liquid files
+  "[liquid-javascript]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid"
+  },
+  // Enables formatting of all .css.liquid files
+  "[liquid-css]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid"
+  },
+  // Enables formatting of all .scss.liquid files
+  "[liquid-scss]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid"
+  },
+  // Enables formatting of all .json.liquid files
+  "[liquid-json]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid"
+  }
+}
+```
 
 ### Key Binding
 
@@ -225,7 +256,8 @@ cmd  + L  # mac
 ctrl + L  # windows
 ```
 
-_You can configure a different key-binding via `editor.action.formatDocument` keyboard shortcuts menu in vscode._
+> **Note**
+> You can configure a different key-binding via `editor.action.formatDocument` keyboard shortcuts menu in vscode.
 
 ### Status Bar
 
@@ -239,116 +271,124 @@ When the extension is enabled and a supported file is open and active in your ed
 | <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-ignored.png?raw=true"  width="50px"> | **Ignoring**  | _Clicking the status bar item removes the file from ignore list and enables formatting_
 | <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-error.png?raw=true"  width="50px"> | **Errors**  | _Click the status bar item in this state opens the output panel for error information_
 
+> **Note**
 > When extended features have been disabled (ie: `liquid.enable` is `false`) then the status bar will not be displayed and formatting will not applied.
+
+### Ignoring Code and/or Files
+
+You can skip formatting on files, directories and code a few different ways. If you are using workspace/user settings for configuration then you can pass a glob list of paths relative to your projects root using `liquid.format.ignore[]` option. Folks using the `.liquidrc` file or `prettify` field in a `package.json` file this option is available via the `ignore[]` field. In addition to path ignores, users can also use Prettify [inline ignores](https://github.com/panoply/prettify#inline-control) for skipping blocks of code and files.
+
+<strong>Ignoring Files</strong><br>
+
+- `{% # @prettify-ignore %}`
+- `<!-- @prettify-ignore -->`
+- `{% comment %} @prettify-ignore {% endcomment %}`
+
+> **Warning**
+> Inline ignore made possible via Prettify are not yet fully operational.
 
 # Configuration
 
-Below is the default configuration used by the extension. You can Generate this file using the `Liquid: Generate .liquidrc File` command and a file in the root of your project will be created. Alternatively you can use the `"liquid.format.rules"` option in your workspace or user settings.
+The extension provides a couple of different ways for users to configure and control capabilities. The preferred method is to use a `.liquidrc` file, but you can also provide configuration via vscode workspace/global settings. In addition to these 2 the extension will also check for the existence of a `prettify` field in `package.json` files.
 
-### Using the workspace setting option
+### Using the workspace settings
 
-Rules can also be applied in your User or Workspace settings using the `liquid.format.*` configuration option. Please note that if a `.liquidrc` is present in your projects root it will run precedence over rules defined in workspace settings. Again, it's recommended you use a `.liquidrc` file for setting custom rules.
+Setting configuration in user or workspace settings is made available on `liquid.*` property. Workspace settings are validated and will inform upon each configuration option in real-time. When a `.liquidrc` file is present in your projects root then that will run precedence over `format` options defined in workspace settings.
 
-### Using .liquidrc rule file
+Refer to [Workspace Settings](#workspace-settings) for defaults.
 
-Including a `.liquidrc` file in the root of your projects workspace is the **recommended approach** for defining a custom set of formatting code style rules and editor specific options. This approach allows you to easily control options to best fit your project.
+### Using the package.json prettify field
 
+In some situations users may prefer to defined options within a `package.json` file. The extension will check `package.json` files for a `prettify` field and use the defined beautification options provided. The `prettify` field only accepts format rules and will override workspace settings but if `liquidrc` file is present in your projects root then that will run precedence.
+
+### Using .liquidrc config file
+
+Including a `.liquidrc` file in the root of your projects workspace is the **recommended** configuration method. The `.liquidrc` file allows users to control beautification, validations and some editor specific options. All options available to workspace settings aside from `liquid.enable` and `liquid.format.enable` can be provided via the `.liquidrc` file.
+
+> **Note**
 > The `.liquidrc` file will be an essential requirement in Liquify (the future release) and the point of control for the Liquify parser, Language Server and the multiple features it provides.
 
-<strong>Supported Files</strong><br>
+### Supported Files
 
 Currently, the extension only supports 2 JSON (with comments) file types.
 
 - `.liquidrc`
 - `.liquidrc.json`
 
-<strong>Option Defaults</strong><br>
+### Generating a .liquidrc File
 
-Below is the defaults configuration applied when using a `.liquidrc` file.
+You can generate a `.liquidrc` file using the **Liquid: Generate .liquidrc** command via the vscode command palette. The extension will use default rules defined on the `liquid.format` user/workspace setting. Don't get too married to this schema as it will likely change when the extension is superseded by Liquify but rest easy knowing backward capability will be provided as things progressively change.
 
 ```jsonc
 {
-  "completions": {
-    "schema": true,
-    "layouts": false,
-    "settings": true,
-    "locales": true
+  "ignore": [],
+  "crlf": false,
+  "commentIndent": true,
+  "endNewline": false,
+  "indentChar": " ",
+  "indentSize": 2,
+  "preserveComment": false,
+  "preserveLine": 2,
+  "wrap": 0,
+  "markup": {
+    "correct": false,
+    "commentNewline": false,
+    "attributeCasing": "preserve",
+    "attributeValues": "preserve",
+    "attributeSort": false,
+    "attributeSortList": [],
+    "forceAttribute": false,
+    "forceLeadAttribute": false,
+    "forceIndent": false,
+    "preserveText": false,
+    "preserveAttributes": false,
+    "selfCloseSpace": false,
+    "quoteConvert": "none"
   },
-  "validate": {
-    "schema": true,
-    "layouts": true,
-    "settings": true,
-    "locales": false
+  "style": {
+    "correct": false,
+    "classPadding": false,
+    "noLeadZero": false,
+    "sortSelectors": false,
+    "sortProperties": false
   },
-  "format": {
-    "ignore": [],
-    "crlf": false,
-    "commentIndent": true,
-    "endNewline": false,
-    "indentChar": " ",
-    "indentSize": 2,
-    "preserveComment": false,
-    "preserveLine": 2,
-    "wrap": 0,
-    "markup": {
-      "correct": false,
-      "commentNewline": false,
-      "attributeCasing": "preserve",
-      "attributeValues": "preserve",
-      "attributeSort": false,
-      "attributeSortList": [],
-      "forceAttribute": false,
-      "forceLeadAttribute": false,
-      "forceIndent": false,
-      "preserveText": false,
-      "preserveAttributes": false,
-      "selfCloseSpace": false,
-      "quoteConvert": "none"
-    },
-    "style": {
-      "correct": false,
-      "classPadding": false,
-      "noLeadZero": false,
-      "sortSelectors": false,
-      "sortProperties": false
-    },
-    "script": {
-      "correct": false,
-      "braceNewline": false,
-      "bracePadding": false,
-      "braceStyle": "none",
-      "braceAllman": false,
-      "caseSpace": false,
-      "inlineReturn": true,
-      "elseNewline": false,
-      "endComma": "never",
-      "arrayFormat": "default",
-      "objectIndent": "default",
-      "functionNameSpace": false,
-      "functionSpace": false,
-      "styleGuide": "none",
-      "ternaryLine": false,
-      "methodChain": 4,
-      "neverFlatten": false,
-      "noCaseIndent": false,
-      "noSemicolon": false,
-      "quoteConvert": "none"
-    },
-    "json": {
-      "arrayFormat": "default",
-      "braceAllman": false,
-      "bracePadding": false,
-      "objectIndent": "default"
-    }
+  "script": {
+    "correct": false,
+    "braceNewline": false,
+    "bracePadding": false,
+    "braceStyle": "none",
+    "braceAllman": false,
+    "caseSpace": false,
+    "inlineReturn": true,
+    "elseNewline": false,
+    "endComma": "never",
+    "arrayFormat": "default",
+    "objectIndent": "default",
+    "functionNameSpace": false,
+    "functionSpace": false,
+    "styleGuide": "none",
+    "ternaryLine": false,
+    "methodChain": 4,
+    "neverFlatten": false,
+    "noCaseIndent": false,
+    "noSemicolon": false,
+    "quoteConvert": "none"
+  },
+  "json": {
+    "arrayFormat": "default",
+    "braceAllman": false,
+    "bracePadding": false,
+    "objectIndent": "default"
   }
 }
 ```
 
-> Don't get too married to the schema structures as they are likely to change when the extension is superseded.
-
 # Snippets
 
-Liquid snippets are supported in this extension. The Filter and Tag snippets included were originally forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). The reason for forking this extension is to avoid conflicts due to the extension dependency it relies on, however additionally the extension includes over 50+ snippet helpers for both Jekyll and Shopify development.
+Liquid snippets are supported in this extension. The filter and tag snippets included were originally forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) but apply choice based delimiter dashes opposed to including duplicated completions.
+
+> **Note**
+> Extension snippets will be deprecated in Liquify and exist only until the extension is superseded. Liquify supports LSP Completions as per [#56](https://github.com/panoply/vscode-liquid/issues/56#issuecomment-852550324).
 
 <br>
 
