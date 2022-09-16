@@ -258,7 +258,8 @@ ctrl + L  # windows
 ```
 
 > **Note**
-> You can configure a different key-binding via `editor.action.formatDocument` keyboard shortcuts menu in vscode.
+>
+> _You can configure a different key-binding via `editor.action.formatDocument` keyboard shortcuts menu in vscode._
 
 ### Status Bar
 
@@ -274,7 +275,7 @@ When the extension is enabled and a supported file is open and active in your ed
 
 > **Note**
 >
-> When extended features have been disabled (ie: `liquid.enable` is `false`) then the status bar will not be displayed and formatting will not applied.
+> _When extended features have been disabled (ie: `liquid.enable` is `false`) then the status bar will not be displayed and formatting will not applied._
 
 ### Ignoring Code and/or Files
 
@@ -287,7 +288,8 @@ You can skip formatting on files, directories and code a few different ways. If 
 - `{% comment %} @prettify-ignore {% endcomment %}`
 
 > **Warning**
-> Inline ignore made possible via Prettify are not yet fully operational.
+>
+> **Inline ignore made possible via Prettify are not yet fully operational.**
 
 # Configuration
 
@@ -309,7 +311,7 @@ Including a `.liquidrc` file in the root of your projects workspace is the **rec
 
 > **Note**
 >
-> The `.liquidrc` file will be an essential requirement in Liquify (the future release) and the point of control for the Liquify parser, Language Server and the multiple features it provides.
+> _The `.liquidrc` file will be an essential requirement in Liquify (the future release) and the point of control for the Liquify parser, Language Server and the multiple features it provides._
 
 ### Supported Files
 
@@ -392,7 +394,7 @@ Liquid snippets are supported in this extension. The filter and tag snippets inc
 
 > **Note**
 >
-> Extension snippets will be deprecated in Liquify and exist only until the extension is superseded. Liquify supports LSP Completions as per [#56](https://github.com/panoply/vscode-liquid/issues/56#issuecomment-852550324).
+> _Extension snippets will be deprecated in Liquify and exist only until the extension is superseded. Liquify supports LSP Completions as per [#56](https://github.com/panoply/vscode-liquid/issues/56#issuecomment-852550324)._
 
 <br>
 
