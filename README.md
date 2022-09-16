@@ -259,7 +259,7 @@ ctrl + L  # windows
 
 > **Note**
 >
-> _You can configure a different key-binding via `editor.action.formatDocument` keyboard shortcuts menu in vscode._
+> _You can configure a different key-binding via `editor.action.formatDocument` keyboard shortcuts menu._
 
 ### Status Bar
 
@@ -402,11 +402,11 @@ Liquid snippets are supported in this extension. The filter and tag snippets inc
 
 # Contributing
 
-TODO
-
-### Requirements
+Contributions are welcome!
 
 ### Support
+
+No obligation, I'll likely use any donations to help dog shelters because dogs are generally better than humans.
 
 **PayPal**: [Donate](https://www.paypal.me/paynicos)<br>
 **BTC**: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
