@@ -698,9 +698,23 @@
       "{",
       "\t\"type\": \"checkbox\",",
       "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": ${4:true}}${5:,\n\t\"info\": \"$6\"}",
-      "}${7:,}"
+      "\t\"label\": \"${2:label}\",",
+      "\t\"default\": ${3|true,false|}",
+      "}"
     ]
+  },
+  "Schema, number": {
+    "prefix": "schema: number",
+    "body": [
+      "{",
+      "\t\"type\": \"number\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${1:label}\",",
+      "\t\"default\": ${1:20},",
+      "\t\"placeholder\": \"${1:placeholder}\"",
+      "}"
+    ],
+    "description": "Schema, number"
   },
   "Schema, range": {
     "description": "Schema input setting: \"range\"",
