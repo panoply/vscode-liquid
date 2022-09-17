@@ -13,6 +13,7 @@ will continue to be maintained and progressively transition to Liquify.</i>
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-liquid/v3.0.0/images/line.svg" width="100%">
 
+<p align="center">
 <a href="https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid">
   <img src="https://img.shields.io/badge/vscode-install-gray.svg?style=popout-square">
 </a>
@@ -29,22 +30,7 @@ will continue to be maintained and progressively transition to Liquify.</i>
   <img src="https://img.shields.io/npm/v/@liquify/prettify?style=popout-square&color=hotpink&label=%F0%9F%8E%80%20prettify%20%20">
 </a>
 &nbsp;
-<a href="https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid">
-  <img src="https://img.shields.io/badge/vscode-install-gray.svg?style=popout-square">
-</a>
-&nbsp;
-<a href="https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid">
-  <img src="https://img.shields.io/visual-studio-marketplace/v/sissel.shopify-liquid.svg?style=popout-square">
-</a>
-&nbsp;
-<a href="https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid">
-  <img src="https://img.shields.io/visual-studio-marketplace/i/sissel.shopify-liquid?style=flat-square">
-</a>
-&nbsp;
-<a href="https://github.com/panoply/prettify">
-  <img src="https://img.shields.io/npm/v/@liquify/prettify?style=popout-square&color=hotpink&label=%F0%9F%8E%80%20prettify%20%20">
-</a>
-&nbsp;
+</p>
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-liquid/v3.0.0/images/banner.png"  atl="Liquid Logo"  width="100%">
 
