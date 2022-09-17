@@ -30,8 +30,6 @@ will continue to be maintained and progressively transition to Liquify.</i>
 
 </code></pre>
 
-<img src="https://raw.githubusercontent.com/panoply/vscode-liquid/v3.0.0/images/line.svg" width="100%">
-
 <img src="https://raw.githubusercontent.com/panoply/vscode-liquid/v3.0.0/images/banner.png"  atl="Liquid Logo"  width="100%">
 
 # Liquid <small style="color:#999;">(vscode)</small>
