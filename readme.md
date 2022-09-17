@@ -1,21 +1,6 @@
-<pre><code><strong>🩸 <i>LIQUIFY ~ INFORMATION ON THE FUTURE RELEASE</i></strong>
-<p>
-<i>For quite some time users of this extension have been waiting for the next release
-(Liquify). Liquify will supersede this extension and facilitate advanced features and
-capabilities. Liquify is a big project which I began developing in 2020. This extension
-will continue to be maintained and progressively transition to Liquify.</i>
-</p>
-   <a href="https://github.com/panoply/vscode-liquid/issues/56"><i>Liquify and the future of this extension</i></a>
-   <a href="https://github.com/panoply/vscode-liquid/projects/6"><i>Project Overview and what to expect</i></a>
-   <a href="https://discord.gg/eUNEsxMuWt"><i>Join the Discord and collaborate on the project</i></a>
-
-</code></pre>
-
-<img src="https://raw.githubusercontent.com/panoply/vscode-liquid/v3.0.0/images/line.svg" width="100%">
-
-<p align="center">
+<h2 align="center">
 <a href="https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid">
-  <img src="https://img.shields.io/badge/vscode-install-gray.svg?style=popout-square">
+  <img src="https://img.shields.io/badge/vscode-install-blue.svg?style=popout-square">
 </a>
 &nbsp;
 <a href="https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid">
@@ -30,7 +15,22 @@ will continue to be maintained and progressively transition to Liquify.</i>
   <img src="https://img.shields.io/npm/v/@liquify/prettify?style=popout-square&color=hotpink&label=%F0%9F%8E%80%20prettify%20%20">
 </a>
 &nbsp;
+</h2>
+
+<pre><code><strong>🩸 <i>LIQUIFY ~ INFORMATION ON THE FUTURE RELEASE</i></strong>
+<p>
+<i>For quite some time users of this extension have been waiting for the next release
+(Liquify). Liquify will supersede this extension and facilitate advanced features and
+capabilities. Liquify is a big project which I began developing in 2020. This extension
+will continue to be maintained and progressively transition to Liquify.</i>
 </p>
+   <a href="https://github.com/panoply/vscode-liquid/issues/56"><i>Liquify and the future of this extension</i></a>
+   <a href="https://github.com/panoply/vscode-liquid/projects/6"><i>Project Overview and what to expect</i></a>
+   <a href="https://discord.gg/eUNEsxMuWt"><i>Join the Discord and collaborate on the project</i></a>
+
+</code></pre>
+
+<img src="https://raw.githubusercontent.com/panoply/vscode-liquid/v3.0.0/images/line.svg" width="100%">
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-liquid/v3.0.0/images/banner.png"  atl="Liquid Logo"  width="100%">
 
