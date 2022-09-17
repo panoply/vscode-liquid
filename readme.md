@@ -11,23 +11,54 @@ will continue to be maintained and progressively transition to Liquify.</i>
 
 </code></pre>
 
-<hr>
+<img src="https://raw.githubusercontent.com/panoply/vscode-liquid/v3.0.0/images/line.svg" width="100%">
 
-[![install](https://img.shields.io/badge/vscode-install-blue.svg?style=popout-square)](https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid) &nbsp; ![](https://img.shields.io/visual-studio-marketplace/v/sissel.shopify-liquid.svg?style=popout-square) &nbsp; ![install](https://vsmarketplacebadge.apphb.com/downloads-short/sissel.shopify-liquid.svg?style=popout-square)
+<a href="https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid">
+  <img src="https://img.shields.io/badge/vscode-install-gray.svg?style=popout-square">
+</a>
+&nbsp;
+<a href="https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid">
+  <img src="https://img.shields.io/visual-studio-marketplace/v/sissel.shopify-liquid.svg?style=popout-square">
+</a>
+&nbsp;
+<a href="https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid">
+  <img src="https://img.shields.io/visual-studio-marketplace/i/sissel.shopify-liquid?style=flat-square">
+</a>
+&nbsp;
+<a href="https://github.com/panoply/prettify">
+  <img src="https://img.shields.io/npm/v/@liquify/prettify?style=popout-square&color=hotpink&label=%F0%9F%8E%80%20prettify%20%20">
+</a>
+&nbsp;
+<a href="https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid">
+  <img src="https://img.shields.io/badge/vscode-install-gray.svg?style=popout-square">
+</a>
+&nbsp;
+<a href="https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid">
+  <img src="https://img.shields.io/visual-studio-marketplace/v/sissel.shopify-liquid.svg?style=popout-square">
+</a>
+&nbsp;
+<a href="https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid">
+  <img src="https://img.shields.io/visual-studio-marketplace/i/sissel.shopify-liquid?style=flat-square">
+</a>
+&nbsp;
+<a href="https://github.com/panoply/prettify">
+  <img src="https://img.shields.io/npm/v/@liquify/prettify?style=popout-square&color=hotpink&label=%F0%9F%8E%80%20prettify%20%20">
+</a>
+&nbsp;
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-liquid/v3.0.0/images/banner.png"  atl="Liquid Logo"  width="100%">
 
-# Liquid <small style="color:#999;">(VS Code)</small>
+# Liquid <small style="color:#999;">(vscode)</small>
 
-A visual studio code extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support, snippet auto-completion, auto formatting (code beautification), validations and more! Respects VS Codes native Intellisense features and provides hover capabilities + various other essentials.
+A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template language. Includes syntax highlighting support, snippet auto-completion, formatting (code beautification), validations and respects HTML Intellisense features.
 
 ### Key Features
 
 - Syntax support for Liquid in CSS, SCSS, JavaScript, Markdown and more!
-- Auto formatting and beautification using [Prettify](https://github.com/panoply/prettify).
+- Formatting and beautification support using [Prettify](https://github.com/panoply/prettify).
 - Snippet auto-completion for Liquid tags, filters and more!
 - Supports Shopify [Section](https://help.shopify.com/en/themes/development/sections) code blocks.
-- Integrated JSON Schema stores that provide IntelliSense capabilities in Shopify Theme files.
+- Integrated Schema stores that provide IntelliSense capabilities within Shopify JSON files.
 - Preserves VSCode HTML IntelliSense capabilities in `.liquid` markup files.
 
 ### Showcase
@@ -65,14 +96,18 @@ A visual studio code extension for the [Liquid](https://shopify.github.io/liquid
 
 After installing this extension run the `Liquid: Generate .liquidrc File` command to create a `.liquidrc` configuration file in your projects root directory. This file will be used to configure the formatting style and control various other capabilities provided by the extension. Refer to the [Formatting](#formatting) and [Rules](#rules) section for additional information and customization options.
 
-### Upgrading v3.0
+### Updating to v3.0.0
 
-Users who were upgraded to version **3.0.0** will need to align their configurations. As of **v3.0.0** the `.liquidrc` configuration file schema does not support the schema used in version **v2.3.0**. Both the `ignore` tags and `associate` tags formatting options are deprecated and will have no effect. The validations will inform about the changes.
+Users who were upgraded to version **3.0.0** will need to align their configurations. The options defined in **v2.3.0** `.liquidrc` rule files are no longer supported of valid. The validations will inform about the changes but take a look at the release notes for a complete overview of all changes.
 
-- [v3.0.0 Release Notes](/release-notes.md)
+- [Release Notes](/release-notes.md)
 - [Changelog](/changelog.md)
 
-If you do not wish to upgrade then you can continue using the old version. Search for the extension "liquid" and clicking the gear icon. Select "Install Another Version" then select **2.3.0**. You can find the old readme in the [v2.3.0](https://github.com/panoply/vscode-liquid/tree/v2.3.0) branch.
+### Continue using v2.3 (not recommended)
+
+If you do not wish to upgrade then you can continue using the old version. Search for the extension "liquid" in vscode (`cmd + shift + x`) and press gear icon in the bottom right corner. Select "Install Another Version" then select **2.3.0**.
+
+- [v2.3.0 Readme](https://github.com/panoply/vscode-liquid/tree/v2.3.0)
 
 # Commands
 
@@ -158,31 +193,31 @@ The extension provides various workspace settings. Most the available options ca
 
 # Syntax Support
 
-Liquid syntax highlighting support within HTML and JSON languages are applied using vscode injection grammars. Grammar injections allow intelliSense capabilities provided by vscode to persist and work without interruption. Liquid syntax contained in JavaScript, TypeScript, CSS/SCSS, JSON and other supported languages require an `.liquid` extension suffix be applied on file names (eg: _js.liquid_, _css.liquid_ etc) or alternatively, you can use the vscode [file associations](https://code.visualstudio.com/docs/languages/identifiers).
+Liquid syntax highlighting support within HTML and JSON languages are applied using vscode injection grammars. Grammar injections allow intelliSense capabilities provided by vscode to persist and work without interruption. Liquid syntax contained in JavaScript, CSS, SCSS, YAML and other supported languages require an `.liquid` extension suffix be applied to file names (eg: _.css_ → _.css.liquid_ etc). If the required `.liquid` suffix is problematic then use [file associations](https://code.visualstudio.com/docs/languages/identifiers) and point extensions to the language names.
 
 ### Supported Languages
 
-| Language Identifier | Supported Extensions | Grammar Scope        | Grammar Injection |
-| ------------------- | -------------------- | -------------------- | ----------------- |
-| HTML                | .liquid _or_ .html   | text.html.derivative | ✓                 |
-| JSON                | .json                | source.json          | ✓                 |
-| Liquid              | .liquid              | source.liquid        | 𐄂                 |
-| Liquid Yaml         | .yaml.liquid         | source.yaml          | 𐄂                 |
-| Liquid Markdown     | .md.liquid           | text.html.markdown   | 𐄂                 |
-| Liquid CSS          | .css.liquid          | source.css           | 𐄂                 |
-| Liquid SCSS         | .scss.liquid         | source.scss          | 𐄂                 |
-| Liquid JavaScript   | .js.liquid           | source.ts            | 𐄂                 |
-| Liquid TypeScript   | .ts.liquid           | source.ts            | 𐄂                 |
+| Language Identifier | Language Alias    | Supported Extension | Grammar Injection |
+| ------------------- | ----------------- | ------------------- | ----------------- |
+| html                | HTML              | .liquid             | ✓                 |
+| json                | JSON              | .json               | ✓                 |
+| liquid              | Liquid            | .liquid             | 𐄂                 |
+| liquid-json         | Liquid JSON       | .json.liquid        | 𐄂                 |
+| liquid-yaml         | Liquid Yaml       | .yaml.liquid        | 𐄂                 |
+| liquid-markdown     | Liquid Markdown   | .md.liquid          | 𐄂                 |
+| liquid-css          | Liquid CSS        | .css.liquid         | 𐄂                 |
+| liquid-scss         | Liquid SCSS       | .scss.liquid        | 𐄂                 |
+| liquid-javascript   | Liquid JavaScript | .js.liquid          | 𐄂                 |
 
 ### Grammar Injections
 
-In previous versions of this extension, the applied injections would cause otherwise valid syntax to be invalidated in the many languages being extended. As of version 3.0 the vast majority of those issues were fixed and no interference outside of Liquid contained structures will apply highlighting.
+In order to preserve vscode intellisense capabilities both the HTML and JSON languages have Liquid grammars injected into them. The injection will allow Liquid code to be highlighted and treated as if its syntax was a part of the language. When a file using a `.liquid` extension it will be associated to HTML, this is the **intended behavior** because Liquid grammars are injected into HTML grammars.
 
-**Files using a `.liquid` extension will be automatically associated to HTML.**
+_Changing the language to Liquid from HTML will disable HTML intellisense capabilities._
 
 ### HTML Validations
 
-If your `<style>` and `<script>` HTML tags contain Liquid syntax consider disabling HTML Validations. This will to prevent VS Code from validating these tags and throwing errors:
+When your `<style>` and `<script>` HTML tags contain Liquid syntax vscode will complain about invalid code. You should consider disabling HTML script and style validations when working with Liquid. Disabling validations in these embedded code regions will to prevent VSCode from validating and throwing errors.
 
 ```json
 {
@@ -193,7 +228,7 @@ If your `<style>` and `<script>` HTML tags contain Liquid syntax consider disabl
 
 ### Markdown Codeblock
 
-Embedded code blocks regions are supported in markdown (_.md_) files:
+Liquid markdown embedded code block regions are supported in `.md` files:
 
 ````md
 ```liquid
@@ -205,12 +240,13 @@ Embedded code blocks regions are supported in markdown (_.md_) files:
 
 # Formatting
 
-Formatting can be enabled/disabled via the command palette and respects `editor.formatOnSave`. When Liquid formatting is **enabled** the extension will format Liquid, JSON and all suffixed `*.liquid` files supported by [Prettify](https://github.com/panoply/prettify). You can **disable** beautification by clicking the 💧 emoji icon in the status bar or define a set of directories/files to exclude from handling using the `format.ignore` option. Formatting options for controlling code output style can be provided within a .liquidrc file or alternatively you can use the workspace setting options.
+Formatting can be enabled/disabled via the command palette and will respect `editor.formatOnSave`. When Liquid formatting is **enabled** the extension will format Liquid, JSON and all suffixed `*.liquid` files supported by [Prettify](https://github.com/panoply/prettify). You can **disable** beautification by clicking the 💧 emoji icon in the status bar or exclude directories/files from handling using the `format.ignore` setting. Formatting options for controlling code output style can be provided within a .liquidrc file or alternatively you can use the workspace setting options.
 
-### Prettify 🎀
+### 🎀 Prettify
 
-[Prettify](https://github.com/panoply/prettify) is used to facilitate formatting capabilities. Prettify is built atop of the late but powerful Sparser + PrettyDiff lexing algorithm and has since been adapted for refined usage by this extension. Prettify exposes a granular set of beautification rules that supports Liquid code contained in markup, script and style languages and will be used in the future Liquify release. I actively maintain Prettify and though it exists in its infancy stages the ambition is to eventually have the tool be a competitive alternative to Prettier with the goal of eliminating the "opinionated" conventions imposed.
+[Prettify](https://github.com/panoply/prettify) is used to facilitate formatting capabilities by the extension. Prettify is built atop of the late but powerful Sparser lexing algorithm and has since been adapted for refined usage in Liquid. Prettify exposes a granular set of rules and supports Liquid beautification in markup, script and style languages. I actively maintain Prettify and though in its infancy stages the ambition is to eventually have the tool become a competitive alternative to Prettier and eliminate "opinionated" conventions.
 
+- [Repository](https://github.com/panoply/prettify)
 - [Playground](https://liquify.dev/prettify)
 
 ### Setting Default Formatter
