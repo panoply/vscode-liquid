@@ -51,8 +51,7 @@ A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template 
 
 # Table of Contents
 
-- [Installing](#installing)
-  - [Upgrading v3.0](#upgrading-v30)
+- [Updating v3.0](#upgrading-v30)
 - [Commands](#commands)
 - [Workspace Settings](#workspace-settings)
 - [Syntax Support](#syntax-support)
@@ -74,10 +73,6 @@ A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template 
   - [Requirements](#requirements)
   - [Support](#support)
 - [Changelog](#changelog)
-
-# Installing
-
-After installing run the `Liquid: Enable Extension` command to activate the extension. You can _optionally_ generate a `.liquidrc` file which can used for defining beautification rules by running on of the `Liquid: Generate .liquidrc` commands.
 
 ### Updating to v3.0.0
 
