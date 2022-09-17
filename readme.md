@@ -15,7 +15,7 @@ will continue to be maintained and progressively transition to Liquify.</i>
 
 [![install](https://img.shields.io/badge/vscode-install-blue.svg?style=popout-square)](https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid) &nbsp; ![](https://img.shields.io/visual-studio-marketplace/v/sissel.shopify-liquid.svg?style=popout-square) &nbsp; ![install](https://vsmarketplacebadge.apphb.com/downloads-short/sissel.shopify-liquid.svg?style=popout-square)
 
-<img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/v3.0.0/images/banner.gif"  atl="Liquid Logo"  width="100%">
+<img src="https://raw.githubusercontent.com/panoply/vscode-liquid/v3.0.0/images/banner.png"  atl="Liquid Logo"  width="100%">
 
 # Liquid <small style="color:#999;">(VS Code)</small>
 
