@@ -54,7 +54,7 @@ A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template 
 - [Updating to v3.0](#updating-to-v300)
 - [Commands](#commands)
 - [Workspace Settings](#workspace-settings)
-  - [Liquid Settings](#liquid-settings)
+  - [Settings Target](#settings-target)
   - [Control Capabilities](#control-capabilities)
 - [Syntax Support](#syntax-support)
   - [Supported Languages](#supported-languages)
@@ -119,9 +119,6 @@ By default, it is assumed you are using workspace/user settings.
 
   // Controls how extension settings are applied
   "liquid.settings.target": "workspace",
-
-  // Whether `.liquid` files should forward to HTML
-  "liquid.settings.html": true,
 
   // Validates the contents of the `{% schema %}` tag and implemented JSON
   "liquid.validate.json": true,
@@ -312,13 +309,13 @@ By default, it is assumed you are using workspace/user settings.
 }
 ```
 
-### Liquid Settings
+### Settings Target
 
-The `liquid.settings` options are used to determine how and where the extension applies settings. The default configuration and behavior of the extension is to use the `.vscode/settings.json` workspace file as per the `workspace` target. Though you can target `user` settings, it is **highly discouraged** and could lead to unexpected issues outside of Liquid projects.
+The `liquid.settings.target` option is used to determine how and where the extension applies settings. The default configuration and behavior of the extension is to use the `.vscode/settings.json` workspace file as per the `workspace` target. Though you can target `user` settings, it is **highly discouraged** and could lead to unexpected issues outside of Liquid projects.
 
-The `liquid.settings.html` is used to associate Liquid to HTML. This option defaults to `true` and allows HTML language capabilities and intellisense features to persist together with Liquid. This below example configuration will be applied to your projects workspace settings unless the HTML language identifier has pre-existing settings defined. VSCode will prompt you if settings exist on the HTML language id and you'll need to set the configurations manually. If the `liquid.format.enable` is set to `false` then process will be skipped. Take a look at the [Setting Default Formatter](#setting-default-formatter) section for more information.
+The below vscode settings is what will be applied to your projects workspace unless the HTML language identifier has pre-existing settings defined. Take a look at the [setting default formatter](#setting-default-formatter) and [grammar injections](#grammar-injections) sections for more information.
 
-_Default configuration applied to your projects .vscode/settings.json file if options are undefined_
+_Default configuration applied to your projects .vscode/settings.json file when options are undefined_
 
 ```jsonc
 {
