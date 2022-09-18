@@ -60,6 +60,12 @@ export class Editor extends State {
       this.barItem.text = '💧 $(sync~spin)';
       this.barItem.tooltip = 'Loading Extension';
 
+    } else if (type === Status.Upgrade) {
+
+      this.barItem.text = '💧 $(warning)';
+      this.barItem.tooltip = 'Using deprecated settings';
+      this.barItem.command = 'liquid.upgradeVersion';
+
     }
 
     return show ? this.barItem.show() : this.barItem.hide();
@@ -78,9 +84,12 @@ export class Editor extends State {
   /**
    * Print something to the Liquid output channel.
    */
-  logOutput (title:| 'liquid'| 'error'| 'warning', message: string) {
+  logOutput (...params: string[]) {
 
-    this.outputChannel.appendLine(`${getTime()} ${title} ${message}`);
+    const message = params[0];
+    const title = params[1] || null;
+
+    this.outputChannel.appendLine(`${getTime()} ${message}`);
 
     if (title === 'error') {
       this.hasError = true;
