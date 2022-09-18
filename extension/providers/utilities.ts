@@ -16,12 +16,15 @@ export const enum Status {
   Disabled,
   Ignored,
   Error,
-  Loading
+  Loading,
+  Upgrade
 }
 
 type LanguageIDs = LiteralUnion<(
   | 'html'
   | 'liquid'
+  | 'json'
+  | 'jsonc'
   | 'liquid-javascript'
   | 'liquid-css'
   | 'liquid-scss'
@@ -42,16 +45,14 @@ export function jsonc (input: object | string) {
 
   } catch (error) {
 
-    console.error(error);
-
-    return false;
+    throw new Error(error);
 
   }
 }
 
 export function getSelectors (inject = false): DocumentSelector {
 
-  const defaults = [
+  const defaults: DocumentSelector = [
     {
       scheme: 'file',
       language: 'liquid'
@@ -101,9 +102,12 @@ export function getSelectors (inject = false): DocumentSelector {
  */
 export function getLanguage (language: LanguageIDs): LanguageNames {
 
+  console.log(language);
   switch (language) {
     case 'liquid':
-    case 'html': return language;
+    case 'json': return language;
+    case 'html': return 'liquid';
+    case 'jsonc': return 'json';
     case 'liquid-javascript': return 'javascript';
     case 'liquid-css': return 'scss';
     case 'liquid-scss': return 'scss';
@@ -173,6 +177,57 @@ export function mergePreferences (options: Options): Options {
     wrap: editor.get<number>('wordWrapColumn') || defaults.wrap,
     indentSize: editor.get<number>('tabSize') || defaults.indentSize,
     endNewline: editor.get<boolean>('renderFinalNewline') || defaults.endNewline
+  });
+
+}
+
+/**
+ * Recommended Rules
+ *
+ * Applies the recommended beautification rules
+ */
+export function recommendedRules (): Options {
+
+  return mergeRight(prettify.options.rules, {
+    wrap: 0,
+    endNewline: true,
+    markup: {
+      forceAttribute: 2,
+      correct: true,
+      quoteConvert: 'double',
+      delimiterSpacing: true,
+      selfCloseSpace: true,
+      commentNewline: true,
+      forceIndent: true
+    },
+    json: {
+      braceAllman: true,
+      arrayFormat: 'indent',
+      objectIndent: 'indent',
+      objectSort: false
+    },
+    style: {
+      sortProperties: true,
+      sortSelectors: true,
+      noLeadZero: true,
+      quoteConvert: 'single'
+    },
+    script: {
+      arrayFormat: 'indent',
+      objectIndent: 'indent',
+      braceAllman: false,
+      methodChain: 3,
+      caseSpace: true,
+      endComma: 'never',
+      quoteConvert: 'single',
+      elseNewline: true,
+      functionNameSpace: true,
+      functionSpace: true,
+      ternaryLine: true,
+      variableList: 'none',
+      vertical: true,
+      correct: true
+    }
   });
 
 }
