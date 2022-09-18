@@ -1,12 +1,13 @@
 {
-  "title": "JSON formatting schema for the VSCode Liquid extension",
+  "title": "Prettify beautification rules.",
+  "description": "Configuration defined here will be forwarded to the vscode-liquid extension.",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "properties": {
-    "liquify": {
+    "prettify": {
       "type": "object",
       "properties": {
         "prettify": {
-          "$ref": "./liquidrc.json#/definitions/prettify"
+          "$ref": "./liquidrc.json"
         }
       }
     }

@@ -1,6 +1,9 @@
 {
-  "title": "JSON formatting schema for the VSCode Liquid extension",
+  "title": "VSCode Liquid Extension Configuration",
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "description": "Accepts formatting rules and options that will be passed to Prettify",
   "definitions": {
     "markup": {
       "properties": {
@@ -527,81 +530,71 @@
           "description": "Glob pattern to files and/or directories to be ignored by the formatter"
         }
       ]
-    },
-    "prettify": {
-      "type": "object",
-      "title": "Prettify Beautification",
-      "description": "Formatting rules and options passed to Prettify",
-      "properties": {
-        "wrap": {
-          "type": "number",
-          "title": "Wrap Limit",
-          "description": "Character width limit before applying word wrap. A `0` value disables this option. Typically, you can leave this option, as it will defaults to the word wrap limit set within workspace/user settings of your text editor."
-        },
-        "indentSize": {
-          "type": "number",
-          "default": 2,
-          "description": "The level of indentation to be applied to HTML and Liquid syntax. This option does not apply to embedded regions."
-        },
-        "commentIndent": {
-          "type": "boolean",
-          "default": false,
-          "description": "If a blank new line should be forced above comments."
-        },
-        "preserveLine": {
-          "type": "number",
-          "default": 3,
-          "description": "The maximum number of consecutive empty lines to retain."
-        },
-        "preserveComment": {
-          "type": "boolean",
-          "default": false,
-          "title": "Eliminate Word Wrap Upon Comments",
-          "description": "Prevent comment reformatting due to option wrap."
-        },
-        "endNewLine": {
-          "type": "boolean",
-          "default": false,
-          "description": "Whether or not to insert a final line. When this rule is undefined in a `.liquidrc` file the Text Editors settings will be used, in vscode that is `*.endWithNewline` where `*` is a language name.  If an `.editorconfig` file is found present in root, those rules will be applied in **precedence** over Text Editor"
-        },
-        "crlf": {
-          "type": "boolean",
-          "default": false,
-          "description": " If line termination should be Windows (CRLF) format. Unix (LF) format is the default."
-        },
-        "markup": {
-          "type": "object",
-          "additionalProperties": false,
-          "description": "HTML beautification formatting options and rules",
-          "$ref": "#/definitions/markup"
-        },
-        "script": {
-          "type": "object",
-          "additionalProperties": false,
-          "description": "JavaScript beautification formatting options and rules. Applied to any defined files, HTML <script> tags and Liquid \"javascript\" tags",
-          "$ref": "#/definitions/script"
-        },
-        "style": {
-          "type": "object",
-          "additionalProperties": false,
-          "description": "CSS beautification formatting options and rules. Applied to defined \"files[]\", HTML <style> tags and Liquid \"stylesheet\" / \"style\" tags",
-          "$ref": "#/definitions/style"
-        },
-        "json": {
-          "type": "object",
-          "additionalProperties": false,
-          "description": "JSON beautification formattingoptions and rules. Applied to any defined files, HTML <script type=\"application/json\"> tags and Liquid \"schema\" tags",
-          "$ref": "#/definitions/json"
-        }
-      }
     }
   },
   "properties": {
     "ignore": {
       "$ref": "#/definitions/exclude"
     },
-    "prettify": {
-      "$ref": "#/definitions/prettify"
+    "wrap": {
+      "type": "number",
+      "title": "Wrap Limit",
+      "description": "Character width limit before applying word wrap. A `0` value disables this option. Typically, you can leave this option, as it will defaults to the word wrap limit set within workspace/user settings of your text editor."
+    },
+    "indentSize": {
+      "type": "number",
+      "default": 2,
+      "description": "The level of indentation to be applied to HTML and Liquid syntax. This option does not apply to embedded regions."
+    },
+    "commentIndent": {
+      "type": "boolean",
+      "default": false,
+      "description": "If a blank new line should be forced above comments."
+    },
+    "preserveLine": {
+      "type": "number",
+      "default": 3,
+      "description": "The maximum number of consecutive empty lines to retain."
+    },
+    "preserveComment": {
+      "type": "boolean",
+      "default": false,
+      "title": "Eliminate Word Wrap Upon Comments",
+      "description": "Prevent comment reformatting due to option wrap."
+    },
+    "endNewLine": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether or not to insert a final line. When this rule is undefined in a `.liquidrc` file the Text Editors settings will be used, in vscode that is `*.endWithNewline` where `*` is a language name.  If an `.editorconfig` file is found present in root, those rules will be applied in **precedence** over Text Editor"
+    },
+    "crlf": {
+      "type": "boolean",
+      "default": false,
+      "description": "If line termination should be Windows (CRLF) format. Unix (LF) format is the default."
+    },
+    "markup": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "HTML beautification formatting options and rules",
+      "$ref": "#/definitions/markup"
+    },
+    "script": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "JavaScript beautification formatting options and rules. Applied to any defined files, HTML <script> tags and Liquid \"javascript\" tags",
+      "$ref": "#/definitions/script"
+    },
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "CSS beautification formatting options and rules. Applied to defined \"files[]\", HTML <style> tags and Liquid \"stylesheet\" / \"style\" tags",
+      "$ref": "#/definitions/style"
+    },
+    "json": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "JSON beautification formattingoptions and rules. Applied to any defined files, HTML <script type=\"application/json\"> tags and Liquid \"schema\" tags",
+      "$ref": "#/definitions/json"
     }
   }
 }
