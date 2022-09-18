@@ -70,10 +70,10 @@ A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template 
   - [Using the package.json prettify field](#using-the-packagejson-prettify-field)
   - [Using .liquidrc rule file](#using-liquidrc-config-file)
 - [Snippets](#snippets)
+- [Releases](#changelog)
 - [Contributing](#contributing)
 - [Acknowledgements](#acknowledgements)
 - [Support](#support)
-- [Releases](#changelog)
 
 # Updating to v3.0.0
 
@@ -81,9 +81,9 @@ Users who were upgraded to version **3.0.0** will need to align their configurat
 
 - [Release Notes](/release-notes.md)
 
-### Continue using v2.3.0 (not recommended)
+### Continue using v2.3.0
 
-If you do not wish to upgrade then you can continue using the old version. Search for the extension "liquid" in vscode (`cmd + shift + x`) and press the gear icon in the bottom right corner. Select "Install Another Version" and then select **2.3.0**.
+Though it is discouraged, if you do not wish to upgrade then you can continue using the old version. Search for the extension "liquid" in vscode and press the gear icon in the bottom right corner. Select "Install Another Version" and then select **2.3.0**.
 
 - [v2.3.0 Documentation](https://github.com/panoply/vscode-liquid/tree/v2.3.0)
 
@@ -105,7 +105,9 @@ Below are the available commands exposed to the vscode command palette (`cmd + s
 
 # Workspace Settings
 
-The extension provides various workspace/user settings. The `liquid.format` options can be controlled using a `.liquidrc` configuration file or alternatively you can define format option on the `prettify` field of a node `package.json` file. Take a look at the [configuration](#configuration) section for information and other setting options. By default, it is assumed you are using workspace/user settings.
+The extension provides various workspace/user settings. The `liquid.format` options can be controlled using a `.liquidrc` configuration file or alternatively you can define format option on the `prettify` field of a node `package.json` file. Take a look at the [configuration](#configuration) section for information and other setting options.
+
+By default, it is assumed you are using workspace/user settings.
 
 ```jsonc
 {
@@ -178,6 +180,8 @@ The extension provides an option for disabling capabilities. The `liquid.enable`
 - File Association
 - JSON Validations
 - Status Bar Item
+
+When you set `liquid.enable` to `false` it does not disabled the extension but instead just prevents it from running at full capacity, assuming environment and providing capabilities that you might otherwise not require.
 
 # Syntax Support
 
@@ -412,7 +416,7 @@ _Extension snippets will be deprecated in Liquify and will exist only until the 
 
 <img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/schema-snippets.png"  atl="Shopify Schema Snippets"  width="100%">
 
-# Releases
+# [Releases](https://github.com/panoply/vscode-liquid/releases)
 
 As of **v3.0.0** all version releases and changelogs, including the distributed VSIX files can be found in [Releases](https://github.com/panoply/vscode-liquid/releases). Previous version changelogs can be found in the [v2.3.0](https://github.com/panoply/vscode-liquid/blob/v2.3.0/CHANGELOG.md) branch.
 
@@ -428,7 +432,7 @@ Contributions are welcome! This project is uses [pnpm](https://pnpm.js.org/en/cl
 
 ### Acknowledgements
 
-Special thanks to these talented folks:
+Special thanks to these talented folks.
 
 - [Curtis](https://github.com/toklok)
 - [Mansedan](https://github.com/MattWIP)
@@ -440,8 +444,7 @@ Special thanks to these talented folks:
 **PayPal**: [Donate](https://www.paypal.me/paynicos)<br>
 **BTC**: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
 
-<br>
 <img src="https://raw.githubusercontent.com/panoply/vscode-liquid/v3.0.0/images/line.svg" width="100%">
 <br>
 
-🥛 <small>[Νίκος Σαβίδης](mailto:n.savvidis@gmx.com)</small> <img align="right" src="https://img.shields.io/badge/-@sisselsiv-1DA1F2?logo=twitter&logoColor=fff" />
+🥛 <small>[Νίκος Σαβίδης](mailto:n.savvidis@gmx.com)</small>
