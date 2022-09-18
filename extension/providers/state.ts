@@ -19,13 +19,9 @@ export const enum ConfigType {
    */
   PackageJSONField,
   /**
-   * Workspace setting, ie: `.vscode/settings.json`
+   * Editor setting, ie: `.vscode/settings.json`
    */
-  WorkspaceSettings,
-  /**
-   * Global defined settings, ie: User Preferences
-   */
-  GlobalSettings
+  EditorSettings
 }
 
 /**
@@ -39,7 +35,7 @@ export class State {
   /**
    * Document Management
    */
-  documents: { [fileName: string]: Disposable } = {};
+  documents: Map<string, Disposable> = new Map();
 
   /**
    * Returns the active text editor, surgar
@@ -93,17 +89,23 @@ export class State {
   /**
    * Returns the current document disposable
    */
-  get provider () { return this.documents[this.fileName]; }
+  get provider () { return this.documents.get(this.fileName); }
 
   /**
    * Sets a new document to the static `documents` cache
    */
-  set provider (disposable) { this.documents[this.fileName] = disposable; }
+  set provider (disposable) {
 
-  /**
-   * Whether or not the document has a disposable
-   */
-  get hasDocument () { return this.fileName in this.documents; }
+    if (!this.documents.has(this.fileName)) {
+      this.documents.set(this.fileName, disposable);
+    }
+  }
+
+  get hasProvider () {
+
+    return this.documents.has(this.fileName);
+
+  }
 
   /**
    * Merged prettify rule
@@ -140,9 +142,14 @@ export class State {
      * Whether or not schema stores are disabled
      */
     schema: boolean;
+    /**
+     * Whether or not schema to validate shopify schema
+     */
+    shopifySchemaValidate: boolean;
   } = {
       formatting: null,
-      schema: null
+      schema: null,
+      shopifySchemaValidate: null
     };
 
   /**
@@ -153,6 +160,10 @@ export class State {
    * Anymatch pattern for ignored paths
    */
   ignoredGlobs: Tester;
+  /**
+   * Whether or not the extension is disabled
+   */
+  doNotStart: boolean = false;
   /**
    * Whether or not the extension is disabled
    */
