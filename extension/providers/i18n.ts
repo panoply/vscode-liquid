@@ -1,16 +1,25 @@
 export const EN = {
-  ENABLED: {
-    FORMATTING: ' Enabled Liquid\'s Prettify Formatter'
-  },
-  DISABLED: {
-    FORMATTING: ' Disabled Liquid\'s Prettify Formatter'
-  },
-  SUCCESS: {
-    SELECTION: ' Selection Formatted',
-    DOCUMENT: ' Document Formatted'
-  },
-  ERRORS: {
-    SELECTION: ' Formatting Failed! The selected text is invalid or incomplete.',
-    DOCUMENT: ' Formatting Failed! Failed! The document could not be formatted, see output.'
-  }
+  UPDATE_SETTINGS: 'Liquid Extension v3.0.0 - The the settings have changed in this version and you need to update configuration to continue using the extension. Check the release notes for more information and instructions.',
+  ENABLED_FORMAT: ' Enabled Liquid\'s Prettify Formatter',
+  DISABLED_FORMAT: ' Disabled Liquid\'s Prettify Formatter',
+  DOCUMENT_FORMAT: ' Document Formatted',
+  DOCUMENT_FORMAT_ERROR: ' Formatting Failed! Failed! The document could not be formatted, see output.',
+  GENERATE_RESET: 'Reset the .liquidrc file rules 👍',
+  GENERATE_EXISTS: '.liquidrc file already exists!',
+  GENERATE_USING: 'You are now using a .liquidrc file 👍',
+  GENERATE_ERROR: 'An error occured generating the rcfile',
+  SETTINGS_WORKSPACE: 'using workspace settings',
+  SETTINGS_LIQUIDRC: 'using liquidrc file ',
+  SETTINGS_PKG_PRETTIFY: 'using package.json prettify field',
+  SETTINGS_MISSING: 'No configuration found, using defaults',
+  ENABLED_PRETTIFY: 'prettify has been enabled',
+  DISABLED_PRETTIFY: 'prettify has been disabled',
+  INVALID_LIQUIDRC_TYPE: 'Invalid configuration type, .liquidrc expects an {}',
+  INVALID_LIQUIDRC_PARSE: 'Failed to parse liquidrc file',
+  INVALID_PKG_PARSE: 'failed to parse the package.json file',
+  DISABLED_EXTENSION: 'extended capabilities have been disabled',
+  ENABLED_EXTENSION: 'extended capabilities have been enabled',
+  DISABLED_SCHEMA_VALIDATE: 'schema validations have been disabled',
+  ENABLED_SCHEMA_VALIDATE: 'schema validations have been enabled',
+  UPDATED_FORMAT_RULES: 'updated prettify beautification rules'
 };
