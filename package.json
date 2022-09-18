@@ -71,6 +71,10 @@
         "title": "Liquid: Restart Extension"
       },
       {
+        "command": "liquid.upgradeVersion",
+        "title": "Liquid: Upgrade Extension"
+      },
+      {
         "command": "liquid.disableExtension",
         "title": "Liquid: Disable Extension"
       },
@@ -99,14 +103,6 @@
         "title": "Liquid: Generate .liquidrc config"
       }
     ],
-    "keybindings": [
-      {
-        "command": "liquid.formatDocument",
-        "key": "ctrl+l",
-        "mac": "cmd+l",
-        "when": "editorTextFocus"
-      }
-    ],
     "languages": [
       {
         "id": "liquid",
@@ -129,22 +125,10 @@
         "id": "liquid-scss",
         "configuration": "./language/liquid.configuration.json",
         "extensions": [
-          ".scss.liquid",
-          ".sass.liquid"
+          ".scss.liquid"
         ],
         "aliases": [
-          "Liquid SCSS",
-          "Liquid SASS"
-        ]
-      },
-      {
-        "id": "liquid-json",
-        "configuration": "./language/liquid.configuration.json",
-        "extensions": [
-          ".json.liquid"
-        ],
-        "aliases": [
-          "Liquid JSON"
+          "Liquid SCSS"
         ]
       },
       {
@@ -155,16 +139,6 @@
         ],
         "aliases": [
           "Liquid JavaScript"
-        ]
-      },
-      {
-        "id": "liquid-yaml",
-        "configuration": "./language/liquid.configuration.json",
-        "extensions": [
-          ".yaml.liquid"
-        ],
-        "aliases": [
-          "Liquid YAML"
         ]
       },
       {
@@ -184,25 +158,39 @@
           "meta.embedded.block.schema.liquid": "json",
           "meta.embedded.block.javascript.liquid": "javascript",
           "meta.embedded.block.stylesheet.liquid": "css",
-          "meta.embedded.block.style.liquid": "liquid-css",
-          "meta.embedded.block.stylesheet.scss.liquid": "liquid-scss"
+          "meta.embedded.block.stylesheet.scss.liquid": "scss",
+          "meta.embedded.block.style.liquid": "liquid-css"
         },
         "injectTo": [
-          "text.html.derivative",
+          "text.html.derivative"
+        ]
+      },
+      {
+        "scopeName": "source.liquid.frontmatter",
+        "path": "./grammar/injections/frontmatter.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.frontmatter.liquid": "yaml"
+        }
+      },
+      {
+        "scopeName": "source.markdown.liquid.injection",
+        "path": "./grammar/injections/markdown.tmLanguage.json",
+        "injectTo": [
           "text.html.markdown"
         ]
       },
       {
-        "language": "liquid-yaml",
-        "scopeName": "source.yaml.liquid",
-        "path": "./grammar/languages/yaml.tmLanguage.json"
-      },
-      {
-        "language": "liquid-json",
-        "scopeName": "source.json.liquid",
-        "path": "./grammar/languages/json.tmLanguage.json",
+        "scopeName": "source.json.liquid.injection",
+        "path": "./grammar/injections/json.tmLanguage.json",
         "injectTo": [
           "source.json"
+        ]
+      },
+      {
+        "scopeName": "source.yaml.liquid.injection",
+        "path": "./grammar/injections/yaml.tmLanguage.json",
+        "injectTo": [
+          "source.yaml"
         ]
       },
       {
@@ -221,16 +209,6 @@
         "path": "./grammar/languages/javascript.tmLanguage.json"
       },
       {
-        "scopeName": "source.liquid.frontmatter",
-        "path": "./grammar/injections/frontmatter.json",
-        "injectTo": [
-          "source.liquid"
-        ],
-        "embeddedLanguages": {
-          "meta.embedded.block.frontmatter.liquid": "yaml"
-        }
-      },
-      {
         "scopeName": "markdown.liquid.codeblock",
         "path": "./grammar/injections/code-block.tmLanguage.json",
         "injectTo": [
@@ -245,10 +223,17 @@
       {
         "language": "liquid",
         "path": "./snippets/snippets.json"
+      },
+      {
+        "language": "html",
+        "path": "./snippets/snippets.json"
       }
     ],
     "configurationDefaults": {
       "[liquid]": {
+        "editor.defaultFormatter": "sissel.shopify-liquid"
+      },
+      "[json]": {
         "editor.defaultFormatter": "sissel.shopify-liquid"
       },
       "[liquid-javascript]": {
@@ -263,11 +248,23 @@
       "[liquid-json]": {
         "editor.defaultFormatter": "sissel.shopify-liquid"
       },
+      "vsicons.associations.files": [
+        {
+          "icon": "liquid",
+          "extensions": [
+            ".liquidrc",
+            ".liquidrc.json"
+          ],
+          "filename": true,
+          "format": "svg"
+        }
+      ],
       "files.associations": {
+        "*.liquid": "html",
+        "*.md.liquid": "markdown",
         "*.js.liquid": "liquid-javascript",
         "*.css.liquid": "liquid-css",
         "*.scss.liquid": "liquid-scss",
-        "*.sass.liquid": "liquid-sass",
         "*.json.liquid": "liquid-json",
         "*.yaml.liquid": "liquid-yaml"
       }
@@ -275,19 +272,20 @@
     "configuration": {
       "type": "object",
       "title": "Liquid Language configuration",
-      "markdownDescription": "The Liquid extension will look for a `.liquidrc` or `.liquidrc.json` in the root of your project. When no such files exists it will check for `.vscode/settings.json` file and use the options provided there or alternatively tour global user settings.",
+      "markdownDescription": "The Liquid extension will look for a `.liquidrc` or `.liquidrc.json` in the root of your project. When no such files exists it will check for the presence of `prettify` field in `package.json` files and if not found it will then use the `.vscode/settings.json` file or alternatively your global user settings.",
       "properties": {
+        "liquid.format": {
+          "markdownDeprecationMessage": "This option is now deprecated. Use `liquid.format.enable` instead."
+        },
+        "liquid.rules": {
+          "markdownDeprecationMessage": "This option is now deprecated. You will need to update the options in order for the extension to work. Formatting rules now use the following structure:\n{\n  \"liquid.format.markup\": {},\n  \"liquid.format.script\": {},\n  \"liquid.format.style\": {},\n  \"liquid.format.json\": {}\n}"
+        },
         "liquid.enable": {
           "type": "boolean",
           "default": true,
-          "markdownDescription": "Whether to enable Liquid activation. When enabled the extension will be provide beautification capabilities and be extended to files that are not _strictly_ suffixed with a `.liquid` extension, such as `.html` and `.json` file types.\n\nWhen a `.liquidrc` or `.liquidrc.json` configuration file is detected in your workspace, this option will default to `true` if undefined or not set within your workspace or user preference settings.\n\nThis option is helpful for folks who do not always work on Liquid projects and don't want its capabilities to extend themselves into those projects."
+          "markdownDescription": "Whether to enable Liquid activation. When enabled the extension will be provide beautification capabilities to extended its features to files that are **not** _strictly_ suffixed with a `.liquid` extension, such as `.html` and `.json` file types.\n\nWhen a `.liquidrc` or `.liquidrc.json` configuration file is detected in your workspace this option will default to `true`. Lastly, if enable is undefined or not set within your workspace/user preference settings it will be `false`.\n\nThis option is helpful for folks who do not always work on Liquid projects and don't want its capabilities to extend themselves into outside projects."
         },
-        "liquid.validate.schema": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "Whether to enable JSON validations in Shopify `{% schema %}` tags."
-        },
-        "liquid.validate.layouts": {
+        "liquid.validate.shopifySchemaTag": {
           "type": "boolean",
           "default": true,
           "markdownDescription": "Whether to enable JSON validations in Shopify `{% schema %}` tags."
@@ -295,7 +293,7 @@
         "liquid.format.enable": {
           "type": "boolean",
           "default": true,
-          "markdownDescription": "Whether to enable or disable beautification support for Liquid. The extension uses [Prettify](https://github.com/panoply/prettify) for formatting Liquid, JavaScript, CSS/SCSS and JSON. Prettify is a new generation beautification tool that I developed which runs atop of the powerful sparser lexing algorithm. You can use instead of relying on Prettier when working with Liquid. It's fast, exposes a grandular set of rules and is far from opinionated.\n\nPrettier is cool and all but it is strict, it's a uniform.\n\nHelp me by choosing Prettify and reporting bugs/defects."
+          "markdownDescription": "Whether to enable or disable beautification support for Liquid. The extension uses [Prettify](https://github.com/panoply/prettify) for formatting Liquid, JavaScript, CSS/SCSS and JSON. Prettify is a new generation beautification tool that I developed which runs atop of the powerful sparser lexing algorithm. You can use instead of relying on Prettier when working with Liquid. It's fast, exposes a grandular set of rules and is far from opinionated.\n\nPrettier is cool and all but it is strict uniform.\n\nHelp me by choosing Prettify and reporting bugs/defects."
         },
         "liquid.format.ignore": {
           "type": "array",
@@ -700,7 +698,8 @@
   },
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup --minify-identifiers --minify-whitespace"
+    "build": "tsup --minify-identifiers --minify-whitespace",
+    "icons": "node ./icons/build/woff.cjs"
   },
   "tsup": {
     "entry": {
@@ -709,11 +708,10 @@
     "outDir": "./dist",
     "noExternal": [
       "@liquify/prettify",
+      "strip-json-comments",
       "fs-extra",
       "anymatch",
-      "rambda",
-      "bundle-require",
-      "strip-json-comments"
+      "rambda"
     ],
     "external": [
       "vscode"
@@ -743,6 +741,7 @@
   "dependencies": {
     "@liquify/prettify": "0.1.0-beta.1",
     "anymatch": "^3.1.2",
+    "fs-extra": "^10.1.0",
     "rambda": "^7.2.1",
     "strip-json-comments": "^5.0.0",
     "vscode-json-languageservice": "^5.1.0",
