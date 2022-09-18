@@ -67,16 +67,16 @@
     ],
     "commands": [
       {
-        "command": "liquid.restartExtension",
-        "title": "Liquid: Restart Extension"
-      },
-      {
         "command": "liquid.upgradeVersion",
         "title": "Liquid: Upgrade Extension"
       },
       {
         "command": "liquid.disableExtension",
-        "title": "Liquid: Disable Extension"
+        "title": "Liquid: Disable Capabilities"
+      },
+      {
+        "command": "liquid.enableExtension",
+        "title": "Liquid: Enable Capabilities"
       },
       {
         "command": "liquid.disableFormatter",
@@ -87,26 +87,29 @@
         "title": "Liquid: Enable Formatting"
       },
       {
-        "command": "liquid.toggleOutput",
-        "title": "Liquid: Toggle Output"
+        "command": "liquid.openOutput",
+        "title": "Liquid: Open Output"
       },
       {
         "command": "liquid.formatDocument",
         "title": "Liquid: Format Document"
       },
       {
-        "command": "liquid.formatSelection",
-        "title": "Liquid: Format Selection"
+        "command": "liquid.generateLiquidrcDefaults",
+        "title": "Liquid: Generate .liquidrc (defaults)"
       },
       {
-        "command": "liquid.generateLiquidrc",
-        "title": "Liquid: Generate .liquidrc config"
+        "command": "liquid.generateLiquidrcRecommended",
+        "title": "Liquid: Generate .liquidrc (recommended)"
       }
     ],
     "languages": [
       {
         "id": "liquid",
         "configuration": "./src/language/liquid.configuration.json",
+        "extensions": [
+          ".liquid"
+        ],
         "aliases": [
           "Liquid"
         ]
@@ -230,24 +233,6 @@
       }
     ],
     "configurationDefaults": {
-      "[liquid]": {
-        "editor.defaultFormatter": "sissel.shopify-liquid"
-      },
-      "[json]": {
-        "editor.defaultFormatter": "sissel.shopify-liquid"
-      },
-      "[liquid-javascript]": {
-        "editor.defaultFormatter": "sissel.shopify-liquid"
-      },
-      "[liquid-css]": {
-        "editor.defaultFormatter": "sissel.shopify-liquid"
-      },
-      "[liquid-scss]": {
-        "editor.defaultFormatter": "sissel.shopify-liquid"
-      },
-      "[liquid-json]": {
-        "editor.defaultFormatter": "sissel.shopify-liquid"
-      },
       "vsicons.associations.files": [
         {
           "icon": "liquid",
@@ -259,6 +244,9 @@
           "format": "svg"
         }
       ],
+      "[liquid]": {
+        "editor.defaultFormatter": "sissel.shopify-liquid"
+      },
       "files.associations": {
         "*.liquid": "html",
         "*.md.liquid": "markdown",
@@ -285,10 +273,19 @@
           "default": true,
           "markdownDescription": "Whether to enable Liquid activation. When enabled the extension will be provide beautification capabilities to extended its features to files that are **not** _strictly_ suffixed with a `.liquid` extension, such as `.html` and `.json` file types.\n\nWhen a `.liquidrc` or `.liquidrc.json` configuration file is detected in your workspace this option will default to `true`. Lastly, if enable is undefined or not set within your workspace/user preference settings it will be `false`.\n\nThis option is helpful for folks who do not always work on Liquid projects and don't want its capabilities to extend themselves into outside projects."
         },
-        "liquid.validate.shopifySchemaTag": {
+        "liquid.settings.target": {
+          "type": "string",
+          "default": "workspace",
+          "markdownDescription": "The configuration preferences to use. Defaults to `workspace`. It is **highly discouraged** to target `user` settings and could lead to unexpected issues outside of Liquid projects. The `workspace` default will write to the `.vscode/settings.json` relative to project root.",
+          "enum": [
+            "workspace",
+            "user"
+          ]
+        },
+        "liquid.validate.json": {
           "type": "boolean",
           "default": true,
-          "markdownDescription": "Whether to enable JSON validations in Shopify `{% schema %}` tags."
+          "markdownDescription": "Whether to enable JSON validations for shopify `{% schema %}` tags."
         },
         "liquid.format.enable": {
           "type": "boolean",
@@ -735,8 +732,7 @@
     "eslint": "^8.23.0",
     "prettier": "^2.7.1",
     "tsup": "^6.2.3",
-    "type-fest": "^2.19.0",
-    "vscode": "^1.1.37"
+    "type-fest": "^2.19.0"
   },
   "dependencies": {
     "@liquify/prettify": "0.1.0-beta.1",
