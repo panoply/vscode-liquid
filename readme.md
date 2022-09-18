@@ -58,7 +58,9 @@ A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template 
 - [Syntax Support](#syntax-support)
   - [Supported Languages](#supported-languages)
   - [Grammar Injections](#grammar-injections)
+  - [Liquid in HTML](#liquid-in-html)
   - [HTML Validations](#html-validations)
+  - [Liquid in JSON, YAML and Markdown](#liquid-in-json-yaml-and-markdown)
   - [Markdown Codeblock](#markdown-codeblock)
 - [Formatting](#formatting)
   - [Prettify](#prettify)
@@ -185,7 +187,7 @@ When you set `liquid.enable` to `false` it does not disabled the extension but i
 
 # Syntax Support
 
-Liquid syntax highlighting support within HTML and JSON languages are applied using vscode injection grammars. Grammar injections allow intelliSense capabilities provided by vscode to persist and work without interruption. Liquid syntax contained in JavaScript, CSS, SCSS, YAML and other supported languages require an `.liquid` extension suffix be applied to file names (eg: _.css_ → _.css.liquid_ etc).
+Liquid syntax highlighting support within HTML, Markdown, YAML and JSON languages are applied using vscode injection grammars. Grammar injections allow intelliSense capabilities provided by vscode to persist and work without interruption. Liquid syntax contained in JavaScript, CSS, SCSS, YAML and other supported languages require an `.liquid` extension suffix be applied to file names (eg: _.css_ → _.css.liquid_ etc).
 
 _If the required `.liquid` suffix is problematic then use [file associations](https://code.visualstudio.com/docs/languages/identifiers)._
 
@@ -195,17 +197,20 @@ _If the required `.liquid` suffix is problematic then use [file associations](ht
 | ------------------- | ----------------- | ------------------- | ----------------- |
 | html                | HTML              | .liquid             | ✓                 |
 | json                | JSON              | .json               | ✓                 |
+| yaml                | YAML              | .yaml               | ✓                 |
+| markdown            | Markdown          | .md                 | ✓                 |
 | liquid              | Liquid            | .liquid             | 𐄂                 |
-| liquid-json         | Liquid JSON       | .json.liquid        | 𐄂                 |
-| liquid-yaml         | Liquid Yaml       | .yaml.liquid        | 𐄂                 |
-| liquid-markdown     | Liquid Markdown   | .md.liquid          | 𐄂                 |
 | liquid-css          | Liquid CSS        | .css.liquid         | 𐄂                 |
 | liquid-scss         | Liquid SCSS       | .scss.liquid        | 𐄂                 |
 | liquid-javascript   | Liquid JavaScript | .js.liquid          | 𐄂                 |
 
 ### Grammar Injections
 
-In order to preserve vscode intellisense capabilities both the HTML and JSON languages have Liquid grammars injected into them. The grammar injection will allow Liquid code to be highlighted and treated as if its syntax was a part of the language it is implemented within. When file is using a `.liquid` extension the **intended behavior** is to associate it to the HTML Language.
+In order to preserve vscode intellisense capabilities both the HTML and JSON languages have Liquid grammars injected into them. The grammar injection will allow Liquid code to be highlighted and treated as if its syntax was a part of the language it is implemented within.
+
+### Liquid in HTML
+
+Liquid is almost exclusively written within markup languages like HTML and as such the Liquid grammars are injected into the HTML grammar derivative. When a file is using a `.liquid` extension the **intended behavior** is to associate it to the HTML Language to ensure HTML intellisense capabilities and made available to you.
 
 _Changing the language to Liquid from HTML will disable HTML intellisense capabilities._
 
@@ -219,6 +224,12 @@ When your `<style>` and `<script>` HTML tags contain Liquid syntax vscode will c
   "html.validate.styles": false
 }
 ```
+
+### Liquid in JSON, YAML and Markdown
+
+Liquid tags, comments and object grammars are also injected into JSON, YAML and Markdown languages but external code regions and anything which requires an embedded language reference is excluded. There is no need to use a `.liquid` suffix on these file names in order for syntax highlighting of Liquid to be applied, it will work out of the box.
+
+_If for any reason the injections become problematic then please report an issue and disable the extension._
 
 ### Markdown Codeblock
 
