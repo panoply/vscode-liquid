@@ -1,10 +1,12 @@
 {
+  "liquid.format": true,
+  "liquid.rules": {},
 
-  "liquid.enable": true,
-  "liquid.format.enable": true,
+  // "liquid.format.enable": true
 
-
-
+  // "liquid.enable": true,
+  // "liquid.format.enable": true,
+  // "[json]": { "editor.defaultFormatter": "sissel.shopify-liquid" }
   /* -------------------------------------------- */
   /* VSCODE NATIVES                               */
   /* -------------------------------------------- */
@@ -18,7 +20,7 @@
   /* -------------------------------------------- */
   /* FORMATTING OPTIONS                           */
   /* -------------------------------------------- */
-/*
+  /*
   "liquid.enable": true,
   "liquid.format.enable": true,
   "liquid.format.ignore": ["ignore.liquid"],

@@ -1,12 +1,14 @@
 --- # yaml document beginning
 
 
-integerValue: 1                   # integer value
-floatingValue: 1                  # floating vale
+{{ object.prop[1200] | form: 'string' }}
+
+integerValue1: 1                   # integer value
+floatingValue3: 1                  # floating vale
 
 stringValue: "456"                # string with double quotes
-stringValue: 'abc'                # string with single quotes
-stringValue: wer                  # string without quotes
+stringValue2: 'abc'                # string with single quotes
+stringValue1: wer                  # string without quotes
 
 
 booleanValue: true                 # boolean values - true or false
