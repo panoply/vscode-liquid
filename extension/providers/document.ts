@@ -1,10 +1,20 @@
-import { workspace, languages, commands, TextEdit, ConfigurationChangeEvent, TextDocumentChangeEvent, Uri } from 'vscode';
+import {
+  workspace,
+  languages,
+  commands,
+  TextEdit,
+  ConfigurationChangeEvent,
+  TextDocumentChangeEvent,
+  Uri
+} from 'vscode';
+import { extname } from 'node:path';
+import prettify from '@liquify/prettify';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { Format } from './format';
-import prettify from '@liquify/prettify';
-import { getLanguage, getRange, Status } from './utilities';
+import { getLanguage, getRange } from './utilities';
 import { JSONLanguageService } from './json';
 import { schema } from './schema';
+import { EN } from './i18n';
 
 /**
  * Document intializer class
@@ -27,9 +37,9 @@ export class Document extends Format {
 
   onJsonService () {
 
-    if (this.service === null) {
+    if (this.service === null && this.capability.shopifySchemaValidate) {
       this.service = new JSONLanguageService(schema);
-      this.logOutput('liquid', 'activated json language service');
+      this.logOutput(EN.ENABLED_SCHEMA_VALIDATE);
     }
 
   }
@@ -39,19 +49,28 @@ export class Document extends Format {
    */
   onConfigChanges (config: ConfigurationChangeEvent) {
 
-    if (config.affectsConfiguration('liquid') && this.commandInvoked === false) {
+    if (this.commandInvoked === false) {
+      if (config.affectsConfiguration('liquid')) {
 
-      this.hasError = false;
-      this.setConfigSettings();
+        const noValidate = this.capability.shopifySchemaValidate;
+        this.hasError = false;
+        this.setConfigSettings();
 
-      if (this.isDisabled) {
-        this.disposeAll();
-        this.barItem.hide();
-      } else {
-        this.statusBar(Status.Enabled, true);
-        this.onOpenTextDocument();
+        if (this.isDisabled) {
+          this.disposeValidations();
+          this.disposeAll();
+          this.barItem.hide();
+        } else {
+          if (noValidate === false && this.capability.shopifySchemaValidate) this.onJsonService();
+          this.onOpenTextDocument();
+        }
+
+      } else if (config.affectsConfiguration('[html]')) {
+
+        console.log('effects language');
+        this.getSettings();
+
       }
-
     }
 
   }
@@ -70,16 +89,37 @@ export class Document extends Format {
       this.isLoading = false;
     }
 
-    this.provider = languages.registerDocumentFormattingEditProvider(this.selector, {
-      provideDocumentFormattingEdits: async (document) => {
+    if (this.hasProvider) return;
 
-        if (this.isDisabled || this.capability.formatting === false) return null;
+    console.log(this.documents);
+
+    if (this.capability.formatting === null && extname(this.fileName) === '.liquid') {
+      this.capability.formatting = true;
+      try {
+        (async () => await this.setWorkspaceDefaults())();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    this.provider = languages.registerDocumentFormattingEditProvider(this.selector, {
+      provideDocumentFormattingEdits: async document => {
+
+        if (this.isDisabled || this.capability.formatting === false) {
+          return null;
+        }
 
         try {
 
           const range = getRange(document);
           const input = document.getText(range);
-          const output = await prettify.format(input, { language: getLanguage(document.languageId) });
+          const language = getLanguage(document.languageId);
+
+          const options = prettify.options.rules.language === language ? {
+            language
+          } : undefined;
+
+          const output = await prettify.format(input, options);
 
           return [ TextEdit.replace(range, output) ];
 
@@ -102,24 +142,42 @@ export class Document extends Format {
 
     this.uriPath = document.uri.path;
 
+    if (this.capability.shopifySchemaValidate === false) return this.disposeValidations();
+
     const section = this.sections.has(document.uri.path);
     const text = document.getText();
     const start = text.search(/{%-?\s*schema\s*-?%}/);
 
     if (start === -1) {
-      if (section) this.sections.delete(this.uriPath);
+
+      if (section) {
+        this.diagnostics.set(document.uri, undefined);
+        this.sections.delete(this.uriPath);
+      }
+
       return;
+
     }
 
     const open = text.indexOf('%}', start) + 2;
     if (open === -1) {
-      if (section) this.sections.delete(this.uriPath);
+
+      if (section) {
+        this.diagnostics.set(document.uri, undefined);
+        this.sections.delete(this.uriPath);
+      }
+
       return;
     }
 
     const close = text.search(/{%-?\s*endschema\s*-?%}/);
     if (close === -1) {
-      if (section) this.sections.delete(this.uriPath);
+
+      if (section) {
+        this.diagnostics.set(document.uri, undefined);
+        this.sections.delete(this.uriPath);
+      }
+
       return;
     }
 
@@ -157,7 +215,7 @@ export class Document extends Format {
 
     if (this.liquidSettings.get<boolean>('validate.schema')) {
 
-      this.diagnostics.clear();
+      this.diagnostics.set(document.uri, undefined);
 
       this.service
         .doValidation(ref.node, ref.offset)
@@ -174,21 +232,35 @@ export class Document extends Format {
 
     await this.getConfigFile();
 
-    this.onJsonService();
+    if (!this.isDisabled) this.onJsonService();
 
     subscriptions.push(
-      commands.registerCommand('liquid.generateLiquidrc', this.liquidrc, this),
-      commands.registerCommand('liquid.disableExtension', this.liquidrc, this),
-      commands.registerCommand('liquid.restartExtension', this.liquidrc, this),
-      commands.registerCommand('liquid.toggleOutput', this.openOutput, this),
-      commands.registerCommand('liquid.disableFormatter', this.disableFormatting, this),
+      commands.registerCommand('liquid.openOutput', this.openOutput, this),
+      commands.registerCommand('liquid.generateLiquidrcDefaults', this.liquidrcDefaults, this),
+      commands.registerCommand('liquid.generateLiquidrcRecommended', this.liquidrcRecommended, this),
+      commands.registerCommand('liquid.disableExtension', this.enableCapabilities, this),
+      commands.registerCommand('liquid.enableExtension', this.disableCapabilities, this),
       commands.registerCommand('liquid.enableFormatter', this.enableFormatting, this),
-      commands.registerCommand('liquid.formatSelection', this.formatSelection, this),
+      commands.registerCommand('liquid.disableFormatter', this.disableFormatting, this),
+      commands.registerCommand('liquid.upgradeVersion', this.upgradeExtension, this),
       workspace.onDidOpenTextDocument(this.onOpenTextDocument, this),
       workspace.onDidChangeConfiguration(this.onConfigChanges, this),
       workspace.onDidChangeTextDocument(this.onChangeTextDocument, this)
     );
 
+  }
+
+  disposeValidations () {
+
+    if (this.capability.shopifySchemaValidate === false) {
+
+      if (this.sections.size > 0) {
+        for (const doc of this.sections) this.diagnostics.set(doc[1].uri, undefined);
+        this.diagnostics.dispose();
+        this.sections.clear();
+      }
+
+    }
   }
 
   /**
@@ -197,7 +269,7 @@ export class Document extends Format {
   dispose () {
 
     // Disposal of match filename handler
-    if (this.hasDocument) this.provider.dispose();
+    if (this.hasProvider) this.provider.dispose();
   }
 
   /**
@@ -211,13 +283,48 @@ export class Document extends Format {
   }
 
   /**
-   * Handles the Generate `.liquidrc` file command
-   *
-   * @memberof Document
+   * Control extension capabilities, Enable from the command palette.
    */
-  liquidrc () {
+  async enableCapabilities () {
 
-    return this.rcfileGenerate();
+    const enable = this.liquidSettings.get<boolean>('enable');
+
+    if (enable) return;
+
+    await this.liquidSettings.update('enable', true);
+
+  }
+
+  /**
+   * Control extension capabilities, Enable from the command palette.
+   */
+  async disableCapabilities () {
+
+    const enable = this.liquidSettings.get<boolean>('enable');
+
+    if (!enable) return;
+
+    await this.liquidSettings.update('enable', false);
+
+  }
+
+  /**
+   * Handles the Generate `.liquidrc` file command for generating
+   * recommended formatting rules
+   */
+  liquidrcRecommended () {
+
+    return this.rcfileGenerate('recommended');
+
+  }
+
+  /**
+   * Handles the Generate `.liquidrc` file command for generating
+   * default formatting rules.
+   */
+  liquidrcDefaults () {
+
+    return this.rcfileGenerate('defaults');
 
   }
 
