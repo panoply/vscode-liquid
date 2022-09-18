@@ -54,6 +54,7 @@ A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template 
 - [Updating to v3.0](#updating-to-v300)
 - [Commands](#commands)
 - [Workspace Settings](#workspace-settings)
+  - [Liquid Settings](#liquid-settings)
   - [Control Capabilities](#control-capabilities)
 - [Syntax Support](#syntax-support)
   - [Supported Languages](#supported-languages)
@@ -95,13 +96,12 @@ Below are the available commands exposed to the vscode command palette (`cmd + s
 
 | Command                                  | Description                                          |
 | ---------------------------------------- | ---------------------------------------------------- |
-| Liquid: Enable Extension                 | _Enable the extension_                               |
-| Liquid: Disable Extension                | _Disable the extension_                              |
-| Liquid: Format File                      | _Formats the current file_                           |
-| Liquid: Format Selection                 | _Formats the selected code_                          |
+| Liquid: Enable Extension                 | _Enable extension capabilities_                      |
+| Liquid: Disable Extension                | _Disable extension capabilities_                     |
 | Liquid: Enable Formatting                | _Enable Prettify formatting_                         |
 | Liquid: Disable Formatting               | _Disable Prettify formatting_                        |
-| Liquid: Restart Extension                | _Restart the extension and clear cache_              |
+| Liquid: Format Document                  | _Formats the current document_                       |
+| Liquid: Open Output                      | _Open the Liquid output panel_                       |
 | Liquid: Generate .liquidrc (defaults)    | _Generate a `.liquidrc` file with default rules_     |
 | Liquid: Generate .liquidrc (recommended) | _Generate a `.liquidrc` file with recommended rules_ |
 
@@ -111,65 +111,221 @@ The extension provides various workspace/user settings. The `liquid.format` opti
 
 By default, it is assumed you are using workspace/user settings.
 
+<!--prettier-ignore-->
 ```jsonc
 {
   // Disable the extended features of the extension
   "liquid.enable": true,
-  // Validate shopify schema tag blocks
-  "liquid.validate.shopifySchemaTag": true,
+
+  // Controls how extension settings are applied
+  "liquid.settings.target": "workspace",
+
+  // Whether `.liquid` files should forward to HTML
+  "liquid.settings.html": true,
+
+  // Validates the contents of the `{% schema %}` tag and implemented JSON
+  "liquid.validate.json": true,
+
   // Controls whether formatting is enabled or disabled
   "liquid.format.enable": true,
+
   // Glob paths to exclude from formatting
   "liquid.format.ignore": [],
+
   // Word wrap limit, defaults to the vscode wordWrapColumn
   "liquid.format.wrap": 0,
+
   // indentation level, defaults to the vscode tabSize
   "liquid.format.indentSize": 2,
+
   // Whether or not documents end with newline, defaults to the vscode renderFinalNewline
   "liquid.format.endNewLine": false,
+
   // If a blank new line should be forced above comments
   "liquid.format.commentIndent": false,
+
   // The maximum number of consecutive empty lines to retain
   "liquid.format.preserveLine": 3,
+
   // Prevent comment reformatting due to option wrap
   "liquid.format.preserveComment": false,
+
   // Use Windows (CRLF) format, Unix (LF) format is the default.
   "liquid.format.crlf": false,
+
   // HTML, Liquid + HTML code style
   "liquid.format.markup": {
+
     // Automatically attempts to correct some sloppiness in code
     "correct": false,
+
     // Control the casing of attributes.
     "attributeCasing": "preserve",
+
     // Alphanumerically sort HTML attributes from A to Z.
     "attributeSort": false,
+
     // Sort attributes according to this list, requires attributeSort  to be true
     "attributeSortList": [],
+
     // Strip extraneous spacing from Liquid delimiters
     "delimiterSpacing": false,
+
     // Whether comments should always start at position 0 or indented to code
-    "commentNewline":  false,
+    "commentNewline": false,
+
     // Force leading attributes onto a newline when using wrap
     "forceLeadAttribute": false,
+
     // Will force indentation upon content
     "forceIndent": false,
+
     // Whether attributes should be indented each onto their own line
     "forceAttribute": false,
+
     // If text in the provided document code should be preserved
     "preserveText": true,
+
     // self-closing tags end will end with ' />' instead of '/>'
     "selfCloseSpace": false,
+
     // Whether attributes should be preserved
     "preserveAttributes": false,
+
+    // Quotation character conversion
+    "quoteConvert": "none"
+  },
+
+  // CSS/SCSS code style
+  "liquid.format.style": {
+
+    // Automatically attempts to correct some sloppiness in code.
+    "correct": false,
+
+    // Whether to apply allman style indentation to braces
+    "braceAllman": false,
+
+    // Sorts CSS Selectors in an alphanumerical order
+    "sortSelectors": false,
+
+    // Sort Selectors in an alphanumerical order
+    "sortProperties": false,
+
+    // Inserts new line characters between every CSS code block
+    "classPadding": false,
+
+    // Whether leading `0s` in CSS values immediately preceding a decimal or removed
+    "noLeadZero": false,
+
+    // If comma separated CSS selectors should present on a single line of code
+    "selectorList": false
+  },
+
+  // JSON code style
+  "liquid.format.json": {
+
+    // Determines how array indexes should be indented
+    "arrayFormat": "default",
+
+    // Whether to apply allman style indentation to braces
+    "braceAllman": false,
+
+    // Inserts a space after the start and before the end of a container
+    "bracePadding": false,
+
+    // Emulates JSBeautify's brace_style option
+    "braceStyle": "none",
+
+    // Determines if all array indexes should be indented, never indented, or left to the default.
+    "formatArray": "default",
+
+    // Determines if all object keys should be indented, never indented, or left to the default
+    "objectIndent": "default"
+  },
+
+  // JavaScript, TypeScript code style
+  "liquid.format.script": {
+
+    // Determines how array indexes should be indented
+    "arrayFormat": "default",
+
+    // Automatically attempts to correct some sloppiness in code.
+    "correct": false,
+
+    // Whether to apply allman style indentation to braces
+    "braceAllman": false,
+
+    // Insert line after opening curly braces and before closing curly braces
+    "braceNewline": false,
+
+    // Inserts a space after the start and before the end of a container
+    "bracePadding": false,
+
+    // Emulates JSBeautify's brace_style option
+    "braceStyle": "none",
+
+    // If the colon separating a case's expression (of a switch/case block)
+    "caseSpace": false,
+
+    // Whether the 'else' keyword is forced onto a new line.
+    "elseNewline": false,
+
+    // If there should be a trailing comma in arrays and object
+    "endComma": "none",
+
+    // Determines how array indexes should be indented
+    "arrayFormat": "default",
+
+    // Determines how object keys should be indented
+    "objectIndent": "default",
+
+    // If a space should follow a JavaScript function name
+    "functionNameSpace": false,
+
+    // When to break chained methods and properties onto separate lines
+    "methodChain": 3,
+
+    // If destructured lists in script should never be flattened
+    "neverFlatten": false,
+
+    // If a case statement should receive indentation
+    "noCaseIndent": false,
+
+    // Removes semicolons that would be inserted by ASI
+    "noSemicolon": false,
+
+    // Prevent comment reformatting due to option wrap
+    "preserveComment": false,
+
     // Quotation character conversion
     "quoteConvert": "none",
-  },
-  // JavaScript, TypeScript code style
-  "liquid.format.script": {},
-  // CSS/SCSS code style
-  "liquid.format.style": {},
-  // JSON code style
-  "liquid.format.json": {},
+
+    // Inserts a space following the function keyword for anonymous functions
+    "functionSpace": false,
+
+    // Keep ternary statements on one Line
+    "ternaryLine": false,
+
+    // Merges into consecutive variables into a comma separated list
+    "variableList": false
+  }
+}
+```
+
+### Liquid Settings
+
+The `liquid.settings` options are used to determine how and where the extension applies settings. The default configuration and behavior of the extension is to use the `.vscode/settings.json` workspace file as per the `workspace` target. Though you can target `user` settings, it is **highly discouraged** and could lead to unexpected issues outside of Liquid projects.
+
+The `liquid.settings.html` is used to associate Liquid to HTML. This option defaults to `true` and allows HTML language capabilities and intellisense features to persist together with Liquid. This below example configuration will be applied to your projects workspace settings unless the HTML language identifier has pre-existing settings defined. VSCode will prompt you if settings exist on the HTML language id and you'll need to set the configurations manually. If the `liquid.format.enable` is set to `false` then process will be skipped. Take a look at the [Setting Default Formatter](#setting-default-formatter) section for more information.
+
+_Default configuration applied to your projects .vscode/settings.json file if options are undefined_
+
+```jsonc
+{
+  "html.validate.scripts": false,
+  "html.validate.styles": false,
+  "[html]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid"
   }
 }
 ```
@@ -282,10 +438,6 @@ _Be sure to define only the languages which you wish to have formatted by the ex
   },
   // Enables formatting of all .scss.liquid files
   "[liquid-scss]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid"
-  },
-  // Enables formatting of all .json.liquid files
-  "[liquid-json]": {
     "editor.defaultFormatter": "sissel.shopify-liquid"
   }
 }
