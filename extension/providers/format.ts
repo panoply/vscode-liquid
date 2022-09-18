@@ -28,9 +28,9 @@ export class Format extends Settings {
     await this.toggleFormatting(true);
 
     this.statusBar(Status.Enabled, true);
-    this.logOutput('liquid', 'prettify has been enabled ' + this.capability.formatting);
+    this.logOutput(EN.ENABLED_PRETTIFY);
 
-    await window.showInformationMessage(EN.ENABLED.FORMATTING);
+    await window.showInformationMessage(EN.ENABLED_FORMAT);
 
   }
 
@@ -42,9 +42,9 @@ export class Format extends Settings {
     await this.toggleFormatting(false);
 
     this.statusBar(Status.Disabled, true);
-    this.logOutput('liquid', 'prettify has been disabled ');
+    this.logOutput(EN.DISABLED_FORMAT);
 
-    await window.showInformationMessage(EN.DISABLED.FORMATTING);
+    await window.showInformationMessage(EN.DISABLED_PRETTIFY);
 
   }
 
@@ -54,8 +54,11 @@ export class Format extends Settings {
   async doFormat (input: string, range = this.range) {
 
     try {
+
       const output = await prettify.format(input, { language: this.languageId });
+
       return [ TextEdit.replace(range, output) ]; ;
+
     } catch (error) {
       return this.logOutput('error', error);
     }
@@ -74,31 +77,6 @@ export class Format extends Settings {
   }
 
   /**
-   * Format the selected (highlighted) text
-   */
-  formatSelection () {
-
-    if (this.textEditor === undefined) return;
-
-    const input = this.textDocument.getText(this.textEditor.selection);
-
-    return this.doFormat(input);
-  }
-
-  /**
-   * Formats a selection of text using command
-   */
-  async onCommandSelectionFormat () {
-
-    try {
-      await this.formatSelection();
-      window.showInformationMessage(EN.SUCCESS.SELECTION);
-    } catch {
-      window.showInformationMessage(EN.ERRORS.SELECTION);
-    }
-  }
-
-  /**
    * Formats the document text using command
    */
   async onCommandDocumentFormat () {
@@ -107,9 +85,9 @@ export class Format extends Settings {
 
     try {
       await this.formatDocument();
-      window.showInformationMessage(EN.SUCCESS.DOCUMENT);
+      window.showInformationMessage(EN.DOCUMENT_FORMAT);
     } catch {
-      window.showInformationMessage(EN.ERRORS.DOCUMENT);
+      window.showInformationMessage(EN.DOCUMENT_FORMAT_ERROR);
     }
   }
 
