@@ -10,11 +10,11 @@ import {
 import prettify from '@liquify/prettify';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { Format } from './format';
-import { getLanguage, getLanguageFromExtension, getRange, Status } from './utilities';
+import { getLanguage, getLanguageFromExtension, getRange } from './utilities';
 import { JSONLanguageService } from './json';
 import { schema } from './schema';
 import { EN } from './i18n';
-import { EXTSettings } from './settings';
+import { EXTSettings, Status } from './types';
 
 /**
  * Document intializer class
@@ -37,7 +37,7 @@ export class Document extends Format {
 
   onJsonService () {
 
-    if (this.service === null && this.capability.shopifySchemaValidate) {
+    if (this.service === null && this.validate.json) {
       this.service = new JSONLanguageService(schema);
       this.logOutput(EN.ENABLED_SCHEMA_VALIDATE);
     }
@@ -53,7 +53,7 @@ export class Document extends Format {
 
       if (config.affectsConfiguration('liquid')) {
 
-        const noValidate = this.capability.shopifySchemaValidate;
+        const noValidate = this.validate.json;
 
         this.hasError = false;
         this.setConfigSettings();
@@ -63,7 +63,7 @@ export class Document extends Format {
           this.disposeAll();
           this.barItem.hide();
         } else {
-          if (noValidate === false && this.capability.shopifySchemaValidate) this.onJsonService();
+          if (noValidate === false && this.validate.json) this.onJsonService();
           this.onOpenTextDocument();
         }
 
@@ -73,7 +73,7 @@ export class Document extends Format {
 
         if (hasConfig === EXTSettings.WorkspaceUndefined) {
           this.logOutput('workspace settings undefined');
-          this.capability.formatting = null;
+          this.feature.format = null;
         }
 
         this.commandInvoked = true;
@@ -94,10 +94,10 @@ export class Document extends Format {
 
     if (this.liquidSettings.get<boolean>('enable')) this.isLoading = false;
 
-    if (this.capability.formatting === null) {
+    if (this.feature.format === null) {
       if (getLanguageFromExtension(this.fileName)) {
         this.statusBar(Status.Loading, true);
-        this.capability.formatting = true;
+        this.feature.format = true;
         (async () => {
           try {
             await this.setWorkspaceDefaults();
@@ -113,7 +113,7 @@ export class Document extends Format {
     this.provider = languages.registerDocumentFormattingEditProvider(this.selector, {
       provideDocumentFormattingEdits: async document => {
 
-        if (this.isDisabled || this.isLoading || this.capability.formatting === false) return null;
+        if (this.isDisabled || this.isLoading || this.feature.format === false) return null;
 
         try {
 
@@ -252,7 +252,7 @@ export class Document extends Format {
 
   disposeValidations () {
 
-    if (this.capability.shopifySchemaValidate === false) {
+    if (this.validate.json === false) {
 
       if (this.sections.size > 0) {
         for (const doc of this.sections) this.diagnostics.set(doc[1].uri, undefined);
