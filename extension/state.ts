@@ -3,26 +3,7 @@ import prettify, { Options } from '@liquify/prettify';
 import { Tester } from 'anymatch';
 import { Disposable, DocumentSelector, window, workspace } from 'vscode';
 import { getRange } from './utilities';
-
-/**
- * Configuration Type
- *
- * Informs upon the configuration type being used
- */
-export const enum ConfigType {
-  /**
-   * Liquidrc file is contained in root and is JSON
-   */
-  RCFile = 1,
-  /**
-   * Prettify filed in the package.json file
-   */
-  PackageJSONField,
-  /**
-   * Editor setting, ie: `.vscode/settings.json`
-   */
-  EditorSettings
-}
+import { Config } from './types';
 
 /**
  * Extension State
@@ -133,24 +114,29 @@ export class State {
   /**
    * Extension feature control
    */
-  capability: {
+  feature: {
+
     /**
      * Whether or not formatting is disabled
      */
-    formatting: boolean;
+    format: boolean;
     /**
      * Whether or not schema stores are disabled
      */
     schema: boolean;
+
+  } = { format: null, schema: null };
+
+  /**
+   * Validation capbilities
+   */
+  validate: {
     /**
-     * Whether or not schema to validate shopify schema
+     * JSON validation
      */
-    shopifySchemaValidate: boolean;
-  } = {
-      formatting: null,
-      schema: null,
-      shopifySchemaValidate: null
-    };
+    json: boolean;
+
+  } = { json: null };
 
   /**
    * Whether or not a command was invoked
@@ -181,9 +167,9 @@ export class State {
    */
   isReady: boolean = false;
   /**
-   * Whether or not the extension has initialized
+   * The extension configuration method being used
    */
-  configType: ConfigType = NaN;
+  config: Config = NaN;
   /**
    * Whether or not an error has occured
    */
