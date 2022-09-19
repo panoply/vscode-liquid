@@ -34,6 +34,9 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "enabledApiProposals": [
+      "outputChannelLanguage"
+    ],
     "jsonValidation": [
       {
         "fileMatch": [
@@ -105,6 +108,12 @@
     ],
     "languages": [
       {
+        "id": "log-liquid",
+        "aliases": [
+          "Log Liquid"
+        ]
+      },
+      {
         "id": "liquid",
         "configuration": "./src/language/liquid.configuration.json",
         "extensions": [
@@ -167,6 +176,11 @@
         "injectTo": [
           "text.html.derivative"
         ]
+      },
+      {
+        "language": "log-liquid",
+        "scopeName": "liquid.log",
+        "path": "./grammar/languages/output.tmLanguage.json"
       },
       {
         "scopeName": "source.liquid.frontmatter",
