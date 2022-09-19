@@ -1,0 +1,29 @@
+{
+  "name": "Liquid Log",
+  "scopeName": "liquid.log",
+  "patterns": [
+    {
+      "match": "\\b(\\.liquidrc(\\.json)?|workspace)\\b",
+      "name": "constant.language log.constant"
+    },
+    {
+      "match": "\\b([pP]rettify)\\b",
+      "name": "keyword.control.flow log.function"
+    },
+    {
+      "match": "\\b(liquid|Liquid|JSON|json|CSS|css|JavaScript|javascript|html|HTML)\\b",
+      "name": "support.class log.support"
+    },
+    {
+      "match": "\\b([uU]pdated).*",
+      "name": "punctuation.definition.tag log.control"
+    },
+    {
+      "match": "\\.[0-9]+(ms|s)",
+      "name": "constant.language log.constant"
+    },
+    {
+      "include": "text.log"
+    }
+  ]
+}
