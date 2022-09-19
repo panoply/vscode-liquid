@@ -708,7 +708,8 @@
       "strip-json-comments",
       "fs-extra",
       "anymatch",
-      "rambda"
+      "rambda",
+      "rambdax"
     ],
     "external": [
       "vscode"
@@ -727,9 +728,9 @@
   "devDependencies": {
     "@liquify/eslint-config": "^1.1.0",
     "@liquify/prettier-config": "^1.0.1",
-    "@types/node": "^18.7.16",
+    "@types/node": "^18.7.18",
     "@types/vscode": "^1.71.0",
-    "eslint": "^8.23.0",
+    "eslint": "^8.23.1",
     "prettier": "^2.7.1",
     "tsup": "^6.2.3",
     "type-fest": "^2.19.0"
@@ -739,6 +740,7 @@
     "anymatch": "^3.1.2",
     "fs-extra": "^10.1.0",
     "rambda": "^7.2.1",
+    "rambdax": "8.1.0",
     "strip-json-comments": "^5.0.0",
     "vscode-json-languageservice": "^5.1.0",
     "vscode-languageserver-textdocument": "^1.0.7"

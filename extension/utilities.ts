@@ -2,9 +2,11 @@
 
 import { LiteralUnion } from 'type-fest';
 import prettify, { Options, LanguageNames } from '@liquify/prettify';
-import { mergeRight } from 'rambda';
+import { mergeDeepRight } from 'rambdax';
 import { Range, workspace, TextDocument, DocumentSelector } from 'vscode';
 import stripJsonComments from 'strip-json-comments';
+import { pathExistsSync } from 'fs-extra';
+import { join } from 'node:path';
 
 /* -------------------------------------------- */
 /* ENUMS                                        */
@@ -93,6 +95,46 @@ export function getSelectors (inject = false): DocumentSelector {
 }
 
 /**
+ * Has .liquidrc File
+ *
+ * Returns a string or undefined to check whether the
+ * current workspace contains a `.liquidrc` or `.liquidrc.json`
+ * file. When undefined is returned not file exists.
+ */
+export function hasLiquidrc (root: string) {
+
+  let path = join(root, '.liquidrc');
+
+  if (!pathExistsSync(path)) {
+    path = join(root, '.liquidrc.json');
+    return pathExistsSync(path)
+      ? path
+      : undefined;
+  }
+
+  return path;
+
+}
+
+/**
+ * Has Package.json
+ *
+ * Returns a string or undefined to check whether the
+ * current workspace contains a `package.json` file.
+ * When undefined is returned not file exists.
+ */
+export function hasPackage (root: string) {
+
+  const path = join(root, 'package.json');
+  const exists = pathExistsSync(path);
+
+  if (!exists) return undefined;
+
+  return path;
+
+}
+
+/**
  * Match Language
  *
  * Converts the provided vscode Language ID to the
@@ -113,6 +155,13 @@ export function getLanguage (language: LanguageIDs): LanguageNames {
 
 }
 
+/**
+ * Get Language from Extension
+ *
+ * Parses a file path string and returns the file language ID
+ * Prettify language name. This is used when trying to determine
+ * the file being dealt with during a change.
+ */
 export function getLanguageFromExtension (path: string) {
 
   if (typeof path !== 'string') return null;
@@ -189,7 +238,7 @@ export function mergePreferences (options: Options): Options {
   const defaults = prettify.options.rules;
   const editor = workspace.getConfiguration('editor');
 
-  return mergeRight(options, {
+  return mergeDeepRight(options, {
     wrap: editor.get<number>('wordWrapColumn') || defaults.wrap,
     indentSize: editor.get<number>('tabSize') || defaults.indentSize,
     endNewline: editor.get<boolean>('renderFinalNewline') || defaults.endNewline
@@ -204,7 +253,7 @@ export function mergePreferences (options: Options): Options {
  */
 export function recommendedRules (): Options {
 
-  return mergeRight(prettify.options.rules, {
+  return mergeDeepRight(prettify.options.rules, {
     wrap: 0,
     endNewline: true,
     markup: {
@@ -283,6 +332,6 @@ export function omitRules (options: Options = prettify.options.rules) {
   const preferences = mergePreferences(defaults);
 
   // RETURN
-  return mergeRight(options, preferences);
+  return mergeDeepRight(options, preferences);
 
 }

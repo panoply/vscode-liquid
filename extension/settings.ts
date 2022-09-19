@@ -79,13 +79,9 @@ export class Settings extends Editor {
         has(inspect, language.workspaceValue)
       );
     } else if (this.target === ConfigurationTarget.Global) {
-      return (
-        typeof language.globalValue === 'object' &&
-        has(inspect, language.globalValue)
-      );
+      return (typeof language.globalValue === 'object' && has(inspect, language.globalValue));
 
     }
-
   }
 
   usingDeprecatedConfig (rcfile: any = undefined) {
