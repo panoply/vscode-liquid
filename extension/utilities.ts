@@ -1,53 +1,62 @@
-/* eslint-disable no-unused-vars */
-
-import { LiteralUnion } from 'type-fest';
-import prettify, { Options, LanguageNames } from '@liquify/prettify';
-import { mergeDeepRight } from 'rambdax';
 import { Range, workspace, TextDocument, DocumentSelector } from 'vscode';
-import stripJsonComments from 'strip-json-comments';
+import prettify, { Options, LanguageNames } from '@liquify/prettify';
 import { pathExistsSync } from 'fs-extra';
 import { join } from 'node:path';
+import { mergeDeepRight, omit, isType, has } from 'rambdax';
+import stripJsonComments from 'strip-json-comments';
+import { LanguageIDs, Liquidrc, Workspace } from './types';
 
 /* -------------------------------------------- */
-/* ENUMS                                        */
+/* TYPEOF CHECKS                                */
 /* -------------------------------------------- */
 
-export const enum Status {
-  Enabled = 1,
-  Disabled,
-  Ignored,
-  Error,
-  Loading,
-  Upgrade
-}
+/**
+ * Whether type is object or not
+ */
+export const isObject = isType('Object');
 
-type LanguageIDs = LiteralUnion<(
-  | 'html'
-  | 'liquid'
-  | 'json'
-  | 'jsonc'
-  | 'liquid-javascript'
-  | 'liquid-css'
-  | 'liquid-scss'
-  | 'liquid-json'
-), string>
+/**
+ * Whether type is array or not
+ */
+export const isArray = isType('Array');
+
+/**
+ * Whether type is boolean or not
+ */
+export const isString = isType('String');
+
+/**
+ * Whether type is boolean or not
+ */
+export const isBoolean = isType('Boolean');
+
+/* -------------------------------------------- */
+/* NATIVE                                       */
+/* -------------------------------------------- */
+
+/**
+ * Normalize Prettify Rules
+ *
+ * Omits the `ignore` and `enable` options
+ * from the extended format configurations
+ */
+export const normalizeRules = omit<keyof Workspace.Format>([
+  'ignore',
+  'enable'
+]);
 
 /* -------------------------------------------- */
 /* FUNCTIONS                                    */
 /* -------------------------------------------- */
 
-export function jsonc (input: object | string) {
+export function jsonc (input: object | string): Liquidrc {
 
-  const json = typeof input === 'string' ? input : JSON.stringify(input);
+  const json = isString(input) ? input : JSON.stringify(input);
 
   try {
-
-    return JSON.parse(stripJsonComments(json));
-
+    return JSON.parse(stripJsonComments(json as string));
   } catch (error) {
-
     throw new Error(error);
-
   }
 }
 
@@ -91,7 +100,34 @@ export function getSelectors (inject = false): DocumentSelector {
   }
 
   return defaults;
+}
 
+/**
+ * Has Deprecated Configuration
+ *
+ * Returns a boolean informing on whether or not
+ * deprecated settings are defined.
+ */
+export function hasDeprecatedSettings (rcfile: Liquidrc = undefined) {
+
+  if (rcfile === undefined) {
+
+    const liquid = workspace.getConfiguration('liquid');
+
+    if (liquid.has('format')) {
+      const format = liquid.get<boolean>('format');
+      return (isBoolean(format) && format === true);
+    }
+
+    return false;
+  }
+
+  return rcfile && (
+    has('html', rcfile) ||
+    has('js', rcfile) ||
+    has('css', rcfile) ||
+    has('scss', rcfile)
+  );
 }
 
 /**
@@ -103,13 +139,13 @@ export function getSelectors (inject = false): DocumentSelector {
  */
 export function hasLiquidrc (root: string) {
 
+  if (!isString(root)) return undefined;
+
   let path = join(root, '.liquidrc');
 
   if (!pathExistsSync(path)) {
     path = join(root, '.liquidrc.json');
-    return pathExistsSync(path)
-      ? path
-      : undefined;
+    return pathExistsSync(path) ? path : undefined;
   }
 
   return path;
@@ -125,12 +161,34 @@ export function hasLiquidrc (root: string) {
  */
 export function hasPackage (root: string) {
 
+  if (!isString(root)) return undefined;
+
   const path = join(root, 'package.json');
   const exists = pathExistsSync(path);
 
   if (!exists) return undefined;
 
   return path;
+
+}
+
+/**
+ * Is Path
+ *
+ * Returns an object indicating whether the provided
+ * path is pointing to the `matchFile` filename or not.
+ * This is used by the file watcher to determine what
+ * change occured in which file.
+ */
+export function isPath (path: string, matchFile: string) {
+
+  const fileName = path.slice(path.lastIndexOf('/') + 1);
+  const match = fileName.startsWith(matchFile);
+
+  return {
+    fileName,
+    match
+  };
 
 }
 
@@ -142,6 +200,8 @@ export function hasPackage (root: string) {
  * and have Prettify switch between languages.
  */
 export function getLanguage (language: LanguageIDs): LanguageNames {
+
+  if (!isString(language)) return undefined;
 
   switch (language) {
     case 'liquid':
@@ -164,7 +224,7 @@ export function getLanguage (language: LanguageIDs): LanguageNames {
  */
 export function getLanguageFromExtension (path: string) {
 
-  if (typeof path !== 'string') return null;
+  if (!isString(path)) return undefined;
 
   const nameidx = path.lastIndexOf('/');
   const lastdot = path.indexOf('.', nameidx);
@@ -177,7 +237,7 @@ export function getLanguageFromExtension (path: string) {
     case 'scss.liquid': return 'scss';
   }
 
-  return null;
+  return undefined;
 
 }
 
@@ -227,6 +287,7 @@ export function getTime (brace = true) {
 
   return brace ? '[' + time + ']' : time;
 }
+
 /**
  * Merge Preferences
  *
