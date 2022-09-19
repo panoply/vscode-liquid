@@ -1,55 +1,30 @@
 /* eslint-disable no-unused-vars */
-import { workspace, window, Uri, FileSystemWatcher, env, languages, ConfigurationTarget } from 'vscode';
-import prettify, { Options } from '@liquify/prettify';
+import { workspace, window, Uri, FileSystemWatcher, env, ConfigurationTarget } from 'vscode';
+import prettify from '@liquify/prettify';
+import { readFile, readJSON, writeFile, writeJSON } from 'fs-extra';
 import { join } from 'node:path';
-import { pathExists, readFile, readJSON, writeFile, writeJSON } from 'fs-extra';
 import { Editor } from './editor';
-import { ConfigType } from './state';
-import { getSelectors, jsonc, omitRules, recommendedRules, Status } from './utilities';
-import { has, omit } from 'rambda';
+import { has, isNil } from 'rambdax';
 import { EN } from './i18n';
-// import anymatch from 'anymatch';
+import { EXTSettings, Config, Workspace, Liquidrc, Status, INLanguageIDs, WatchEvents } from './types';
+import {
+  getSelectors,
+  isBoolean,
+  jsonc,
+  omitRules,
+  recommendedRules,
+  hasDeprecatedSettings,
+  isObject,
+  mergePreferences,
+  normalizeRules,
+  isString,
+  isArray,
+  hasPackage,
+  hasLiquidrc,
+  isPath
+} from './utilities';
 
-/**
- * Extension Settings
- *
- * This enum is used to determine how configuration
- * files are setup in the users workspace.
- */
-export const enum EXTSettings {
-  /**
-   * Using Deprecated Workspace settings
-   */
-  DeprecatedWorkspaceSettings = 1,
-  /**
-   * Using Deprecated Liquidrc settings
-   */
-  DeprecatedLiquidrcSettings,
-  /**
-   * Workspace Settings are not defined
-   */
-  WorkspaceUndefined,
-  /**
-   * Workspace Settings are defined
-   */
-  WorkspaceDefined,
-  /**
-   * No Liquidrc file is present
-   */
-  LiquidrcUndefined,
-  /**
-   * Liquidrc file is present
-   */
-  LiquidrcDefined,
-  /**
-   * Prettify Field in package.json is defined
-   */
-  PrettifyFieldDefined,
-  /**
-   * No configuration is defined
-   */
-  ConfigurationUndefined,
-}
+// import anymatch from 'anymatch';
 
 /**
  * Applies custom configuration settings used
@@ -64,7 +39,7 @@ export class Settings extends Editor {
   private watcher: FileSystemWatcher[] = [];
   private ignored: string[] = [];
   private target: ConfigurationTarget = ConfigurationTarget.Workspace;
-  private prettify: {};
+  private prettify: Liquidrc = {};
   private watchChange: boolean = false;
 
   hasConfigOption (selector: string, inspect?: any) {
@@ -84,26 +59,6 @@ export class Settings extends Editor {
     }
   }
 
-  usingDeprecatedConfig (rcfile: any = undefined) {
-
-    if (rcfile === undefined) {
-      if (this.liquidSettings.has('format')) {
-        const inuse = this.liquidSettings.get('format');
-        if (typeof inuse === 'boolean' && inuse === true) return true;
-      } else {
-        return false;
-      }
-    }
-
-    return rcfile && (
-      has('html', rcfile) ||
-      has('js', rcfile) ||
-      has('css', rcfile) ||
-      has('scss', rcfile)
-    );
-
-  }
-
   /**
    * Get Settings
    *
@@ -114,40 +69,36 @@ export class Settings extends Editor {
   getSettings () {
 
     // Using deprecated settings
-    if (this.usingDeprecatedConfig()) {
+    if (hasDeprecatedSettings()) {
       return EXTSettings.DeprecatedWorkspaceSettings;
     }
 
     if (this.commandInvoked) {
       this.commandInvoked = false;
-      return;
+      return null;
     }
 
-    const enable = this.liquidSettings.get<boolean>('enable');
-    const target = this.liquidSettings.get<'workspace' | 'user'>('settings.target');
-    const validate = this.liquidSettings.get<{ json: boolean }>('validate');
-    const format = this.liquidSettings.get<Options & { ignore: string[]; enable: boolean; }>('format');
-    const exclude = omit([ 'ignore', 'enable' ]);
-
-    console.log('in settings', this.capability);
+    const liquid = workspace.getConfiguration('liquid');
+    const enable = liquid.get<boolean>('enable');
+    const target = liquid.get<Workspace.Target>('settings.target');
+    const validate = liquid.get<Workspace.Validate>('validate');
+    const format = liquid.get<Workspace.Format>('format');
 
     // No configuration defined for the extension
-    if (enable === undefined && format === undefined) {
-      return EXTSettings.WorkspaceUndefined;
-    }
+    if (isNil(enable) && isNil(format)) return EXTSettings.WorkspaceUndefined;
 
     // Whether or not the extension is disabled
     this.isDisabled = enable === false;
 
-    if (validate && typeof validate === 'object') {
-      if (has('json', validate) && typeof validate.json === 'boolean') {
-        this.capability.shopifySchemaValidate = validate.json;
+    if (isObject(validate)) {
+      if (has('json', validate) && isBoolean(validate.json)) {
+        this.validate.json = validate.json;
       } else {
-        this.capability.shopifySchemaValidate = enable;
+        this.validate.json = enable;
       }
     }
 
-    if (target && typeof target === 'string') {
+    if (isString(target)) {
       if (target === 'user') {
         this.target = ConfigurationTarget.Global;
       } else if (target === 'workspace' && this.target !== ConfigurationTarget.Workspace) {
@@ -155,34 +106,31 @@ export class Settings extends Editor {
       }
     }
 
-    if (format && typeof format === 'object') {
+    if (isObject(format)) {
 
-      let defined: boolean = this.configType === ConfigType.EditorSettings;
+      let defined: boolean = this.config === Config.Workspace;
       let options: EXTSettings = EXTSettings.WorkspaceUndefined;
 
       // If first run, we will assert editor settings is being used
-      if (isNaN(this.configType)) {
-        this.configType = ConfigType.EditorSettings;
+      if (isNaN(this.config)) {
+        this.config = Config.Workspace;
         defined = true;
       }
 
-      if (defined && Array.isArray(format.ignore)) {
+      if (isArray(format.ignore)) {
         this.ignored = format.ignore;
         options = EXTSettings.WorkspaceDefined;
       }
 
       // lets determine if formatting is enabled or not
-      if (has('enable', format) && typeof format.enable === 'boolean') {
-        this.capability.formatting = format.enable;
+      if (has('enable', format) && isBoolean(format.enable)) {
+        this.feature.format = format.enable;
       }
 
       // if we are using editor settings lets apply prettify rules
-      if (defined) {
-        this.prettify = exclude(format);
-      }
+      if (defined) this.prettify = mergePreferences(normalizeRules(format));
 
       return options;
-
     }
 
     return EXTSettings.WorkspaceUndefined;
@@ -196,49 +144,67 @@ export class Settings extends Editor {
    * and then looks for a _prettify_ property. When detected
    * the extension will use the rules defined there.
    */
-  async getPkgJSON (uri?: string) {
+  async getPkgJSON () {
 
-    const path = uri || join(this.rootPath, 'package.json');
-    const exists = await pathExists(path);
-
-    if (!exists) return;
+    const path = hasPackage(this.rootPath);
+    if (!path) return EXTSettings.PackageJsonUndefined;
 
     this.uri.package = path;
 
     try {
 
-      const pkg = await readJSON(this.uri.package, { throws: true });
+      const pkg: { prettify: Liquidrc } = await readJSON(this.uri.package, { throws: true });
 
-      if (has('prettify', pkg) && typeof pkg.prettify === 'object') {
+      if (has('prettify', pkg)) {
 
-        if (has('ignore', pkg.prettify) && Array.isArray(pkg.prettify.ignore)) {
-          this.ignored = pkg.prettify.ignore;
+        if (isObject(pkg.prettify)) {
+
+          if (has('ignore', pkg.prettify) && isArray(pkg.prettify.ignore)) {
+            this.ignored = pkg.prettify.ignore;
+          }
+
+          this.config = Config.Package;
+          this.prettify = normalizeRules(pkg.prettify);
+
+          if (this.feature.format === null) this.feature.format = true;
+          if (this.isDisabled === null) this.isDisabled = false;
+
+          return EXTSettings.PrettifyFieldDefined;
+
         }
 
-        this.prettify = omit('ignore', pkg.prettify);
-        this.configType = ConfigType.PackageJSONField;
+        return EXTSettings.PrettifyFieldInvalid;
 
-        // when the prettify config field exists and formatting capability is still null
-        // then we will enable it because it is assumed with existence of this field.
-        if (this.capability.formatting === null) {
-          this.capability.formatting = true;
-        }
-
-        // when the prettify config field exists and isDisabled is still null
-        // then we will enable it because it is assumed with existence of this field.
-        if (this.isDisabled === null) {
-          this.isDisabled = false;
-        }
-
-        return true;
       }
 
-    } catch (error) {
-      console.log(error);
+      return EXTSettings.PrettifyFieldUndefined;
+
+    } catch (e) {
+      console.error(e);
       this.logOutput('error', EN.INVALID_PKG_PARSE);
     }
 
-    return false;
+    return EXTSettings.PackageJsonError;
+
+  }
+
+  async updateLiquidrc (rcfile: string) {
+
+    try {
+
+      const { language } = prettify.options.rules;
+      const liquidrc = await prettify.format(rcfile, { language: 'json' });
+
+      await writeFile(this.uri.liquidrc, liquidrc);
+
+      prettify.options({ language });
+
+      this.logOutput(EN.UPDATED_FORMAT_RULES);
+
+    } catch (e) {
+      console.error(e);
+      this.logOutput('error', e);
+    }
   }
 
   /**
@@ -253,82 +219,71 @@ export class Settings extends Editor {
    */
   async getLiquidrc () {
 
-    let setting: EXTSettings = EXTSettings.LiquidrcUndefined;
-    let path = join(this.rootPath, '.liquidrc');
+    const path = hasLiquidrc(this.rootPath);
 
-    const exclude = omit('ignore');
-    const exists = await pathExists(path);
-
-    if (exists === false) {
-
-      path = join(this.rootPath, '.liquidrc.json');
-
-      const exists = await pathExists(path);
-
-      if (exists === false) return { setting, rcfile: null };
+    if (!path) {
+      return {
+        rcfile: null,
+        setting: EXTSettings.LiquidrcUndefined
+      };
     }
 
-    this.configType = ConfigType.RCFile;
+    this.config = Config.Liquidrc;
     this.uri.liquidrc = path;
 
     try {
 
       const read = await readFile(this.uri.liquidrc);
-      const rcfile = jsonc(read.toString());
+      const rcfile = read.toString();
+      const rules = jsonc(read.toString());
 
-      if (typeof rcfile === 'object') {
+      if (isObject(rules)) {
 
-        setting = EXTSettings.LiquidrcDefined;
-
-        if (this.usingDeprecatedConfig(rcfile)) {
+        if (hasDeprecatedSettings(rules)) {
           return {
-            setting: EXTSettings.DeprecatedLiquidrcSettings,
-            rcfile: read.toString()
+            rcfile,
+            setting: EXTSettings.DeprecatedLiquidrc
           };
         }
 
-        if (has('ignore', rcfile) && Array.isArray(rcfile.ignore)) {
-          this.ignored = rcfile.ignore;
+        if (has('ignore', rules) && isArray(rules.ignore)) {
+          this.ignored = rules.ignore;
         }
 
-        this.prettify = exclude(rcfile);
+        this.prettify = normalizeRules(rules);
 
-        // when liquidrc file exists and formatting capability is still null
-        // then we will enable it because it is assumed with existence
-        // of the liquidrc file being present.
-        if (this.capability.formatting === null) {
-          this.capability.formatting = true;
-        }
-
-        // when liquidrc file exists and isDisabled is still null
-        // then we will ensure to enable it because it is assumed with existence
-        // of the liquidrc file being present.
-        if (this.isDisabled === null) {
-          this.isDisabled = false;
-        }
+        if (this.feature.format === null) this.feature.format = true;
+        if (this.isDisabled === null) this.isDisabled = false;
 
         return {
-          setting,
-          rcfile: read.toString()
+          rcfile,
+          setting: EXTSettings.LiquidrcDefined
         };
 
-      } else {
-        this.logOutput('error', EN.INVALID_LIQUIDRC_TYPE);
       }
 
-    } catch (error) {
-      console.error(error);
+      this.logOutput('error', EN.INVALID_LIQUIDRC_TYPE);
+
+      return {
+        rcfile,
+        setting: EXTSettings.LiquidrcInvalidRules
+      };
+
+    } catch (e) {
+      console.error(e);
       this.logOutput('error', EN.INVALID_LIQUIDRC_PARSE);
     }
 
     return {
-      setting,
+      setting: EXTSettings.LiquidrcError,
       rcfile: null
     };
 
   }
 
   /**
+   * Watch Configuration Files
+   *
    * Start watching the `.liquidrc` file and `package.json` for changes.
    * Passing a `false` parameter will dispose the watchers.
    */
@@ -337,20 +292,19 @@ export class Settings extends Editor {
     if (startWatching === false) {
 
       for (const watcher of this.watcher) watcher.dispose();
-
       this.isWatching = false;
 
     } else {
 
       this.watcher.push(
-        workspace.createFileSystemWatcher('**/.liquidr{c,c.json}'),
-        workspace.createFileSystemWatcher('**/package.json')
+        workspace.createFileSystemWatcher(join(this.rootPath, '.liquidr{c,c.json}')),
+        workspace.createFileSystemWatcher(join(this.rootPath, 'package.json'))
       );
 
       for (const watcher of this.watcher) {
-        watcher.onDidChange((uri) => this.setFormattingRules('change', uri));
-        watcher.onDidDelete((uri) => this.setFormattingRules('delete', uri));
-        watcher.onDidCreate((uri) => this.setFormattingRules('create', uri));
+        watcher.onDidChange((uri) => this.setFormattingRules(WatchEvents.Change, uri));
+        watcher.onDidDelete((uri) => this.setFormattingRules(WatchEvents.Delete, uri));
+        watcher.onDidCreate((uri) => this.setFormattingRules(WatchEvents.Create, uri));
       }
 
       this.isWatching = true;
@@ -363,7 +317,8 @@ export class Settings extends Editor {
 
     if (answer === 'Release Notes') {
 
-      const config = this.liquidSettings.inspect('format');
+      const liquid = workspace.getConfiguration('liquid');
+      const config = liquid.inspect('format');
 
       if (config.globalValue === true) {
         this.doNotStart = true;
@@ -373,61 +328,87 @@ export class Settings extends Editor {
     }
   }
 
-  async setWorkspaceDefaults () {
+  /**
+   * Set Workspace Defaults
+   *
+   * This function will update the workspace settings `[html]`
+   * language identifiers `defaultFormatter` option. It's used
+   * to automatically assert Prettify as the formatter.
+   */
+  async setWorkspaceDefaults (language: INLanguageIDs = '[html]') {
 
     const config = workspace.getConfiguration();
 
-    if (this.capability.formatting === true) {
+    if (this.feature.format) {
 
-      const html = config.inspect('[html]');
-      const value = { 'editor.defaultFormatter': 'sissel.shopify-liquid' };
+      /**
+       * This letting will determine whether the workspace
+       * settings can be updated or not
+       */
+      let update: boolean = true;
 
-      if (typeof html.workspaceValue !== 'object' || !has('editor.defaultFormatter', html.workspaceValue)) {
-        await config.update('[html]', value, this.target, true);
-        this.logOutput('assigned default formatter');
+      const html = config.inspect(language);
+      const DEFAULT = 'editor.defaultFormatter';
+      const EXTENSION = 'sissel.shopify-liquid';
+
+      if (this.target === ConfigurationTarget.Global) {
+
+        this.logOutput(EN.WARNING_USER_SETTINGS);
+
+        if (isObject(html.globalValue)) {
+          if (has(DEFAULT, html.globalValue)) {
+            update = false;
+            if (html.globalValue[DEFAULT] === EXTENSION) {
+              this.logOutput(EN.DEFAULT_IS_PRETTIFY);
+            } else {
+              this.logOutput(EN.DEFAULT_NOT_PRETTIFY + html.globalValue[DEFAULT]);
+            }
+          }
+        }
       } else {
-        if (
-          typeof html.workspaceValue === 'object' &&
-          has('editor.defaultFormatter', html.workspaceValue) &&
-          html.workspaceValue['editor.defaultFormatter'] !== 'sissel.shopify-liquid'
-        ) {
-          this.logOutput('unable to assign default formatter, record already exists');
+        if (isObject(html.workspaceValue)) {
+          if (has(DEFAULT, html.workspaceValue)) {
+            update = false;
+            if (html.workspaceValue[DEFAULT] === EXTENSION) {
+              this.logOutput(EN.DEFAULT_IS_PRETTIFY);
+            } else {
+              this.logOutput(EN.DEFAULT_NOT_PRETTIFY + html.workspaceValue[DEFAULT]);
+            }
+          }
         }
       }
-    }
 
-    if (this.target === ConfigurationTarget.Workspace) {
+      if (update) {
 
-      const ws = config.inspect('html.validate');
+        await config.update(language, {
+          [DEFAULT]: EXTENSION
+        }, this.target, true);
 
-      if (!has('scripts', ws)) {
-        await config.update('html.validate.scripts', false, this.target);
-        this.logOutput('disabled html script validations for workspace');
-      }
-
-      if (!has('styles', ws)) {
-        await config.update('html.validate.styles', false, this.target);
-        this.logOutput('disabled html style validations for workspace');
+        this.logOutput(EN.DEFAULT_UPDATED);
       }
     }
 
-    if (this.isLoading) this.isLoading = false;
-
-    if (this.capability.formatting) {
-      this.statusBar(Status.Enabled, true);
+    if (this.feature.format) {
+      this.statusBar(Status.Enabled);
     } else {
-      this.statusBar(Status.Disabled, true);
+      this.statusBar(Status.Disabled);
     }
   }
 
+  /**
+   * Get Config File
+   *
+   * This function is invoked at the runtime activation event.
+   * It determines the workspaces configuration and sets up the
+   * extension accordingly, assigning all default and requirements.
+   */
   async getConfigFile () {
 
     const settings = this.getSettings();
 
     if (settings === EXTSettings.DeprecatedWorkspaceSettings) {
-      this.statusBar(Status.Upgrade, true);
       this.isDisabled = true;
-      return;
+      return this.statusBar(Status.Upgrade);
     }
 
     try {
@@ -436,56 +417,54 @@ export class Settings extends Editor {
 
       const liquidrc = await this.getLiquidrc();
 
-      if (liquidrc.setting === EXTSettings.DeprecatedLiquidrcSettings) {
-        this.statusBar(Status.Upgrade, true);
+      console.log(liquidrc);
+
+      if (liquidrc.setting === EXTSettings.DeprecatedLiquidrc) {
         this.isDisabled = true;
-        return;
+        return this.statusBar(Status.Upgrade, true);
       }
 
-      if (this.capability.formatting === true) {
+      if (this.feature.format) {
         await this.setWorkspaceDefaults();
+        this.statusBar(Status.Enabled);
+        prettify.options(this.prettify);
+      } else {
+        this.statusBar(Status.Disabled);
       }
 
-      // setup formatting output
-      // prints everytime the document is formatted
-      prettify.format.after((_, { language }) => {
-        this.logOutput(`${language} formatted in ${prettify.format.stats.time}ms`);
+      // setup formatting output to prints everytime the document is formatted
+      prettify.format.after((_, { languageName }) => {
+        this.logOutput(`${languageName} formatted in ${prettify.format.stats.time}ms`);
       });
 
       this.watchConfigFiles();
 
-      if (this.configType === ConfigType.EditorSettings) {
+      if (this.config === Config.Workspace) {
         this.logOutput(EN.SETTINGS_WORKSPACE);
-      } else if (this.configType === ConfigType.PackageJSONField) {
+      } else if (this.config === Config.Package) {
         this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
-      } else if (this.configType === ConfigType.RCFile) {
+      } else if (this.config === Config.Liquidrc) {
         this.logOutput(`${EN.SETTINGS_LIQUIDRC} ${this.uri.liquidrc}`);
-      }
-
-      if (this.capability.formatting) {
-        this.statusBar(Status.Enabled, true);
-        prettify.options(this.prettify);
-      } else {
-        this.statusBar(Status.Disabled, true);
       }
 
       this.selector = getSelectors(!this.isDisabled);
       this.isReady = true;
 
-    } catch (error) {
-
-      console.error(error);
+    } catch (e) {
+      console.error(e);
     }
 
   }
 
   setConfigSettings () {
 
+    // CURRENT SETTINGS
+    //
     const isDisabled = this.isDisabled;
-    const canFormat = this.capability.formatting;
-    const canValidate = this.capability.shopifySchemaValidate;
+    const canFormat = this.feature.format;
+    const canValidate = this.validate.json;
 
-    this.getSettings();
+    const settings = this.getSettings();
 
     if (this.isDisabled) {
       this.selector = getSelectors();
@@ -496,34 +475,38 @@ export class Settings extends Editor {
       }
     }
 
-    if (this.capability.formatting === false) {
-      this.statusBar(Status.Disabled, true);
+    if (this.feature.format === false) {
+      this.statusBar(Status.Disabled);
       this.logOutput(EN.DISABLED_FORMAT);
     } else {
-      if (this.capability.formatting !== canFormat) {
-        this.statusBar(Status.Enabled, true);
+      if (this.feature.format !== canFormat) {
+        this.statusBar(Status.Enabled);
         this.logOutput(EN.ENABLED_FORMAT);
       }
     }
 
-    if (this.capability.formatting && this.configType === ConfigType.EditorSettings) {
+    if (this.feature.format && this.config === Config.Workspace) {
       prettify.options(this.prettify);
     }
 
-    if (canValidate === true && this.capability.shopifySchemaValidate === false) {
+    if (canValidate === true && this.validate.json === false) {
       this.logOutput(EN.DISABLED_SCHEMA_VALIDATE);
-    } else if (this.capability.shopifySchemaValidate === true && canValidate === false) {
+    } else if (this.validate.json === true && canValidate === false) {
       this.logOutput(EN.ENABLED_SCHEMA_VALIDATE);
     }
+
+    return settings;
 
   }
 
   /**
+   * Set Formatting Rules
+   *
    * Defines where formatting rules are sourced.
    * Looks for rules defined in a `.liquirc` file and if
    * no file present will default to workspace settings configuration.
    */
-  async setFormattingRules (type: 'create' | 'delete' | 'change', { path }: Uri) {
+  async setFormattingRules (type: WatchEvents, { path }: Uri) {
 
     // When rcfile changes we want to prevent repeated
     // runs after reading the contents
@@ -532,130 +515,192 @@ export class Settings extends Editor {
       return;
     }
 
-    try {
+    const event = isPath(path, 'package');
 
-      // Determine which file was changed, we only watch
-      // for changes to package.json and liquidrc file.
-      const fileName = path.slice(path.lastIndexOf('/') + 1);
-      const isPackage = fileName.startsWith('package');
+    if (type === WatchEvents.Change) {
 
-      if (type === 'change') {
+      if (event.match) {
 
-        if (isPackage) {
+        // Change was applied to package.json but we can skip
+        // processing because user is using an rcfile or workspace
+        if (this.config === Config.Liquidrc) return;
 
-          // change was applied to package.json but we can skip
-          // processing because user is using an rcfile
-          if (this.configType !== ConfigType.PackageJSONField) return;
+        const pkg = await this.getPkgJSON();
 
-          const pkg = await this.getPkgJSON(path);
+        if (this.config === Config.Package) {
 
-          if (pkg) {
-            console.log(this.prettify);
+          if (pkg === EXTSettings.PrettifyFieldDefined) {
+
             prettify.options(this.prettify);
             this.logOutput(EN.UPDATED_FORMAT_RULES);
+
+          } else if (pkg === EXTSettings.PrettifyFieldUndefined) {
+
+            this.config = Config.Workspace;
+            this.setConfigSettings();
+            this.logOutput(EN.SETTINGS_WORKSPACE);
+
+          } else if (pkg === EXTSettings.PrettifyFieldInvalid) {
+
+            this.logOutput(EN.INVALID_SETTINGS + event.fileName);
+            this.statusBar(Status.Error);
+
+          } else if (pkg === EXTSettings.PackageJsonError) {
+
+            this.statusBar(Status.Error);
+
           }
 
         } else {
 
-          const { setting, rcfile } = await this.getLiquidrc();
-
-          if (setting === EXTSettings.LiquidrcDefined) {
+          if (pkg === EXTSettings.PrettifyFieldDefined) {
 
             prettify.options(this.prettify);
 
-            const liquidrc = await prettify.format(rcfile, {
-              ...this.prettify,
-              language: 'json'
-            });
-
-            await writeFile(this.uri.liquidrc, liquidrc);
-
-            prettify.options(this.prettify);
-
-            this.watchChange = true;
-            this.logOutput(EN.UPDATED_FORMAT_RULES);
-
-          }
-        }
-
-      } else if (type === 'create') {
-
-        if (isPackage === false) {
-
-          if (this.configType === ConfigType.PackageJSONField) {
-            this.logOutput(`settings in ${fileName} override prettify field in package.json`);
-          }
-
-          if (this.configType === ConfigType.EditorSettings) {
-            this.logOutput(`settings in ${fileName} override the liquid.format workspace options`);
-          }
-
-          this.configType = ConfigType.RCFile;
-          this.uri.liquidrc = path;
-          this.logOutput(`${EN.SETTINGS_LIQUIDRC} ${this.uri.liquidrc}`);
-
-        } else {
-
-          const pkg = await this.getPkgJSON(path);
-
-          if (pkg) {
             this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
+            this.logOutput(EN.UPDATED_FORMAT_RULES);
+
+          } else if (pkg === EXTSettings.PrettifyFieldInvalid) {
+
+            this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
+            this.logOutput(EN.INVALID_SETTINGS + event.fileName);
+            this.statusBar(Status.Error);
+
           }
+        }
+
+      } else {
+
+        const liquidrc = await this.getLiquidrc();
+
+        if (liquidrc.setting === EXTSettings.LiquidrcDefined) {
+
+          await this.updateLiquidrc(liquidrc.rcfile);
+
+          this.statusBar(Status.Enabled);
+          this.watchChange = true;
+
+        } else if (liquidrc.setting === EXTSettings.LiquidrcInvalidRules) {
+
+          this.logOutput(EN.INVALID_SETTINGS + event.fileName);
+          this.statusBar(Status.Error);
+
+        } else if (liquidrc.setting === EXTSettings.LiquidrcError) {
+
+          this.statusBar(Status.Error);
+
+        }
+      }
+    } else if (type === WatchEvents.Create) {
+
+      if (event.match) {
+
+        if (this.config !== Config.Liquidrc) return;
+
+        const pkg = await this.getPkgJSON();
+
+        if (pkg === EXTSettings.PrettifyFieldDefined) {
+
+          prettify.options(this.prettify);
+
+          this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
+          this.logOutput(EN.UPDATED_FORMAT_RULES);
+
+        } else if (pkg === EXTSettings.PrettifyFieldInvalid) {
+
+          this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
+          this.logOutput(EN.INVALID_SETTINGS + event.fileName);
+          this.statusBar(Status.Error);
 
         }
 
-      } else if (type === 'delete') {
+      } else {
 
-        if (isPackage) {
+        if (this.config === Config.Package) {
+          this.logOutput(event.fileName + EN.OVERRIDE_PRETTIFY);
+        }
+        if (this.config === Config.Workspace) {
+          this.logOutput(event.fileName + EN.OVERRIDE_WORKSPACE);
+        }
 
-          if (this.configType !== ConfigType.RCFile) {
-            if (this.uri.liquidrc !== null) {
-              this.configType = ConfigType.RCFile;
-              this.logOutput(`${EN.SETTINGS_LIQUIDRC} ${this.uri.liquidrc}`);
-            }
-          }
+        this.logOutput(EN.SETTINGS_LIQUIDRC + this.uri.liquidrc);
 
-        } else {
+        const liquidrc = await this.getLiquidrc();
 
-          if (this.configType === ConfigType.RCFile) {
+        if (liquidrc.setting === EXTSettings.LiquidrcDefined) {
 
-            const pkg = await this.getPkgJSON(path);
+          await this.updateLiquidrc(liquidrc.rcfile);
 
-            if (pkg) {
+          this.statusBar(Status.Enabled);
+          this.watchChange = true;
 
-              this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
+        } else if (liquidrc.setting === EXTSettings.LiquidrcInvalidRules) {
 
-            } else {
+          this.logOutput(EN.INVALID_SETTINGS + event.fileName);
+          this.statusBar(Status.Error);
 
-              this.prettify = {};
-              const settings = this.getSettings();
+        } else if (liquidrc.setting === EXTSettings.LiquidrcError) {
 
-              if (settings === EXTSettings.WorkspaceUndefined) {
+          this.statusBar(Status.Error);
 
-                const pkg = await this.getPkgJSON(path);
-
-                if (pkg) {
-                  this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
-                } else {
-                  this.logOutput(EN.SETTINGS_MISSING);
-                }
-
-              } else if (settings === EXTSettings.WorkspaceDefined) {
-
-                this.configType = ConfigType.EditorSettings;
-                prettify.options(this.prettify);
-                this.logOutput(EN.SETTINGS_WORKSPACE);
-              }
-            }
-          }
         }
       }
 
-    } catch (error) {
+    } else if (type === WatchEvents.Delete) {
 
-      this.hasError = true;
-      this.logOutput('error', error.message);
+      if (event.match) {
 
+        const liquidrc = await this.getLiquidrc();
+
+        if (liquidrc.setting === EXTSettings.LiquidrcUndefined) {
+
+          this.config = Config.Workspace;
+          this.setConfigSettings();
+
+        } else if (liquidrc.setting === EXTSettings.LiquidrcDefined) {
+
+          await this.updateLiquidrc(liquidrc.rcfile);
+
+          this.statusBar(Status.Enabled);
+          this.watchChange = true;
+
+        } else if (liquidrc.setting === EXTSettings.LiquidrcInvalidRules) {
+
+          this.logOutput(EN.INVALID_SETTINGS + event.fileName);
+          this.statusBar(Status.Error);
+
+        } else if (liquidrc.setting === EXTSettings.LiquidrcError) {
+
+          this.statusBar(Status.Error);
+
+        }
+
+      } else {
+
+        const pkg = await this.getPkgJSON();
+
+        if (pkg === EXTSettings.PrettifyFieldDefined) {
+
+          prettify.options(this.prettify);
+
+          this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
+          this.logOutput(EN.UPDATED_FORMAT_RULES);
+
+        } else if (pkg === EXTSettings.PrettifyFieldInvalid) {
+
+          this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
+          this.logOutput(EN.INVALID_SETTINGS + event.fileName);
+          this.statusBar(Status.Error);
+
+        } else {
+
+          this.config = Config.Workspace;
+          this.setConfigSettings();
+          this.logOutput(EN.SETTINGS_WORKSPACE);
+
+        }
+
+      }
     }
 
   }
@@ -669,7 +714,7 @@ export class Settings extends Editor {
    */
   async rcfileGenerate (config: 'recommended' | 'defaults') {
 
-    if (this.configType === ConfigType.RCFile) {
+    if (this.config === Config.Liquidrc) {
 
       const answer = await window.showErrorMessage(EN.GENERATE_EXISTS, 'Reset', 'Open');
 
