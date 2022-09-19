@@ -16,7 +16,7 @@ import { EN } from './i18n';
  * This enum is used to determine how configuration
  * files are setup in the users workspace.
  */
-const enum EXTSettings {
+export const enum EXTSettings {
   /**
    * Using Deprecated Workspace settings
    */
@@ -67,6 +67,27 @@ export class Settings extends Editor {
   private prettify: {};
   private watchChange: boolean = false;
 
+  hasConfigOption (selector: string, inspect?: any) {
+
+    if (selector.charCodeAt(0) !== 91) return workspace.getConfiguration().has(selector);
+
+    const language = workspace.getConfiguration().inspect(selector);
+
+    if (this.target === ConfigurationTarget.Workspace) {
+      return (
+        typeof language.workspaceValue === 'object' &&
+        has(inspect, language.workspaceValue)
+      );
+    } else if (this.target === ConfigurationTarget.Global) {
+      return (
+        typeof language.globalValue === 'object' &&
+        has(inspect, language.globalValue)
+      );
+
+    }
+
+  }
+
   usingDeprecatedConfig (rcfile: any = undefined) {
 
     if (rcfile === undefined) {
@@ -112,9 +133,7 @@ export class Settings extends Editor {
     const format = this.liquidSettings.get<Options & { ignore: string[]; enable: boolean; }>('format');
     const exclude = omit([ 'ignore', 'enable' ]);
 
-    if (this.capability.formatting !== null && format === undefined) {
-      this.capability.formatting = null;
-    }
+    console.log('in settings', this.capability);
 
     // No configuration defined for the extension
     if (enable === undefined && format === undefined) {
@@ -192,7 +211,7 @@ export class Settings extends Editor {
 
     try {
 
-      const pkg = await readJSON(uri, { throws: true });
+      const pkg = await readJSON(this.uri.package, { throws: true });
 
       if (has('prettify', pkg) && typeof pkg.prettify === 'object') {
 
@@ -371,7 +390,13 @@ export class Settings extends Editor {
         await config.update('[html]', value, this.target, true);
         this.logOutput('assigned default formatter');
       } else {
-        this.logOutput('unable to assign default formatter, record already exists');
+        if (
+          typeof html.workspaceValue === 'object' &&
+          has('editor.defaultFormatter', html.workspaceValue) &&
+          html.workspaceValue['editor.defaultFormatter'] !== 'sissel.shopify-liquid'
+        ) {
+          this.logOutput('unable to assign default formatter, record already exists');
+        }
       }
     }
 
@@ -390,6 +415,13 @@ export class Settings extends Editor {
       }
     }
 
+    if (this.isLoading) this.isLoading = false;
+
+    if (this.capability.formatting) {
+      this.statusBar(Status.Enabled, true);
+    } else {
+      this.statusBar(Status.Disabled, true);
+    }
   }
 
   async getConfigFile () {
@@ -522,9 +554,9 @@ export class Settings extends Editor {
           const pkg = await this.getPkgJSON(path);
 
           if (pkg) {
+            console.log(this.prettify);
             prettify.options(this.prettify);
             this.logOutput(EN.UPDATED_FORMAT_RULES);
-            this.watchChange = true;
           }
 
         } else {
@@ -536,6 +568,7 @@ export class Settings extends Editor {
             prettify.options(this.prettify);
 
             const liquidrc = await prettify.format(rcfile, {
+              ...this.prettify,
               language: 'json'
             });
 
@@ -602,8 +635,17 @@ export class Settings extends Editor {
               const settings = this.getSettings();
 
               if (settings === EXTSettings.WorkspaceUndefined) {
-                this.logOutput(EN.SETTINGS_MISSING);
+
+                const pkg = await this.getPkgJSON(path);
+
+                if (pkg) {
+                  this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
+                } else {
+                  this.logOutput(EN.SETTINGS_MISSING);
+                }
+
               } else if (settings === EXTSettings.WorkspaceDefined) {
+
                 this.configType = ConfigType.EditorSettings;
                 prettify.options(this.prettify);
                 this.logOutput(EN.SETTINGS_WORKSPACE);

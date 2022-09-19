@@ -1,56 +1,69 @@
 {% # @prettify %}
 
-<aside id="mobile-menu" aria-hidden="true" class="drawer-panel drawer-left pb-3 px-3 d-none" data-controller="drawer">
+<aside
+  id="mobile-menu"
+  aria-hidden="true"
+  class="drawer-panel drawer-left pb-3 px-3 d-none"
+  data-controller="drawer">
+
 
   <div class="onCasing"></div>
 
   <div class="mobile-menu-container">
+
+
     <nav class="mobile-menu as-center py-3">
 
 
-      <div class="relapse mt-3 mb-2" data-accordion-persist-value="true" data-accordion-multiple-value="false"
+      <div
+        class="relapse mt-3 mb-2"
+        data-accordion-persist-value="true"
+        data-accordion-multiple-value="false"
         data-controller="accordion">
 
+
         {%- for link in linklists.mobile-drawer-menu.links -%}
-        {%- if link.links != blank -%}
-        <button class="relapse-btn upper mb-2 {% if link.active -%} opened{%- endif -%}">
-          {{- link.title -}}
+          {%- if link.links != blank -%}
+            <button class="relapse-btn upper mb-2 {% if link.active -%} opened{%- endif -%}">
+              {{- link.title -}}
 
 
-        </button>
+            </button>
 
 
-        <div class="relapse-fold">
-          <ul class="list-clear p-3" id="{{- link.title | handleize -}}">
-            {%- for childlink in link.links -%}
-            {%- if forloop.first -%}
-            <li class="pt-1 pb-1 {% if link.active %} active{%- endif -%}">
-              <a href=" {{- link.url }}">
-                SHOP ALL
-              </a>
-            </li>
-            {%- endif -%}
-            {%- if childlink.title contains 'Archive' -%}
-            <li class="pt-1 pb-1 {% if childlink.active %}active{%- endif -%}">
-              <a class="text-red" href=" {{- childlink.url }}">
-                {{- childlink.title | replace: 'Archive', 'Season Sale' -}}
-              </a>
-            </li>
+            <div class="relapse-fold">
+              <ul
+                class="list-clear p-3"
+                id="{{- link.title | handleize -}}">
+                {%- for childlink in link.links -%}
+                  {%- if forloop.first -%}
+                    <li class="pt-1 pb-1 {% if link.active %} active{%- endif -%}">
+                      <a href=" {{- link.url }}">
+                        SHOP ALL
+                      </a>
+                    </li>
+                  {%- endif -%}
+                  {%- if childlink.title contains 'Archive' -%}
+                    <li class="pt-1 pb-1 {% if childlink.active %}active{%- endif -%}">
+                      <a
+                        class="text-red"
+                        href=" {{- childlink.url }}">
+                        {{- childlink.title | replace: 'Archive', 'Season Sale' -}}
+                      </a>
+                    </li>
 
 
-            {%- else -%}
-            <li class="pt-1 pb-1 {% if childlink.active %}active{%- endif -%}">
-              <a href=" {{- childlink.url }}">
-                {{- childlink.title -}}
-              </a>
-            </li>
-            {%- endif -%}
-            {%- endfor -%}
-          </ul>
-        </div>
-        {%- endif -%}
-
-
+                  {%- else -%}
+                    <li class="pt-1 pb-1 {% if childlink.active %}active{%- endif -%}">
+                      <a href=" {{- childlink.url }}">
+                        {{- childlink.title -}}
+                      </a>
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endif -%}
 
 
         {%- endfor -%}
@@ -60,29 +73,29 @@
 
         {%- if condition -%}
 
-        {{ all_country_option_tags }}
+          {{ all_country_option_tags }}
         {%- endif -%}
       </div>
 
       {%- form 'product', product -, %}{%- endform -%}
 
-      for
-
 
       {%- for link in linklists.mobile-drawer-menu.links -%}
-      {%- if link.links == blank -%}
-      {% if link.active -%}
-      {%- assign link_class = 'link mb-2 d-block ' | append: 'active' -%}
-      {%- else -%}
-      {%- assign link_class = 'link mb-2 d-block' -%}
-      {%- endif -%}
+        {%- if link.links == blank -%}
+          {% if link.active -%}
+            {%- assign link_class = 'link mb-2 d-block ' | append: 'active' -%}
+          {%- else -%}
+            {%- assign link_class = 'link mb-2 d-block' -%}
+          {%- endif -%}
 
-      <a href="{{- link.url }}" class="{{ link_class }}">
-        {{ link.title }}
-      </a>
+          <a
+            href="{{- link.url }}"
+            class="{{ link_class }}">
+            {{ link.title }}
+          </a>
 
 
-      {%- endif -%}
+        {%- endif -%}
       {%- endfor -%}
 
 

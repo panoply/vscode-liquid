@@ -57,6 +57,7 @@ export class Editor extends State {
 
     } else if (type === Status.Loading) {
 
+      this.isLoading = true;
       this.barItem.text = '💧 $(sync~spin)';
       this.barItem.tooltip = 'Loading Extension';
 

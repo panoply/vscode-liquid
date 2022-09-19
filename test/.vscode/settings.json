@@ -1,6 +1,17 @@
 {
-  "liquid.format": true,
-  "liquid.rules": {},
+  "[html]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid"
+  },
+    "[json]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid"
+  },
+  "html.validate.scripts": false,
+  "html.validate.styles": false,
+  "liquid.format.enable": true
+
+
+ // "liquid.format": true,
+ // "liquid.rules": {},
 
   // "liquid.format.enable": true
 

@@ -4,7 +4,6 @@ import { LiteralUnion } from 'type-fest';
 import prettify, { Options, LanguageNames } from '@liquify/prettify';
 import { mergeRight } from 'rambda';
 import { Range, workspace, TextDocument, DocumentSelector } from 'vscode';
-import { TextDocument as ITextDocument } from 'vscode-languageserver-textdocument';
 import stripJsonComments from 'strip-json-comments';
 
 /* -------------------------------------------- */
@@ -76,7 +75,7 @@ export function getSelectors (inject = false): DocumentSelector {
   ];
 
   if (inject) {
-    defaults.push(
+    (defaults as DocumentSelector[]).push(
       {
         scheme: 'file',
         language: 'html'
@@ -102,17 +101,34 @@ export function getSelectors (inject = false): DocumentSelector {
  */
 export function getLanguage (language: LanguageIDs): LanguageNames {
 
-  console.log(language);
   switch (language) {
     case 'liquid':
     case 'json': return language;
-    case 'html': return 'liquid';
     case 'jsonc': return 'json';
+    case 'html': return 'liquid';
     case 'liquid-javascript': return 'javascript';
     case 'liquid-css': return 'scss';
     case 'liquid-scss': return 'scss';
-    case 'liquid-json': return 'json';
   }
+
+}
+
+export function getLanguageFromExtension (path: string) {
+
+  if (typeof path !== 'string') return null;
+
+  const nameidx = path.lastIndexOf('/');
+  const lastdot = path.indexOf('.', nameidx);
+  const extname = path.slice(lastdot + 1);
+
+  switch (extname) {
+    case 'liquid': return 'liquid';
+    case 'js.liquid': return 'javascript';
+    case 'css.liquid': return 'css';
+    case 'scss.liquid': return 'scss';
+  }
+
+  return null;
 
 }
 

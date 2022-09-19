@@ -7,14 +7,14 @@ import {
   TextDocumentChangeEvent,
   Uri
 } from 'vscode';
-import { extname } from 'node:path';
 import prettify from '@liquify/prettify';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { Format } from './format';
-import { getLanguage, getRange } from './utilities';
+import { getLanguage, getLanguageFromExtension, getRange, Status } from './utilities';
 import { JSONLanguageService } from './json';
 import { schema } from './schema';
 import { EN } from './i18n';
+import { EXTSettings } from './settings';
 
 /**
  * Document intializer class
@@ -50,9 +50,11 @@ export class Document extends Format {
   onConfigChanges (config: ConfigurationChangeEvent) {
 
     if (this.commandInvoked === false) {
+
       if (config.affectsConfiguration('liquid')) {
 
         const noValidate = this.capability.shopifySchemaValidate;
+
         this.hasError = false;
         this.setConfigSettings();
 
@@ -67,65 +69,63 @@ export class Document extends Format {
 
       } else if (config.affectsConfiguration('[html]')) {
 
-        console.log('effects language');
-        this.getSettings();
+        const hasConfig = this.getSettings();
+
+        if (hasConfig === EXTSettings.WorkspaceUndefined) {
+          this.logOutput('workspace settings undefined');
+          this.capability.formatting = null;
+        }
+
+        this.commandInvoked = true;
 
       }
-    }
+    } else {
+
+      this.commandInvoked = false;
+    };
 
   }
 
   onOpenTextDocument () {
 
-    if (this.isDisabled) {
-      this.dispose();
-      return;
-    }
+    this.disposeAll();
 
-    if (this.liquidSettings.get<boolean>('enable')) {
-      this.isLoading = false;
-    } else if (this.isLoading) {
-      this.barItem.hide();
-      this.isLoading = false;
-    }
+    if (this.isDisabled) return this.dispose();
 
-    if (this.hasProvider) return;
+    if (this.liquidSettings.get<boolean>('enable')) this.isLoading = false;
 
-    console.log(this.documents);
-
-    if (this.capability.formatting === null && extname(this.fileName) === '.liquid') {
-      this.capability.formatting = true;
-      try {
-        (async () => await this.setWorkspaceDefaults())();
-      } catch (e) {
-        console.error(e);
+    if (this.capability.formatting === null) {
+      if (getLanguageFromExtension(this.fileName)) {
+        this.statusBar(Status.Loading, true);
+        this.capability.formatting = true;
+        (async () => {
+          try {
+            await this.setWorkspaceDefaults();
+          } catch (e) {
+            console.error(e);
+          }
+        })();
       }
     }
+
+    if (this.hasProvider) return null;
 
     this.provider = languages.registerDocumentFormattingEditProvider(this.selector, {
       provideDocumentFormattingEdits: async document => {
 
-        if (this.isDisabled || this.capability.formatting === false) {
-          return null;
-        }
+        if (this.isDisabled || this.isLoading || this.capability.formatting === false) return null;
 
         try {
 
           const range = getRange(document);
           const input = document.getText(range);
           const language = getLanguage(document.languageId);
-
-          const options = prettify.options.rules.language === language ? {
-            language
-          } : undefined;
-
+          const options = prettify.options.rules.language !== language ? { language } : undefined;
           const output = await prettify.format(input, options);
 
           return [ TextEdit.replace(range, output) ];
 
         } catch (error) {
-
-          console.log(error);
           this.logOutput('error', error);
         }
 
@@ -277,8 +277,9 @@ export class Document extends Format {
    */
   disposeAll () {
 
-    for (const key in this.documents) {
-      if (key in this.documents) this.documents[key].dispose();
+    for (const [ key, doc ] of this.documents) {
+      doc.dispose();
+      this.documents.delete(key);
     }
   }
 
