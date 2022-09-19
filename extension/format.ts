@@ -2,7 +2,7 @@ import { window, TextEdit } from 'vscode';
 import prettify from '@liquify/prettify';
 import { Settings } from './settings';
 import { EN } from './i18n';
-import { Status } from './utilities';
+import { Status } from './types';
 
 /**
  * Applies formatting to the document
@@ -14,9 +14,9 @@ export class Format extends Settings {
   async toggleFormatting (enabled: boolean) {
 
     this.commandInvoked = true;
-    this.capability.formatting = enabled;
+    this.feature.format = enabled;
 
-    await this.liquidSettings.update('format.enable', this.capability.formatting);
+    await this.liquidSettings.update('format.enable', this.feature.format);
 
   }
 
