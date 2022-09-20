@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable quote-props */
 
-import { ExtensionContext } from 'vscode';
+import { ExtensionContext, window } from 'vscode';
+import { waitFor, isType } from 'rambdax';
 // import { Tester } from 'anymatch';
-import { Document } from '../extension/providers/document';
+import { Document } from './document';
+import { isUndefined } from './utilities';
 
 /**
  * vscode-liquid
@@ -14,9 +16,6 @@ export async function activate ({ subscriptions }: ExtensionContext) {
 
   const document = new Document();
 
-  // Only init on active document
-  if (!document.textEditor && !document.textDocument) return;
-
-  document.onEditorStart(subscriptions);
+  await document.onEditorStart(subscriptions);
 
 };

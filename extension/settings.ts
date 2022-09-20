@@ -1,12 +1,14 @@
 /* eslint-disable no-unused-vars */
+
 import { workspace, window, Uri, FileSystemWatcher, env, ConfigurationTarget } from 'vscode';
 import prettify from '@liquify/prettify';
-import { readFile, readJSON, writeFile, writeJSON } from 'fs-extra';
+import { readFile, writeFile, writeJSON } from 'fs-extra';
 import { join } from 'node:path';
 import { Editor } from './editor';
 import { has, isNil } from 'rambdax';
 import { EN } from './i18n';
 import { EXTSettings, Config, Workspace, Liquidrc, Status, INLanguageIDs, WatchEvents } from './types';
+import parseJSON from 'parse-json';
 import {
   getSelectors,
   isBoolean,
@@ -21,7 +23,8 @@ import {
   isArray,
   hasPackage,
   hasLiquidrc,
-  isPath
+  isPath,
+  getLanguagExtensionMap
 } from './utilities';
 
 // import anymatch from 'anymatch';
@@ -42,23 +45,6 @@ export class Settings extends Editor {
   private prettify: Liquidrc = {};
   private watchChange: boolean = false;
 
-  hasConfigOption (selector: string, inspect?: any) {
-
-    if (selector.charCodeAt(0) !== 91) return workspace.getConfiguration().has(selector);
-
-    const language = workspace.getConfiguration().inspect(selector);
-
-    if (this.target === ConfigurationTarget.Workspace) {
-      return (
-        typeof language.workspaceValue === 'object' &&
-        has(inspect, language.workspaceValue)
-      );
-    } else if (this.target === ConfigurationTarget.Global) {
-      return (typeof language.globalValue === 'object' && has(inspect, language.globalValue));
-
-    }
-  }
-
   /**
    * Get Settings
    *
@@ -69,9 +55,7 @@ export class Settings extends Editor {
   getSettings () {
 
     // Using deprecated settings
-    if (hasDeprecatedSettings()) {
-      return EXTSettings.DeprecatedWorkspaceSettings;
-    }
+    if (hasDeprecatedSettings()) return EXTSettings.DeprecatedWorkspaceSettings;
 
     if (this.commandInvoked) {
       this.commandInvoked = false;
@@ -127,6 +111,11 @@ export class Settings extends Editor {
         this.feature.format = format.enable;
       }
 
+      // lets determine if formatting is enabled or not
+      if (has('languages', format) && isArray(format.languages)) {
+        this.languages = new Set(getLanguagExtensionMap(format.languages));
+      }
+
       // if we are using editor settings lets apply prettify rules
       if (defined) this.prettify = mergePreferences(normalizeRules(format));
 
@@ -142,68 +131,88 @@ export class Settings extends Editor {
    *
    * Checks for the existence of a `package.json` files
    * and then looks for a _prettify_ property. When detected
-   * the extension will use the rules defined there.
+   * the extension will use the rules provided to the property.
    */
   async getPkgJSON () {
 
     const path = hasPackage(this.rootPath);
+
     if (!path) return EXTSettings.PackageJsonUndefined;
 
     this.uri.package = path;
 
     try {
 
-      const pkg: { prettify: Liquidrc } = await readJSON(this.uri.package, { throws: true });
+      const read = await readFile(this.uri.package);
+      const pkg = parseJSON(read.toString());
 
-      if (has('prettify', pkg)) {
+      if (!has('prettify', pkg)) return EXTSettings.PrettifyFieldUndefined;
 
-        if (isObject(pkg.prettify)) {
+      if (!isObject(pkg.prettify)) {
 
-          if (has('ignore', pkg.prettify) && isArray(pkg.prettify.ignore)) {
-            this.ignored = pkg.prettify.ignore;
-          }
-
-          this.config = Config.Package;
-          this.prettify = normalizeRules(pkg.prettify);
-
-          if (this.feature.format === null) this.feature.format = true;
-          if (this.isDisabled === null) this.isDisabled = false;
-
-          return EXTSettings.PrettifyFieldDefined;
-
-        }
+        this.error('Invalid configuration type provided in .liquidrc', [
+          'The "prettify" field expects an {} (object) type to be provided but instead recieved',
+          `${typeof pkg.prettify} type which is invalid. You need to use the right configuration.`
+        ]);
 
         return EXTSettings.PrettifyFieldInvalid;
-
       }
 
-      return EXTSettings.PrettifyFieldUndefined;
+      if (has('ignore', pkg.prettify) && isArray(pkg.prettify.ignore)) {
+        this.ignored = pkg.prettify.ignore;
+      }
+
+      // lets determine if formatting is enabled or not
+      if (has('languages', pkg) && isArray(pkg.languages)) {
+        this.languages = new Set(getLanguagExtensionMap(pkg.languages));
+      }
+
+      this.config = Config.Package;
+      this.prettify = normalizeRules(pkg.prettify);
+
+      if (this.feature.format === null) this.feature.format = true;
+      if (this.isDisabled === null) this.isDisabled = false;
+
+      return EXTSettings.PrettifyFieldDefined;
 
     } catch (e) {
-      console.error(e);
-      this.logOutput('error', EN.INVALID_PKG_PARSE);
+      this.error('The package.json file could not be parsed', e);
     }
 
     return EXTSettings.PackageJsonError;
 
   }
 
+  /**
+   * Update Liquidrc File
+   *
+   * Updates the .liquidrc file. Returns a boolean indicating whether or not
+   * the file was upates successfully,
+   */
   async updateLiquidrc (rcfile: string) {
 
-    try {
-
-      const { language } = prettify.options.rules;
-      const liquidrc = await prettify.format(rcfile, { language: 'json' });
-
-      await writeFile(this.uri.liquidrc, liquidrc);
+    const { language } = prettify.options.rules;
+    const liquidrc = await prettify.format(rcfile, { language: 'json' }).catch((e) => {
 
       prettify.options({ language });
 
-      this.logOutput(EN.UPDATED_FORMAT_RULES);
+      this.error('unable to format the .liquidrc file', e);
 
-    } catch (e) {
-      console.error(e);
-      this.logOutput('error', e);
+    });
+
+    if (liquidrc) {
+
+      prettify.options({ language });
+
+      try {
+        await writeFile(this.uri.liquidrc, liquidrc);
+      } catch (e) {
+        this.error('unable to update the .liquidrc file', e);
+        return false;
+      }
+
+      return true;
+
     }
   }
 
@@ -237,41 +246,47 @@ export class Settings extends Editor {
       const rcfile = read.toString();
       const rules = jsonc(read.toString());
 
-      if (isObject(rules)) {
+      if (!isObject(rules)) {
 
-        if (hasDeprecatedSettings(rules)) {
-          return {
-            rcfile,
-            setting: EXTSettings.DeprecatedLiquidrc
-          };
-        }
-
-        if (has('ignore', rules) && isArray(rules.ignore)) {
-          this.ignored = rules.ignore;
-        }
-
-        this.prettify = normalizeRules(rules);
-
-        if (this.feature.format === null) this.feature.format = true;
-        if (this.isDisabled === null) this.isDisabled = false;
+        this.error('Invalid configuration type provided in .liquidrc', [
+          'The .liquirc file expects an {} (object) type to be provided but instead recieved',
+          `${typeof rules} type which is invalid. You can generate a .liquidrc file via the command palette`
+        ]);
 
         return {
           rcfile,
-          setting: EXTSettings.LiquidrcDefined
+          setting: EXTSettings.LiquidrcInvalidRules
         };
-
       }
 
-      this.logOutput('error', EN.INVALID_LIQUIDRC_TYPE);
+      if (hasDeprecatedSettings(rules)) {
+        return {
+          rcfile,
+          setting: EXTSettings.DeprecatedLiquidrc
+        };
+      }
+
+      if (has('ignore', rules) && isArray(rules.ignore)) {
+        this.ignored = rules.ignore;
+      }
+
+      // lets determine if formatting is enabled or not
+      if (has('languages', rules) && isArray(rules.languages)) {
+        this.languages = new Set(getLanguagExtensionMap(rules.languages));
+      }
+
+      this.prettify = normalizeRules(rules);
+
+      if (this.feature.format === null) this.feature.format = true;
+      if (this.isDisabled === null) this.isDisabled = false;
 
       return {
         rcfile,
-        setting: EXTSettings.LiquidrcInvalidRules
+        setting: EXTSettings.LiquidrcDefined
       };
 
     } catch (e) {
-      console.error(e);
-      this.logOutput('error', EN.INVALID_LIQUIDRC_PARSE);
+      this.error('The .liquidrc configuration file could not be parsed', e);
     }
 
     return {
@@ -348,6 +363,9 @@ export class Settings extends Editor {
       let update: boolean = true;
 
       const html = config.inspect(language);
+
+      // FORMATTER DEFAULTS
+      //
       const DEFAULT = 'editor.defaultFormatter';
       const EXTENSION = 'sissel.shopify-liquid';
 
@@ -379,19 +397,17 @@ export class Settings extends Editor {
       }
 
       if (update) {
-
-        await config.update(language, {
-          [DEFAULT]: EXTENSION
-        }, this.target, true);
-
+        await config.update(language, { [DEFAULT]: EXTENSION }, this.target, true);
         this.logOutput(EN.DEFAULT_UPDATED);
       }
     }
 
-    if (this.feature.format) {
-      this.statusBar(Status.Enabled);
-    } else {
-      this.statusBar(Status.Disabled);
+    if (this.isReady) {
+      if (this.feature.format) {
+        this.statusBar(Status.Enabled);
+      } else {
+        this.statusBar(Status.Disabled);
+      }
     }
   }
 
@@ -417,8 +433,6 @@ export class Settings extends Editor {
 
       const liquidrc = await this.getLiquidrc();
 
-      console.log(liquidrc);
-
       if (liquidrc.setting === EXTSettings.DeprecatedLiquidrc) {
         this.isDisabled = true;
         return this.statusBar(Status.Upgrade, true);
@@ -426,15 +440,14 @@ export class Settings extends Editor {
 
       if (this.feature.format) {
         await this.setWorkspaceDefaults();
-        this.statusBar(Status.Enabled);
         prettify.options(this.prettify);
-      } else {
-        this.statusBar(Status.Disabled);
       }
 
       // setup formatting output to prints everytime the document is formatted
       prettify.format.after((_, { languageName }) => {
-        this.logOutput(`${languageName} formatted in ${prettify.format.stats.time}ms`);
+        if (!this.hasError) {
+          this.logOutput(`${languageName} formatted in ${prettify.format.stats.time}ms`);
+        }
       });
 
       this.watchConfigFiles();
@@ -444,7 +457,7 @@ export class Settings extends Editor {
       } else if (this.config === Config.Package) {
         this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
       } else if (this.config === Config.Liquidrc) {
-        this.logOutput(`${EN.SETTINGS_LIQUIDRC} ${this.uri.liquidrc}`);
+        this.logOutput(`${EN.SETTINGS_LIQUIDRC}${this.uri.liquidrc}`);
       }
 
       this.selector = getSelectors(!this.isDisabled);
@@ -508,11 +521,10 @@ export class Settings extends Editor {
    */
   async setFormattingRules (type: WatchEvents, { path }: Uri) {
 
-    // When rcfile changes we want to prevent repeated
-    // runs after reading the contents
+    // When rcfile changes we want to prevent repeated runs after reading the contents
     if (this.watchChange) {
       this.watchChange = false;
-      return;
+      return null;
     }
 
     const event = isPath(path, 'package');
@@ -521,50 +533,36 @@ export class Settings extends Editor {
 
       if (event.match) {
 
-        // Change was applied to package.json but we can skip
-        // processing because user is using an rcfile or workspace
         if (this.config === Config.Liquidrc) return;
 
-        const pkg = await this.getPkgJSON();
-
         if (this.config === Config.Package) {
+
+          const pkg = await this.getPkgJSON();
 
           if (pkg === EXTSettings.PrettifyFieldDefined) {
 
             prettify.options(this.prettify);
-            this.logOutput(EN.UPDATED_FORMAT_RULES);
+
+            this.logOutput('updated prettify beautification rules');
 
           } else if (pkg === EXTSettings.PrettifyFieldUndefined) {
 
             this.config = Config.Workspace;
+
             this.setConfigSettings();
-            this.logOutput(EN.SETTINGS_WORKSPACE);
-
-          } else if (pkg === EXTSettings.PrettifyFieldInvalid) {
-
-            this.logOutput(EN.INVALID_SETTINGS + event.fileName);
-            this.statusBar(Status.Error);
-
-          } else if (pkg === EXTSettings.PackageJsonError) {
-
-            this.statusBar(Status.Error);
+            this.logOutput('using workspace settings');
 
           }
 
         } else {
 
+          const pkg = await this.getPkgJSON();
+
           if (pkg === EXTSettings.PrettifyFieldDefined) {
 
             prettify.options(this.prettify);
 
-            this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
-            this.logOutput(EN.UPDATED_FORMAT_RULES);
-
-          } else if (pkg === EXTSettings.PrettifyFieldInvalid) {
-
-            this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
-            this.logOutput(EN.INVALID_SETTINGS + event.fileName);
-            this.statusBar(Status.Error);
+            this.logOutput('using prettify field in package.json file');
 
           }
         }
@@ -575,74 +573,54 @@ export class Settings extends Editor {
 
         if (liquidrc.setting === EXTSettings.LiquidrcDefined) {
 
-          await this.updateLiquidrc(liquidrc.rcfile);
+          const update = await this.updateLiquidrc(liquidrc.rcfile);
 
-          this.statusBar(Status.Enabled);
-          this.watchChange = true;
-
-        } else if (liquidrc.setting === EXTSettings.LiquidrcInvalidRules) {
-
-          this.logOutput(EN.INVALID_SETTINGS + event.fileName);
-          this.statusBar(Status.Error);
-
-        } else if (liquidrc.setting === EXTSettings.LiquidrcError) {
-
-          this.statusBar(Status.Error);
-
+          if (update) {
+            this.logOutput('updated prettify beautification rules');
+            this.watchChange = true;
+          }
         }
+
       }
     } else if (type === WatchEvents.Create) {
 
       if (event.match) {
 
-        if (this.config !== Config.Liquidrc) return;
+        if (this.config === Config.Workspace) return;
 
         const pkg = await this.getPkgJSON();
 
         if (pkg === EXTSettings.PrettifyFieldDefined) {
 
+          this.config = Config.Package;
+
           prettify.options(this.prettify);
 
-          this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
-          this.logOutput(EN.UPDATED_FORMAT_RULES);
-
-        } else if (pkg === EXTSettings.PrettifyFieldInvalid) {
-
-          this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
-          this.logOutput(EN.INVALID_SETTINGS + event.fileName);
-          this.statusBar(Status.Error);
+          this.logOutput('using prettify field in package.json file');
 
         }
 
       } else {
 
         if (this.config === Config.Package) {
-          this.logOutput(event.fileName + EN.OVERRIDE_PRETTIFY);
+          this.logOutput(`${event.fileName} settings override the "prettify" field in package.json files`);
         }
         if (this.config === Config.Workspace) {
-          this.logOutput(event.fileName + EN.OVERRIDE_WORKSPACE);
+          this.logOutput(`${event.fileName} settings override "liquid.format.*" configurations in the workspace`);
         }
 
-        this.logOutput(EN.SETTINGS_LIQUIDRC + this.uri.liquidrc);
+        this.logOutput(`using .liquidrc file: ${path}`);
 
         const liquidrc = await this.getLiquidrc();
 
         if (liquidrc.setting === EXTSettings.LiquidrcDefined) {
 
-          await this.updateLiquidrc(liquidrc.rcfile);
+          const update = await this.updateLiquidrc(liquidrc.rcfile);
 
-          this.statusBar(Status.Enabled);
-          this.watchChange = true;
-
-        } else if (liquidrc.setting === EXTSettings.LiquidrcInvalidRules) {
-
-          this.logOutput(EN.INVALID_SETTINGS + event.fileName);
-          this.statusBar(Status.Error);
-
-        } else if (liquidrc.setting === EXTSettings.LiquidrcError) {
-
-          this.statusBar(Status.Error);
-
+          if (update) {
+            this.statusBar(Status.Enabled);
+            this.watchChange = true;
+          }
         }
       }
 
@@ -650,30 +628,9 @@ export class Settings extends Editor {
 
       if (event.match) {
 
-        const liquidrc = await this.getLiquidrc();
-
-        if (liquidrc.setting === EXTSettings.LiquidrcUndefined) {
-
-          this.config = Config.Workspace;
-          this.setConfigSettings();
-
-        } else if (liquidrc.setting === EXTSettings.LiquidrcDefined) {
-
-          await this.updateLiquidrc(liquidrc.rcfile);
-
-          this.statusBar(Status.Enabled);
-          this.watchChange = true;
-
-        } else if (liquidrc.setting === EXTSettings.LiquidrcInvalidRules) {
-
-          this.logOutput(EN.INVALID_SETTINGS + event.fileName);
-          this.statusBar(Status.Error);
-
-        } else if (liquidrc.setting === EXTSettings.LiquidrcError) {
-
-          this.statusBar(Status.Error);
-
-        }
+        this.config = Config.Workspace;
+        this.setConfigSettings();
+        this.logOutput('using workspace settings');
 
       } else {
 
@@ -681,22 +638,19 @@ export class Settings extends Editor {
 
         if (pkg === EXTSettings.PrettifyFieldDefined) {
 
+          this.config = Config.Package;
+
           prettify.options(this.prettify);
 
-          this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
-          this.logOutput(EN.UPDATED_FORMAT_RULES);
-
-        } else if (pkg === EXTSettings.PrettifyFieldInvalid) {
-
-          this.logOutput(EN.SETTINGS_PKG_PRETTIFY);
-          this.logOutput(EN.INVALID_SETTINGS + event.fileName);
-          this.statusBar(Status.Error);
+          this.logOutput('using prettify field in package.json file');
 
         } else {
 
           this.config = Config.Workspace;
+
           this.setConfigSettings();
-          this.logOutput(EN.SETTINGS_WORKSPACE);
+
+          this.logOutput('using workspace settings');
 
         }
 
@@ -730,7 +684,7 @@ export class Settings extends Editor {
       } else if (answer === 'Reset') {
 
         const rules = config === 'defaults'
-          ? omitRules()
+          ? omitRules() as any
           : recommendedRules();
 
         try {
@@ -741,16 +695,15 @@ export class Settings extends Editor {
           await window.showTextDocument(document, 1, false);
           return window.showInformationMessage(EN.GENERATE_RESET);
 
-        } catch (error) {
-          console.error(error);
-          this.logOutput('error', error);
+        } catch (e) {
+          this.error('failed to generated .liquidrc file', e);
         }
       }
 
     } else {
 
       const rules = config === 'defaults'
-        ? omitRules()
+        ? omitRules() as any
         : recommendedRules();
 
       try {
@@ -761,10 +714,9 @@ export class Settings extends Editor {
 
         return window.showInformationMessage(EN.GENERATE_USING);
 
-      } catch (error) {
+      } catch (e) {
 
-        console.error(error);
-        this.logOutput('error', EN.GENERATE_ERROR);
+        this.error(EN.GENERATE_ERROR, e);
       }
     }
   }

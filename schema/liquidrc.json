@@ -536,6 +536,88 @@
     "ignore": {
       "$ref": "#/definitions/exclude"
     },
+    "liquid.format.languages": {
+      "type": "array",
+      "default": [
+        "liquid",
+        "liquid-css",
+        "liquid-scss",
+        "liquid-javascript"
+      ],
+      "markdownDescription": "Languages to format using Prettify. Please extend with care.",
+      "items": [
+        {
+          "type": "string",
+          "const": "liquid",
+          "description": "Formatting support of `.liquid` files of the **Liquid** Template Language"
+        },
+        {
+          "type": "string",
+          "const": "liquid-css",
+          "description": "Formatting support of `.css.liquid` files of the **Liquid + CSS** Language"
+        },
+        {
+          "type": "string",
+          "const": "liquid-scss",
+          "description": "**USE WITH CAUTION** - Formatting support of `.scss.liquid` files of the **Liquid + SCSS** Language"
+        },
+        {
+          "type": "string",
+          "const": "liquid-javascript",
+          "description": "Formatting support of `.js.liquid` files of the **Liquid + JavaScript** Language"
+        },
+        {
+          "type": "string",
+          "const": "json",
+          "markdownDescription": "Formatting support of `.json` files of the **JSON** Language"
+        },
+        {
+          "type": "string",
+          "const": "jsonc",
+          "description": "Formatting support of `.jsonc` files of the **JSON with Comments** Language"
+        },
+        {
+          "type": "string",
+          "const": "xml",
+          "description": "Formatting support of `.xml` files of the **XML** Language"
+        },
+        {
+          "type": "string",
+          "const": "html",
+          "description": "Formatting support of `.html` files of the **HTML** Language"
+        },
+        {
+          "type": "string",
+          "const": "css",
+          "description": "Formatting support of `.css` files of the **CSS** Language"
+        },
+        {
+          "type": "string",
+          "const": "scss",
+          "description": "**USE WITH CAUTION** Formatting support of `.scss` files of the **SASS** Language"
+        },
+        {
+          "type": "string",
+          "const": "javascript",
+          "description": "**USE WITH CAUTION** - Formatting support of `.js` files of the **JavaScript** Language"
+        },
+        {
+          "type": "string",
+          "const": "typescript",
+          "description": "**EXPERIMENTAL (AVOID USING)** - Formatting support of `.ts` files of the **TypeScript** Language"
+        },
+        {
+          "type": "string",
+          "const": "jsx",
+          "description": "**EXPERIMENTAL (AVOID USING)** - Formatting support of `.jsx` files of the **JSX** Language"
+        },
+        {
+          "type": "string",
+          "const": "tsx",
+          "description": "**EXPERIMENTAL (AVOID USING)** - Formatting support of `.tsx` files of the **TSX** Language"
+        }
+      ]
+    },
     "wrap": {
       "type": "number",
       "title": "Wrap Limit",

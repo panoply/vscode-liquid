@@ -10,7 +10,7 @@ import {
 import prettify from '@liquify/prettify';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { Format } from './format';
-import { getLanguage, getLanguageFromExtension, getRange } from './utilities';
+import { getFileNameExtension, getLanguage, getLanguageFromExtension, getRange, isBoolean } from './utilities';
 import { JSONLanguageService } from './json';
 import { schema } from './schema';
 import { EN } from './i18n';
@@ -28,6 +28,7 @@ export class Document extends Format {
   private diagnostics = languages.createDiagnosticCollection('Liquid');
   private sections: Map<string, { node: TextDocument; offset: number; uri: Uri; }> = new Map();
   private uriPath: string = null;
+  private errorCache: string = null;
 
   get section () {
 
@@ -54,17 +55,24 @@ export class Document extends Format {
       if (config.affectsConfiguration('liquid')) {
 
         const noValidate = this.validate.json;
+        const canFormat = this.feature.format;
 
         this.hasError = false;
         this.setConfigSettings();
 
         if (this.isDisabled) {
           this.disposeValidations();
-          this.disposeAll();
+          if (this.provider) this.provider.dispose();
           this.barItem.hide();
         } else {
           if (noValidate === false && this.validate.json) this.onJsonService();
           this.onOpenTextDocument();
+        }
+
+        if (config.affectsConfiguration('liquid.format')) {
+          if (canFormat === true && this.feature.format === true) {
+            this.logOutput('updated prettify beautification rules');
+          }
         }
 
       } else if (config.affectsConfiguration('[html]')) {
@@ -72,7 +80,7 @@ export class Document extends Format {
         const hasConfig = this.getSettings();
 
         if (hasConfig === EXTSettings.WorkspaceUndefined) {
-          this.logOutput('workspace settings undefined');
+          this.logOutput('workspace settings ');
           this.feature.format = null;
         }
 
@@ -88,45 +96,68 @@ export class Document extends Format {
 
   onOpenTextDocument () {
 
-    this.disposeAll();
+    // this.disposeAll();
 
-    if (this.isDisabled) return this.dispose();
-
+    if (this.provider) this.provider.dispose();
+    if (this.isDisabled) return null;
     if (this.liquidSettings.get<boolean>('enable')) this.isLoading = false;
 
-    if (this.feature.format === null) {
-      if (getLanguageFromExtension(this.fileName)) {
-        this.statusBar(Status.Loading, true);
-        this.feature.format = true;
-        (async () => {
-          try {
-            await this.setWorkspaceDefaults();
-          } catch (e) {
-            console.error(e);
-          }
-        })();
+    if (this.statusBarActive === false && isBoolean(this.feature.format)) {
+      this.statusBarActive = true;
+      if (this.feature.format) {
+        this.statusBar(Status.Enabled);
+      } else {
+        this.statusBar(Status.Disabled);
       }
     }
 
-    if (this.hasProvider) return null;
+    if (this.feature.format === null) {
+
+      const language = getLanguageFromExtension(this.fileName);
+
+      if (language === 'liquid') {
+        this.statusBar(Status.Loading, true);
+        this.feature.format = true;
+        this.setWorkspaceDefaults();
+      }
+    }
 
     this.provider = languages.registerDocumentFormattingEditProvider(this.selector, {
       provideDocumentFormattingEdits: async document => {
 
         if (this.isDisabled || this.isLoading || this.feature.format === false) return null;
 
+        const ext = getFileNameExtension(document.fileName);
+
+        if (ext === '.html' && this.languages.has(ext) === false) {
+          this.statusBar(Status.Ignored);
+          return null;
+        } else {
+          this.statusBar(Status.Enabled);
+        }
+
+        const range = getRange(document);
+        const input = document.getText(range);
+        const language = getLanguage(document.languageId);
+        const options = prettify.options.rules.language !== language ? { language } : undefined;
+
         try {
 
-          const range = getRange(document);
-          const input = document.getText(range);
-          const language = getLanguage(document.languageId);
-          const options = prettify.options.rules.language !== language ? { language } : undefined;
           const output = await prettify.format(input, options);
+
+          if (this.hasError) {
+            this.errorCache = null;
+            this.statusBar(Status.Enabled);
+          }
 
           return [ TextEdit.replace(range, output) ];
 
-        } catch (error) {
-          this.logOutput('error', error);
+        } catch (e) {
+
+          if (this.hasError === false || this.errorCache !== e) {
+            this.errorCache = e;
+            this.error('Formatting parse error occured in document', e);
+          }
         }
 
       }
@@ -136,13 +167,17 @@ export class Document extends Format {
 
   }
 
-  onChangeTextDocument ({ document }: TextDocumentChangeEvent) {
+  onChangeTextDocument (change: TextDocumentChangeEvent) {
 
-    if (document.languageId !== 'html' && document.languageId !== 'liquid') return;
+    if (!change) return null;
+
+    const { document } = change;
+
+    if (document.languageId !== 'html' && document.languageId !== 'liquid') return null;
 
     this.uriPath = document.uri.path;
 
-    if (this.capability.shopifySchemaValidate === false) return this.disposeValidations();
+    if (this.validate.json === false) return this.disposeValidations();
 
     const section = this.sections.has(document.uri.path);
     const text = document.getText();
@@ -260,26 +295,6 @@ export class Document extends Format {
         this.sections.clear();
       }
 
-    }
-  }
-
-  /**
-   * Dispose the most active handler
-   */
-  dispose () {
-
-    // Disposal of match filename handler
-    if (this.hasProvider) this.provider.dispose();
-  }
-
-  /**
-   * Dispose of all handlers
-   */
-  disposeAll () {
-
-    for (const [ key, doc ] of this.documents) {
-      doc.dispose();
-      this.documents.delete(key);
     }
   }
 

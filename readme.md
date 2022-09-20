@@ -126,6 +126,9 @@ By default, it is assumed you are using workspace/user settings.
   // Controls whether formatting is enabled or disabled
   "liquid.format.enable": true,
 
+  // A list of languages that should be beautified with Prettify
+  "liquid.format.languages": [],
+
   // Glob paths to exclude from formatting
   "liquid.format.ignore": [],
 
@@ -409,10 +412,16 @@ Formatting can be enabled/disabled via the command palette and will respect `edi
 
 In some situations you may have already configured another extension to handle formatting and this might prevent vscode from forwarding documents to the extension for beautification. Depending on your preferences, you may need to explicitly define a language `defaultFormatter` in your vscode workspace/user settings.
 
+If you are leveraging the `languages` setting and your `liquid.settings.target` has no other `defaultFormatter` defined then the extension will automatically apply those configurations for you in either your workspace or user settings file.
+
 _Be sure to define only the languages which you wish to have formatted by the extension. If you don't want Prettify to handle formatting then set the option `liquid.format.enable` to `false`._
 
 ```jsonc
 {
+  // Enables formatting of .liquid files
+  "[html]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid"
+  },
   // Enables formatting of .liquid files
   "[liquid]": {
     "editor.defaultFormatter": "sissel.shopify-liquid"

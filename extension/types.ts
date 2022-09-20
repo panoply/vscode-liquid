@@ -7,6 +7,22 @@ import { Options } from '@liquify/prettify';
 import { LiteralUnion, Merge } from 'type-fest';
 
 /**
+ * Output State
+ *
+ * Used to control the output state
+ */
+export const enum OutputState {
+  /**
+   * Output is closed
+   */
+  Closed = 1,
+  /**
+   * Output was opened
+   */
+  Opened
+}
+
+/**
  * Watch Events
  *
  * Informs upon the file watch event that was invoked
@@ -225,6 +241,12 @@ export namespace Workspace {
      */
     enable?: boolean;
     /**
+     * The value of `liquid.format.languages`
+     *
+     * @default true
+     */
+    languages?: string[];
+    /**
      * The string list of paths to ignore
      *
      * @default []
@@ -258,4 +280,10 @@ export type Liquidrc = Merge<Options, {
    * The string list of paths to ignore
    */
   ignore?: string[];
+  /**
+   * The value of `liquid.format.languages`
+   *
+   * @default true
+   */
+  languages?: string[];
 }>

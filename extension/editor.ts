@@ -1,6 +1,6 @@
 import { window, StatusBarAlignment } from 'vscode';
 import { State } from './state';
-import { getTime } from './utilities';
+import { parseStack, getTime, isArray, isUndefined, isString } from './utilities';
 import { Status } from './types';
 
 /**
@@ -14,12 +14,12 @@ export class Editor extends State {
   /**
    * The status bar item
    */
-  barItem = window.createStatusBarItem(StatusBarAlignment.Right, -2);
+  public barItem = window.createStatusBarItem(StatusBarAlignment.Right, -2);
 
   /**
    * The output channel instance
    */
-  outputChannel = window.createOutputChannel('Liquid', 'log-liquid');
+  public outputChannel = window.createOutputChannel('Liquid', 'log-liquid');
 
   /**
    *  The status bar item functionality
@@ -86,6 +86,45 @@ export class Editor extends State {
   openOutput () {
 
     return this.outputChannel.show();
+
+  }
+
+  error (message: string, context?: Error | string[] | string) {
+
+    this.statusBar(Status.Error);
+
+    if (context instanceof Error) {
+
+      const stack = parseStack(context);
+
+      this.outputChannel.appendLine(`\nERROR: ${message}\n`);
+
+      const json = context.message.indexOf(' while parsing near');
+
+      if (json > -1) context.message = context.message.slice(0, json) + ':';
+
+      this.outputChannel.appendLine(context.message);
+
+      for (const line of stack) this.outputChannel.appendLine(line);
+
+    } else if (isUndefined(context)) {
+
+      this.outputChannel.appendLine(`${getTime()} ERROR: ${message}`);
+
+    } else if (isArray(context)) {
+
+      this.outputChannel.appendLine(`ERROR: ${message}\n`);
+
+      (context as string[]).push('');
+
+      for (const line of context as string[]) this.outputChannel.appendLine('  ' + line);
+
+    } else if (isString(context)) {
+
+      this.outputChannel.appendLine(`ERROR: ${message}\n`);
+      this.outputChannel.appendLine(context as string + '\n');
+
+    }
 
   }
 

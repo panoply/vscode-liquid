@@ -3,6 +3,25 @@
   "scopeName": "liquid.log",
   "patterns": [
     {
+      "name": "punctuation, log.punctuation",
+      "match": "\\b(ERROR)\\b(\\:)\\s(.*)",
+      "captures": {
+        "1": {
+          "name": "invalid log.error"
+        },
+        "2": {
+          "name": "punctuation, log.punctuation"
+        },
+        "3": {
+          "name": "invalid log.error"
+        }
+      }
+    },
+    {
+      "match": "\\bPrettify\\sError\\b",
+      "name": "invalid log.error"
+    },
+    {
       "match": "\\b(\\.liquidrc(\\.json)?|workspace)\\b",
       "name": "constant.language log.constant"
     },
@@ -17,6 +36,10 @@
     {
       "match": "\\b([uU]pdated).*",
       "name": "punctuation.definition.tag log.control"
+    },
+    {
+      "match": "\\b(using).*\\:?",
+      "name": "keyword.control.flow log.function"
     },
     {
       "match": "\\.[0-9]+(ms|s)",

@@ -4,5 +4,8 @@
 
   ],
   "object": {},
+
+
   "file": "{{ object.prop[100] | filter: 'prop' }}"
 }
+

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import prettify, { Options } from '@liquify/prettify';
+import prettify from '@liquify/prettify';
 import { Tester } from 'anymatch';
 import { Disposable, DocumentSelector, window, workspace } from 'vscode';
 import { getRange } from './utilities';
@@ -13,11 +13,22 @@ import { Config } from './types';
  */
 export class State {
 
+  statusBarActive = false;
+
   /**
    * Document Management
    */
-  documents: Map<string, Disposable> = new Map();
+  languages: Set<string> = new Set([
+    '.liquid',
+    '.css.liquid',
+    '.scss.liquid',
+    '.js.liquid'
+  ]);
 
+  /**
+   * Returns the current document disposable
+   */
+  provider: Disposable = null;
   /**
    * Returns the active text editor, surgar
    * for `window.activeTextEditor`
@@ -66,27 +77,6 @@ export class State {
    * Returns the `liquid` settings preference
    */
   get liquidSettings () { return workspace.getConfiguration('liquid'); }
-
-  /**
-   * Returns the current document disposable
-   */
-  get provider () { return this.documents.get(this.fileName); }
-
-  /**
-   * Sets a new document to the static `documents` cache
-   */
-  set provider (disposable) {
-
-    if (!this.documents.has(this.fileName)) {
-      this.documents.set(this.fileName, disposable);
-    }
-  }
-
-  get hasProvider () {
-
-    return this.documents.has(this.fileName);
-
-  }
 
   /**
    * Merged prettify rule

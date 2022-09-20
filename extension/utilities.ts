@@ -1,10 +1,20 @@
 import { Range, workspace, TextDocument, DocumentSelector } from 'vscode';
 import prettify, { Options, LanguageNames } from '@liquify/prettify';
-import { pathExistsSync } from 'fs-extra';
-import { join } from 'node:path';
+import { pathExistsSync, writeFile } from 'fs-extra';
+import { join, basename } from 'node:path';
+import os from 'node:os';
 import { mergeDeepRight, omit, isType, has } from 'rambdax';
 import stripJsonComments from 'strip-json-comments';
 import { LanguageIDs, Liquidrc, Workspace } from './types';
+import parseJSON from 'parse-json';
+
+/* -------------------------------------------- */
+/* CONSTANTS                                    */
+/* -------------------------------------------- */
+
+const HOMEDIR = typeof os.homedir === 'undefined'
+  ? ''
+  : os.homedir().replace(/\\/g, '/');
 
 /* -------------------------------------------- */
 /* TYPEOF CHECKS                                */
@@ -14,6 +24,11 @@ import { LanguageIDs, Liquidrc, Workspace } from './types';
  * Whether type is object or not
  */
 export const isObject = isType('Object');
+
+/**
+ * Whether type is undefined
+ */
+export const isUndefined = isType('Undefined');
 
 /**
  * Whether type is array or not
@@ -42,22 +57,48 @@ export const isBoolean = isType('Boolean');
  */
 export const normalizeRules = omit<keyof Workspace.Format>([
   'ignore',
-  'enable'
+  'enable',
+  'languages'
 ]);
 
 /* -------------------------------------------- */
 /* FUNCTIONS                                    */
 /* -------------------------------------------- */
 
+/**
+ * Parse Error Stack
+ *
+ * Creates a string list of error stacks that are cleaned
+ * for rendering in the outpout log.
+ */
+export function parseStack (error: Error) {
+
+  const stack = error instanceof Error ? error.stack : error;
+
+  if (!stack) return '';
+
+  const match = stack.match(/(?:\n(?: {4}|\t)at .*)+/);
+
+  if (!match) return '';
+
+  const lines = match[0].slice(1).split('\n').map(line => (
+    line.replace(/^\t/, '  ').replace(/\s+at.*[(\s](.*)\)?/, (m, p) => (
+      m.replace(p, p.replace(HOMEDIR, '~'))
+    ))
+  ));
+
+  lines.push('');
+
+  return lines;
+
+}
+
 export function jsonc (input: object | string): Liquidrc {
 
   const json = isString(input) ? input : JSON.stringify(input);
 
-  try {
-    return JSON.parse(stripJsonComments(json as string));
-  } catch (error) {
-    throw new Error(error);
-  }
+  return parseJSON(stripJsonComments(json as string));
+
 }
 
 export function getSelectors (inject = false): DocumentSelector {
@@ -100,6 +141,28 @@ export function getSelectors (inject = false): DocumentSelector {
   }
 
   return defaults;
+}
+
+export function getDefaultFormatter (language: string, target: 'globalValue' | 'workspaceValue') {
+
+  const setting = workspace.getConfiguration().inspect(language);
+
+  if (!isObject(setting[target])) return undefined;
+  if (!has('editor.defaultFormatter', setting[target])) return undefined;
+
+  return setting[target]['editor.defaultFormatter'];
+
+}
+
+export function hasDefinedDefaultFormatter (language: string, target: 'globalValue' | 'workspaceValue') {
+
+  const setting = workspace.getConfiguration().inspect(language);
+
+  if (!isObject(setting[target])) return false;
+  if (!has('editor.defaultFormatter', setting[target])) return false;
+
+  return setting[target]['editor.defaultFormatter'] === 'sissel.shopify-liquid';
+
 }
 
 /**
@@ -149,7 +212,6 @@ export function hasLiquidrc (root: string) {
   }
 
   return path;
-
 }
 
 /**
@@ -169,7 +231,6 @@ export function hasPackage (root: string) {
   if (!exists) return undefined;
 
   return path;
-
 }
 
 /**
@@ -189,6 +250,35 @@ export function isPath (path: string, matchFile: string) {
     fileName,
     match
   };
+}
+
+/**
+ * Update File
+ *
+ * Write a file to the system. This is wrapper around fs-extra
+ * `writeFile` that executes in a `try/catch` block and if it
+ *  fails returns a custom output error message.
+ */
+export async function updateFile (path: string, content: string): Promise<{
+  error: boolean;
+  message?: string;
+}> {
+
+  try {
+
+    await writeFile(path, content);
+
+    return { error: false };
+
+  } catch (e) {
+
+    console.error(e);
+
+    return {
+      error: true,
+      message: `ERROR: File ${basename(path)} could not be updated`
+    };
+  }
 
 }
 
@@ -209,9 +299,67 @@ export function getLanguage (language: LanguageIDs): LanguageNames {
     case 'jsonc': return 'json';
     case 'html': return 'liquid';
     case 'liquid-javascript': return 'javascript';
-    case 'liquid-css': return 'scss';
+    case 'liquid-css': return 'css';
     case 'liquid-scss': return 'scss';
   }
+
+}
+
+/**
+ * Get Language from Extension
+ *
+ * Parses a file path string and returns the file language ID
+ * Prettify language name. This is used when trying to determine
+ * the file being dealt with during a change.
+ */
+export function getLanguagExtensionMap (languages: string[]): string[] {
+
+  const entries: string[] = [];
+
+  for (const language of languages) {
+    if (language === 'liquid') {
+      entries.push('liquid');
+    } else if (language === 'liquid-javascript') {
+      entries.push('.js.liquid');
+    } else if (language === 'liquid-css') {
+      entries.push('.css.liquid');
+    } else if (language === 'liquid-scss') {
+      entries.push('.scss.liquid');
+    } else if (language === 'jsonc') {
+      entries.push('.json');
+    } else if (language === 'json') {
+      entries.push('.json');
+    } else if (language === 'html') {
+      entries.push('.html');
+    } else if (language === 'xml') {
+      entries.push('.xml');
+    } else if (language === 'css') {
+      entries.push('.css');
+    } else if (language === 'scss') {
+      entries.push('.scss');
+    } else if (language === 'javascript') {
+      entries.push('.js');
+    } else if (language === 'typescript') {
+      entries.push('.ts');
+    } else if (language === 'jsx') {
+      entries.push('.jsx');
+    } else if (language === 'tsx') {
+      entries.push('.tsx');
+    }
+  }
+
+  return entries;
+
+}
+
+export function getFileNameExtension (path: string) {
+
+  if (!isString(path)) return undefined;
+
+  const nameidx = path.lastIndexOf('/');
+  const lastdot = path.indexOf('.', nameidx);
+
+  return path.slice(lastdot);
 
 }
 
@@ -228,13 +376,13 @@ export function getLanguageFromExtension (path: string) {
 
   const nameidx = path.lastIndexOf('/');
   const lastdot = path.indexOf('.', nameidx);
-  const extname = path.slice(lastdot + 1);
+  const extname = path.slice(lastdot);
 
   switch (extname) {
-    case 'liquid': return 'liquid';
-    case 'js.liquid': return 'javascript';
-    case 'css.liquid': return 'css';
-    case 'scss.liquid': return 'scss';
+    case '.liquid': return 'liquid';
+    case '.js.liquid': return 'javascript';
+    case '.css.liquid': return 'css';
+    case '.scss.liquid': return 'scss';
   }
 
   return undefined;

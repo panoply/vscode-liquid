@@ -1,8 +1,7 @@
 {
-  "prettify": {
+  "prettifys": {
 
-
-    "preserveLine": 2,
+    "preserveLine": 1,
     "wrap": 0,
     "markup": {
       "correct": false,
@@ -19,6 +18,7 @@
       "preserveAttributes": false,
       "selfCloseSpace": false,
       "quoteConvert": "none"
+
     },
     "script": {
       "braceStyle": "collapse",
@@ -36,3 +36,4 @@
     }
   }
 }
+
