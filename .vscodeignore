@@ -11,7 +11,7 @@ jsconfig.json
 tsconfig.json
 
 node_modules
-src/extension/**
+extension/
 docs
 test
 versions
