@@ -1,7 +1,7 @@
 {
   "name": "Liquid",
   "scopeName": "source.liquid",
-  "injectionSelector": "L:text.html.derivative",
+  "injectionSelector": "L:text.html.derivative, L:source.css -comment -string, L:source.js -comment -string -meta",
   "injections": {
     "L:entity.other.attribute-name.class.css": {
       "patterns": [
@@ -25,8 +25,7 @@
     { "include": "#embedded-stylesheet" },
     { "include": "#embedded-stylesheet-scss" },
     { "include": "#tags" },
-    { "include": "#output" },
-    { "include": "text.html.derivative" }
+    { "include": "#output" }
   ],
   "repository": {
     "comment-block": {
