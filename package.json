@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "keywords": [
     "liquid",
     "shopify",
@@ -21,7 +21,7 @@
     "url": "https://github.com/panoply/vscode-liquid/issues"
   },
   "engines": {
-    "vscode": "^1.69.0"
+    "vscode": "^1.71.0"
   },
   "categories": [
     "Formatters",
@@ -163,10 +163,10 @@
     ],
     "grammars": [
       {
-        "language": "liquid",
         "scopeName": "source.liquid",
         "path": "./grammar/liquid.tmLanguage.json",
         "embeddedLanguages": {
+          "text.html.derivative": "html",
           "meta.embedded.block.schema.liquid": "json",
           "meta.embedded.block.javascript.liquid": "javascript",
           "meta.embedded.block.stylesheet.liquid": "css",
@@ -176,6 +176,19 @@
         "injectTo": [
           "text.html.derivative"
         ]
+      },
+      {
+        "language": "liquid",
+        "scopeName": "source.liquid.derivative",
+        "path": "./grammar/liquid-derivative.tmLanguage.json",
+        "embeddedLanguages": {
+          "text.html.basic": "html",
+          "meta.embedded.block.schema.liquid": "json",
+          "meta.embedded.block.javascript.liquid": "javascript",
+          "meta.embedded.block.stylesheet.liquid": "css",
+          "meta.embedded.block.stylesheet.scss.liquid": "scss",
+          "meta.embedded.block.style.liquid": "liquid-css"
+        }
       },
       {
         "language": "log-liquid",
@@ -258,9 +271,6 @@
           "format": "svg"
         }
       ],
-      "[liquid]": {
-        "editor.defaultFormatter": "sissel.shopify-liquid"
-      },
       "files.associations": {
         "*.liquid": "html",
         "*.md.liquid": "markdown",
@@ -791,8 +801,8 @@
   },
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup --minify-identifiers --minify-whitespace",
-    "icons": "node ./icons/build/woff.cjs"
+    "build": "tsup --minify-identifiers --minify-whitespace --onSuccess \"vsce package --no-dependencies\"",
+    "vsix:dry": "vsce ls package --no-dependencies"
   },
   "tsup": {
     "entry": {
@@ -801,12 +811,10 @@
     "outDir": "./dist",
     "noExternal": [
       "@liquify/prettify",
-      "clean-stack",
       "parse-json",
       "strip-json-comments",
       "fs-extra",
       "anymatch",
-      "rambda",
       "rambdax"
     ],
     "external": [
@@ -838,10 +846,7 @@
     "anymatch": "^3.1.2",
     "fs-extra": "^10.1.0",
     "parse-json": "^6.0.2",
-    "rambda": "^7.2.1",
     "rambdax": "8.1.0",
-    "strip-json-comments": "^5.0.0",
-    "vscode-json-languageservice": "^5.1.0",
-    "vscode-languageserver-textdocument": "^1.0.7"
+    "strip-json-comments": "^5.0.0"
   }
 }
