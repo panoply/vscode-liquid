@@ -1,82 +1,95 @@
-{% # @prettify %}
+<!doctype html>
+<html lang="{{ shop_locale.iso_code }}">
 
-<aside id="mobile-menu" aria-hidden="true" class="drawer-panel drawer-left pb-3 px-3 d-none" data-controller="drawer">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      {{- page_title -}}
+      {%- if current_tags -%}
+        {%- assign meta_tags = current_tags | join: ', ' -%}
+        {{ 'general.meta.tags' | t: tags: meta_tags | prepend: ' &ndash; ' }}
+      {%- endif -%}
+      {%- if current_page != 1 -%}
+        {{ 'general.meta.page' | t: page: current_page | prepend: ' &ndash; ' }}
+      {%- endif -%}
+      {%- unless page_title contains shop.name -%}
+        {{ shop.name | prepend: ' &ndash;' }}
+      {%- endunless -%}
+    </title>
 
-  <div class="onCasing"></div>
+    {%- render 'favicons' -%}
+    {%- render 'meta_tags' -%}
 
-  <div class="mobile-menu-container">
+    <link rel="dns-prefetch" href="https://api.ipstack.com" crossorigin>
+    <link rel="dns-prefetch" href="https://api.brixtol.com" crossorigin>
+    <link rel="dns-prefetch" href="https://s.pinimg.com" crossorigin>
+    <link rel="dns-prefetch" href="https://brixtol.cloud" crossorigin>
 
-    <nav class="mobile-menu as-center py-3">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+    <link rel="preconnect" href="https://brixtol.cloud" crossorigin>
 
-      <div class="relapse mt-3 mb-2" data-accordion-persist-value="true" data-accordion-multiple-value="false" data-controller="accordion">
+    <link rel="preload" href="{{ 'catalogue-ll-regular.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ 'catalogue-ll-italic.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ 'stylesheet.css' | asset_url }}" as="style" crossorigin>
+    <link rel="preload" href="{{ 'theme.css' | asset_url }}" as="style" crossorigin>
+    <link rel="preload" href="{{ 'bundle.js' | asset_url -}}" as="script" crossorigin>
 
-        {%- for link in linklists.mobile-drawer-menu.links -%}
-          {%- if link.links != blank -%}
-            <button class="relapse-btn upper mb-2 {% if link.active -%} opened{%- endif -%}">
-              {{- link.title -}}
-
-            </button>
-
-
-            <div class="relapse-fold">
-              <ul class="list-clear p-3" id="{{- link.title | handleize -}}">
-                {%- for childlink in link.links -%}
-                  {%- if forloop.first -%}
-                    <li class="pt-1 pb-1 {% if link.active %} active{%- endif -%}">
-                      <a href=" {{- link.url }}">
-                        SHOP ALL
-                      </a>
-                    </li>
-                  {%- endif -%}
-                  {%- if childlink.title contains 'Archive' -%}
-                    <li class="pt-1 pb-1 {% if childlink.active %}active{%- endif -%}">
-                      <a class="text-red" href=" {{- childlink.url }}">
-                        {{- childlink.title | replace: 'Archive', 'Season Sale' -}}
-                      </a>
-                    </li>
-
-                  {%- else -%}
-                    <li class="pt-1 pb-1 {% if childlink.active %}active{%- endif -%}">
-                      <a href=" {{- childlink.url }}">
-                        {{- childlink.title -}}
-                      </a>
-                    </li>
-                  {%- endif -%}
+    <style>
+      {%- render 'vars.css' %}
+    </style>
 
 
-                {%- endfor -%}
-              </ul>
-            </div>
-          {%- endif -%}
+    <link rel="stylesheet" href="{{ 'stylesheet.css' | asset_url }}">
+    <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
 
-        {%- endfor -%}
+    <script data-spx-eval="false">
+      {%- render 'shop.js' -%}
 
-        {% for item in collection %}{% endfor %}
 
-        {%- if condition -%}
+      {%- if condition -%}
 
-          {{ all_country_option_tags }}
-        {%- endif -%}
-      </div>
+        const foo = {};
 
-      {%- form 'product', product -, %}{%- endform -%}
+        {{ object.prop.prop['string'][10] | filter: false }}
 
-      {%- for link in linklists.mobile-drawer-menu.links -%}
-        {%- if link.links == blank -%}
-          {% if link.active -%}
-            {%- assign link_class = 'link mb-2 d-block ' | append: 'active' -%}
-          {%- else -%}
-            {%- assign link_class = 'link mb-2 d-block' -%}
-          {%- endif -%}
+      {%- endif -%}
+    </script>
 
-          <a href="{{- link.url }}" class="{{ link_class }}">
-            {{ link.title }}
-          </a>
+    <script data-spx-eval="false">{%- render 'i18n.js' -%}</script>
+    <script data-spx-eval="false" src="{{ 'bundle.js' | asset_url }}" type="module" defer>
+      window.app();
+    </script>
 
-        {%- endif -%}
-      {%- endfor -%}
 
-    </nav>
+    <script src="https://www.googletagmanager.com/gtag/js?id=g-htnv2npht6" defer async></script>
 
-  </div>
-</aside>
+    {%- if template contains 'customers' -%}
+      <script src="{{ 'shopify_common.js' | shopify_asset_url -}}" async></script>
+      <script src="{{ 'customer_area.js' | shopify_asset_url }}" async></script>
+    {%- endif -%}
+
+    {%- capture content_header -%}
+      {{ content_for_header }}
+    {%- endcapture -%}
+    {{ content_header | replace: '<script', '<script data-spx-eval="false"' }}
+  </head>
+
+  <body {{ object.prop.prop['string'][10] | filter: false }}>
+
+    {%- if condition -%}{%- endif -%}
+
+    {%- render 'drawer_menu', overlay: 'drawer-overlay' -%}
+    {%- render 'drawer_cart', overlay: 'drawer-overlay' -%}
+    {%- section 'header' -%}
+    {{ content_for_layout }}
+    {%- section 'footer' -%}
+    {%- render 'icons' -%}
+    {%- render 'nodes' -%}
+    {%- render 'gdrp', overlay: 'bg-visible' -%}
+    {%- render 'discounts' -%}
+
+  </body>
+
+</html>
+
