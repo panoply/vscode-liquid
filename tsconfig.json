@@ -1,17 +1,25 @@
 {
   "typeAcquisition": {
     "enable": true,
-    "include": ["node"],
-    "exclude": ["node_modules"]
+    "include": [
+      "node"
+    ],
+    "exclude": [
+      "node_modules"
+    ]
   },
   "compilerOptions": {
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "incremental": true,
     "declaration": false,
     "outDir": "dist",
     "target": "ES6",
     "removeComments": true,
-    "lib": ["es2020"],
+    "lib": [
+      "es2020"
+    ],
     "module": "ESNext",
     "alwaysStrict": true,
     "allowUmdGlobalAccess": true,
@@ -25,6 +33,21 @@
     "noEmitOnError": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "pretty": true
+    "pretty": true,
+    "baseUrl": "./src",
+    "paths": {
+      "providers/*": [
+        "providers/*.ts"
+      ],
+      "utils": [
+        "utils.ts"
+      ],
+      "state": [
+        "state.ts"
+      ],
+      "types": [
+        "types.ts"
+      ]
+    }
   }
 }
