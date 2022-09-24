@@ -2,10 +2,15 @@
 <div class="{{ object.prop | filter: 'string' }}">
 
   <!-- TEST: Liquid Attribute Injections -->
-  <div id="test" {% if condition == false %} data-id="{{ x }}" {% endif %}></div>
+  <div
+    id="test"
+    {% if condition == false %}
+    data-id="{{ x }}"
+    {% endif %}></div>
 
 </div>
 
+<script></script>
 <!-- @prettify-ignore-start -->
 
 {%- liquid
@@ -18,7 +23,6 @@
 -%}
 
 <!-- @prettify-ignore-end -->
-
 
 {% # TEST: Liquid Schema Tag Block Validations %}
 
@@ -35,4 +39,3 @@
     }
   }
 {% endschema %}
-

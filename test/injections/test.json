@@ -1,4 +1,3 @@
-{{ foo.prop['foo'] |  }}
 {
   "name": "Liquid",
   "scopeName": "source.liquid",
@@ -6,50 +5,72 @@
   "injections": {
     "L:meta": {
       "patterns": [
-        { "include": "source.liquid#tags" },
-        { "include": "source.liquid#output" }
+        {
+          "include": "source.liquid#tags"
+        }, {
+          "include": "source.liquid#output"
+        }
       ]
     },
     "L:entity.other.attribute-name.class.css": {
       "patterns": [
-        { "include": "source.liquid#tags" },
-        { "include": "source.liquid#output" }
+        {
+          "include": "source.liquid#tags"
+        }, {
+          "include": "source.liquid#output"
+        }
       ]
+
+
     },
     "L:string - (string.quoted.*.html)": {
       "patterns": [
-        { "include": "source.liquid#tags" },
-        { "include": "source.liquid#output" }
+        {
+          "include": "source.liquid#tags"
+        }, {
+          "include": "source.liquid#output"
+        }
       ]
     }
   },
   "patterns": [
-    { "include": "#comment-block" },
-    { "include": "#comment-line" },
-    { "include": "#embedded-schema" },
-    { "include": "#embedded-javascript" },
-    { "include": "#embedded-style" },
-    { "include": "#embedded-stylesheet" },
-    { "include": "#embedded-stylesheet-scss" },
-    { "include": "#tags" },
-    { "include": "#output" },
-    { "include": "text.html.derivative" }
+    {
+      "include": "#comment-block"
+    }, {
+      "include": "#comment-line"
+    }, {
+      "include": "#embedded-schema"
+    }, {
+      "include": "#embedded-javascript"
+    }, {
+      "include": "#embedded-style"
+    }, {
+      "include": "#embedded-stylesheet"
+    }, {
+      "include": "#embedded-stylesheet-scss"
+    }, {
+      "include": "#tags"
+    }, {
+      "include": "#output"
+    }, {
+      "include": "text.html.derivative"
+    }
   ],
 
   "repository": {
     "comment-block": {
       "name": "comment.block.liquid",
-      "begin": "{%-?\\s*\\bcomment\\b\\s*-?%}",
-      "end": "{%-?\\s*\\bendcomment\\b\\s*-?%}"
+      "begin": "{%- ?\\s*\\bcomment\\b\\s*-? %}",
+      "end": "{%- ?\\s*\\bendcomment\\b\\s*-? %}"
     },
     "comment-line": {
       "name": "comment.block.liquid",
-      "begin": "{%-?\\s*#\\s+",
-      "end": "-?%}"
+      "begin": "{%- ?\\s*#\\s+",
+      "end": "-? %}"
     },
     "tags": {
       "name": "punctuation.output.liquid",
-      "begin": "({%)(-)?",
+
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.liquid"
@@ -60,22 +81,33 @@
       },
       "patterns": [
         {
-          "name": "entity.name.tag.liquid",
-          "match": "(?<={%-?)\\s*\\w+\\s*"
-        },
-        { "include": "#liquid" },
-        { "include": "#objects" },
-        { "include": "#numeric" },
-        { "include": "#constants" },
-        { "include": "#parameters" },
-        { "include": "#invalid" },
-        { "include": "#operators" },
-        { "include": "#strings" },
-        { "include": "#filters" }
+          "name": "entity.name.tag.liquid"
+
+        }, {
+          "include": "#liquid"
+        }, {
+          "include": "#objects"
+        }, {
+          "include": "#numeric"
+        }, {
+          "include": "#constants"
+        }, {
+          "include": "#parameters"
+        }, {
+          "include": "#invalid"
+        }, {
+          "include": "#operators"
+        }, {
+          "include": "#strings"
+        }, {
+          "include": "#filters"
+        }
       ],
-      "end": "(-)?(%})",
+
       "endCaptures": {
-        "1": { "name": "keyword.other.whitespace.liquid" },
+        "1": {
+          "name": "keyword.other.whitespace.liquid"
+        },
         "2": {
           "name": "punctuation.definition.tag.end.liquid"
         }
@@ -83,7 +115,7 @@
     },
     "output": {
       "name": "punctuation.output.liquid",
-      "begin": "({{)(-)?",
+
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.liquid"
@@ -93,16 +125,25 @@
         }
       },
       "patterns": [
-        { "include": "#objects" },
-        { "include": "#numeric" },
-        { "include": "#constants" },
-        { "include": "#parameters" },
-        { "include": "#invalid" },
-        { "include": "#operators" },
-        { "include": "#strings" },
-        { "include": "#filters" }
+        {
+          "include": "#objects"
+        }, {
+          "include": "#numeric"
+        }, {
+          "include": "#constants"
+        }, {
+          "include": "#parameters"
+        }, {
+          "include": "#invalid"
+        }, {
+          "include": "#operators"
+        }, {
+          "include": "#strings"
+        }, {
+          "include": "#filters"
+        }
       ],
-      "end": "(-)?(}})",
+      "end": "(-)?( }})",
       "endCaptures": {
         "1": {
           "name": "keyword.other.whitespace.liquid"
@@ -116,7 +157,7 @@
       "patterns": [
         {
           "name": "support.class.liquid",
-          "match": "(?:(?<=[{%}>=!\\[\\]\\-|:])|(?<=\\s))(\\w+)(?=\\.)"
+          "match": "(?:(?<=[    {% }>=!\\[\\]\\-|:])|(?<=\\s))(\\w+)(?=\\.)"
         }
       ]
     },
@@ -195,14 +236,13 @@
           }
         },
         {
-          "match": "(?=if|unless|elsif)\\s*[^%}]+\\s(in)\\s+",
+          "match": "(?=if|unless|elsif)\\s*[^ %}]+\\s(in)\\s+",
           "captures": {
             "3": {
               "name": "invalid.illegal.operator.liquid"
             }
           }
-        },
-        {
+        }, {
           "name": "invalid.illegal.filter.liquid",
           "match": "(?<=\\s)(\\+|\\-|\\/|\\*)(?=\\s)"
         }
@@ -213,28 +253,22 @@
         {
           "match": "\\=",
           "name": "keyword.operator.assignment.augmented.liquid"
-        },
-        {
+        }, {
           "match": "\\.",
           "name": "keyword.other.dot.liquid"
-        },
-        {
+        }, {
           "name": "keyword.operator.logical.liquid",
           "match": "\\s+(and|or|contains|in)\\s+"
-        },
-        {
+        }, {
           "name": "keyword.operator.equality.liquid",
           "match": "\\s+(\\!=|\\=\\=|\\<|\\>|\\>\\=|\\<\\=)\\s+"
-        },
-        {
+        }, {
           "name": "keyword.other.colon.liquid",
           "match": ":"
-        },
-        {
+        }, {
           "name": "keyword.other.array-item.liquid",
           "match": "\\[|\\]"
-        },
-        {
+        }, {
           "name": "variable.parameter.liquid",
           "match": "(?<=\\s)(as|with|offset|limit|reverse|cols)"
         }
@@ -246,8 +280,7 @@
           "name": "string.quoted.single.liquid",
           "begin": "'",
           "end": "'"
-        },
-        {
+        }, {
           "name": "string.quoted.double.liquid",
           "begin": "\"",
           "end": "\""
@@ -267,8 +300,7 @@
               "name": "support.function.filter.liquid"
             }
           }
-        },
-        {
+        }, {
           "name": "support.function.without-args.liquid",
           "match": "(\\|\\s*)(?![\\.0-9])([a-zA-Z0-9_-]+)\\s*",
           "captures": {
@@ -285,7 +317,7 @@
     "embedded-schema": {
       "name": "meta.embedded.block.liquid",
       "contentName": "meta.embedded.block.frontmatter.liquid",
-      "begin": "({%)(-)?\\s*(schema)\\s*(-)?(%})",
+
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.liquid"
@@ -303,7 +335,7 @@
           "name": "punctuation.definition.tag.end.liquid"
         }
       },
-      "end": "({%)(-)?\\s*(endschema)\\s*(-)?(%})",
+
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.liquid"
@@ -330,7 +362,7 @@
     "embedded-style": {
       "name": "meta.embedded.block.liquid",
       "contentName": "meta.embedded.block.style.liquid",
-      "begin": "({%)(-)?\\s*\\b(style)\\b\\s*(-)?(%})",
+
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.liquid"
@@ -348,7 +380,7 @@
           "name": "punctuation.definition.tag.end.liquid"
         }
       },
-      "end": "({%)(-)?\\s*\\b(endstyle)\\b\\s*(-)?(%})",
+
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.liquid"
@@ -375,7 +407,7 @@
     "embedded-stylesheet": {
       "name": "meta.embedded.block.liquid",
       "contentName": "meta.embedded.block.stylesheet.liquid",
-      "begin": "({%)(-)?\\s*(stylesheet)\\s*(-)?(%})",
+
       "beginCaptures": {
         "0": {
           "name": "meta.tag.metadata.stylesheet.scss.start.liquid"
@@ -396,7 +428,7 @@
           "name": "punctuation.definition.tag.end.liquid"
         }
       },
-      "end": "({%)(-)?\\s*(endstylesheet)\\s*(-)?(%})",
+
       "endCaptures": {
         "0": {
           "name": "meta.tag.metadata.stylesheet.end.liquid"
@@ -426,7 +458,7 @@
     "embedded-stylesheet-scss": {
       "name": "meta.embedded.block.liquid",
       "contentName": "meta.embedded.block.stylesheet.scss.liquid",
-      "begin": "({%)\\s*(stylesheet)\\s*('(scss)')\\s*(%})",
+
       "beginCaptures": {
         "0": {
           "name": "meta.tag.metadata.stylesheet.scss.start.liquid"
@@ -447,7 +479,7 @@
           "name": "punctuation.definition.tag.end.liquid"
         }
       },
-      "end": "({%)\\s*(endstylesheet)\\s*(%})",
+
       "endCaptures": {
         "0": {
           "name": "meta.tag.metadata.stylesheet.scss.end.liquid"
@@ -471,7 +503,7 @@
     "embedded-javascript": {
       "name": "meta.embedded.block.liquid",
       "contentName": "meta.embedded.block.javascript.liquid",
-      "begin": "({%)\\s*(javascript)\\s*(%})",
+
       "beginCaptures": {
         "0": {
           "name": "meta.tag.metadata.javascript.start.liquid"
@@ -486,7 +518,7 @@
           "name": "punctuation.definition.tag.end.liquid"
         }
       },
-      "end": "({%)\\s*(endjavascript)\\s*(%})",
+
       "endCaptures": {
         "0": {
           "name": "meta.tag.metadata.javascript.end.liquid"
@@ -494,8 +526,14 @@
         "1": {
           "name": "punctuation.definition.tag.begin.liquid"
         },
+
+
+
+
         "2": {
           "name": "entity.name.tag.liquid"
+
+
         },
         "3": {
           "name": "punctuation.definition.tag.end.liquid"

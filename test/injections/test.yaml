@@ -14,6 +14,7 @@ stringValue1: wer                  # string without quotes
 booleanValue: true                 # boolean values - true or false
 
 
+
 # Multiline string with literal block syntax -preserved new lines
 string1: |
    Line1

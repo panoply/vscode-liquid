@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="{{ shop_locale.iso_code }}">
-
   <head>
     <meta charset="utf-8">
     <title>
@@ -20,69 +19,119 @@
     {%- render 'favicons' -%}
     {%- render 'meta_tags' -%}
 
-    <link rel="dns-prefetch" href="https://api.ipstack.com" crossorigin>
-    <link rel="dns-prefetch" href="https://api.brixtol.com" crossorigin>
-    <link rel="dns-prefetch" href="https://s.pinimg.com" crossorigin>
-    <link rel="dns-prefetch" href="https://brixtol.cloud" crossorigin>
-
-    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
-    <link rel="preconnect" href="https://use.typekit.net" crossorigin>
-    <link rel="preconnect" href="https://brixtol.cloud" crossorigin>
-
-    <link rel="preload" href="{{ 'catalogue-ll-regular.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="{{ 'catalogue-ll-italic.woff2' | asset_url }}" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="{{ 'stylesheet.css' | asset_url }}" as="style" crossorigin>
-    <link rel="preload" href="{{ 'theme.css' | asset_url }}" as="style" crossorigin>
-    <link rel="preload" href="{{ 'bundle.js' | asset_url -}}" as="script" crossorigin>
+    <link
+      rel="dns-prefetch"
+      href="https://api.ipstack.com"
+      crossorigin>
+    <link
+      rel="dns-prefetch"
+      href="https://api.brixtol.com"
+      crossorigin>
+    <link
+      rel="dns-prefetch"
+      href="https://s.pinimg.com"
+      crossorigin>
+    <link
+      rel="dns-prefetch"
+      href="https://brixtol.cloud"
+      crossorigin>
+    <link
+      rel="preconnect"
+      href="https://cdn.shopify.com"
+      crossorigin>
+    <link
+      rel="preconnect"
+      href="https://use.typekit.net"
+      crossorigin>
+    <link
+      rel="preconnect"
+      href="https://brixtol.cloud"
+      crossorigin>
+    <link
+      rel="preload"
+      href="{{ 'catalogue-ll-regular.woff2' | asset_url }}"
+      as="font"
+      type="font/woff2"
+      crossorigin>
+    <link
+      rel="preload"
+      href="{{ 'catalogue-ll-italic.woff2' | asset_url }}"
+      as="font"
+      type="font/woff2"
+      crossorigin>
+    <link
+      rel="preload"
+      href="{{ 'stylesheet.css' | asset_url }}"
+      as="style"
+      crossorigin>
+    <link
+      rel="preload"
+      href="{{ 'theme.css' | asset_url }}"
+      as="style"
+      crossorigin>
+    <link
+      rel="preload"
+      href="{{ 'bundle.js' | asset_url -}}"
+      as="script"
+      crossorigin>
 
     <style>
       {%- render 'vars.css' %}
     </style>
 
-
-    <link rel="stylesheet" href="{{ 'stylesheet.css' | asset_url }}">
-    <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
+    <link
+      rel="stylesheet"
+      href="{{ 'stylesheet.css' | asset_url }}">
+    <link
+      rel="stylesheet"
+      href="{{ 'theme.css' | asset_url }}">
 
     <script data-spx-eval="false">
       {%- render 'shop.js' -%}
-
-
       {%- if condition -%}
-
         const foo = {};
-
         {{ object.prop.prop['string'][10] | filter: false }}
-
       {%- endif -%}
     </script>
 
     <script data-spx-eval="false">{%- render 'i18n.js' -%}</script>
-    <script data-spx-eval="false" src="{{ 'bundle.js' | asset_url }}" type="module" defer>
+    <script
+      data-spx-eval="false"
+      src="{{ 'bundle.js' | asset_url }}"
+      type="module"
+      defer>
       window.app();
     </script>
 
-
-    <script src="https://www.googletagmanager.com/gtag/js?id=g-htnv2npht6" defer async></script>
+    <script
+      src="https://www.googletagmanager.com/gtag/js?id=g-htnv2npht6"
+      defer
+      async></script>
 
     {%- if template contains 'customers' -%}
-      <script src="{{ 'shopify_common.js' | shopify_asset_url -}}" async></script>
-      <script src="{{ 'customer_area.js' | shopify_asset_url }}" async></script>
+      <script
+        src="{{ 'shopify_common.js' | shopify_asset_url -}}"
+        async></script>
+      <script
+        src="{{ 'customer_area.js' | shopify_asset_url }}"
+        async></script>
     {%- endif -%}
 
     {%- capture content_header -%}
       {{ content_for_header }}
     {%- endcapture -%}
+
     {{ content_header | replace: '<script', '<script data-spx-eval="false"' }}
   </head>
 
   <body {{ object.prop.prop['string'][10] | filter: false }}>
 
     {%- if condition -%}{%- endif -%}
-
     {%- render 'drawer_menu', overlay: 'drawer-overlay' -%}
     {%- render 'drawer_cart', overlay: 'drawer-overlay' -%}
     {%- section 'header' -%}
     {{ content_for_layout }}
+
     {%- section 'footer' -%}
     {%- render 'icons' -%}
     {%- render 'nodes' -%}
@@ -90,6 +139,4 @@
     {%- render 'discounts' -%}
 
   </body>
-
 </html>
-

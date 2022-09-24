@@ -1,6 +1,9 @@
 {
   "prettifys": {
 
+
+
+
     "preserveLine": 1,
     "wrap": 0,
     "markup": {
@@ -20,6 +23,10 @@
       "quoteConvert": "none"
 
     },
+
+
+
+
     "script": {
       "braceStyle": "collapse",
       "arrayFormat": "indent",
@@ -36,4 +43,3 @@
     }
   }
 }
-

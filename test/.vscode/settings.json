@@ -1,32 +1,28 @@
 {
-  "[html]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid",
-    "editor.bracketPairColorization.enabled": false
-  },
+  // "[html]": {
+  // "editor.defaultFormatter": "sissel.shopify-liquid",
+  // "editor.bracketPairColorization.enabled": false
+  // },
   "liquid.format.enable": true,
-  "html.validate.scripts": false,
-  "html.validate.styles": false
-
-
-
- // "liquid.format": true,
- // "liquid.rules": {},
-
+  "json.validate.enable": false,
+  // "html.validate.scripts": false,
+  // "html.validate.styles": false
+  // "liquid.format": true,
+  // "liquid.rules": {},
   // "liquid.format.enable": true
-
   // "liquid.enable": true,
   // "liquid.format.enable": true,
-  // "[json]": { "editor.defaultFormatter": "sissel.shopify-liquid" }
+  "[html]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid"
+  }
   /* -------------------------------------------- */
   /* VSCODE NATIVES                               */
   /* -------------------------------------------- */
-
-  //"[liquid-css]": {},
-  //"[liquid-scss]": {},
-  //"[liquid-javascript]": {},
-  //"[liquid-json]": {},
-  //"[liquid-yaml]": {},
-
+  // "[liquid-css]": {},
+  // "[liquid-scss]": {},
+  // "[liquid-javascript]": {},
+  // "[liquid-json]": {},
+  // "[liquid-yaml]": {},
   /* -------------------------------------------- */
   /* FORMATTING OPTIONS                           */
   /* -------------------------------------------- */
@@ -43,60 +39,60 @@
   "liquid.format.preserveLine": 2,
   "liquid.format.wrap": 0,
   "liquid.format.markup": {
-    "correct": false,
-    "commentNewline": false,
-    "attributeCasing": "preserve",
-    "attributeSort": false,
-    "attributeSortList": [],
-    "forceAttribute": false,
-    "forceLeadAttribute": false,
-    "forceIndent": false,
-    "preserveText": false,
-    "preserveAttributes": false,
-    "selfCloseSpace": false,
-    "quoteConvert": "none",
+  "correct": false,
+  "commentNewline": false,
+  "attributeCasing": "preserve",
+  "attributeSort": false,
+  "attributeSortList": [],
+  "forceAttribute": false,
+  "forceLeadAttribute": false,
+  "forceIndent": false,
+  "preserveText": false,
+  "preserveAttributes": false,
+  "selfCloseSpace": false,
+  "quoteConvert": "none",
   },
   "liquid.format.style": {
-    "correct": false,
-    "commentNewline": false,
-    "attributeCasing": "preserve",
-    "attributeValues": "preserve",
-    "attributeSort": false,
-    "attributeSortList": [],
-    "forceAttribute": false,
-    "forceLeadAttribute": false,
-    "forceIndent": false,
-    "preserveText": false,
-    "preserveAttributes": false,
-    "selfCloseSpace": false,
-    "quoteConvert": "none"
+  "correct": false,
+  "commentNewline": false,
+  "attributeCasing": "preserve",
+  "attributeValues": "preserve",
+  "attributeSort": false,
+  "attributeSortList": [],
+  "forceAttribute": false,
+  "forceLeadAttribute": false,
+  "forceIndent": false,
+  "preserveText": false,
+  "preserveAttributes": false,
+  "selfCloseSpace": false,
+  "quoteConvert": "none"
   },
   "liquid.format.script": {
-    "correct": false,
-    "braceNewline": false,
-    "bracePadding": false,
-    "braceStyle": "none",
-    "braceAllman": false,
-    "caseSpace": false,
-    "inlineReturn": true,
-    "elseNewline": false,
-    "endComma": "never",
-    "arrayFormat": "default",
-    "objectIndent": "default",
-    "functionNameSpace": false,
-    "functionSpace": false,
-    "styleGuide": "none",
-    "ternaryLine": false,
-    "methodChain": 4,
-    "neverFlatten": false,
-    "noCaseIndent": false,
-    "noSemicolon": false,
-    "quoteConvert": "none"
+  "correct": false,
+  "braceNewline": false,
+  "bracePadding": false,
+  "braceStyle": "none",
+  "braceAllman": false,
+  "caseSpace": false,
+  "inlineReturn": true,
+  "elseNewline": false,
+  "endComma": "never",
+  "arrayFormat": "default",
+  "objectIndent": "default",
+  "functionNameSpace": false,
+  "functionSpace": false,
+  "styleGuide": "none",
+  "ternaryLine": false,
+  "methodChain": 4,
+  "neverFlatten": false,
+  "noCaseIndent": false,
+  "noSemicolon": false,
+  "quoteConvert": "none"
   },
   "liquid.format.json": {
-    "arrayFormat": "default",
-    "braceAllman": false,
-    "bracePadding": false,
-    "objectIndent": "default"
+  "arrayFormat": "default",
+  "braceAllman": false,
+  "bracePadding": false,
+  "objectIndent": "default"
   }*/
 }
