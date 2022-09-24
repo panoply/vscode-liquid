@@ -1,7 +1,9 @@
 <!doctype html>
-<html lang="{{ shop_locale.iso_code }}">
+<html
+  lang="{{ shop_locale.iso_code }}">
   <head>
-    <meta charset="utf-8">
+    <meta
+      charset="utf-8">
     <title>
       {{- page_title -}}
       {%- if current_tags -%}
@@ -75,9 +77,12 @@
       as="script"
       crossorigin>
 
+
+
     <style>
       {%- render 'vars.css' %}
     </style>
+
 
     <link
       rel="stylesheet"
@@ -86,7 +91,8 @@
       rel="stylesheet"
       href="{{ 'theme.css' | asset_url }}">
 
-    <script data-spx-eval="false">
+    <script
+      data-spx-eval="false">
       {%- render 'shop.js' -%}
       {%- if condition -%}
         const foo = {};
@@ -94,7 +100,8 @@
       {%- endif -%}
     </script>
 
-    <script data-spx-eval="false">{%- render 'i18n.js' -%}</script>
+    <script
+      data-spx-eval="false">{%- render 'i18n.js' -%}</script>
     <script
       data-spx-eval="false"
       src="{{ 'bundle.js' | asset_url }}"
@@ -124,9 +131,11 @@
     {{ content_header | replace: '<script', '<script data-spx-eval="false"' }}
   </head>
 
-  <body {{ object.prop.prop['string'][10] | filter: false }}>
+  <body
+    {{ object.prop.prop['string'][10] | filter: false }}>
 
     {%- if condition -%}{%- endif -%}
+
     {%- render 'drawer_menu', overlay: 'drawer-overlay' -%}
     {%- render 'drawer_cart', overlay: 'drawer-overlay' -%}
     {%- section 'header' -%}
@@ -139,4 +148,5 @@
     {%- render 'discounts' -%}
 
   </body>
+
 </html>

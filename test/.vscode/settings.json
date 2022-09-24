@@ -5,6 +5,9 @@
   // },
   "liquid.format.enable": true,
   "json.validate.enable": false,
+  "liquid.format.ignore": [
+    "**/ignore.liquid"
+  ],
   // "html.validate.scripts": false,
   // "html.validate.styles": false
   // "liquid.format": true,
@@ -13,6 +16,12 @@
   // "liquid.enable": true,
   // "liquid.format.enable": true,
   "[html]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid"
+  },
+  "[jsonc]": {
+    // "editor.defaultFormatter": "sissel.shopify-liquid"
+  },
+  "[json]": {
     "editor.defaultFormatter": "sissel.shopify-liquid"
   }
   /* -------------------------------------------- */

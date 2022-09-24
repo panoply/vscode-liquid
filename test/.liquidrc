@@ -1,61 +1,54 @@
 {
-  "ignore": ["ignore.liquid"],
-  "crlf": false,
-  "commentIndent": true,
-  "indentSize": 2,
-  "preserveComment": false,
-  "preserveLine": 2,
-  "wrap": 0,
-  "markup": {
-    "delimiterSpacing": true,
-    "commentNewline": false,
-    "attributeCasing": "preserve",
-    "attributeValues": "preserve",
-    "attributeSort": false,
-    "attributeSortList": [],
-    "forceAttribute": false,
-    "forceLeadAttribute": false,
-    "forceIndent": false,
-    "preserveText": false,
-    "preserveAttributes": false,
-    "selfCloseSpace": false,
-    "quoteConvert": "none"
+  "ignore": [
+    {
+      "type": "liquid",
+      "begin": "comment",
+      "end": "endcomment"
+    },
+    {
+      "type": "html",
+      "begin": "script",
+      "end": "script"
+    },
+    {
+      "type": "html",
+      "begin": "style",
+      "end": "style"
+    }
+  ],
+  "html": {
+    "correct": true,
+    "force_attribute": false,
+    "preserve": 2,
+    "unformatted": false
   },
-  "style": {
-    "correct": true, // some comment
-    "classPadding": false,
-    "noLeadZero": false,
-    "sortSelectors": false,
-    "sortProperties": false
+  "js": {
+    "preserve": 1,
+    "method_chain": 0,
+    "quote_convert": "none",
+    "format_array": "indent",
+    "format_object": "indent",
+    "braces": false,
+    "no_semicolon": false,
+    "brace_block": true
   },
-  "script": {
-    "commentIndent": false,
-    "correct": false,
-    "braceNewline": false,
-    "bracePadding": false,
-    "braceStyle": "none",
-    "braceAllman": false,
-    "caseSpace": false,
-    "inlineReturn": true,
-    "elseNewline": false,
-    "endComma": "never",
-    "arrayFormat": "indent",
-    "objectIndent": "default",
-    "functionNameSpace": false,
-    "functionSpace": false,
-    "styleGuide": "none",
-    "ternaryLine": false,
-    "methodChain": 4,
-    "neverFlatten": false,
-    "noCaseIndent": false,
-    "noSemicolon": false,
-    "quoteConvert": "none"
+  "scss": {
+    "css_insert_lines": true,
+    "preserve": 2,
+    "braces": false,
+    "brace_block": true
+  },
+  "css": {
+    "css_insert_lines": true,
+    "preserve": 2,
+    "braces": false,
+    "brace_block": true
   },
   "json": {
-    "braceStyle": "collapse",
-    "arrayFormat": "indent",
-    "braceAllman": true,
-    "bracePadding": false,
-    "objectIndent": "indent"
+    "preserve": 0,
+    "format_array": "indent",
+    "braces": true,
+    "no_semicolon": true,
+    "brace_block": false
   }
 }
