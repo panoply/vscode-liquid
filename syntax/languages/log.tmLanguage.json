@@ -30,7 +30,19 @@
       "name": "keyword.control.flow log.function"
     },
     {
-      "match": "\\b(liquid|Liquid|JSON|json|CSS|css|JavaScript|javascript|html|HTML)\\b",
+      "match": "(?<=Ignore\\spath\\s(?:created|removed))(:)\\s*(.*)",
+      "name": "support.function.filter log.filter",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.tag log.control"
+        },
+        "2": {
+          "name": "support.function.filter log.path"
+        }
+      }
+    },
+    {
+      "match": "\\b([lL]iquid(\\-(css|scss|javascript))?|JSONC?|jsonc?|CSS|css|JavaScript|javascript|html|HTML|typescript|jsx|JSX|tsx|TSX|XML|xml)\\b",
       "name": "support.class log.support"
     },
     {
@@ -38,7 +50,11 @@
       "name": "punctuation.definition.tag log.control"
     },
     {
-      "match": "\\b(using).*\\:?",
+      "match": "\\b([iI]gnoring).*",
+      "name": "punctuation.definition.tag log.control"
+    },
+    {
+      "match": "\\b(Using).*\\:?",
       "name": "keyword.control.flow log.function"
     },
     {
