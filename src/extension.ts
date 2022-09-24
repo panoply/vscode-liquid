@@ -1,4 +1,4 @@
-import { ExtensionContext, window } from 'vscode';
+import { ExtensionContext } from 'vscode';
 import { VSCodeLiquid } from 'service';
 
 /**
@@ -8,10 +8,8 @@ import { VSCodeLiquid } from 'service';
  */
 export async function activate ({ subscriptions, extension }: ExtensionContext) {
 
-  if (!window.activeTextEditor) return;
-
   const liquid = new VSCodeLiquid(extension);
 
-  return liquid.onActiveEditor(subscriptions).catch(console.error);
+  return liquid.onActiveEditor(subscriptions);
 
 };
