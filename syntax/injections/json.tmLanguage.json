@@ -1,5 +1,5 @@
 {
-  "scopeName": "source.json.liquid.injection",
+  "scopeName": "source.json.liquid",
   "injectionSelector": "L:source.json -string",
   "injections": {
     "L:string - (string.quoted.*.json)": {
