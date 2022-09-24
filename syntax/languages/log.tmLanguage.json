@@ -42,6 +42,10 @@
       }
     },
     {
+      "match": "\\b(RESTARTING\\sEXTENSION|EXTENSION\\sRESTARTED)\\b",
+      "name": "support.class log.support"
+    },
+    {
       "match": "\\b([lL]iquid(\\-(css|scss|javascript))?|JSONC?|jsonc?|CSS|css|JavaScript|javascript|html|HTML|typescript|jsx|JSX|tsx|TSX|XML|xml)\\b",
       "name": "support.class log.support"
     },
@@ -54,8 +58,37 @@
       "name": "punctuation.definition.tag log.control"
     },
     {
-      "match": "\\b(Using).*\\:?",
-      "name": "keyword.control.flow log.function"
+      "match": "Using\\s(\"prettify\")\\sfield\\sin\\s(package\\.json)\\sfile",
+      "captures": {
+        "1": {
+          "name": "support.function.filter log.path"
+        },
+        "2": {
+          "name": "constant.language log.constant"
+        }
+      }
+    },
+    {
+      "match": "Using\\s(workspace\\ssettings)\\sfor\\sconfiguration",
+      "captures": {
+        "1": {
+          "name": "constant.language log.constant"
+        }
+      }
+    },
+    {
+      "match": "Using\\s(\\.liquidrc(?:\\.json)?)\\sfile(\\:)\\s(.*)",
+      "captures": {
+        "1": {
+          "name": "constant.language log.constant"
+        },
+        "2": {
+          "name": "punctuation.definition.tag log.control"
+        },
+        "3": {
+          "name": "support.function.filter log.path"
+        }
+      }
     },
     {
       "match": "\\.[0-9]+(ms|s)",
