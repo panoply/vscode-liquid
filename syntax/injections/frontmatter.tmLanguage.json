@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "injectionSelector": "L:source.liquid -meta.embedded -comment, L:source.js.liquid -meta.embedded -comment, L:source.json.liquid -meta.embedded -comment, L:source.css.liquid -meta.embedded -comment, L:source.scss.liquid -meta.embedded -comment",
+  "injectionSelector": "L:source.liquid, L:source.js.liquid, L:source.json.liquid, L:source.css.liquid, L:source.scss.liquid",
   "scopeName": "source.liquid.frontmatter",
   "patterns": [
     {
