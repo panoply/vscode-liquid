@@ -2,18 +2,14 @@ import { window } from 'vscode';
 import * as u from 'utils';
 import { StatusBarItem } from 'providers/StatusBarItem';
 import { State } from 'state';
+import { has } from 'rambdax';
 
 export class OutputChannel extends State {
 
   /**
    * Status Bar Item - instance
    */
-  public status = new StatusBarItem({
-    displayName: this.displayName,
-    version: this.version,
-    prettifyVersion: this.prettifyVersion,
-    repository: this.repository
-  });
+  public status = new StatusBarItem();
 
   /**
    * Liquid Output Channel
@@ -47,24 +43,26 @@ export class OutputChannel extends State {
    *
    * Ensures throws are handled correctly
    */
-  public catch (message: string, error?: Error) {
+  public catch (message: string, error: Error) {
 
     if (error instanceof Error) {
 
-      const stack = u.parseStack(error);
-
       this.output.appendLine(`\nERROR: ${message}\n`);
 
-      const json = error.message.indexOf(' while parsing near');
+      if (has('message', error)) {
+        const json = error.message.indexOf(' while parsing near');
+        if (json > -1) error.message = error.message.slice(0, json) + ':';
+        this.output.appendLine(error.message);
+      }
 
-      if (json > -1) error.message = error.message.slice(0, json) + ':';
+      const stack = u.parseStack(error);
+      if (u.isArray(stack)) for (const line of stack) this.output.appendLine(line);
 
-      this.output.appendLine(error.message);
+    } else {
 
-      for (const line of stack) this.output.appendLine(line);
+      console.log(message, error);
 
     }
-
   }
 
   /**
