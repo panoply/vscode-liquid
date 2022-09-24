@@ -1,35 +1,65 @@
-import { commands, ConfigurationChangeEvent, Disposable, languages, LanguageStatusSeverity, Range, TextDocument, TextDocumentChangeEvent, TextEdit, TextEditor, window, workspace } from 'vscode';
-import prettify from '@liquify/prettify';
-import { has } from 'rambdax';
-import { Config, LanguageIds, Setting } from './types';
+import {
+  commands,
+  ConfigurationChangeEvent,
+  ConfigurationTarget,
+  languages,
+  Range,
+  TextDocument,
+  TextEdit,
+  TextEditor,
+  window,
+  workspace
+} from 'vscode';
+import prettify, { Options } from '@liquify/prettify';
+import { Config, LanguageIds, Setting } from 'types';
 import { CommandPalette } from 'providers/CommandPalette';
-import * as u from './utils';
-import { StatusLanguageItem } from 'providers/StatusLanguageItem';
+// import { StatusLanguageItem } from 'providers/StatusLanguageItem';
+import { clone, delay } from 'rambdax';
+import * as u from 'utils';
 
 export class VSCodeLiquid extends CommandPalette {
 
-  /**
-   * Returns the current document provider disposable
-   */
-  private formatHandler: Disposable = null;
+  // private language = new StatusLanguageItem();
 
   /**
-   * Returns the current document provider disposable
+   * Restart Extension
+   *
+   * Invokes a soft restart of the extension. Clears all
+   * persisted states and disposes of subscriptions. From here
+   * re-activates extension by calling back to `onActiveEditor`.
    */
-  private formatIgnore: Set<string> = new Set();
+  private restart = (
+    prettifyRules: Options,
+    languages: any,
+    subscriptions: { dispose(): void; }[]
+  ) => async () => {
 
-  /**
-   * Returns the current document provider disposable
-   */
-  private formatRegister: Set<string> = new Set();
+    this.info('RESTARTING EXTENSION');
+    this.status.loading();
 
-  private language = new StatusLanguageItem();
+    await delay(2000);
 
-  private dispose () {
-    if (this.formatHandler) {
-      this.formatHandler.dispose();
-    } this.formatHandler = undefined;
-  }
+    this.isReady = false;
+    this.canFormat = false;
+    this.configMethod = Config.Workspace;
+    this.configTarget = ConfigurationTarget.Workspace;
+    this.ignoreList = [];
+    this.ignoreMatch = null;
+    this.liquidrcPath = null;
+    this.prettifyRules = prettify.options(prettifyRules);
+    this.languages = languages;
+    this.formatIgnore.clear();
+    this.formatRegister.clear();
+    this.dispose();
+    this.getWatchers(false);
+
+    for (const subscription of subscriptions) subscription.dispose();
+
+    await this.onActiveEditor(subscriptions);
+
+    this.info('EXTENSION RESTARTED');
+
+  };
 
   /**
    * onActiveEditor
@@ -41,7 +71,7 @@ export class VSCodeLiquid extends CommandPalette {
    */
   public async onActiveEditor (subscriptions: { dispose(): void; }[]) {
 
-    if (this.isReady) return null;
+    const config = this.getWorkspace();
 
     // Using deprecated settings
     if (u.hasDeprecatedSettings()) {
@@ -49,9 +79,11 @@ export class VSCodeLiquid extends CommandPalette {
       this.status.error();
     }
 
+    const prettifyRules = clone(prettify.options.rules);
+    const languages = clone(this.languages);
+
     try {
 
-      const config = this.getWorkspace();
       const pkgjson = await this.getPackage();
       const liquidrc = await this.getLiquidrc();
 
@@ -61,40 +93,79 @@ export class VSCodeLiquid extends CommandPalette {
 
       if (this.configMethod === Config.Workspace) {
         if (config === Setting.WorkspaceDefined) prettify.options(this.prettifyRules);
-        this.info('using workspace settings');
+        this.info('Using workspace settings for configuration');
       } else if (this.configMethod === Config.Package) {
         if (pkgjson === Setting.PrettifyFieldDefined) prettify.options(this.prettifyRules);
-        this.info('using prettify field in package.json file');
-        this.language.status('package.json');
+        this.info('Using "prettify" field in package.json file');
+      //  this.language.configFile('package.json');
       } else if (this.configMethod === Config.Liquidrc) {
         if (liquidrc === Setting.LiquidrcDefined) prettify.options(this.prettifyRules);
-        this.info(`using .liquidrc file: ${this.getRelative(this.liquidrcPath)}`);
-        this.language.status('.liquidrc');
+        this.info(`Using .liquidrc file: ${this.liquidrcPath}`);
+        //   this.language.configFile('.liquidrc');
       }
-
-      this.onDidChangeTextEditor(window.activeTextEditor);
-
-      subscriptions.push(
-        //  commands.registerCommand('liquid.liquidrcDefaults', this.liquidrcDefaults, this),
-        //  commands.registerCommand('liquid.liquidrcRecommended', this.liquidrcRecommended, this),
-        commands.registerCommand('liquid.openOutput', this.output.show, this),
-        commands.registerCommand('liquid.enableFormatting', this.enableFormatting, this),
-        commands.registerCommand('liquid.disableFormatting', this.disableFormatting, this)
-
-      );
-
-      workspace.onDidChangeConfiguration(this.onConfigChange, this, subscriptions);
-      workspace.onDidCloseTextDocument(this.onDidCloseTextDocument, this, subscriptions);
-
-      // workspace.onDidOpenTextDocument(this.onDidChangeTextEditor, this, subscriptions);
-      window.onDidChangeActiveTextEditor(this.onDidChangeTextEditor, this, subscriptions);
-      // workspace.onDidChangeConfiguration(this.onConfigChange, this, subscriptions);
-
-      this.isReady = true;
 
     } catch (e) {
       this.catch('failed to initialize extension', e);
     }
+
+    subscriptions.push(
+      this.onDidChangeTextEditor(
+        window.activeTextEditor
+      ),
+      commands.registerCommand(
+        'liquid.liquidrcDefaults',
+        this.liquidrcDefaults,
+        this
+      ),
+      commands.registerCommand(
+        'liquid.liquidrcRecommended',
+        this.liquidrcRecommend,
+        this
+      ),
+      commands.registerCommand(
+        'liquid.openOutput',
+        this.output.show,
+        this
+      ),
+      commands.registerCommand(
+        'liquid.enableFormatting',
+        this.enableFormatting,
+        this
+      ),
+      commands.registerCommand(
+        'liquid.disableFormatting',
+        this.disableFormatting,
+        this
+      ),
+      commands.registerCommand(
+        'liquid.restartExtension',
+        this.restart(
+          prettifyRules,
+          languages,
+          subscriptions
+        )
+      )
+    );
+
+    workspace.onDidChangeConfiguration(
+      this.onConfigChange,
+      this,
+      subscriptions
+    );
+
+    workspace.onDidCloseTextDocument(
+      this.onDidCloseTextDocument,
+      this,
+      subscriptions
+    );
+
+    window.onDidChangeActiveTextEditor(
+      this.onDidChangeTextEditor,
+      this,
+      subscriptions
+    );
+
+    this.isReady = true;
 
   };
 
@@ -165,7 +236,11 @@ export class VSCodeLiquid extends CommandPalette {
    */
   public onDidChangeTextEditor (textDocument: TextEditor | undefined) {
 
-    if (!textDocument) return;
+    if (!textDocument) {
+      this.dispose();
+      this.status.hide();
+      return;
+    };
 
     const { uri, languageId } = textDocument.document;
 
@@ -194,8 +269,6 @@ export class VSCodeLiquid extends CommandPalette {
       this.status.disable();
     }
 
-    console.log(this);
-
     this.formatRegister.add(uri.fsPath);
 
     return this.onRegisterProvider();
@@ -205,60 +278,76 @@ export class VSCodeLiquid extends CommandPalette {
   /**
    * onRegisterProvider
    *
-   * Invoked when the text document is opened.
+   * Invoked when the text document is opened. Accepts a `boolean`
+   * disposal parameter. When `true` the `formatHandler` will be disposed
+   * before being re-registered.
+   *
+   * @param dispose
    */
   public onRegisterProvider (dispose = false) {
 
     if (this.formatHandler && dispose === false) return this.formatHandler;
     if (dispose) this.dispose();
 
-    this.formatHandler = languages.registerDocumentFormattingEditProvider(this.selector, {
-      provideDocumentFormattingEdits: async (document: TextDocument) => {
+    this.formatHandler = languages.registerDocumentFormattingEditProvider(
+      this.selector.active,
+      {
+        provideDocumentFormattingEdits: async (document: TextDocument) => {
 
-        if (this.formatIgnore.has(document.uri.fsPath)) return [];
+          if (this.formatIgnore.has(document.uri.fsPath)) return [];
 
-        const range = u.getRange(document);
+          const range = u.getRange(document);
 
-        return this.onDocumentEdit({
-          range,
-          input: document.getText(range),
-          language: u.getLanguage(document.languageId)
-        });
+          return this.onDocumentEdit({
+            range,
+            input: document.getText(range),
+            language: u.getLanguage(document.languageId)
+          });
 
+        }
       }
-    });
+    );
 
     return this.formatHandler;
+
   }
 
   public onConfigChange (config: ConfigurationChangeEvent) {
 
     if (config.affectsConfiguration('liquid')) {
 
-      this.hasError = false;
       this.getSettings();
 
       if (config.affectsConfiguration('liquid.format')) {
+
+        if (config.affectsConfiguration('liquid.format.ignore')) {
+          this.info('workspace ignore list changed');
+          this.formatIgnore.clear();
+          this.formatRegister.clear();
+        }
+
         if (!this.canFormat) {
           this.dispose();
           this.status.disable();
+        } else {
+          this.onRegisterProvider(true);
         }
       }
 
     } else {
 
+      const target = this.getTarget();
+
       for (const id in this.languages) {
 
         if (!config.affectsConfiguration(`[${id}]`)) continue;
-
-        const target = this.getTarget();
 
         if (u.isDefaultFormatter(`[${id}]`, target)) {
 
           if (!this.languages[id]) {
             this.languages[id] = true;
-            if (this.selector.some(({ language }) => language !== id)) {
-              this.selector.push({ language: id, scheme: 'file' });
+            if (this.selector.active.some(({ language }) => language !== id)) {
+              this.selector.active.push({ language: id, scheme: 'file' });
             }
           }
 
@@ -268,7 +357,7 @@ export class VSCodeLiquid extends CommandPalette {
           if (this.languages[id]) {
             this.languages[id] = false;
             this.info('Prettify is no longer the default formatter of ' + id);
-            this.selector = this.selector.filter(({ language }) => {
+            this.selector.active = this.selector.active.filter(({ language }) => {
               if (language.startsWith('liquid')) return true;
               return language !== id;
             });
