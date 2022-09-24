@@ -4,9 +4,10 @@ import { getRange } from 'utils';
 import { FSWatch } from 'providers/FileSystemWatcher';
 
 /**
- * Applies formatting to the document
+ * Command Invocation
  *
- * @extends {Pattern}
+ * This class is used to handle and process commands invoked
+ * from the command palette.
  */
 export class CommandPalette extends FSWatch {
 
@@ -25,13 +26,15 @@ export class CommandPalette extends FSWatch {
 
   }
 
-  public async toggleFormatting (enabled: boolean) {
+  public async restartExtension () {
 
-    this.canFormat = enabled;
+  }
 
-    await workspace
-      .getConfiguration('liquid')
-      .update('format.enable', this.canFormat);
+  public async liquidrcDefaults () {
+
+  }
+
+  public async liquidrcRecommend () {
 
   }
 
@@ -40,13 +43,11 @@ export class CommandPalette extends FSWatch {
    */
   public async enableFormatting () {
 
-    await this.toggleFormatting(true);
+    this.canFormat = true;
 
-    this.status.enable();
-    this.info('Enabled formatting');
-
-    await window.showInformationMessage('Enabled Liquid\'s Prettify Formatter');
-
+    await workspace
+      .getConfiguration('liquid')
+      .update('format.enable', this.canFormat, this.configTarget);
   }
 
   /**
@@ -54,19 +55,17 @@ export class CommandPalette extends FSWatch {
    */
   public async disableFormatting () {
 
-    await this.toggleFormatting(false);
+    this.canFormat = false;
 
-    this.status.disable();
-    this.info('Disabled Formatting');
-
-    await window.showInformationMessage('Disabled Liquid\'s Prettify Formatter');
-
+    await workspace
+      .getConfiguration('liquid')
+      .update('format.enable', this.canFormat, this.configTarget);
   }
 
   /**
    * Disable formatting (command)
    */
-  public async doFormat (input: string, options: Options, range?: Range) {
+  public async onDocumentFormat (input: string, options: Options, range?: Range) {
 
     try {
 
@@ -77,10 +76,11 @@ export class CommandPalette extends FSWatch {
         this.status.enable();
       }
 
-      return [ TextEdit.replace(range, output) ];
+      return [
+        TextEdit.replace(range, output)
+      ];
 
     } catch (e) {
-
       if (this.hasError === false || this.errorCache !== e) {
         this.errorCache = e;
         this.error('Formatting parse error occured in document', e);
@@ -106,11 +106,11 @@ export class CommandPalette extends FSWatch {
         const range = getRange(document);
         const input = document.getText(range);
 
-        await this.doFormat(input, { language: languageId }, range);
+        await this.onDocumentFormat(input, { language: languageId }, range);
 
       } else {
 
-        this.warn('language id ' + languageId + ' is not enabled');
+        this.warn('Language id ' + languageId + ' is not enabled');
 
       }
 
