@@ -1,9 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable quote-props */
 
-import { ConfigurationTarget, workspace, Extension, Memento } from 'vscode';
-import { Merge } from 'type-fest';
-import { Config, LanguageIds, PackageJSON } from 'types';
+import { ConfigurationTarget, Disposable, Extension, workspace } from 'vscode';
+import { Config, LanguageIds, PackageJSON, Selectors } from 'types';
 import { join } from 'node:path';
 import { Tester } from 'anymatch';
 import prettify, { Options } from '@liquify/prettify';
@@ -13,7 +12,8 @@ import prettify, { Options } from '@liquify/prettify';
  */
 export class State {
 
-  constructor ({ packageJSON }: Merge<Extension<any>, { packageJSON: PackageJSON }>) {
+  constructor ({ packageJSON, isActive }: Extension<PackageJSON>) {
+    this.isActive = isActive;
     this.version = packageJSON.version;
     this.id = packageJSON.name;
     this.repository = packageJSON.repository.url;
@@ -21,23 +21,22 @@ export class State {
     this.prettifyVersion = packageJSON.dependencies['@liquify/prettify'];
     this.rootPath = workspace.workspaceFolders[0].uri.fsPath;
     this.packagePath = join(this.rootPath, 'package.json');
-
   }
 
   /**
    * The extension official identifier, ie: sissel.vscode-liquid
    */
-  id: string;
+  id: string = 'sissel.shopify-liquid';
 
   /**
    * Github Repostory URL
    */
-  displayName: string;
+  displayName: string = 'Liquid';
 
   /**
    * Github Repostory URL
    */
-  repository: string;
+  repository: string = 'https://github.com/panoply/vscode-liquid';
 
   /**
    * Extension version
@@ -111,6 +110,35 @@ export class State {
   canFormat: boolean = false;
 
   /**
+   * The formatting handler
+   */
+  formatHandler: Disposable = null;
+
+  /**
+   * Set list of ignore paths
+   */
+  formatIgnore: Set<string> = new Set();
+
+  /**
+   * Set list of `fsPath` URI paths
+   */
+  formatRegister: Set<string> = new Set();
+
+  /**
+   * Whether or not the extension was activated
+   *
+   * @default false
+   */
+  isActive: boolean = false;
+
+  /**
+   * Whether or not an action was invoked from command
+   *
+   * @default false
+   */
+  isCommand: boolean = false;
+
+  /**
    * Whether or not the extension has initialized
    *
    * @default false
@@ -139,7 +167,39 @@ export class State {
   hasWarning: boolean = false;
 
   /**
-   * Set list of the default languages we apply formatting to
+   * Document Selectors
+   */
+  selector: Selectors = {
+    active: [
+      { scheme: 'file', language: 'liquid' },
+      { scheme: 'file', language: 'liquid-css' },
+      { scheme: 'file', language: 'liquid-scss' },
+      { scheme: 'file', language: 'liquid-javascript' }
+    ],
+    liquid: [
+      { scheme: 'file', language: 'liquid' },
+      { scheme: 'file', language: 'liquid-css' },
+      { scheme: 'file', language: 'liquid-scss' },
+      { scheme: 'file', language: 'liquid-javascript' }
+    ],
+    extend: [
+      { scheme: 'file', language: 'html' },
+      { scheme: 'file', language: 'xml' },
+      { scheme: 'file', language: 'css' },
+      { scheme: 'file', language: 'scss' },
+      { scheme: 'file', language: 'sass' },
+      { scheme: 'file', language: 'json' },
+      { scheme: 'file', language: 'jsonc' },
+      { scheme: 'file', language: 'javascript' },
+      { scheme: 'file', language: 'typescript' },
+      { scheme: 'file', language: 'jsx' },
+      { scheme: 'file', language: 'tsx' }
+    ]
+  };
+
+  /**
+   * Languages determination - Holds a reference to
+   * which language selectors are currently enabled/disabled.
    */
   languages: { [K in LanguageIds]: boolean } = {
     'liquid': true,
@@ -160,26 +220,5 @@ export class State {
     'typescript': false,
     'yaml': false
   };
-
-  /**
-   * Document Selector
-   */
-  selector: Array<{ language: LanguageIds; scheme: 'file' }> = [
-    { scheme: 'file', language: 'liquid' },
-    { scheme: 'file', language: 'liquid-css' },
-    { scheme: 'file', language: 'liquid-scss' },
-    { scheme: 'file', language: 'liquid-javascript' },
-    { scheme: 'file', language: 'html' },
-    { scheme: 'file', language: 'xml' },
-    { scheme: 'file', language: 'css' },
-    { scheme: 'file', language: 'scss' },
-    { scheme: 'file', language: 'sass' },
-    { scheme: 'file', language: 'json' },
-    { scheme: 'file', language: 'jsonc' },
-    { scheme: 'file', language: 'javascript' },
-    { scheme: 'file', language: 'typescript' },
-    { scheme: 'file', language: 'jsx' },
-    { scheme: 'file', language: 'tsx' }
-  ];
 
 }
