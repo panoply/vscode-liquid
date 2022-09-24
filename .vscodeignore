@@ -11,10 +11,11 @@ jsconfig.json
 tsconfig.json
 
 node_modules
-extension/
+src
 docs
 test
 versions
 
 rollup.config.js
 yarn.lock
+pnpm-lock.yaml
