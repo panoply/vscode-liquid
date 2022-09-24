@@ -59,7 +59,6 @@ A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template 
 - [Syntax Support](#syntax-support)
   - [Supported Languages](#supported-languages)
   - [Grammar Injections](#grammar-injections)
-  - [Liquid as HTML](#liquid-as-html)
   - [HTML Validations](#html-validations)
   - [Liquid in JSON, YAML and Markdown](#liquid-in-json-yaml-and-markdown)
   - [Markdown Codeblock](#markdown-codeblock)
@@ -122,14 +121,15 @@ By default, it is assumed you are using vscode workspace/user settings.
   // Controls how extension settings are applied (leave this to workspace)
   "liquid.settings.target": "workspace",
 
-  // Allows the extension to apply in-language settings on your behalf
-  "liquid.settings.normalize": true,
-
   // Controls whether formatting is enabled or disabled
   "liquid.format.enable": true,
 
-  // A list of languages that should be beautified with Prettify
-  "liquid.format.languages": [],
+   // A list of language id's to have Prettify format
+  "liquid.format.languages": [
+    "liquid",
+    "liquid-css",
+    "liquid-js"
+  ],
 
   // Glob paths to exclude from formatting
   "liquid.format.ignore": [],
@@ -318,83 +318,49 @@ By default, it is assumed you are using vscode workspace/user settings.
 
 The `liquid.settings.target` option is used to determine where the extension writes settings. The default configuration and behavior of the extension is to use the `.vscode/settings.json` workspace file. Though you can target `user` settings (ie: global), it is **highly discouraged** to do so and could lead to unexpected issues outside of Liquid projects.
 
-### Settings Normalize
-
-The `liquid.settings.normalize` option allows the extension to apply workspace/user settings on your behalf. The extension leverages [grammar injections](#grammar-injections) which requires some additional vscode workspace/user setting be applied in languages like HTML to provide the best possible development experience. The _normalize_ option is enabled by default and automatically applies these additional configurations to language identifiers.
-
-_The below example is what will be applied to workspace/user settings when `liquid.settings.normalize` is enabled_
-
-<!--prettier-ignore-->
-```jsonc
-{
-  "[html]": {
-
-    // Sets the default formatter for beautification capabilities
-    "editor.defaultFormatter": "sissel.shopify-liquid",
-
-    // Disables bracket colors on Liquid delimiters in script and styles
-    "editor.bracketPairColorization.enabled": false
-  }
-}
-```
-
-> Consider disabling [HTML Validations](#html-validations) to prevent vscode from complaining when Liquid syntax is contained within `<script>` and `<style>` embedded code regions.
-
-### Controlling Capabilities
-
-The extension provides an option for disabling capabilities. The `liquid.enable` workspace/user option can be used to disable the extension from initializing in environments or projects where you may no desire its usage. When the `liquid.enable` setting is set to `false` it will disable the following features:
-
-- Formatting
-- File Association
-- Status Bar Item
-
-When you set `liquid.enable` to `false` it does not disable the extension but instead just prevents it from running at full capacity, assuming environment and providing capabilities that you might otherwise not require.
-
 # Syntax Support
 
-Liquid syntax highlighting support within HTML, Markdown, YAML and JSON languages are applied using vscode injection grammars. Grammar injections allow intelliSense capabilities provided by vscode to persist and work without interruption. Liquid syntax contained in JavaScript, CSS, SCSS, YAML and other supported languages require a `.liquid` extension suffix be applied to file names, for example:
+Liquid syntax highlighting support within Markdown, YAML and JSON languages are applied using vscode injection grammars. Grammar injections allow intelliSense capabilities provided by vscode to persist and work without interruption. Liquid syntax contained in JavaScript, CSS, SCSS, YAML and other supported languages require a `.liquid` extension suffix be applied on file names, for example:
 
 ```
-.css  →  .css.liquid
-.scss →  .scss.liquid
-.js   →  .js.liquid
+.css    →   .css.liquid
+.scss   →   .scss.liquid
+.js     →   .js.liquid
 ```
 
 _If the required `.liquid` suffix is problematic then use [file associations](https://code.visualstudio.com/docs/languages/identifiers)._
 
 ### Supported Languages
 
-| Language Identifier | Language Alias    | Supported Extension | Grammar Injection |
-| ------------------- | ----------------- | ------------------- | ----------------- |
-| html                | HTML              | .liquid             | ✓                 |
-| liquid              | Liquid            | .liquid             | 𐄂                 |
-| json                | JSON              | .json               | ✓                 |
-| yaml                | YAML              | .yaml               | ✓                 |
-| markdown            | Markdown          | .md                 | ✓                 |
-| liquid-css          | Liquid CSS        | .css.liquid         | 𐄂                 |
-| liquid-scss         | Liquid SCSS       | .scss.liquid        | 𐄂                 |
-| liquid-javascript   | Liquid JavaScript | .js.liquid          | 𐄂                 |
+The below language support Liquid syntax and whenever a file uses a defined _Support Extension_ they will be automatically associated and features will be enabled.
+
+| Language Identifier | Language Alias    | Supported Extension    | Grammar Injection |
+| ------------------- | ----------------- | ---------------------- | ----------------- |
+| liquid              | Liquid            | _.liquid_ or _.jekyll_ | 𐄂                 |
+| json                | JSON              | .json                  | ✓                 |
+| yaml                | YAML              | .yaml                  | ✓                 |
+| markdown            | Markdown          | .md, .md.liquid        | ✓                 |
+| liquid-css          | Liquid CSS        | .css.liquid            | 𐄂                 |
+| liquid-scss         | Liquid SCSS       | .scss.liquid           | 𐄂                 |
+| liquid-javascript   | Liquid JavaScript | .js.liquid             | 𐄂                 |
 
 ### Grammar Injections
 
-In order to preserve vscode intellisense capabilities the HTML, JSON, Yaml and Markdown languages have Liquid grammars injected into them. The grammar injection will allow Liquid code to be highlighted and treated as if its syntax was a part of the language it is implemented within.
+In order to preserve vscode intellisense capabilities the below languages have Liquid grammars injected into them. The grammar injection will allow Liquid code to be highlighted and treated as if the syntax is a part of these languages.
 
-### Liquid as HTML
+- JSON
+- Yaml
+- Markdown
 
-Liquid is almost exclusively written within markup languages like HTML. Liquid grammars are injected into the vscode HTML grammar derivative. When a file is using a `.liquid` extension the **intended behavior** is to associate it to the HTML Language to ensure HTML intellisense capabilities are made available to you.
-
-_Changing the language to Liquid from HTML will disable HTML intellisense capabilities._
-
-### HTML Validations
-
-When your `<style>` and `<script>` HTML tags contain Liquid syntax vscode will complain about invalid code. You should consider disabling HTML script and style validations when working with Liquid. Disabling validations in these embedded code regions will prevent VSCode from validating and throwing errors.
-
-_This is only applicable for Liquid as HTML._
+When these languages contain Liquid syntax vscode might complain about invalid code. You should consider disabling validations on these languages when working with Liquid. Please be aware that in situations where you are leverage linters or third party tools that Liquid code will typically be interpreted as invalid and it is up to you to take the necessary steps to disable or prevent issues from becoming problematic to your development experience.
 
 ```json
 {
-  "html.validate.scripts": false,
-  "html.validate.styles": false
+  // Disabling JSON validations when it contains Liquid syntax
+  "json.validate.enable": false,
+
+  // Disabling JavaScript validations when it contains Liquid syntax
+  "javascript.validate.enable": true
 }
 ```
 
@@ -418,27 +384,23 @@ Liquid markdown embedded code block regions are supported in `.md` files.
 
 Formatting can be enabled/disabled via the command palette and will respect `editor.formatOnSave`. When Liquid formatting is **enabled** the extension will format Liquid and all suffixed `*.liquid` files with a language supported by [Prettify](https://github.com/panoply/prettify). You can **disable** beautification by clicking the 💧 emoji icon in the status bar or exclude directories/files from handling using the `format.ignore` setting. You can define formatting options in a `.liquidrc` file, a package.json `prettify` field or alternatively you can use the workspace setting options.
 
-### 🎀 Prettify
+### Prettify 🎀
 
-[Prettify](https://github.com/panoply/prettify) is used to facilitate formatting capabilities by the extension. Prettify is built atop of the late but powerful Sparser lexing algorithm and has since been adapted for refined usage with Liquid. Prettify exposes a granular set of rules and supports Liquid beautification in various markup, script and style languages.
+[Prettify](https://github.com/panoply/prettify) is used to facilitate formatting capabilities by the extension. Prettify is built atop of the late but powerful Sparser lexing algorithm and has since been adapted for refined usage with Liquid and this extension. Prettify exposes a granular set of rules and supports Liquid beautification in various markup, script and style languages.
 
-I actively maintain Prettify and though it exists in its infancy stages the ambition is to eventually have the tool become a competitive alternative to Prettier and eliminate the "opinionated" conventions which are imposed.
+I actively maintain Prettify and it is currently in a **pre-release** (beta) stage. The ambition is to eventually have the tool become a competitive alternative to Prettier and eliminate the imposed "opinionated" conventions. Prettify was introduced in version **3.0.0** replacing [PrettyDiff](https://github.com/prettydiff/prettydiff) as the core formatter of this extension. Though Prettify has yet to ship an official release candidate it is stable enough for usage and its adaption fixes previous version defects.
 
 - [Repository](https://github.com/panoply/prettify)
 - [Playground](https://liquify.dev/prettify)
 
 ### Setting Default Formatter
 
-The `liquid.settings.normalize` option which is enabled by default will automatically assign the in~language default formatter but in situations where you have the `normalize` option disabled or when another extension is used to handle formatting you may need to explicitly define the language `defaultFormatter` in your vscode workspace/user settings.
+In some situations you have another extension handling formatting and you will need to explicitly define the language `defaultFormatter` in your vscode workspace/user settings.
 
 _Be sure to define only the languages you wish to have formatted by the extension. If you don't want Prettify to handle formatting then set the option `liquid.format.enable` to `false`._
 
 ```jsonc
 {
-  // Enables formatting of .liquid files for Liquid as HTML
-  "[html]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid"
-  },
   // Enables formatting of .liquid files
   "[liquid]": {
     "editor.defaultFormatter": "sissel.shopify-liquid"
@@ -470,15 +432,15 @@ _Be sure to define only the languages you wish to have formatted by the extensio
 
 When the extension is enabled and a supported file has been opened in the editor you'll see a 💧 emoji appear in the bottom right hand side of the vscode status bar. This is the extensions **status bar item** and it will allow you to enable/disable formatting (programmatically), inform upon ignored files and notify you when the parser encounters any code errors.
 
-_When `liquid.enable` is `false` then the status bar item will not be displayed and formatting will not applied._
+_When `liquid.enable` is `false` the status bar item will not be displayed and formatting will not applied._
 
 <!-- prettier-ignore -->
 | Status  | Command | Action |
 |:--|:--|:--|
-| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-enabled.png?raw=true"  width="50px"> | **Enabled** | _Clicking the status bar item in this state will disable formatting_ |
-| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-disabled.png?raw=true"  width="50px"> | **Disabled** |  _Clicking the status bar item in this state will enable formatting_ |
-| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-ignored.png?raw=true"  width="50px"> | **Ignoring**  | _Clicking the status bar item in this state removes the file from ignore list_
-| <img  src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-error.png?raw=true"  width="50px"> | **Errors**  | _Clicking the status bar item in this state opens the output panel_
+| <img src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-enabled.png?raw=true"  width="50px"> | **Enabled** | _Clicking the status bar item in this state will disable formatting_ |
+| <img src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-disabled.png?raw=true"  width="50px"> | **Disabled** |  _Clicking the status bar item in this state will enable formatting_ |
+| <img src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-ignored.png?raw=true"  width="50px"> | **Ignoring**  | _Clicking the status bar item in this state removes the file from ignore list_
+| <img src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-error.png?raw=true"  width="50px"> | **Errors**  | _Clicking the status bar item in this state opens the output panel_
 
 ### Ignoring Code and/or Files
 
@@ -502,7 +464,7 @@ _You can also annotate HTML tags with `data-prettify-ignore` attributes_
 - `// @prettify-ignore`
 
 > **Warning**&nbsp;
-> Inline comment ignore made possible via Prettify are not yet fully operational.
+> Inline comment ignores made possible via Prettify might be little flakey until an official release.
 
 # Configuration
 
@@ -633,9 +595,9 @@ Contributions are welcome! This project uses [pnpm](https://pnpm.js.org/en/cli/i
 The project uses [tsup](https://tsup.egoist.sh) for producing the distributed bundle. You can produce a VSIX by running the `pnpm build` command. The `.vscode/launch.json` file contains the extension host logic.
 
 ```bash
-pnpm dev             # Development in watch mode
-pnpm build           # Builds extension and packages VSIX
-pnpm vsix:dry        # Prints list of files that are packages into VSIX
+pnpm dev         # Development in watch mode
+pnpm build       # Builds extension and packages VSIX
+pnpm dry         # Prints list of files that are packages into VSIX
 ```
 
 ### Testing
