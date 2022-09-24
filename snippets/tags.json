@@ -1,0 +1,332 @@
+{
+  "{% schema %}, name": {
+    "description": "Schema property: \"name\"",
+    "prefix": "schema: name",
+    "body": "\"name\": \"$1\"$0"
+  },
+  "{% schema %}, tag": {
+    "description": "Schema property: \"tag\"",
+    "prefix": "schema: tag",
+    "body": "\"tag\": \"${1|article,aside,div,footer,header,section|}\",${2:,}"
+  },
+  "{% schema %}, class": {
+    "description": "Schema property: \"class\"",
+    "prefix": "schema: class",
+    "body": "\"class\": \"$1\"${2:,}$0"
+  },
+  "{% schema %}, settings": {
+    "prefix": "schema: settings",
+    "description": "Schema property: \"settings\"",
+    "body": ["\"settings\": [", "\t$0", "]"]
+  },
+  "{% schema %}, max blocks": {
+    "description": "Schema property: \"max_blocks\"",
+    "prefix": "schema: max_blocks",
+    "body": "\"max_blocks\": ${1:5}${2:,}$0"
+  },
+  "{% schema %}, type": {
+    "description": "Schema settings property: \"type\"",
+    "prefix": "schema: type",
+    "body": "\"type\": \"${2|header,paragraph,text,textarea,image_picker,radio,select,checkbox,range,color,font_picker,collection,product,blog,page,link_list,url,video_url,richtext,html,article|}\""
+  },
+  "{% schema %}, placeholder": {
+    "description": "Schema settings property: \"placeholder\"",
+    "prefix": "schema: placeholder",
+    "body": "\"placeholder\": \"$1\"${2:,}$0"
+  },
+  "{% schema %}, info": {
+    "description": "Schema settings property: \"info\"",
+    "prefix": "schema: info",
+    "body": "\"info\": \"$1\"${2:,}$0"
+  },
+  "{% schema %}, default": {
+    "description": "Schema property: \"default\"",
+    "prefix": "schema: default",
+    "body": "\"default\": \"$1\"${2:,}$0"
+  },
+  "{% schema %}, header": {
+    "description": "Schema input setting: \"header\"",
+    "prefix": "schema: header",
+    "body": [
+      "{",
+      "\t\"type\": \"header\",",
+      "\t\"content\": \"$1\"${2:,\n\t\"info\": \"$3\"}${4:,}",
+      "}${5:,}$0"
+    ]
+  },
+  "{% schema %}, paragraph": {
+    "description": "Schema input setting: \"paragraph\"",
+    "prefix": "schema: paragraph",
+    "body": [
+      "{",
+      "\t\"type\": \"paragraph\",",
+      "\t\"content\": \"$1\"",
+      "}${2:,}$0"
+    ]
+  },
+  "{% schema %}, text": {
+    "description": "Schema input setting: \"text\"",
+    "prefix": "schema: text",
+    "body": [
+      "{",
+      "\t\"type\": \"text\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"$4\"}${5:,\n\t\"info\": \"$6\"}${7:,\n\t\"placeholder\": \"$8\"}",
+      "}${9:,}$0"
+    ]
+  },
+  "{% schema %}, textarea": {
+    "description": "Schema input setting: \"textarea\"",
+    "prefix": "schema: textarea",
+    "body": [
+      "{",
+      "\t\"type\": \"textarea\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"$4\"}${5:,\n\t\"info\": \"$6\"}${7:,\n\t\"placeholder\": \"$8\"}",
+      "}${9:,}$0"
+    ]
+  },
+  "{% schema %}, richtext": {
+    "description": "Schema input setting: \"richtext\"",
+    "prefix": "schema: richtext",
+    "body": [
+      "{",
+      "\t\"type\": \"richtext\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"$4\"}${5:,\n\t\"info\": \"$6\"}",
+      "}${7:,}$0"
+    ]
+  },
+  "{% schema %}, select": {
+    "description": "Schema input setting: \"select\"",
+    "prefix": "schema: select",
+    "body": [
+      "{",
+      "\t\"type\": \"select\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\",",
+      "\t\"options\": [",
+      "\t\t{",
+      "\t\t\t\"value\": \"$3\",",
+      "\t\t\t\"label\": \"$4\"${5:,\n\t\t\t\"group\": \"$6\"}",
+      "\t\t}",
+      "\t]",
+      "}${7:,}$0"
+    ]
+  },
+  "{% schema %}, radio": {
+    "description": "Schema input setting: \"radio\"",
+    "prefix": "schema: radio",
+    "body": [
+      "{",
+      "\t\"type\": \"radio\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\",${3:\n\t\"default\": \"$4\",}${5:\n\t\"info\": \"$6\",}",
+      "\t\"options\": [",
+      "\t\t{",
+      "\t\t\t\"value\": \"$7\",",
+      "\t\t\t\"label\": \"$8\"",
+      "\t\t}",
+      "\t]",
+      "}${9:,}$0"
+    ]
+  },
+  "{% schema %}, option": {
+    "description": "Schema input select/radio option setting",
+    "prefix": "schema: select/radio option",
+    "body": [
+      "{",
+      "\t\"value\": \"$1\",",
+      "\t\"label\": \"$2\"${3:,\n\t\"group\": \"$4\"}",
+      "}${5:,}$0"
+    ]
+  },
+  "{% schema %}, checkbox": {
+    "description": "Schema input setting: \"checkbox\"",
+    "prefix": "schema: checkbox",
+    "body": [
+      "{",
+      "\t\"type\": \"checkbox\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\",",
+      "\t\"default\": ${3|true,false|}",
+      "}"
+    ]
+  },
+  "{% schema %}, number": {
+    "prefix": "schema: number",
+    "body": [
+      "{",
+      "\t\"type\": \"number\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${1:label}\",",
+      "\t\"default\": ${1:20},",
+      "\t\"placeholder\": \"${1:placeholder}\"",
+      "}"
+    ],
+    "description": "{% schema %}, number"
+  },
+  "{% schema %}, range": {
+    "description": "Schema input setting: \"range\"",
+    "prefix": "schema: range",
+    "body": [
+      "{",
+      "\t\"type\": \"range\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\",",
+      "\t\"unit\": \"${3:unit}\",",
+      "\t\"min\": ${4:1},",
+      "\t\"max\": ${5:10},",
+      "\t\"step\": ${6:1},",
+      "\t\"default\": ${7:1}",
+      "}${8:,}$0"
+    ]
+  },
+  "{% schema %}, image picker": {
+    "description": "Schema input setting: \"image_picker\"",
+    "prefix": "schema: image_picker",
+    "body": [
+      "{",
+      "\t\"type\": \"image_picker\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"",
+      "}${3:,}$0"
+    ]
+  },
+  "{% schema %}, link list": {
+    "description": "Schema input setting: \"link_list\"",
+    "prefix": "schema: link_list",
+    "body": [
+      "{",
+      "\t\"type\": \"link_list\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"$4\"}${5:,\n\t\"info\": \"$6\"}",
+      "}${7:,}$0"
+    ]
+  },
+  "{% schema %}, color": {
+    "description": "Schema input setting: \"color\"",
+    "prefix": "schema: color",
+    "body": [
+      "{",
+      "\t\"type\": \"color\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"#$4\"}${5:,\n\t\"info\": \"$6\"}",
+      "}${7:,}$0"
+    ]
+  },
+  "{% schema %}, font picker": {
+    "description": "Schema input setting: \"font_picker\"",
+    "prefix": "schema: font_picker",
+    "body": [
+      "{",
+      "\t\"type\": \"font_picker\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"#$4\"}${5:,\n\t\"info\": \"$6\"}",
+      "}${7:,}$0"
+    ]
+  },
+  "{% schema %}, collection": {
+    "description": "Schema input setting: \"collection\"",
+    "prefix": "schema: collection",
+    "body": [
+      "{",
+      "\t\"type\": \"collection\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"${3:,\n\t\"info\": \"$4\"}",
+      "}${5:,}$0"
+    ]
+  },
+  "{% schema %}, product": {
+    "description": "Schema input setting: \"product\"",
+    "prefix": "schema: product",
+    "body": [
+      "{",
+      "\t\"type\": \"product\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"${3:,\n\t\"info\": \"$4\"}",
+      "}${5:,}$0"
+    ]
+  },
+  "{% schema %}, blog": {
+    "description": "Schema input setting: \"blog\"",
+    "prefix": "schema: blog",
+    "body": [
+      "{",
+      "\t\"type\": \"blog\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"${3:,\n\t\"info\": \"$4\"}",
+      "}${5:,}$0"
+    ]
+  },
+  "{% schema %}, article": {
+    "description": "Schema input setting: \"article\"",
+    "prefix": "schema: article",
+    "body": [
+      "{",
+      "\t\"type\": \"article\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"${3:,\n\t\"info\": \"$4\"}",
+      "}${5:,}$0"
+    ]
+  },
+  "{% schema %}, page": {
+    "description": "Schema input setting: \"page\"",
+    "prefix": "schema: page",
+    "body": [
+      "{",
+      "\t\"type\": \"page\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"${3:,\n\t\"info\": \"$4\"}",
+      "}${5:,}$0"
+    ]
+  },
+  "{% schema %}, url": {
+    "description": "Schema input setting: \"url\"",
+    "prefix": "schema: url",
+    "body": [
+      "{",
+      "\t\"type\": \"url\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"$4\"}",
+      "}${5:,}$0"
+    ]
+  },
+  "{% schema %}, video url": {
+    "description": "Schema input setting: \"video_url\"",
+    "prefix": "schema: video_url",
+    "body": [
+      "{",
+      "\t\"type\": \"video_url\",",
+      "\t\"id\": \"$1\",",
+      "\t\"accept\": [",
+      "\t\t${2:\"youtube\"}${4:,}${3:\n\t\t\"vimeo\"}",
+      "\t],",
+      "\t\"label\": \"${5:label}\"${6:,\n\t\"default\": \"$7\"}${8:,\n\t\"info\": \"$9\"}${10:,\n\t\"placeholder\": \"$11\"}",
+      "}${12:,}$0"
+    ]
+  },
+  "{% schema %}, html": {
+    "description": "Schema input setting: \"html\"",
+    "prefix": "schema: html",
+    "body": [
+      "{",
+      "\t\"type\": \"html\",",
+      "\t\"id\": \"${1:id}\",",
+      "\t\"label\": \"${2:label}\"${3:,\n\t\"info\": \"$4\"}",
+      "}${5:,}$0"
+    ]
+  },
+  "{% schema %}, presets": {
+    "description": "Schema property: \"presets\"",
+    "prefix": "schema: presets",
+    "body": [
+      "\"presets\": [",
+      "\t{",
+      "\t\t\"category\": \"$1\",",
+      "\t\t\"name\":\"$2\"",
+      "\t}",
+      "]${4:,}$0"
+    ]
+  }
+}
