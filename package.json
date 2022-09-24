@@ -1,15 +1,19 @@
 {
   "name": "shopify-liquid",
-  "displayName": "Liquid",
-  "description": "Syntax highlighting, formatting and snippet support for the liquid template language. Supports both Jekyll and Shopify variations.",
+  "displayName": "Liquid Language Support",
+  "description": "Liquid Language Support. Formatting, Syntax Highlighting, Snippets, HTML IntelliSense and other essential features for developers working with Liquid.",
   "publisher": "sissel",
   "icon": "images/logo.png",
-  "author": "Nikolas Savvidis <nicos@gmx.com>",
+  "author": "Νίκος Σαβίδης <n.savvidis@gmx.com>",
   "version": "3.0.0",
   "keywords": [
     "liquid",
     "shopify",
+    "formatter",
+    "html",
     "jekyll",
+    "syntax",
+    "snippets",
     "language",
     "formatting"
   ],
@@ -18,10 +22,12 @@
     "url": "https://github.com/panoply/vscode-liquid.git"
   },
   "bugs": {
+    "email": "n.savvidis@gmx.com",
     "url": "https://github.com/panoply/vscode-liquid/issues"
   },
   "engines": {
-    "vscode": "^1.71.0"
+    "vscode": "^1.71.0",
+    "node": "v16.15.0"
   },
   "categories": [
     "Formatters",
@@ -33,19 +39,39 @@
     "onStartupFinished"
   ],
   "main": "./dist/extension.js",
+  "extensionDependencies": [
+    "vscode.html-language-features"
+  ],
   "contributes": {
     "enabledApiProposals": [
       "outputChannelLanguage"
     ],
+    "htmlLanguageParticipants": [
+      {
+        "autoInsert": true,
+        "languageId": "liquid"
+      }
+    ],
     "jsonValidation": [
       {
+        "url": "./schema/prettify.json",
+        "fileMatch": "package.json"
+      },
+      {
+        "url": "./schema/liquidrc.json",
         "fileMatch": [
           ".liquidrc",
           ".liquidrc.json"
-        ],
-        "url": "./schema/liquidrc.json"
+        ]
       },
       {
+        "url": "./schema/shopify-settings.json",
+        "fileMatch": [
+          "settings_schema.json"
+        ]
+      },
+      {
+        "url": "./schema/shopify-templates.json",
         "fileMatch": [
           "index.json",
           "index.*.json",
@@ -64,46 +90,44 @@
           "search.*.json",
           "product.json",
           "product.*.json"
-        ],
-        "url": "./schema/layouts.json"
+        ]
       }
     ],
     "commands": [
       {
         "command": "liquid.upgradeVersion",
-        "title": "Liquid: Upgrade Extension"
+        "title": "Upgrade Extension",
+        "category": "Liquid"
       },
       {
-        "command": "liquid.disableExtension",
-        "title": "Liquid: Disable Capabilities"
+        "command": "liquid.enableFormatting",
+        "title": "Enable Formatting",
+        "category": "Liquid"
       },
       {
-        "command": "liquid.enableExtension",
-        "title": "Liquid: Enable Capabilities"
-      },
-      {
-        "command": "liquid.disableFormatter",
-        "title": "Liquid: Disable Formatting"
-      },
-      {
-        "command": "liquid.enableFormatter",
-        "title": "Liquid: Enable Formatting"
+        "command": "liquid.disableFormatting",
+        "title": "Disable Formatting",
+        "category": "Liquid"
       },
       {
         "command": "liquid.openOutput",
-        "title": "Liquid: Open Output"
+        "title": "Open Output",
+        "category": "Liquid"
       },
       {
         "command": "liquid.formatDocument",
-        "title": "Liquid: Format Document"
+        "title": "Format Document",
+        "category": "Liquid"
       },
       {
         "command": "liquid.generateLiquidrcDefaults",
-        "title": "Liquid: Generate .liquidrc (defaults)"
+        "title": "Generate .liquidrc (defaults)",
+        "category": "Liquid"
       },
       {
         "command": "liquid.generateLiquidrcRecommended",
-        "title": "Liquid: Generate .liquidrc (recommended)"
+        "title": "Generate .liquidrc (recommended)",
+        "category": "Liquid"
       }
     ],
     "languages": [
@@ -115,9 +139,10 @@
       },
       {
         "id": "liquid",
-        "configuration": "./src/language/liquid.configuration.json",
+        "configuration": "./language/liquid.language-configuration.json",
         "extensions": [
-          ".liquid"
+          ".liquid",
+          ".jekyll"
         ],
         "aliases": [
           "Liquid"
@@ -125,7 +150,7 @@
       },
       {
         "id": "liquid-css",
-        "configuration": "./src/language/liquid.configuration.json",
+        "configuration": "./language/liquid-css.language-configuration.json",
         "extensions": [
           ".css.liquid"
         ],
@@ -135,7 +160,7 @@
       },
       {
         "id": "liquid-scss",
-        "configuration": "./language/liquid.configuration.json",
+        "configuration": "./language/liquid-css.language-configuration.json",
         "extensions": [
           ".scss.liquid"
         ],
@@ -145,7 +170,7 @@
       },
       {
         "id": "liquid-javascript",
-        "configuration": "./language/liquid.configuration.json",
+        "configuration": "./language/liquid-javascript.language-configuration.json",
         "extensions": [
           ".js.liquid"
         ],
@@ -163,26 +188,22 @@
     ],
     "grammars": [
       {
-        "scopeName": "source.liquid",
-        "path": "./grammar/liquid.tmLanguage.json",
-        "embeddedLanguages": {
-          "text.html.derivative": "html",
-          "meta.embedded.block.schema.liquid": "json",
-          "meta.embedded.block.javascript.liquid": "javascript",
-          "meta.embedded.block.stylesheet.liquid": "css",
-          "meta.embedded.block.stylesheet.scss.liquid": "scss",
-          "meta.embedded.block.style.liquid": "liquid-css"
-        },
-        "injectTo": [
-          "text.html.derivative"
-        ]
+        "language": "log-liquid",
+        "scopeName": "liquid.log",
+        "path": "./syntax/languages/log.tmLanguage.json"
       },
       {
         "language": "liquid",
-        "scopeName": "source.liquid.derivative",
-        "path": "./grammar/liquid-derivative.tmLanguage.json",
+        "scopeName": "source.liquid",
+        "path": "./syntax/liquid.tmLanguage.json"
+      },
+      {
+        "scopeName": "source.liquid.embedded",
+        "path": "./syntax/injections/embedded.tmLanguage.json",
+        "injectTo": [
+          "source.liquid"
+        ],
         "embeddedLanguages": {
-          "text.html.basic": "html",
           "meta.embedded.block.schema.liquid": "json",
           "meta.embedded.block.javascript.liquid": "javascript",
           "meta.embedded.block.stylesheet.liquid": "css",
@@ -191,34 +212,37 @@
         }
       },
       {
-        "language": "log-liquid",
-        "scopeName": "liquid.log",
-        "path": "./grammar/languages/log.tmLanguage.json"
-      },
-      {
         "scopeName": "source.liquid.frontmatter",
-        "path": "./grammar/injections/frontmatter.json",
+        "path": "./syntax/injections/frontmatter.tmLanguage.json",
+        "injectTo": [
+          "source.liquid",
+          "source.json.liquid",
+          "source.yaml.liquid",
+          "source.css.liquid",
+          "source.scss.liquid",
+          "source.js.liquid"
+        ],
         "embeddedLanguages": {
           "meta.embedded.block.frontmatter.liquid": "yaml"
         }
       },
       {
-        "scopeName": "source.markdown.liquid.injection",
-        "path": "./grammar/injections/markdown.tmLanguage.json",
+        "scopeName": "source.markdown.liquid",
+        "path": "./syntax/injections/markdown.tmLanguage.json",
         "injectTo": [
           "text.html.markdown"
         ]
       },
       {
-        "scopeName": "source.json.liquid.injection",
-        "path": "./grammar/injections/json.tmLanguage.json",
+        "scopeName": "source.json.liquid",
+        "path": "./syntax/injections/json.tmLanguage.json",
         "injectTo": [
           "source.json"
         ]
       },
       {
-        "scopeName": "source.yaml.liquid.injection",
-        "path": "./grammar/injections/yaml.tmLanguage.json",
+        "scopeName": "source.yaml.liquid",
+        "path": "./syntax/injections/yaml.tmLanguage.json",
         "injectTo": [
           "source.yaml"
         ]
@@ -226,21 +250,21 @@
       {
         "language": "liquid-css",
         "scopeName": "source.css.liquid",
-        "path": "./grammar/languages/css.tmLanguage.json"
+        "path": "./syntax/languages/css.tmLanguage.json"
       },
       {
         "language": "liquid-scss",
         "scopeName": "source.scss.liquid",
-        "path": "./grammar/languages/scss.tmLanguage.json"
+        "path": "./syntax/languages/scss.tmLanguage.json"
       },
       {
         "language": "liquid-javascript",
         "scopeName": "source.js.liquid",
-        "path": "./grammar/languages/javascript.tmLanguage.json"
+        "path": "./syntax/languages/javascript.tmLanguage.json"
       },
       {
         "scopeName": "markdown.liquid.codeblock",
-        "path": "./grammar/injections/code-block.tmLanguage.json",
+        "path": "./syntax/injections/code-block.tmLanguage.json",
         "injectTo": [
           "text.html.markdown"
         ],
@@ -252,158 +276,79 @@
     "snippets": [
       {
         "language": "liquid",
-        "path": "./snippets/snippets.json"
+        "path": "./snippets/tags.json"
       },
       {
-        "language": "html",
-        "path": "./snippets/snippets.json"
+        "language": "liquid",
+        "path": "./snippets/tags.json"
       }
     ],
     "configurationDefaults": {
-      "vsicons.associations.files": [
-        {
-          "icon": "liquid",
-          "extensions": [
-            ".liquidrc",
-            ".liquidrc.json"
-          ],
-          "filename": true,
-          "format": "svg"
-        }
-      ],
+      "[liquid]": {
+        "editor.bracketPairColorization.enabled": false,
+        "editor.defaultFormatter": "sissel.shopify-liquid"
+      },
+      "[liquid-css]": {
+        "editor.bracketPairColorization.enabled": false,
+        "editor.defaultFormatter": "sissel.shopify-liquid"
+      },
+      "[liquid-scss]": {
+        "editor.bracketPairColorization.enabled": false,
+        "editor.defaultFormatter": "sissel.shopify-liquid"
+      },
+      "[liquid-javascript]": {
+        "editor.bracketPairColorization.enabled": false,
+        "editor.defaultFormatter": "sissel.shopify-liquid"
+      },
       "files.associations": {
-        "*.liquid": "html",
+        "*.json.liquid": "json",
+        "*.yaml.liquid": "yaml",
         "*.md.liquid": "markdown",
         "*.js.liquid": "liquid-javascript",
         "*.css.liquid": "liquid-css",
-        "*.scss.liquid": "liquid-scss",
-        "*.json.liquid": "liquid-json",
-        "*.yaml.liquid": "liquid-yaml"
-      }
+        "*.scss.liquid": "liquid-scss"
+      },
+      "vsicons.associations.files": [
+        {
+          "icon": "liquid",
+          "filename": true,
+          "format": "svg",
+          "extensions": [
+            ".liquidrc",
+            ".liquidrc.json"
+          ]
+        }
+      ]
     },
     "configuration": {
       "type": "object",
       "title": "Liquid Language configuration",
-      "markdownDescription": "The Liquid extension will look for a `.liquidrc` or `.liquidrc.json` in the root of your project. When no such files exists it will check for the presence of `prettify` field in `package.json` files and if not found it will then use the `.vscode/settings.json` file or alternatively your global user settings.",
+      "markdownDescription": "The Liquid extension will look for a `.liquidrc` or `.liquidrc.json` in the root of your project. When no such files exists it will check for the presence of a `prettify` field in `package.json` files.When neither are detected the extension will use the `.vscode/settings.json` file or alternatively your global user settings.",
       "properties": {
-        "liquid.format": {
-          "markdownDeprecationMessage": "This option is now deprecated. Use `liquid.format.enable` instead."
-        },
         "liquid.rules": {
+          "type": "null",
           "markdownDeprecationMessage": "This option is now deprecated. You will need to update the options in order for the extension to work. Formatting rules now use the following structure:\n{\n  \"liquid.format.markup\": {},\n  \"liquid.format.script\": {},\n  \"liquid.format.style\": {},\n  \"liquid.format.json\": {}\n}"
-        },
-        "liquid.enable": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "Whether to enable Liquid activation. When enabled the extension will be provide beautification capabilities to extended its features to files that are **not** _strictly_ suffixed with a `.liquid` extension, such as `.html` and `.json` file types.\n\nWhen a `.liquidrc` or `.liquidrc.json` configuration file is detected in your workspace this option will default to `true`. Lastly, if enable is undefined or not set within your workspace/user preference settings it will be `false`.\n\nThis option is helpful for folks who do not always work on Liquid projects and don't want its capabilities to extend themselves into outside projects."
         },
         "liquid.settings.target": {
           "type": "string",
           "default": "workspace",
-          "markdownDescription": "The configuration preferences to use. Defaults to `workspace`. It is **highly discouraged** to target `user` settings and could lead to unexpected issues outside of Liquid projects. The `workspace` default will write to the `.vscode/settings.json` relative to project root.",
+          "markdownDescription": "The configuration preferences to use. This option defaults to `workspace`. It is **highly discouraged** to target `user` settings and could lead to unexpected issues outside of Liquid projects. The `workspace` default will write to the `.vscode/settings.json` relative to project root.",
           "enum": [
             "workspace",
             "user"
           ]
         },
-        "liquid.validate.json": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "Whether to enable JSON validations for shopify `{% schema %}` tags."
-        },
         "liquid.format.enable": {
           "type": "boolean",
           "default": true,
-          "markdownDescription": "Whether to enable or disable beautification support for Liquid. The extension uses [Prettify](https://github.com/panoply/prettify) for formatting Liquid, JavaScript, CSS/SCSS and JSON. Prettify is a new generation beautification tool that I developed which runs atop of the powerful sparser lexing algorithm. You can use instead of relying on Prettier when working with Liquid. It's fast, exposes a grandular set of rules and is far from opinionated.\n\nPrettier is cool and all but it is strict uniform.\n\nHelp me by choosing Prettify and reporting bugs/defects."
+          "markdownDescription": "Whether to enable or disable beautification support for Liquid. The extension uses [Prettify](https://github.com/panoply/prettify) for formatting and supports the following languages:\n\n- Liquid\n- JavaScript\n- CSS\n- SCSS\n- JSON\n- HTML\n- XML\n- JavaScript\n\nPrettify is a _new generation_ beautification tool that runs atop of the powerful sparser lexing algorithm. Prettify can be used as an alternative to Prettier and has been developed for usage for Liquid. It's fast, exposes a grandular set of rules and is far from opinionated.\n\nHelp me by choosing Prettify and reporting bugs and defects."
         },
         "liquid.format.ignore": {
           "type": "array",
-          "markdownDescription": "Glob pattern of file's and/or directories to be ignored by the formatter. Use relative paths to exclude or ignore formatting. You can also leverage place a `{% # @prettify-ignore %}` comment at the top of files you to exclude from beautification.",
+          "markdownDescription": "Glob pattern of file's and/or directories to be ignored from formatting. Use relative paths to exclude or ignore formatting.\n\nYou can also leverage inline ignore comments. Place a Prettify ignore comment at the top of files you to exclude from beautification.\n\n**Example:**\n```liquid\n{% # @prettify-ignore %}\n\nOR\n\n<!-- @prettify-ignore -->\n```",
           "items": [
             {
               "type": "string"
-            }
-          ]
-        },
-        "liquid.format.languages": {
-          "type": "array",
-          "default": [
-            "liquid",
-            "liquid-css",
-            "liquid-scss",
-            "liquid-javascript"
-          ],
-          "markdownDescription": "Languages to format using Prettify. Please extend with care.",
-          "items": [
-            {
-              "type": "string",
-              "const": "liquid",
-              "description": "Formatting support of `.liquid` files of the **Liquid** Template Language"
-            },
-            {
-              "type": "string",
-              "const": "liquid-css",
-              "description": "Formatting support of `.css.liquid` files of the **Liquid + CSS** Language"
-            },
-            {
-              "type": "string",
-              "const": "liquid-scss",
-              "description": "**USE WITH CAUTION** - Formatting support of `.scss.liquid` files of the **Liquid + SCSS** Language"
-            },
-            {
-              "type": "string",
-              "const": "liquid-javascript",
-              "description": "Formatting support of `.js.liquid` files of the **Liquid + JavaScript** Language"
-            },
-            {
-              "type": "string",
-              "const": "json",
-              "markdownDescription": "Formatting support of `.json` files of the **JSON** Language"
-            },
-            {
-              "type": "string",
-              "const": "jsonc",
-              "description": "Formatting support of `.jsonc` files of the **JSON with Comments** Language"
-            },
-            {
-              "type": "string",
-              "const": "xml",
-              "description": "Formatting support of `.xml` files of the **XML** Language"
-            },
-            {
-              "type": "string",
-              "const": "html",
-              "description": "Formatting support of `.html` files of the **HTML** Language"
-            },
-            {
-              "type": "string",
-              "const": "css",
-              "description": "Formatting support of `.css` files of the **CSS** Language"
-            },
-            {
-              "type": "string",
-              "const": "scss",
-              "description": "**USE WITH CAUTION** Formatting support of `.scss` files of the **SASS** Language"
-            },
-            {
-              "type": "string",
-              "const": "javascript",
-              "description": "**USE WITH CAUTION** - Formatting support of `.js` files of the **JavaScript** Language"
-            },
-            {
-              "type": "string",
-              "const": "typescript",
-              "description": "**EXPERIMENTAL (AVOID USING)** - Formatting support of `.ts` files of the **TypeScript** Language"
-            },
-            {
-              "type": "string",
-              "const": "jsx",
-              "description": "**EXPERIMENTAL (AVOID USING)** - Formatting support of `.jsx` files of the **JSX** Language"
-            },
-            {
-              "type": "string",
-              "const": "tsx",
-              "description": "**EXPERIMENTAL (AVOID USING)** - Formatting support of `.tsx` files of the **TSX** Language"
             }
           ]
         },
@@ -411,7 +356,7 @@
           "type": "number",
           "title": "Wrap Limit",
           "default": 0,
-          "markdownDescription": "Character width limit before applying word wrap. A `0` value disables this option. Typically, you can leave this option, as it will defaults to the word wrap limit set within workspace/user settings of your text editor."
+          "markdownDescription": "Character width limit before applying word wrap. A `0` value disables this option. Typically, you can omit this option, as it will defaults to the word wrap limit set within workspace/user settings of your text editor."
         },
         "liquid.format.indentSize": {
           "type": "number",
@@ -475,7 +420,7 @@
               "items": {
                 "type": "string"
               },
-              "markdownDescription": "A list of HTML attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires \"attribute_sort\" have a value of true and does not support Liquid tag names, only HTML names are applicable."
+              "markdownDescription": "A list of HTML attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires `attributeSort` have a value of `true` and does not support Liquid tag names, only HTML names are applicable."
             },
             "delimiterSpacing": {
               "type": "boolean",
@@ -490,7 +435,7 @@
             "forceLeadAttribute": {
               "type": "boolean",
               "default": false,
-              "markdownDescription": "Whether the leading attribute should be forced onto a newline when word `wrap` limit is exceeded or if it should be preserved. By default, Prettify preserves the leading attribute when applying wrap indentation. Enabling this option will force indent all attributes if wrap is exceeded."
+              "markdownDescription": "Whether the leading attribute should be forced onto a newline when word `wrap` limit is exceeded or if it should be preserved. By default, Prettify preserves the leading attribute when applying wrap indentation. Enabling this option will force indent all attributes if wrap is exceeded. This rule requires a `wrap` level to be defined. If you have `forceAttribute` enabled or using a force attribute limit value it will override this option. If you desire wrap based attribute indentation, set `forceAttribute` to `false` and ensure a `wrap` level is defined.\n#### Disabled (default)\n*Below is an example of how this rule works if it's disabled (ie: `false`) and attributes have exceeded a defined wrap limit. Notice how leading attributes are preserved that have not exceeded wrap, but proceeding attributes are indented onto their own lines, this is the default behavior Prettify uses.*\n```liquid\n<!-- Leading attribute is preserved -->\n<div class=\"x\"\n  id=\"{{ foo }}\"\n  data-attribute-example=\"100\"\n  data-x=\"xx\"></div>\n```#### Enabled\n*Below is an example of how this rule works if it's enabled (ie: `true`) and attributes have exceeded the defined wrap limit. Notice how all attributes and indented onto their own line, including the leading attribute.*\n```liquid\n<!-- All attributes are forced including the leading attribute -->\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-attribute-example=\"100\"\n  data-x=\"xx\"></div>\n```"
             },
             "forceIndent": {
               "type": "boolean",
@@ -503,7 +448,7 @@
                 "number"
               ],
               "default": false,
-              "markdownDescription": "If all document attributes should be indented each onto their own line."
+              "markdownDescription": "If all markup attributes should be indented each onto their own line. You can optionally provide an integer value of `1` or more. When an integer value is passed, attributes will be forced only if the number of attributes contained on the tag exceeds the supplied value limit. When you define a `wrap` level then attributes will be automatically forced. This is typically a better solution than forcing all attributes onto newlines or an even better solution would be to set a limit level.\n\n#### Disabled Example\n*Below is the default, wherein attributes are only forced when wrap is exceeded.*\n```liquid\n<div class=\"x\" id=\"{{ foo }}\" data-x=\"xx\">\n</div>\n```\n#### Enabled Example\n*Below is an example of how this rule works if it's enabled, ie: `true`*\n```liquid\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-x=\"xx\">\n</div>\n```\n#### Limit Example\n*Below we provide a value of `2` so formatting will be applied as such:*\n```liquid\n<!-- Tag contains 2 attributes, they will not be forced-->\n<div class=\"x\" id=\"{{ foo }}\"></div>\n\n<!-- Tag contains 3 attributes, thus they will be forced -->\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-x=\"xx\"></div>\n\n<!-- Tag contains 1 attribute, it will not be forced-->\n<div class=\"x\"></div>\n```"
             },
             "preserveText": {
               "type": "boolean",
@@ -802,13 +747,12 @@
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup --minify-identifiers --minify-whitespace --onSuccess \"vsce package --no-dependencies\"",
-    "vsix:dry": "vsce ls package --no-dependencies"
+    "dry": "vsce ls package --no-dependencies"
   },
   "tsup": {
     "entry": {
-      "extension": "./extension/extension.ts"
+      "extension": "./src/extension.ts"
     },
-    "outDir": "./dist",
     "noExternal": [
       "@liquify/prettify",
       "parse-json",
