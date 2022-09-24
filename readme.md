@@ -395,7 +395,7 @@ _Prettify, once stable enough for the big time will be made available for usage 
 
 ### Setting Default Formatter
 
-In some situations you may have another extension handling formatting and you will need to explicitly define an in~language `editor.defaultFormatter` within your vscode workspace/user settings. VSCode will typically inform you about this but if for any reason you are unable to get formatting to work, try setting the in~language default formatter.
+In some situations you may have another extension handling formatting and you will need to explicitly define an in-language `editor.defaultFormatter` within your vscode workspace/user settings. VSCode will typically inform you about this but if for any reason you are unable to get formatting to work, try setting the in-language default formatter.
 
 _Be sure to define only the languages you wish to have formatted by the extension. If you don't want Prettify to handle formatting then set the option `liquid.format.enable` to `false`._
 
@@ -634,15 +634,15 @@ This extension uses the **Liquid** display name and is considered the official L
 
 ### Liquid Languages Support
 
-If you are using or have installed [Liquid Languages Support](https://marketplace.visualstudio.com/items?itemName=neilding.language-liquid) extension then it is recommended that you either uninstall or disable it. Liquid Languages Support is not maintained and the grammars are mostly obsolete. Using it along side this extension and Shopify Liquid is problematic.
+If you are using or have installed the [Liquid Languages Support](https://marketplace.visualstudio.com/items?itemName=neilding.language-liquid) extension then it is recommended that you either uninstall or disable it. Liquid Languages Support is not maintained and the grammars are mostly obsolete. Using it along side this extension and Shopify Liquid is problematic. Boycott it.
 
 ### Shopify Liquid
 
-If you are using or have installed [Shopify Liquid](https://marketplace.visualstudio.com/items?itemName=Shopify.theme-check-vscode) then you _may_ need to choose or alternate between the Shopify Liquid extension and this extension. The Shopify Liquid extension is for Shopify projects (specifically themes) and provide a couple of features which this extension does not (yet) support.
+If you are using or have installed [Shopify Liquid](https://marketplace.visualstudio.com/items?itemName=Shopify.theme-check-vscode) then you _may_ need to choose (or alternate) between the Shopify Liquid extension and this extension. The Shopify Liquid extension is for Shopify projects (specifically themes) and provide a couple of features which this extension does not (yet) support.
 
-Shopify Liquid does not support windows and the language server implementation it employs is rather resource heavy and exhaustive to your machine. Though the extra features it provides help in some cases, they are specific to Shopify themes and to much use outside of that.
+However, Shopify Liquid does not support Windows and the language server implementation it employs is rather resource heavy and exhaustive on your machine. Though the extra features it provides help in some cases, they are specific to Shopify themes and not much use outside of that.
 
-_The capabilities to be made available in the future release (Liquify) will support all current features of the Shopify Liquid extension._
+_The capabilities available in the future release (Liquify) will support all current features of the Shopify Liquid extension._
 
 # Releases
 
