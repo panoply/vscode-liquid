@@ -7,11 +7,30 @@ import { has, isNil, difference } from 'rambdax';
 import prettify from '@liquify/prettify';
 import parseJSON from 'parse-json';
 import anymatch from 'anymatch';
-import { OutputChannel } from './OutputChannel';
-import { Setting, Config, Workspace } from '../types';
-import * as u from '../utils';
+import { OutputChannel } from 'providers/OutputChannel';
+import { Setting, Config, Workspace } from 'types';
+import * as u from 'utils';
+import { Status } from './StatusBarItem';
 
 export class Settings extends OutputChannel {
+
+  /**
+   * Formatting Disposals
+   *
+   * Disposes of the formatHandler and resets it reference
+   * to `undefined` only when the handler is defined.
+   */
+  public dispose () {
+    if (this.formatHandler) {
+      this.formatHandler.dispose();
+      this.formatHandler = undefined;
+      this.formatIgnore.clear();
+      this.formatRegister.clear();
+    } else {
+      this.formatIgnore.clear();
+      this.formatRegister.clear();
+    }
+  }
 
   /**
    * Get Relative file path
@@ -36,20 +55,36 @@ export class Settings extends OutputChannel {
 
     const current = this.ignoreList;
 
-    if (u.isArray(rules) && rules.length > 0) {
+    if (u.isArray(rules)) {
 
-      if (this.isReady && current.length > 0) {
-        for (const remove of difference(current, rules)) {
-          this.info('Ignore path removed: ' + remove);
+      if (this.isReady && rules.length > 0) {
+
+        if (current.length > 0) {
+          for (const remove of difference(current, rules)) {
+            this.info('Ignore path removed: ' + remove);
+          }
         }
 
         for (const added of difference(rules, current)) {
           this.info('Ignore path created: ' + added);
         }
+
       }
 
       this.ignoreList = rules;
-      this.ignoreMatch = anymatch(this.ignoreList);
+
+      if (rules.length === 0) {
+
+        for (const remove of difference(current, rules)) {
+          this.info('Ignore path removed: ' + remove);
+        }
+
+        this.ignoreMatch = null;
+
+      } else {
+
+        this.ignoreMatch = anymatch(this.ignoreList);
+      }
 
     }
   }
@@ -94,6 +129,7 @@ export class Settings extends OutputChannel {
     for (const id in this.languages) {
       if (u.isDefaultFormatter(`[${id}]`, target) && this.languages[id] === false) {
         this.languages[id] = true;
+        this.selector.active.push({ language: id, scheme: 'file' });
         this.info('Prettify was made the default formatter of ' + id);
       }
     }
@@ -121,13 +157,12 @@ export class Settings extends OutputChannel {
     if (this.canFormat === false) {
       this.status.disable();
       this.info('Disabled formatting');
-    } else if (this.canFormat !== canFormat) {
+    } else if ((this.canFormat !== canFormat) || (this.status.state === Status.Disabled && this.canFormat)) {
       this.status.enable();
       this.info('Enabled formatting');
     }
 
     if (this.canFormat && this.configMethod === Config.Workspace) {
-      this.getIgnores(this.ignoreList);
       prettify.options(this.prettifyRules);
     }
 
@@ -172,6 +207,8 @@ export class Settings extends OutputChannel {
       if (has('ignore', format)) {
         this.getIgnores(format.ignore);
         opt = Setting.WorkspaceDefined;
+      } else if (def) {
+        this.getIgnores([]);
       }
 
       // lets determine if formatting is enabled or not
@@ -220,7 +257,11 @@ export class Settings extends OutputChannel {
         return Setting.PrettifyFieldInvalid;
       }
 
-      if (has('ignore', pkg.prettify)) this.getIgnores(pkg.prettify.ignore);
+      if (has('ignore', pkg.prettify)) {
+        this.getIgnores(pkg.prettify.ignore);
+      } else if (this.configMethod === Config.Package) {
+        this.getIgnores([]);
+      }
 
       this.configMethod = Config.Package;
       this.prettifyRules = u.rulesNormalize(pkg.prettify);
@@ -283,7 +324,11 @@ export class Settings extends OutputChannel {
         return Setting.DeprecatedLiquidrc;
       }
 
-      if (has('ignore', rules)) this.getIgnores(rules.ignore);
+      if (has('ignore', rules)) {
+        this.getIgnores(rules.ignore);
+      } else if (this.ignoreList.length > 0) {
+        this.getIgnores([]);
+      }
 
       this.prettifyRules = u.rulesNormalize(rules);
 
