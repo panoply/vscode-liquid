@@ -1,5 +1,5 @@
 {
-  "scopeName": "source.yaml.liquid.injection",
+  "scopeName": "source.yaml.liquid",
   "injectionSelector": "L:source.yaml",
   "injections": {
     "L:string - (string.quoted.*.yaml)": {
