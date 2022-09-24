@@ -1,31 +1,33 @@
 {
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Liquid",
   "scopeName": "source.liquid",
-  "injectionSelector": "L:text.html.derivative, L:source.css -comment -string, L:source.js -comment -string -meta",
   "injections": {
+    "L:meta -(meta.embedded.block.liquid)": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    },
     "L:entity.other.attribute-name.class.css": {
       "patterns": [
-        { "include": "#tags" },
-        { "include": "#output" }
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
       ]
     },
     "L:string - (string.quoted.*.html)": {
       "patterns": [
-        { "include": "#tags" },
-        { "include": "#output" }
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
       ]
     }
   },
   "patterns": [
     { "include": "#comment-block" },
     { "include": "#comment-line" },
-    { "include": "#embedded-schema" },
-    { "include": "#embedded-javascript" },
-    { "include": "#embedded-style" },
-    { "include": "#embedded-stylesheet" },
-    { "include": "#embedded-stylesheet-scss" },
     { "include": "#tags" },
-    { "include": "#output" }
+    { "include": "#output" },
+    { "include": "text.html.derivative" }
   ],
   "repository": {
     "comment-block": {
@@ -270,231 +272,6 @@
               "name": "support.function.filter.liquid"
             }
           }
-        }
-      ]
-    },
-    "embedded-schema": {
-      "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.frontmatter.liquid",
-      "begin": "({%)(-)?\\s*(schema)\\s*(-)?(%})",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.begin.liquid"
-        },
-        "2": {
-          "name": "keyword.other.whitespace.liquid"
-        },
-        "3": {
-          "name": "entity.name.tag.liquid"
-        },
-        "4": {
-          "name": "keyword.other.whitespace.liquid"
-        },
-        "5": {
-          "name": "punctuation.definition.tag.end.liquid"
-        }
-      },
-      "end": "({%)(-)?\\s*(endschema)\\s*(-)?(%})",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.begin.liquid"
-        },
-        "2": {
-          "name": "keyword.other.whitespace.liquid"
-        },
-        "3": {
-          "name": "entity.name.tag.liquid"
-        },
-        "4": {
-          "name": "keyword.other.whitespace.liquid"
-        },
-        "5": {
-          "name": "punctuation.definition.tag.end.liquid"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.json"
-        }
-      ]
-    },
-    "embedded-style": {
-      "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.style.liquid",
-      "begin": "({%)(-)?\\s*\\b(style)\\b\\s*(-)?(%})",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.begin.liquid"
-        },
-        "2": {
-          "name": "keyword.other.whitespace.liquid"
-        },
-        "3": {
-          "name": "entity.name.tag.liquid"
-        },
-        "4": {
-          "name": "keyword.other.whitespace.liquid"
-        },
-        "5": {
-          "name": "punctuation.definition.tag.end.liquid"
-        }
-      },
-      "end": "({%)(-)?\\s*\\b(endstyle)\\b\\s*(-)?(%})",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.begin.liquid"
-        },
-        "2": {
-          "name": "keyword.other.whitespace.liquid"
-        },
-        "3": {
-          "name": "entity.name.tag.liquid"
-        },
-        "4": {
-          "name": "keyword.other.whitespace.liquid"
-        },
-        "5": {
-          "name": "punctuation.definition.tag.end.liquid"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.css"
-        }
-      ]
-    },
-    "embedded-stylesheet": {
-      "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.stylesheet.liquid",
-      "begin": "({%)(-)?\\s*(stylesheet)\\s*(-)?(%})",
-      "beginCaptures": {
-        "0": {
-          "name": "meta.tag.metadata.stylesheet.scss.start.liquid"
-        },
-        "1": {
-          "name": "punctuation.definition.tag.begin.liquid"
-        },
-        "2": {
-          "name": "keyword.other.whitespace.liquid"
-        },
-        "3": {
-          "name": "entity.name.tag.liquid"
-        },
-        "4": {
-          "name": "keyword.other.whitespace.liquid"
-        },
-        "5": {
-          "name": "punctuation.definition.tag.end.liquid"
-        }
-      },
-      "end": "({%)(-)?\\s*(endstylesheet)\\s*(-)?(%})",
-      "endCaptures": {
-        "0": {
-          "name": "meta.tag.metadata.stylesheet.end.liquid"
-        },
-        "1": {
-          "name": "punctuation.definition.tag.begin.liquid"
-        },
-        "2": {
-          "name": "keyword.other.whitespace.liquid"
-        },
-        "3": {
-          "name": "entity.name.tag.liquid"
-        },
-        "4": {
-          "name": "keyword.other.whitespace.liquid"
-        },
-        "5": {
-          "name": "punctuation.definition.tag.end.liquid"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.css"
-        }
-      ]
-    },
-    "embedded-stylesheet-scss": {
-      "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.stylesheet.scss.liquid",
-      "begin": "({%)\\s*(stylesheet)\\s*('(scss)')\\s*(%})",
-      "beginCaptures": {
-        "0": {
-          "name": "meta.tag.metadata.stylesheet.scss.start.liquid"
-        },
-        "1": {
-          "name": "punctuation.definition.tag.begin.liquid"
-        },
-        "2": {
-          "name": "entity.name.tag.liquid"
-        },
-        "3": {
-          "name": "string.quoted.single.liquid"
-        },
-        "4": {
-          "name": "meta.attribute.type.liquid"
-        },
-        "5": {
-          "name": "punctuation.definition.tag.end.liquid"
-        }
-      },
-      "end": "({%)\\s*(endstylesheet)\\s*(%})",
-      "endCaptures": {
-        "0": {
-          "name": "meta.tag.metadata.stylesheet.scss.end.liquid"
-        },
-        "1": {
-          "name": "punctuation.definition.tag.begin.liquid"
-        },
-        "2": {
-          "name": "entity.name.tag.liquid"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.liquid"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.css.scss"
-        }
-      ]
-    },
-    "embedded-javascript": {
-      "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.javascript.liquid",
-      "begin": "({%)\\s*(javascript)\\s*(%})",
-      "beginCaptures": {
-        "0": {
-          "name": "meta.tag.metadata.javascript.start.liquid"
-        },
-        "1": {
-          "name": "punctuation.definition.tag.begin.liquid"
-        },
-        "2": {
-          "name": "entity.name.tag.liquid"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.liquid"
-        }
-      },
-      "end": "({%)\\s*(endjavascript)\\s*(%})",
-      "endCaptures": {
-        "0": {
-          "name": "meta.tag.metadata.javascript.end.liquid"
-        },
-        "1": {
-          "name": "punctuation.definition.tag.begin.liquid"
-        },
-        "2": {
-          "name": "entity.name.tag.liquid"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.liquid"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.js"
         }
       ]
     }
