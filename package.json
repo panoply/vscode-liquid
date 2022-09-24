@@ -1,7 +1,7 @@
 {
   "name": "shopify-liquid",
-  "displayName": "Liquid Language Support",
-  "description": "Liquid Language Support. Formatting, Syntax Highlighting, Snippets, HTML IntelliSense and other essential features for developers working with Liquid.",
+  "displayName": "Liquid",
+  "description": "Liquid Template Language. Supports Formatting, Syntax Highlighting, Snippets, HTML IntelliSense and other essential features for working with Liquid.",
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Νίκος Σαβίδης <n.savvidis@gmx.com>",
@@ -95,38 +95,45 @@
     ],
     "commands": [
       {
-        "command": "liquid.upgradeVersion",
-        "title": "Upgrade Extension",
+        "command": "liquid.restartExtension",
+        "title": "Restart Extension",
+        "icon": "$(refresh)",
         "category": "Liquid"
       },
       {
         "command": "liquid.enableFormatting",
         "title": "Enable Formatting",
+        "icon": "$(check)",
         "category": "Liquid"
       },
       {
         "command": "liquid.disableFormatting",
         "title": "Disable Formatting",
+        "icon": "$(x)",
         "category": "Liquid"
       },
       {
         "command": "liquid.openOutput",
         "title": "Open Output",
+        "icon": "$(note)",
         "category": "Liquid"
       },
       {
         "command": "liquid.formatDocument",
         "title": "Format Document",
+        "icon": "$(list-selection)",
         "category": "Liquid"
       },
       {
-        "command": "liquid.generateLiquidrcDefaults",
+        "command": "liquid.liquidrcDefaults",
         "title": "Generate .liquidrc (defaults)",
+        "icon": "$(file-add)",
         "category": "Liquid"
       },
       {
-        "command": "liquid.generateLiquidrcRecommended",
+        "command": "liquid.liquidrcRecommend",
         "title": "Generate .liquidrc (recommended)",
+        "icon": "$(file-add)",
         "category": "Liquid"
       }
     ],
