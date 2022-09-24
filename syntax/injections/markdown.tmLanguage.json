@@ -1,5 +1,5 @@
 {
-  "scopeName": "source.markdown.liquid.injection",
+  "scopeName": "source.markdown.liquid",
   "injectionSelector": "L:text.html.markdown",
   "patterns": [
     { "include": "source.liquid#comment-inline" },
