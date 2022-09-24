@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-unused-vars */
-import { languages, StatusBarAlignment, ThemeColor, window } from 'vscode';
+import { StatusBarAlignment, ThemeColor, window } from 'vscode';
 import { getStatusBar, mdString } from 'utils';
 
 /**
@@ -50,31 +50,11 @@ export const enum Status {
  */
 export class StatusBarItem {
 
-  private meta: {
-    /**
-     * Github Repostory URL
-     */
-    displayName: string;
-    /**
-     * Github Repostory URL
-     */
-    repository: string;
-    /**
-     * Extension version
-     */
-    version: string;
-    /**
-     * Extension version
-     */
-    prettifyVersion: string;
-  };
-
-  constructor (meta: StatusBarItem['meta']) { this.meta = meta; }
-
   /**
    * The current state of the status bar item
    */
   public state: Status = Status.Hidden;
+
   /**
    * The status bar item instance
    */
@@ -112,6 +92,16 @@ export class StatusBarItem {
   }
 
   /**
+   * Status Bar Item - Hide
+   */
+  public hide () {
+    if (this.state !== Status.Hidden) {
+      this.item.hide();
+      this.state = Status.Hidden;
+    }
+  }
+
+  /**
    * Status Bar Item - Loading
    */
   public loading () {
@@ -130,7 +120,7 @@ export class StatusBarItem {
     this.state = Status.Enabled;
     this.item.text = '💧 $(check)';
     this.item.tooltip = 'Disable Liquid Formatting';
-    this.item.command = 'liquid.disableFormatter';
+    this.item.command = 'liquid.disableFormatting';
     this.item.tooltip = mdString('<i>Press to disable formatting</i>');
     this.item.color = 'white';
   }
@@ -142,9 +132,10 @@ export class StatusBarItem {
     this.show();
     this.state = Status.Ignoring;
     this.item.text = '💧 $(eye-closed)';
-    this.item.tooltip = mdString('<i>Press to enable formatting</i>');
-    this.item.command = 'liquid.enableFormatting';
+    this.item.tooltip = mdString('<i>File is ignored from formatting</i>');
+    this.item.command = 'liquid.openOutput';
     this.item.color = 'white';
+
   }
 
   /**
@@ -167,7 +158,7 @@ export class StatusBarItem {
     this.state = Status.Error;
     this.item.text = '🩸 $(x)';
     this.item.tooltip = 'Errors! Press to toggle output';
-    this.item.command = 'liquid.toggleOutput';
+    this.item.command = 'liquid.openOutput';
     this.item.color = new ThemeColor('statusBarItem.errorBackground');
   }
 
@@ -193,16 +184,6 @@ export class StatusBarItem {
       this.warnings--;
       this[this.last]();
     }, 3500);
-  }
-
-  /**
-   * Status Bar Item - Hide
-   */
-  public hide () {
-    if (this.state !== Status.Hidden) {
-      this.item.hide();
-      this.state = Status.Hidden;
-    }
   }
 
 };
