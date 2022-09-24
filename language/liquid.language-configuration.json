@@ -1,0 +1,115 @@
+{
+	"comments": {
+		"lineComment": "{% #",
+		"blockComment": [
+			"{%- comment -%}",
+			"{%- endcomment -%}",
+			"{% comment %}",
+			"{% endcomment %}"
+		]
+	},
+	"brackets": [
+		[
+			"<!--",
+			"-->"
+		],
+		[
+			"<",
+			">"
+		],
+		[
+			"{{",
+			"}}"
+		],
+		[
+			"{%",
+			"%}"
+		],
+		[
+			"{",
+			"}"
+		],
+		[
+			"[",
+			"]"
+		],
+		[
+			"(",
+			")"
+		],
+		[
+			"---",
+			"---"
+		]
+	],
+	"autoClosingPairs": [
+		{
+			"open": "{",
+			"close": "}"
+		},
+		{
+			"open": "[",
+			"close": "]"
+		},
+		{
+			"open": "(",
+			"close": ")"
+		},
+		{
+			"open": "'",
+			"close": "'"
+		},
+		{
+			"open": "\"",
+			"close": "\""
+		}
+	],
+	"surroundingPairs": [
+		{
+			"open": "'",
+			"close": "'"
+		},
+		{
+			"open": "\"",
+			"close": "\""
+		},
+		{
+			"open": "<",
+			"close": ">"
+		},
+		{
+			"open": "{",
+			"close": "}"
+		}
+	],
+	"folding": {
+		"markers": {
+			"start": "^\\s*//\\s*#?region\\b",
+			"end": "^\\s*//\\s*#?endregion\\b"
+		}
+	},
+	"onEnterRules": [
+		{
+			"beforeText": {
+				"pattern": "<(?!(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr))([_:\\w][_:\\w-.\\d]*)([^/>]*(?!\\/)>)[^<]*$",
+				"flags": "i"
+			},
+			"afterText": {
+				"pattern": "^<\\/([_:\\w][_:\\w-.\\d]*)\\s*>",
+				"flags": "i"
+			},
+			"action": {
+				"indent": "indentOutdent"
+			}
+		},
+		{
+			"beforeText": {
+				"pattern": "<(?!(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr))(\\w[\\w\\d]*)([^/>]*(?!\\/)>)[^<]*$",
+				"flags": "i"
+			},
+			"action": {
+				"indent": "indent"
+			}
+		}
+	],
+}
