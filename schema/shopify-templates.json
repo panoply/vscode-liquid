@@ -1,0 +1,106 @@
+{
+  "title": "Shopify OS 2.0 Templates ~ Sections Everywhere",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "name": {
+      "type": "string",
+      "description": "A name for the template."
+    },
+    "layout": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "The filename of the layout to use when rendering the template. For example, specify \"full-width\" to render \"layout/full-width.liquid.\". The default layout is \"theme.liquid.\""
+        },
+        {
+          "const": false,
+          "description": "Use the value false to render the template without a layout. Templates without a layout can't be customized in the theme editor."
+        }
+      ],
+      "type": ["string"],
+      "description": "A name for the template."
+    },
+    "wrapper": {
+      "pattern": "(div|main|section)([#.[].*?)?",
+      "type": "string",
+      "description": "The HTML wrapper element for the template's sections."
+    },
+    "order": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sections": {
+      "type": "object",
+      "maxProperties": 25,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "A unique ID for the section. Accepts only alphanumeric characters."
+          },
+          "disabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "When true, the section is not rendered but can still be customized in the theme editor. Is false by default."
+          },
+          "type": {
+            "type": "string",
+            "description": "The filename of the section file to render, without the extension."
+          },
+          "settings": {
+            "type": "object",
+            "description": "Settings as defined in the schema of the section or the block.",
+            "additionalProperties": true
+          },
+          "block_order": {
+            "type": "array",
+            "maxItems": 50,
+            "description": "An array of block IDs, ordered as they should be rendered. The IDs must exist in the blocks object, and duplicates are not allowed.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "blocks": {
+            "type": "object",
+            "required": ["type"],
+            "description": "Settings as defined in the schema of the section or the block.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "The type of block to render, as defined in the schema of the section file."
+              },
+              "settings": {
+                "type": "object",
+                "description": "Settings as defined in the schema of the section or the block.",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "type": "object",
+  "description": "JSON templates are data files that store a list of sections to be rendered, and their associated settings. Merchants can add, remove, and reorder these sections using the theme editor.",
+  "properties": {
+    "name": {
+      "$ref": "#/definitions/name"
+    },
+    "layout": {
+      "$ref": "#/definitions/layout"
+    },
+    "wrapper": {
+      "$ref": "#/definitions/wrapper"
+    },
+    "order": {
+      "$ref": "#/definitions/order"
+    },
+    "sections": {
+      "$ref": "#/definitions/sections"
+    }
+  }
+}
