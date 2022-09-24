@@ -1,9 +1,9 @@
 import prettify from '@liquify/prettify';
 import { basename, join } from 'node:path';
 import { FileSystemWatcher, Uri, workspace } from 'vscode';
-import { Config, Setting } from '../types';
-import { isFile } from '../utils';
-import { Settings } from './WorkspaceSettings';
+import { Config, Setting } from 'types';
+import { isFile } from 'utils';
+import { Settings } from 'providers/WorkspaceSettings';
 import { has } from 'rambdax';
 
 export class FSWatch extends Settings {
@@ -65,22 +65,33 @@ export class FSWatch extends Settings {
 
       if (this.configMethod === Config.Liquidrc) return null;
 
+      const before = this.configMethod;
       const pkg = await this.getPackage();
 
       if (this.configMethod === Config.Package) {
         if (pkg === Setting.PrettifyFieldDefined) {
 
           prettify.options(this.prettifyRules);
+
+          if (before === Config.Workspace) {
+            this.formatIgnore.clear();
+            this.formatRegister.clear();
+            this.info('Using "prettify" field in package.json file');
+          }
+
           this.info('Updated Prettify beautification rules');
 
         } else if (pkg === Setting.PrettifyFieldUndefined) {
 
           this.getSettings(Config.Workspace);
-          this.info('Using workspace settings');
+          this.formatIgnore.clear();
+          this.formatRegister.clear();
+          this.info('Using workspace settings for configuration');
 
         }
       } else if (pkg === Setting.PrettifyFieldDefined) {
         prettify.options(this.prettifyRules);
+        this.dispose();
         this.info('Using "prettify" field in package.json file');
       }
 
@@ -100,6 +111,8 @@ export class FSWatch extends Settings {
   private async onDidCreate ({ fsPath }: Uri) {
 
     const isPackage = isFile(fsPath, 'package.json');
+
+    this.dispose();
 
     if (isPackage) {
 
@@ -142,10 +155,12 @@ export class FSWatch extends Settings {
 
     const isPackage = isFile(fsPath, 'package.json');
 
+    this.dispose();
+
     if (isPackage) {
 
       this.getSettings(Config.Workspace);
-      this.info('Using workspace settings');
+      this.info('Using workspace settings for configuration');
 
     } else {
 
@@ -159,7 +174,7 @@ export class FSWatch extends Settings {
       } else {
 
         this.getSettings(Config.Workspace);
-        this.info('Using workspace settings');
+        this.info('Using workspace settings for configuration');
 
       }
     }
