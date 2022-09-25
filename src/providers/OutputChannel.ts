@@ -1,10 +1,10 @@
 import { window } from 'vscode';
 import * as u from 'utils';
 import { StatusBarItem } from 'providers/StatusBarItem';
-import { State } from 'state';
+import { StatusLanguageItem } from 'providers/StatusLanguageItem';
 import { has } from 'rambdax';
 
-export class OutputChannel extends State {
+export class OutputChannel extends StatusLanguageItem {
 
   /**
    * Status Bar Item - instance
