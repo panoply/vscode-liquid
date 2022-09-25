@@ -19,8 +19,8 @@ export class State {
     this.repository = packageJSON.repository.url;
     this.displayName = packageJSON.displayName;
     this.prettifyVersion = packageJSON.dependencies['@liquify/prettify'];
-    this.rootPath = workspace.workspaceFolders[0].uri.fsPath;
-    this.packagePath = join(this.rootPath, 'package.json');
+    this.fsPath = workspace.workspaceFolders[0].uri.fsPath;
+    this.rootPath = this.fsPath;
   }
 
   /**
@@ -51,6 +51,18 @@ export class State {
    */
   version: string;
 
+  /**
+   * The workspace `fsPath`
+   *
+   * @default null
+   */
+  fsPath: string = null;
+  /**
+   * Base URL path (`null` if not provided)
+   *
+   * @default null
+   */
+  baseUrl: string = null;
   /**
    * URI root path of the project
    *
@@ -168,13 +180,6 @@ export class State {
   hasError: boolean = false;
 
   /**
-   * Whether or not a warning has occured
-   *
-   * @default false
-   */
-  hasWarning: boolean = false;
-
-  /**
    * Document Selectors
    *
    * The document selector list of languages passed to
@@ -233,8 +238,7 @@ export class State {
     'jsx': false,
     'tsx': false,
     'javascript': false,
-    'typescript': false,
-    'yaml': false
+    'typescript': false
   };
 
 }
