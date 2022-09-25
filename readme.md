@@ -19,10 +19,11 @@
 
 <pre><code><strong> 💧 <i>LIQUIFY ~ INFORMATION ON THE FUTURE RELEASE</i></strong>
 <p>
-<i>For quite some time users of this extension have been waiting for the next release
-(Liquify). Liquify will supersede this extension and facilitate advanced features and
-capabilities. Liquify is a big project which I began developing in 2020. This extension
-will continue to be maintained and progressively transition to Liquify.</i>
+<i>For quite some time users of this extension have been waiting for
+the next release (Liquify). Liquify will supersede this extension and
+facilitate advanced features and capabilities. Liquify is a big project
+which I began developing in 2020. This extension will continue to be
+maintained and progressively transition to Liquify.</i>
 </p>
   → <a href="https://github.com/panoply/vscode-liquid/issues/56"><i>Liquify and the future of this extension</i></a>
   → <a href="https://github.com/panoply/vscode-liquid/projects/6"><i>Project Overview and what to expect</i></a>
@@ -318,9 +319,7 @@ By default, it is assumed you are using vscode workspace/user settings.
 
 ### Config Base URL
 
-The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving config files. The option will only work in projects that use `.liquidrc` files or define formatting rules on a package.json `prettify` field (see: [Configuration](#configuration)).
-
-Consider the following directory layout:
+The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving config files. The option will only work in projects that use `.liquidrc` files or define formatting rules on a package.json `prettify` field (see: [Configuration](#configuration)). Consider the following directory layout:
 
 ```bash
  root
@@ -668,7 +667,7 @@ If you are using alternative extensions such as the Shopify Liquid or Liquid Lan
 
 The vscode marketplace has 3 different extensions for Liquid support:
 
-- Liquid
+- **Liquid**
 - Liquid Languages Support
 - Shopify Liquid
 
@@ -721,7 +720,7 @@ _PR's are welcome for test cases, but be aware that the Liquify supersede will m
 
 # Acknowledgements
 
-Special thanks to these talented folks who's work, ideas, feedback and contributions have made this extension possible.
+Thanks to these talented folks who's work, ideas, feedback and contributions make this extension possible.
 
 - [Curtis](https://github.com/toklok)
 - [Mansedan](https://github.com/MattWIP)
