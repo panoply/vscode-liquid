@@ -336,6 +336,10 @@
           "type": "null",
           "markdownDeprecationMessage": "This option is now deprecated. You will need to update the options in order for the extension to work. Formatting rules now use the following structure:\n{\n  \"liquid.format.markup\": {},\n  \"liquid.format.script\": {},\n  \"liquid.format.style\": {},\n  \"liquid.format.json\": {}\n}"
         },
+        "liquid.config.baseUrl": {
+          "type": "string",
+          "markdownDescription": "The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving config files. The option is will only work in projects that use `.liquidrc` files or define rules on a package.json `prettify` field"
+        },
         "liquid.settings.target": {
           "type": "string",
           "default": "workspace",
