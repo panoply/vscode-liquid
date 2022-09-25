@@ -1,6 +1,8 @@
 import { window, TextEdit, Range, workspace } from 'vscode';
+import { writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import prettify, { Options } from '@liquify/prettify';
-import { getRange } from 'utils';
+import { getRange, isString, pathExists, rulesDefault, rulesRecommend } from 'utils';
 import { FSWatch } from 'providers/FileSystemWatcher';
 
 /**
@@ -26,17 +28,60 @@ export class CommandPalette extends FSWatch {
 
   }
 
-  public async restartExtension () {
+  private async generateLiquidrc (type: 'default' | 'recommended') {
 
+    const exists = await pathExists(this.liquidrcPath);
+
+    let action: string;
+
+    if (exists) {
+
+      action = await this.infoMessage([ 'Open', 'Overwrite' ], [
+        'Your workspace already contains a .liquidrc file. You can overwrite the existing',
+        `config with ${type} rules or open the file and inspect the formatting options.`
+      ]);
+
+      if (action === 'OPEN') return this.openDocument(this.liquidrcPath);
+
+    } else {
+
+      action = await this.infoMessage([ '.liquidrc', '.liquidrc.json' ], [
+        'Choose a .liquidrc file type to be created. It does not matter which you select,',
+        'both will be interpreted as JSONC (JSON with Comments) language types.'
+      ]);
+
+      if (action === '.LIQUIDRC.JSON' || action === '.LIQUIDRC') {
+        this.liquidrcPath = join(this.rootPath, action.toLowerCase());
+      }
+    }
+
+    if (isString(action)) {
+
+      const input = type === 'default' ? rulesDefault() : rulesRecommend();
+      const stringify = JSON.stringify(input, null, 2);
+      const rules = await prettify.format(stringify, { ...input, language: 'json' });
+
+      prettify.options({ language: 'auto' });
+
+      try {
+
+        await writeFile(this.liquidrcPath, rules);
+        this.info('Generated .liquidrc file: ' + this.liquidrcPath);
+        return this.openDocument(this.liquidrcPath);
+      } catch (e) {
+        this.catch('Failed to write .liquidrc file to workspace root', e);
+      }
+
+    } else {
+
+      this.info('Cancelled .liquidrc file generation');
+
+    }
   }
 
-  public async liquidrcDefaults () {
+  public liquidrcDefaults () { return this.generateLiquidrc('default'); }
 
-  }
-
-  public async liquidrcRecommend () {
-
-  }
+  public liquidrcRecommend () { return this.generateLiquidrc('recommended'); }
 
   /**
    * Enabled formatting (command)
@@ -76,11 +121,10 @@ export class CommandPalette extends FSWatch {
         this.status.enable();
       }
 
-      return [
-        TextEdit.replace(range, output)
-      ];
+      return [ TextEdit.replace(range, output) ];
 
     } catch (e) {
+
       if (this.hasError === false || this.errorCache !== e) {
         this.errorCache = e;
         this.error('Formatting parse error occured in document', e);

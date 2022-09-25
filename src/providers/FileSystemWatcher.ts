@@ -1,12 +1,12 @@
-import prettify from '@liquify/prettify';
 import { basename, join } from 'node:path';
 import { FileSystemWatcher, Uri, workspace } from 'vscode';
+import prettify from '@liquify/prettify';
 import { Config, Setting } from 'types';
 import { isFile } from 'utils';
-import { Settings } from 'providers/WorkspaceSettings';
+import { FSUtils } from 'providers/FileSystemUtilities';
 import { has } from 'rambdax';
 
-export class FSWatch extends Settings {
+export class FSWatch extends FSUtils {
 
   /**
    * Whether or not the file system watcher is running
