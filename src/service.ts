@@ -48,8 +48,6 @@ export class VSCodeLiquid extends CommandPalette {
     this.liquidrcPath = null;
     this.prettifyRules = prettify.options(prettifyRules);
     this.languages = languages;
-    this.formatIgnore.clear();
-    this.formatRegister.clear();
     this.dispose();
     this.getWatchers(false);
 
@@ -109,42 +107,13 @@ export class VSCodeLiquid extends CommandPalette {
     }
 
     subscriptions.push(
-      this.onDidChangeTextEditor(
-        window.activeTextEditor
-      ),
-      commands.registerCommand(
-        'liquid.liquidrcDefaults',
-        this.liquidrcDefaults,
-        this
-      ),
-      commands.registerCommand(
-        'liquid.liquidrcRecommended',
-        this.liquidrcRecommend,
-        this
-      ),
-      commands.registerCommand(
-        'liquid.openOutput',
-        this.output.show,
-        this
-      ),
-      commands.registerCommand(
-        'liquid.enableFormatting',
-        this.enableFormatting,
-        this
-      ),
-      commands.registerCommand(
-        'liquid.disableFormatting',
-        this.disableFormatting,
-        this
-      ),
-      commands.registerCommand(
-        'liquid.restartExtension',
-        this.restart(
-          prettifyRules,
-          languages,
-          subscriptions
-        )
-      )
+      this.onDidChangeTextEditor(window.activeTextEditor),
+      commands.registerCommand('liquid.liquidrcDefaults', this.liquidrcDefaults, this),
+      commands.registerCommand('liquid.liquidrcRecommend', this.liquidrcRecommend, this),
+      commands.registerCommand('liquid.openOutput', this.output.show, this),
+      commands.registerCommand('liquid.enableFormatting', this.enableFormatting, this),
+      commands.registerCommand('liquid.disableFormatting', this.disableFormatting, this),
+      commands.registerCommand('liquid.restartExtension', this.restart(prettifyRules, languages, subscriptions))
     );
 
     workspace.onDidChangeConfiguration(
@@ -179,7 +148,7 @@ export class VSCodeLiquid extends CommandPalette {
 
     if (!u.isFunction(this.ignoreMatch)) return false;
 
-    const path = this.getRelative(uri);
+    const path = this.relative(uri);
 
     if (this.ignoreMatch(path)) {
       this.info(`Ignoring: ${path}`);
