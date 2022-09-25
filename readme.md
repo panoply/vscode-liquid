@@ -318,13 +318,12 @@ By default, it is assumed you are using vscode workspace/user settings.
 
 ### Config Base URL
 
-The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving config files. The option is will only work in projects that use `.liquidrc` files or define rules on a package.json `prettify` field (see: [Configuration](#configuration)).
+The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving config files. The option will only work in projects that use `.liquidrc` files or define formatting rules on a package.json `prettify` field (see: [Configuration](#configuration)).
 
 Consider the following directory layout:
 
 ```bash
  root
- │
  ├─ .vscode
  │  └─ settings.json
  ├─ docs
@@ -335,7 +334,7 @@ Consider the following directory layout:
     └─ views
 ```
 
-By default, when no `.liquidrc` or `package.json` file (containing a `prettify` field) exist in a projects root, it will assume beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace settings file default rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseUrl` to the directory containing of the supported file types.
+By default, when no `.liquidrc` or `package.json` file (containing a `prettify` field) exist in a projects root, it will assume beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace file then the default Prettify rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseUrl` to the directory containing a the supported file types.
 
 Targeting the `.liquidrc.json` file located in `docs` directory:
 
@@ -685,7 +684,7 @@ If you are using or have installed [Shopify Liquid](https://marketplace.visualst
 
 These capabilities made available by Shopify Liquid are nice but they come with limitations as the extension does not support Windows and its LSP (Language Server) implementation requires Ruby to function making it rather resource heavy and exhaustive on your machine. Though the extra features it provides help in some cases, they are specific to Shopify themes and not much use outside of that.
 
-_**FYI**: The capabilities available in the future release (Liquify) will support all current features of the Shopify Liquid extension._
+_Capabilities available in the future release (Liquify) support all current features of the Shopify Liquid extension._
 
 # Releases
 
