@@ -59,7 +59,7 @@ export class StatusBarItem {
   /**
    * The status bar item instance
    */
-  private item = window.createStatusBarItem(StatusBarAlignment.Right, 3);
+  private item = window.createStatusBarItem(StatusBarAlignment.Right, 0);
 
   /**
    * The number of warnings
