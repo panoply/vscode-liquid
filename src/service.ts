@@ -10,16 +10,13 @@ import {
   window,
   workspace
 } from 'vscode';
-import prettify, { Options } from '@liquify/prettify';
+import prettify from '@liquify/prettify';
 import { Config, LanguageIds, Setting } from 'types';
 import { CommandPalette } from 'providers/CommandPalette';
 // import { StatusLanguageItem } from 'providers/StatusLanguageItem';
-import { clone, delay } from 'rambdax';
 import * as u from 'utils';
 
 export class VSCodeLiquid extends CommandPalette {
-
-  // private language = new StatusLanguageItem();
 
   /**
    * Restart Extension
@@ -28,16 +25,11 @@ export class VSCodeLiquid extends CommandPalette {
    * persisted states and disposes of subscriptions. From here
    * re-activates extension by calling back to `onActiveEditor`.
    */
-  private restart = (
-    prettifyRules: Options,
-    languages: any,
-    subscriptions: { dispose(): void; }[]
-  ) => async () => {
+  private restart = (subscriptions: { dispose(): void; }[]) => async () => {
+
+    await this.status.loading('Restarting extension...');
 
     this.info('RESTARTING EXTENSION');
-    this.status.loading();
-
-    await delay(2000);
 
     this.isReady = false;
     this.canFormat = false;
@@ -46,8 +38,6 @@ export class VSCodeLiquid extends CommandPalette {
     this.ignoreList = [];
     this.ignoreMatch = null;
     this.liquidrcPath = null;
-    this.prettifyRules = prettify.options(prettifyRules);
-    this.languages = languages;
     this.dispose();
     this.getWatchers(false);
 
@@ -77,9 +67,6 @@ export class VSCodeLiquid extends CommandPalette {
       this.status.error();
     }
 
-    const prettifyRules = clone(prettify.options.rules);
-    const languages = clone(this.languages);
-
     try {
 
       const pkgjson = await this.getPackage();
@@ -103,17 +90,17 @@ export class VSCodeLiquid extends CommandPalette {
       }
 
     } catch (e) {
-      this.catch('failed to initialize extension', e);
+      this.catch('Failed to activate extension.', e);
     }
 
     subscriptions.push(
-      this.onDidChangeTextEditor(window.activeTextEditor),
       commands.registerCommand('liquid.liquidrcDefaults', this.liquidrcDefaults, this),
       commands.registerCommand('liquid.liquidrcRecommend', this.liquidrcRecommend, this),
       commands.registerCommand('liquid.openOutput', this.output.show, this),
+      commands.registerCommand('liquid.formatDocument', this.formatDocument, this),
       commands.registerCommand('liquid.enableFormatting', this.enableFormatting, this),
       commands.registerCommand('liquid.disableFormatting', this.disableFormatting, this),
-      commands.registerCommand('liquid.restartExtension', this.restart(prettifyRules, languages, subscriptions))
+      commands.registerCommand('liquid.restartExtension', this.restart(subscriptions))
     );
 
     workspace.onDidChangeConfiguration(
@@ -133,6 +120,8 @@ export class VSCodeLiquid extends CommandPalette {
       this,
       subscriptions
     );
+
+    this.onDidChangeTextEditor(window.activeTextEditor);
 
     this.isReady = true;
 
@@ -255,27 +244,25 @@ export class VSCodeLiquid extends CommandPalette {
    */
   public onRegisterProvider (dispose = false) {
 
-    if (this.formatHandler && dispose === false) return this.formatHandler;
+    if (this.canFormat && this.formatHandler && dispose === false) return this.formatHandler;
     if (dispose) this.dispose();
 
-    this.formatHandler = languages.registerDocumentFormattingEditProvider(
-      this.selector.active,
-      {
-        provideDocumentFormattingEdits: async (document: TextDocument) => {
+    this.formatHandler = languages.registerDocumentFormattingEditProvider(this.selector.active, {
+      provideDocumentFormattingEdits: async (document: TextDocument) => {
 
-          if (this.formatIgnore.has(document.uri.fsPath)) return [];
+        if (this.canFormat === false) return [];
+        if (this.formatIgnore.has(document.uri.fsPath)) return [];
 
-          const range = u.getRange(document);
+        const range = u.getRange(document);
 
-          return this.onDocumentEdit({
-            range,
-            input: document.getText(range),
-            language: u.getLanguage(document.languageId)
-          });
+        return this.onDocumentEdit({
+          range,
+          input: document.getText(range),
+          language: u.getLanguage(document.languageId)
+        });
 
-        }
       }
-    );
+    });
 
     return this.formatHandler;
 
