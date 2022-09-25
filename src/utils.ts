@@ -1,11 +1,11 @@
 import { Range, workspace, TextDocument, MarkdownString } from 'vscode';
-import prettify, { Options, LanguageNames } from '@liquify/prettify';
-import { pathExistsSync } from 'fs-extra';
+import { access } from 'node:fs/promises';
 import { join } from 'node:path';
 import os from 'node:os';
-import { mergeDeepRight, omit, isType, has } from 'rambdax';
+import prettify, { LanguageNames } from '@liquify/prettify';
+import { omit, isType, has } from 'rambdax';
 import stripJsonComments from 'strip-json-comments';
-import { InLanguageIds, LanguageIds, Liquidrc } from './types';
+import { InLanguageIds, LanguageIds, Liquidrc, Workspace } from './types';
 import parseJSON from 'parse-json';
 import { Status } from 'providers/StatusBarItem';
 
@@ -13,9 +13,7 @@ import { Status } from 'providers/StatusBarItem';
 /* CONSTANTS                                    */
 /* -------------------------------------------- */
 
-const HOMEDIR = typeof os.homedir === 'undefined'
-  ? ''
-  : os.homedir().replace(/\\/g, '/');
+const HOMEDIR = typeof os.homedir === 'undefined' ? '' : os.homedir().replace(/\\/g, '/');
 
 /* -------------------------------------------- */
 /* TYPEOF CHECKS                                */
@@ -55,6 +53,28 @@ export const isString = isType('String');
  * Whether type is boolean or not
  */
 export const isBoolean = isType('Boolean');
+
+/* -------------------------------------------- */
+/* FILE SYSTEM                                  */
+/* -------------------------------------------- */
+
+/**
+ * Path Exists
+ *
+ * Checks if the uri `path` exists. Returns a boolean
+ * value `true` when path is found, else `false`
+ */
+export async function pathExists (path: string) {
+
+  if (!isString(path)) return false;
+
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 /* -------------------------------------------- */
 /* NATIVE                                       */
@@ -223,18 +243,21 @@ export function hasDeprecatedSettings (rcfile: Liquidrc = undefined) {
  * current workspace contains a `.liquidrc` or `.liquidrc.json`
  * file. When undefined is returned not file exists.
  */
-export function hasLiquidrc (root: string) {
+export async function hasLiquidrc (root: string) {
 
   if (!isString(root)) return undefined;
 
-  let path = join(root, '.liquidrc');
+  const rcfile = join(root, '.liquidrc');
+  const exists = await pathExists(rcfile);
 
-  if (!pathExistsSync(path)) {
-    path = join(root, '.liquidrc.json');
-    return pathExistsSync(path) ? path : undefined;
+  if (!exists) {
+    const rcjson = join(root, '.liquidrc.json');
+    const exists = await pathExists(rcjson);
+
+    return exists ? rcjson : undefined;
   }
 
-  return path;
+  return rcfile;
 }
 
 /**
@@ -402,16 +425,76 @@ export function getTime (brace = true) {
  * Extracts the users preference settings and returns
  * a Prettify model that will be merged with defaults.
  */
-export function mergePreferences (options: Options): Options {
+export function rulesDefault (): Workspace.Format {
 
-  const defaults = prettify.options.rules;
+  const rules = rulesOmitted(prettify.options.rules);
   const editor = workspace.getConfiguration('editor');
 
-  return mergeDeepRight(options, {
-    wrap: editor.get<number>('wordWrapColumn') || defaults.wrap,
-    indentSize: editor.get<number>('tabSize') || defaults.indentSize,
-    endNewline: editor.get<boolean>('renderFinalNewline') || defaults.endNewline
-  });
+  return {
+    ignore: [],
+    wrap: editor.get<number>('wordWrapColumn') || rules.wrap,
+    commentIndent: rules.commentIndent,
+    crlf: rules.crlf,
+    indentSize: editor.get<number>('tabSize') || rules.indentSize,
+    preserveComment: rules.preserveComment,
+    preserveLine: rules.preserveLine,
+    endNewline: editor.get<boolean>('renderFinalNewline') || rules.endNewline,
+    markup: {
+      correct: rules.markup.correct,
+      quoteConvert: rules.markup.quoteConvert,
+      delimiterSpacing: rules.markup.delimiterSpacing,
+      selfCloseSpace: rules.markup.selfCloseSpace,
+      commentNewline: rules.markup.commentNewline,
+      forceIndent: rules.markup.forceIndent,
+      attributeSort: rules.markup.attributeSort,
+      attributeSortList: rules.markup.attributeSortList,
+      attributeCasing: rules.markup.attributeCasing,
+      forceAttribute: rules.markup.forceAttribute,
+      forceLeadAttribute: rules.markup.forceLeadAttribute,
+      preserveAttributes: rules.markup.preserveAttributes,
+      preserveText: rules.markup.preserveText
+    },
+    json: {
+      bracePadding: rules.json.bracePadding,
+      braceAllman: rules.json.braceAllman,
+      arrayFormat: rules.json.arrayFormat,
+      objectIndent: rules.json.objectIndent,
+      objectSort: rules.json.objectSort
+    },
+    style: {
+      correct: rules.style.correct,
+      sortProperties: rules.style.sortProperties,
+      sortSelectors: rules.style.sortSelectors,
+      noLeadZero: rules.style.noLeadZero,
+      quoteConvert: rules.style.quoteConvert,
+      classPadding: rules.style.classPadding,
+      compressCSS: rules.style.compressCSS
+    },
+    script: {
+      correct: rules.script.correct,
+      arrayFormat: rules.script.arrayFormat,
+      braceAllman: rules.script.braceAllman,
+      braceNewline: rules.script.braceNewline,
+      bracePadding: rules.script.bracePadding,
+      braceStyle: rules.script.braceStyle,
+      objectIndent: rules.script.objectIndent,
+      caseSpace: rules.script.caseSpace,
+      endComma: rules.script.endComma,
+      quoteConvert: rules.script.quoteConvert,
+      elseNewline: rules.script.elseNewline,
+      functionNameSpace: rules.script.functionNameSpace,
+      functionSpace: rules.script.functionSpace,
+      ternaryLine: rules.script.ternaryLine,
+      commentNewline: rules.script.commentNewline,
+      methodChain: rules.script.methodChain,
+      neverFlatten: rules.script.neverFlatten,
+      noCaseIndent: rules.script.noCaseIndent,
+      noSemicolon: rules.script.noSemicolon,
+      objectSort: rules.script.objectSort,
+      variableList: rules.script.variableList,
+      vertical: rules.script.vertical
+    }
+  };
 
 }
 
@@ -420,33 +503,50 @@ export function mergePreferences (options: Options): Options {
  *
  * Applies the recommended beautification rules
  */
-export function recommendedRules (): Options {
+export function rulesRecommend (): Workspace.Format {
 
-  return mergeDeepRight(prettify.options.rules, {
+  return {
+    ignore: [],
     wrap: 0,
+    commentIndent: true,
+    crlf: false,
+    indentSize: 2,
+    preserveComment: false,
+    preserveLine: 2,
     endNewline: true,
     markup: {
-      forceAttribute: 2,
       correct: true,
       quoteConvert: 'double',
       delimiterSpacing: true,
       selfCloseSpace: true,
       commentNewline: true,
-      forceIndent: true
+      forceIndent: true,
+      attributeSort: true,
+      attributeSortList: [],
+      attributeCasing: 'preserve',
+      forceAttribute: 2,
+      forceLeadAttribute: false,
+      preserveAttributes: false,
+      preserveText: true
     },
     json: {
+      bracePadding: false,
       braceAllman: true,
       arrayFormat: 'indent',
       objectIndent: 'indent',
       objectSort: false
     },
     style: {
+      correct: false,
       sortProperties: true,
       sortSelectors: true,
       noLeadZero: true,
-      quoteConvert: 'single'
+      quoteConvert: 'single',
+      classPadding: true,
+      compressCSS: false
     },
     script: {
+      correct: true,
       arrayFormat: 'indent',
       objectIndent: 'indent',
       braceAllman: false,
@@ -458,49 +558,17 @@ export function recommendedRules (): Options {
       functionNameSpace: true,
       functionSpace: true,
       ternaryLine: true,
-      variableList: 'none',
-      vertical: true,
-      correct: true
+      braceNewline: false,
+      bracePadding: false,
+      braceStyle: 'none',
+      commentNewline: true,
+      neverFlatten: false,
+      noCaseIndent: true,
+      noSemicolon: false,
+      objectSort: false,
+      vertical: false,
+      variableList: 'none'
     }
-  });
-
-}
-
-/**
- * Omit Rules
- *
- * Normalizes the formatting options. Omits certain prettify
- * beautification rules from formatting.
- */
-export function omitRules (options: Options = prettify.options.rules) {
-
-  const defaults = Object.assign({}, options);
-
-  // OMITTED BASE RULES
-  delete defaults.lexer;
-  delete defaults.language;
-  delete defaults.languageName;
-  delete defaults.mode;
-  delete defaults.indentLevel;
-  delete defaults.grammar;
-
-  // OMITTED SCRIPT RULES
-  delete defaults.script.commentNewline;
-  delete defaults.script.objectSort;
-  delete defaults.script.vertical;
-  delete defaults.script.variableList;
-
-  // OMITTED CSS RULES
-  delete defaults.style.forceValue;
-  delete defaults.style.quoteConvert;
-  delete defaults.style.compressCSS;
-
-  // OMITTED JSON RULES
-  delete defaults.json.objectSort;
-
-  const preferences = mergePreferences(defaults);
-
-  // RETURN
-  return mergeDeepRight(options, preferences);
+  };
 
 }
