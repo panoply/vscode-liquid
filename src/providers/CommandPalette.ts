@@ -1,9 +1,10 @@
-import { window, TextEdit, Range, workspace } from 'vscode';
+import { window, workspace } from 'vscode';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import prettify, { Options } from '@liquify/prettify';
+import prettify from '@liquify/prettify';
 import { getRange, isString, pathExists, rulesDefault, rulesRecommend } from 'utils';
 import { FSWatch } from 'providers/FileSystemWatcher';
+import { has } from 'rambdax';
 
 /**
  * Command Invocation
@@ -108,57 +109,45 @@ export class CommandPalette extends FSWatch {
   }
 
   /**
-   * Disable formatting (command)
-   */
-  public async onDocumentFormat (input: string, options: Options, range?: Range) {
-
-    try {
-
-      const output = await prettify.format(input, options);
-
-      if (this.hasError) {
-        this.errorCache = null;
-        this.status.enable();
-      }
-
-      return [ TextEdit.replace(range, output) ];
-
-    } catch (e) {
-
-      if (this.hasError === false || this.errorCache !== e) {
-        this.errorCache = e;
-        this.error('Formatting parse error occured in document', e);
-      }
-    }
-
-  }
-
-  /**
    * Formats the entire document
    */
   public async formatDocument () {
 
     if (window.activeTextEditor === undefined) return;
 
-    if (this.canFormat === true) {
+    const { document } = window.activeTextEditor;
+    const { languageId } = document;
 
-      const { document } = window.activeTextEditor;
-      const { languageId } = document;
+    if (has(languageId, this.languages)) {
 
-      if (this.languages[languageId]) {
+      const range = getRange(document);
+      const input = document.getText(range);
 
-        const range = getRange(document);
-        const input = document.getText(range);
+      try {
 
-        await this.onDocumentFormat(input, { language: languageId }, range);
+        const output = await prettify.format(input, { language: languageId });
 
-      } else {
+        if (this.hasError) {
+          this.errorCache = null;
+          this.status.enable();
+        }
 
-        this.warn('Language id ' + languageId + ' is not enabled');
+        await window.activeTextEditor.edit(code => code.replace(range, output));
 
+      } catch (e) {
+
+        if (this.hasError === false || this.errorCache !== e) {
+          this.errorCache = e;
+          this.error('Formatting parse error occured in document', e);
+        }
       }
 
+    } else {
+
+      this.warn('Language id ' + languageId.toUpperCase() + ' is not enabled');
+
     }
+
   }
 
   /**
