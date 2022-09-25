@@ -774,7 +774,7 @@
     "external": [
       "vscode"
     ],
-    "treeshake": true,
+    "treeshake": "smallest",
     "splitting": false,
     "format": "cjs"
   },
