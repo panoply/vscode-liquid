@@ -692,19 +692,6 @@
     ],
     "description": "Schema input setting: \"checkbox\""
   },
-  "Schema, number": {
-    "prefix": "schema: number",
-    "body": [
-      "{",
-      "  \"type\": \"number\",",
-      "  \"id\": \"${1:id}\",",
-      "  \"label\": \"${1:label}\",",
-      "  \"default\": ${1:20},",
-      "  \"placeholder\": \"${1:placeholder}\"",
-      "}"
-    ],
-    "description": "Schema, number"
-  },
   "Schema, range": {
     "description": "Schema input setting: \"range\"",
     "prefix": "schema: range",
