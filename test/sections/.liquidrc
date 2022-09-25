@@ -24,11 +24,14 @@
     "preserveText": true
   },
   "json": {
+
+
     "bracePadding": false,
     "braceAllman": true,
     "arrayFormat": "indent",
     "objectIndent": "indent",
     "objectSort": false
+
   },
   "style": {
     "correct": false,
