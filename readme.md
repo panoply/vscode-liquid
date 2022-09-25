@@ -17,13 +17,13 @@
 &nbsp;
 </h2>
 
-<pre><code><strong> 💧 <i>LIQUIFY ~ INFORMATION ON THE FUTURE RELEASE</i></strong>
-<p>
-<i>For quite some time users of this extension have been waiting for
-the next release (Liquify). Liquify will supersede this extension and
-facilitate advanced features and capabilities. Liquify is a big project
-which I began developing in 2020. This extension will continue to be
-maintained and progressively transition to Liquify.</i>
+<pre><code><strong>
+  💧 <i>LIQUIFY ~ INFORMATION ON THE FUTURE RELEASE</i></strong>
+<p><i>
+  For quite some time users of this extension have been waiting for the next
+  release (Liquify). Liquify will supersede this extension to facilitate advanced
+  features and capabilities. Liquify is a big project which I began developing in 2020.
+  This extension will continue to be maintained and slowly transition to Liquify.</i>
 </p>
   → <a href="https://github.com/panoply/vscode-liquid/issues/56"><i>Liquify and the future of this extension</i></a>
   → <a href="https://github.com/panoply/vscode-liquid/projects/6"><i>Project Overview and what to expect</i></a>
