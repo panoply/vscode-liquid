@@ -1,4 +1,4 @@
-import { basename, join } from 'node:path';
+import { basename } from 'node:path';
 import { FileSystemWatcher, Uri, workspace } from 'vscode';
 import prettify from '@liquify/prettify';
 import { Config, Setting } from 'types';
@@ -26,9 +26,21 @@ export class FSWatch extends FSUtils {
    * File System Watchers
    */
   private watchers: FileSystemWatcher[] = [
-    workspace.createFileSystemWatcher(join(this.rootPath, '.liquidr{c,c.json}')),
-    workspace.createFileSystemWatcher(this.packagePath)
+    workspace.createFileSystemWatcher('**/.liquidr{c,c.json}'),
+    workspace.createFileSystemWatcher('**/package.json')
   ];
+
+  /**
+   * Watched change was config
+   */
+  private isMatch (fsPath: string) {
+
+    return (
+      fsPath !== this.liquidrcPath &&
+      fsPath !== this.packagePath
+    );
+
+  }
 
   /**
    * File System Watcher - Invoke Watchers
@@ -49,7 +61,6 @@ export class FSWatch extends FSUtils {
         watch.onDidDelete(this.onDidDelete, this);
       }
     }
-
   };
 
   /**
@@ -57,6 +68,7 @@ export class FSWatch extends FSUtils {
    */
   private async onDidChange ({ fsPath }: Uri) {
 
+    if (this.isMatch(fsPath)) return null;
     if (this.changed) return (this.changed = false);
 
     const isPackage = isFile(fsPath, 'package.json');
@@ -110,6 +122,8 @@ export class FSWatch extends FSUtils {
 
   private async onDidCreate ({ fsPath }: Uri) {
 
+    if (this.isMatch(fsPath)) return null;
+
     const isPackage = isFile(fsPath, 'package.json');
 
     this.dispose();
@@ -152,6 +166,8 @@ export class FSWatch extends FSUtils {
   }
 
   private async onDidDelete ({ fsPath }: Uri) {
+
+    if (this.isMatch(fsPath)) return null;
 
     const isPackage = isFile(fsPath, 'package.json');
 
