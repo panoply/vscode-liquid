@@ -222,7 +222,6 @@ export type LanguageIds = LiteralUnion<(
   | 'tsx'
   | 'javascript'
   | 'typescript'
-  | 'yaml'
 ), string>
 
 /**
@@ -246,7 +245,6 @@ export type InLanguageIds = LiteralUnion<(
   | '[tsx]'
   | '[javascript]'
   | '[typescript]'
-  | '[yaml]'
 ), string>
 
 /**
