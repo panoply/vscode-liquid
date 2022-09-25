@@ -54,13 +54,15 @@ A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template 
 - [Updating to v3.0](#updating-to-v300)
 - [Command Palette](#command-palette)
 - [Workspace Settings](#workspace-settings)
+  - [Working Directories](#working-directories)
+  - [Config Base URL](#config-base-url)
   - [Settings Target](#settings-target)
   - [Controlling Capabilities](#controlling-capabilities)
 - [Syntax Support](#syntax-support)
   - [Supported Languages](#supported-languages)
   - [Grammar Injections](#grammar-injections)
-  - [HTML Validations](#html-validations)
   - [Liquid in JSON, YAML and Markdown](#liquid-in-json-yaml-and-markdown)
+  - [Liquid in CSS, SCSS, SASS and JavaScript](#liquid-in-css-scss-sass-and-javascript)
   - [Markdown Codeblock](#markdown-codeblock)
 - [Formatting](#formatting)
   - [Prettify](#prettify)
@@ -102,14 +104,15 @@ Though it is discouraged you can continue using the old version of this extensio
 
 Below are the available commands exposed to the vscode command palette (`cmd + shift + p`)
 
-| Command                                  | Description                                          |
-| ---------------------------------------- | ---------------------------------------------------- |
-| Liquid: Enable Formatting                | _Enable Prettify formatting_                         |
-| Liquid: Disable Formatting               | _Disable Prettify formatting_                        |
-| Liquid: Format Document                  | _Formats the current document_                       |
-| Liquid: Open Output                      | _Open the Liquid output panel_                       |
-| Liquid: Generate .liquidrc (defaults)    | _Generate a `.liquidrc` file with default rules_     |
-| Liquid: Generate .liquidrc (recommended) | _Generate a `.liquidrc` file with recommended rules_ |
+| Command                                | Description                                          |
+| -------------------------------------- | ---------------------------------------------------- |
+| Liquid: Enable Formatting              | _Enable Prettify formatting_                         |
+| Liquid: Disable Formatting             | _Disable Prettify formatting_                        |
+| Liquid: Format Document                | _Formats the current document_                       |
+| Liquid: Generate .liquidrc (defaults)  | _Generate a `.liquidrc` file with default rules_     |
+| Liquid: Generate .liquidrc (recommend) | _Generate a `.liquidrc` file with recommended rules_ |
+| Liquid: Open Output                    | _Open the Liquid output panel_                       |
+| Liquid: Restart Extension              | _Restarts the extension_                             |
 
 # Workspace Settings
 
@@ -120,8 +123,9 @@ By default, it is assumed you are using vscode workspace/user settings.
 <!--prettier-ignore-->
 ```jsonc
 {
-  // Disable the extended features of the extension
-  "liquid.enable": true,
+
+  // Path location to a rule configuration file (relative to project root)
+  "liquid.config.baseUrl": ".",
 
   // Controls how extension settings are applied (leave this to workspace)
   "liquid.settings.target": "workspace",
@@ -312,43 +316,67 @@ By default, it is assumed you are using vscode workspace/user settings.
 }
 ```
 
+### Config Base URL
+
+The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving config files. The option is will only work in projects that use `.liquidrc` files or define rules on a package.json `prettify` field (see: [Configuration](#configuration)).
+
+Consider the following directory layout:
+
+```bash
+ root
+ │
+ ├─ .vscode
+ │  └─ settings.json
+ ├─ docs
+ │  ├─ .liquidrc.json
+ │  └─ index.liquid
+ └─ src
+    ├─ includes
+    └─ views
+```
+
+By default, when no `.liquidrc` or `package.json` file (containing a `prettify` field) exist in a projects root, it will assume beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace settings file default rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseUrl` to the directory containing of the supported file types.
+
+Targeting the `.liquidrc.json` file located in `docs` directory:
+
+<!--prettier-ignore-->
+```jsonc
+{
+  "liquid.config.baseUrl": "./docs"
+}
+```
+
+_The `baseUrl` must point a relative directory not a file. If the directory provided cannot be resolved, root is used._
+
 ### Settings Target
 
 The `liquid.settings.target` option is used to determine where the extension writes settings. The default configuration and behavior is to use the `.vscode/settings.json` workspace file. Though you can target `user` settings (ie: global) it is **highly discouraged** to do so and could lead to unexpected issues outside of Liquid projects.
 
 # Syntax Support
 
-Liquid syntax highlighting within Markdown, YAML and JSON languages are supported using vscode injection grammars. Grammar injections allow intelliSense capabilities provided by vscode to persist and work without interruption. Liquid syntax contained in JavaScript, CSS, SCSS, YAML and other supported languages require a `.liquid` extension suffix be applied on file names, e.g:
-
-```
-.css    →   .css.liquid
-.scss   →   .scss.liquid
-.js     →   .js.liquid
-```
-
-_If the required `.liquid` suffix is problematic then use [file associations](https://code.visualstudio.com/docs/languages/identifiers)._
+Liquid syntax highlighting is applied using detailed token captures which extend upon the HTML derivative. The core grammars account for all all token structures available in Liquid and have been developed with theming consideration in mind. Liquid contained within Markdown, YAML and JSON languages are supported using vscode injection grammars and applied in a non-conflicting manner. The injected grammars allow intelliSense capabilities provided by vscode to persist and work without interruption while the base Liquid grammar supports HTML intelliSense features within `.liquid` extension files in an isolated manner.
 
 ### Supported Languages
 
-| Language Identifier | Language Alias    | Supported Extension    | Grammar Injection |
-| ------------------- | ----------------- | ---------------------- | ----------------- |
-| liquid              | Liquid            | _.liquid_ or _.jekyll_ | 𐄂                 |
-| json                | JSON              | .json                  | ✓                 |
-| yaml                | YAML              | .yaml                  | ✓                 |
-| markdown            | Markdown          | .md, .md.liquid        | ✓                 |
-| liquid-css          | Liquid CSS        | .css.liquid            | 𐄂                 |
-| liquid-scss         | Liquid SCSS       | .scss.liquid           | 𐄂                 |
-| liquid-javascript   | Liquid JavaScript | .js.liquid             | 𐄂                 |
+| Language Identifier | Language Alias    | Supported Extension       | IntelliSense Support |
+| ------------------- | ----------------- | ------------------------- | -------------------- |
+| liquid              | Liquid            | .liquid, or .jekyll       | ✓                    |
+| json                | JSON              | .json                     | ✓                    |
+| yaml                | YAML              | .yaml                     | ✓                    |
+| markdown            | Markdown          | .md, .md.liquid           | ✓                    |
+| liquid-css          | Liquid CSS        | .css.liquid               | 𐄂                    |
+| liquid-scss         | Liquid SCSS       | .scss.liquid, sass.liquid | 𐄂                    |
+| liquid-javascript   | Liquid JavaScript | .js.liquid                | 𐄂                    |
 
 ### Grammar Injections
 
-In order to preserve vscode intellisense capabilities the below languages have Liquid grammars injected into them. The grammar injection will allow Liquid code to be highlighted and treated as if the syntax is a part of the languages.
+In order to preserve vscode intellisense capabilities the below languages have Liquid grammars injected into them. The grammar injection will allow Liquid code to be highlighted and treated as if the syntax exists as part of the languages.
 
 - JSON
 - Yaml
 - Markdown
 
-When these languages contain Liquid syntax vscode might complain about invalid code. You should consider disabling validations on these languages when they contain Liquid. Please be aware that in situations where you are leverage linters or third party tools then Liquid code will typically be interpreted as invalid, so it is up to you to take the necessary steps to disable and prevent such issues from becoming problematic to your development experience.
+When these languages contain Liquid syntax vscode might complain about invalid code. You should consider disabling validations on these languages when they contain Liquid. Please be aware that in situations where you leverage linters or third party tools that Liquid code will typically be interpreted as invalid. It is up to you to take the necessary steps to disable and prevent such issues from becoming problematic to your development experience.
 
 ```jsonc
 {
@@ -365,6 +393,19 @@ When these languages contain Liquid syntax vscode might complain about invalid c
 Liquid tags, comments and object grammars are injected into JSON, YAML and Markdown languages. External language code regions and anything which requires an embedded language (ie: `{% schema %}`) are excluded. There is no need to use a `.liquid` suffix on these file names in order for Liquid syntax highlighting as it will work out of the box.
 
 _If for any reason the injections become problematic then please report an issue._
+
+### Liquid in CSS, SCSS, SASS and JavaScript
+
+Liquid syntax contained in JavaScript, CSS, SCSS, SASS and other supported languages require a `.liquid` extension suffix be applied on file names. The suffix will associate these languages to a designated grammar, for example:
+
+```
+.css    →   .css.liquid
+.scss   →   .scss.liquid
+.sass   →   .scss.liquid
+.js     →   .js.liquid
+```
+
+_If the required `.liquid` suffix is problematic to your use case then use [file associations](https://code.visualstudio.com/docs/languages/identifiers). Please note that the language native IntelliSense capabilities are not supported in the suffixed files._
 
 ### Markdown Codeblock
 
@@ -624,7 +665,9 @@ Shopify `{% schema %}` tag snippets are made supported by the extension and can 
 
 # Extension Conflicts
 
-If you are using alternative extensions such as the Shopify Liquid or Liquid Languages Support extension then you may run into some issues. The conflicts will be caused because these extensions also target Liquid grammars. The vscode marketplace has 3 different extensions for Liquid support:
+If you are using alternative extensions such as the Shopify Liquid or Liquid Languages Support extension then you may run into some issues. The conflicts which may be incurred will be caused because these extensions also target Liquid grammars.
+
+The vscode marketplace has 3 different extensions for Liquid support:
 
 - Liquid
 - Liquid Languages Support
@@ -634,15 +677,15 @@ This extension uses the **Liquid** display name and is considered the official L
 
 ### Liquid Languages Support
 
-If you are using or have installed the [Liquid Languages Support](https://marketplace.visualstudio.com/items?itemName=neilding.language-liquid) extension then it is recommended that you either uninstall or disable it. Liquid Languages Support is not maintained and the grammars are mostly obsolete. Using it along side this extension and Shopify Liquid is problematic. Boycott it.
+If you are using or have installed the [Liquid Languages Support](https://marketplace.visualstudio.com/items?itemName=neilding.language-liquid) extension then it is recommended that you either uninstall or disable it. The Liquid Languages Support extension is not maintained and the grammars are mostly obsolete. Using it along side this extension and Shopify Liquid is problematic, boycott it, as it does nothing but increase th editors startup time.
 
 ### Shopify Liquid
 
-If you are using or have installed [Shopify Liquid](https://marketplace.visualstudio.com/items?itemName=Shopify.theme-check-vscode) then you _may_ need to choose (or alternate) between the Shopify Liquid extension and this extension. The Shopify Liquid extension is for Shopify projects (specifically themes) and provide a couple of features which this extension does not (yet) support.
+If you are using or have installed [Shopify Liquid](https://marketplace.visualstudio.com/items?itemName=Shopify.theme-check-vscode) then you _may_ need to choose (or alternate) between the Shopify Liquid extension and this extension. The Shopify Liquid extension is for Shopify projects (specifically themes) and provides a couple of great features which this extension does not (yet) support.
 
-However, Shopify Liquid does not support Windows and the language server implementation it employs is rather resource heavy and exhaustive on your machine. Though the extra features it provides help in some cases, they are specific to Shopify themes and not much use outside of that.
+These capabilities made available by Shopify Liquid are nice but they come with limitations as the extension does not support Windows and its LSP (Language Server) implementation requires Ruby to function making it rather resource heavy and exhaustive on your machine. Though the extra features it provides help in some cases, they are specific to Shopify themes and not much use outside of that.
 
-_The capabilities available in the future release (Liquify) will support all current features of the Shopify Liquid extension._
+_**FYI**: The capabilities available in the future release (Liquify) will support all current features of the Shopify Liquid extension._
 
 # Releases
 
