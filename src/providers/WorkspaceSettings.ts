@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
 
 import { workspace, ConfigurationTarget } from 'vscode';
-import { relative } from 'node:path';
+import { join } from 'node:path';
 import { readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { has, isNil, difference } from 'rambdax';
 import prettify from '@liquify/prettify';
 import parseJSON from 'parse-json';
@@ -171,16 +172,20 @@ export class WorkspaceSettings extends OutputChannel {
     const liquid = workspace.getConfiguration('liquid');
     const target = liquid.get<Workspace.Target>('settings.target');
     const format = liquid.get<Workspace.Format>('format');
+    const baseUrl = liquid.get<string>('config.baseUrl');
 
     // No configuration defined for the extension
-    if (isNil(target) && isNil(format)) return Setting.WorkspaceUndefined;
+    if (isNil(target) && isNil(format) && isNil(baseUrl)) return Setting.WorkspaceUndefined;
 
-    if (u.isString(target)) {
-      if (target === 'user') {
-        this.configTarget = ConfigurationTarget.Global;
-      } else if (target === 'workspace' && this.configTarget !== ConfigurationTarget.Workspace) {
-        this.configTarget = ConfigurationTarget.Workspace;
+    if (u.isString(baseUrl)) {
+      const newRoot = join(this.rootPath, baseUrl);
+      if (newRoot !== this.rootPath && existsSync(newRoot)) {
+        this.baseUrl = baseUrl;
+        this.rootPath = newRoot;
       }
+    } else if (isNil(baseUrl) && u.isString(this.baseUrl)) {
+      this.baseUrl = null;
+      this.rootPath = this.fsPath;
     }
 
     if (u.isObject(format)) {
@@ -226,6 +231,8 @@ export class WorkspaceSettings extends OutputChannel {
    * the extension will use the rules provided to the property.
    */
   public async getPackage () {
+
+    this.packagePath = join(this.rootPath, 'package.json');
 
     const path = await u.pathExists(this.packagePath);
     if (!path) return Setting.PackageJsonUndefined;

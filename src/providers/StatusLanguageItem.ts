@@ -1,44 +1,13 @@
 import { Command, languages, LanguageStatusItem, LanguageStatusSeverity } from 'vscode';
+import { State } from 'state';
 
-export class StatusLanguageItem {
-
-  private extendedSelectors = [
-    {
-      language: 'html',
-      scheme: 'file'
-    },
-    {
-      language: 'css',
-      scheme: 'file'
-    },
-    {
-      language: 'javascript',
-      scheme: 'file'
-    }
-
-  ];
-
-  private liquidSelectors = [
-    {
-      language: 'liquid',
-      scheme: 'file'
-    },
-    {
-      language: 'liquid-css',
-      scheme: 'file'
-    },
-    {
-      language: 'liquid-scss',
-      scheme: 'file'
-    },
-    {
-      language: 'liquid-javascript',
-      scheme: 'file'
-    }
-  ];
+export class StatusLanguageItem extends State {
 
   items: Set<LanguageStatusItem> = new Set();
 
+  /**
+   * Dispose Language Status Items
+   */
   dispose () {
     if (this.items.size > 0) {
       for (const item of this.items) {
@@ -47,7 +16,7 @@ export class StatusLanguageItem {
     }
   }
 
-  status (config: string, command?: Command) {
+  configFile (config: string, command?: Command) {
 
     const status = languages.createLanguageStatusItem('Liquid Language', this.liquidSelectors);
     status.severity = LanguageStatusSeverity.Information;
@@ -59,20 +28,7 @@ export class StatusLanguageItem {
 
   }
 
-  extended (message: string, command?: Command) {
-
-    const extend = languages.createLanguageStatusItem('Prettify', this.extendedSelectors);
-    extend.severity = LanguageStatusSeverity.Information;
-    extend.text = message;
-    extend.detail = 'Formatting using Prettify';
-
-    if (command) extend.command = command;
-
-    this.items.add(extend);
-
-  }
-
-  warning (message: string, command?: Command) {
+  configWarning (message: string, command?: Command) {
 
     const warning = languages.createLanguageStatusItem('Liquid Warning', this.liquidSelectors);
     warning.severity = LanguageStatusSeverity.Warning;
@@ -84,7 +40,7 @@ export class StatusLanguageItem {
 
   }
 
-  error (message: string, command?: Command) {
+  configError (message: string, command?: Command) {
 
     const error = languages.createLanguageStatusItem('Liquid Errors', this.liquidSelectors);
     error.severity = LanguageStatusSeverity.Error;
