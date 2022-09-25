@@ -3,7 +3,7 @@
 
 import { ConfigurationTarget, Disposable, Extension, workspace } from 'vscode';
 import { Config, LanguageIds, PackageJSON, Selectors } from 'types';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { Tester } from 'anymatch';
 import prettify, { Options } from '@liquify/prettify';
 
@@ -22,6 +22,14 @@ export class State {
     this.rootPath = workspace.workspaceFolders[0].uri.fsPath;
     this.packagePath = join(this.rootPath, 'package.json');
   }
+
+  /**
+   * Get Relative file path
+   *
+   * Returns the relative path of a the provided `uri`
+   * using the `fsPath` base location.
+   */
+  relative = (path: string) => relative(this.rootPath, path);
 
   /**
    * The extension official identifier, ie: sissel.vscode-liquid
@@ -168,6 +176,12 @@ export class State {
 
   /**
    * Document Selectors
+   *
+   * The document selector list of languages passed to
+   * providers. The `active` property contains the in~use
+   * selectors. The `liquid` property is the default selectors
+   * and the `extend` is the additional languages that can
+   * be handled.
    */
   selector: Selectors = {
     active: [
@@ -198,8 +212,10 @@ export class State {
   };
 
   /**
-   * Languages determination - Holds a reference to
-   * which language selectors are currently enabled/disabled.
+   * Languages determination
+   *
+   * Holds a reference to which language selectors are
+   * currently enabled/disabled.
    */
   languages: { [K in LanguageIds]: boolean } = {
     'liquid': true,

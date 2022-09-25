@@ -2,7 +2,7 @@
 
 import { workspace, ConfigurationTarget } from 'vscode';
 import { relative } from 'node:path';
-import { pathExists, readFile } from 'fs-extra';
+import { readFile } from 'node:fs/promises';
 import { has, isNil, difference } from 'rambdax';
 import prettify from '@liquify/prettify';
 import parseJSON from 'parse-json';
@@ -10,9 +10,9 @@ import anymatch from 'anymatch';
 import { OutputChannel } from 'providers/OutputChannel';
 import { Setting, Config, Workspace } from 'types';
 import * as u from 'utils';
-import { Status } from './StatusBarItem';
+import { Status } from 'providers/StatusBarItem';
 
-export class Settings extends OutputChannel {
+export class WorkspaceSettings extends OutputChannel {
 
   /**
    * Formatting Disposals
@@ -21,6 +21,7 @@ export class Settings extends OutputChannel {
    * to `undefined` only when the handler is defined.
    */
   public dispose () {
+
     if (this.formatHandler) {
       this.formatHandler.dispose();
       this.formatHandler = undefined;
@@ -30,17 +31,6 @@ export class Settings extends OutputChannel {
       this.formatIgnore.clear();
       this.formatRegister.clear();
     }
-  }
-
-  /**
-   * Get Relative file path
-   *
-   * Returns the relative path of a the provided `uri`
-   * using the `fsPath` base location.
-   */
-  public getRelative (uri: string) {
-
-    return relative(this.rootPath, uri);
 
   }
 
@@ -237,7 +227,7 @@ export class Settings extends OutputChannel {
    */
   public async getPackage () {
 
-    const path = await pathExists(this.packagePath);
+    const path = await u.pathExists(this.packagePath);
     if (!path) return Setting.PackageJsonUndefined;
 
     try {
@@ -292,21 +282,21 @@ export class Settings extends OutputChannel {
 
     if (isNil(this.liquidrcPath)) {
 
-      const path = u.hasLiquidrc(this.rootPath);
+      const path = await u.hasLiquidrc(this.rootPath);
       if (!path) return Setting.LiquidrcUndefined;
 
       this.configMethod = Config.Liquidrc;
       this.liquidrcPath = path;
 
     } else {
-      const exists = await pathExists(this.liquidrcPath);
+      const exists = await u.pathExists(this.liquidrcPath);
       if (!exists) return Setting.LiquidrcUndefined;
     }
 
     try {
 
-      const read = await readFile(this.liquidrcPath);
-      const rules = u.jsonc(read.toString());
+      const read = await readFile(this.liquidrcPath, { encoding: 'utf8' });
+      const rules = u.jsonc(read);
 
       if (!u.isObject(rules)) {
 
