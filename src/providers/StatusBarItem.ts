@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 import { StatusBarAlignment, ThemeColor, window } from 'vscode';
 import { getStatusBar, mdString } from 'utils';
+import { delay } from 'rambdax';
 
 /**
  * Status States
@@ -104,12 +105,13 @@ export class StatusBarItem {
   /**
    * Status Bar Item - Loading
    */
-  public loading () {
+  public async loading (tooltip = 'Loading Extension', delayed = 1500) {
     this.show();
     this.state = Status.Loading;
     this.item.text = '💧 $(sync~spin)';
-    this.item.tooltip = 'Loading Extension';
+    this.item.tooltip = tooltip;
     this.item.command = 'liquid.toggleOutput';
+    await delay(delayed);
   }
 
   /**
@@ -153,12 +155,12 @@ export class StatusBarItem {
   /**
    * Status Bar Item - Error
    */
-  public error () {
+  public error (tooltip = 'Errors! Press to toggle output', command = 'liquid.openOutput') {
     this.show();
     this.state = Status.Error;
     this.item.text = '🩸 $(x)';
-    this.item.tooltip = 'Errors! Press to toggle output';
-    this.item.command = 'liquid.openOutput';
+    this.item.tooltip = tooltip;
+    this.item.command = command;
     this.item.color = new ThemeColor('statusBarItem.errorBackground');
   }
 
