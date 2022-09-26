@@ -284,10 +284,6 @@
       {
         "language": "liquid",
         "path": "./snippets/tags.json"
-      },
-      {
-        "language": "liquid",
-        "path": "./snippets/tags.json"
       }
     ],
     "configurationDefaults": {
@@ -335,6 +331,15 @@
         "liquid.rules": {
           "type": "null",
           "markdownDeprecationMessage": "This option is now deprecated. You will need to update the options in order for the extension to work. Formatting rules now use the following structure:\n{\n  \"liquid.format.markup\": {},\n  \"liquid.format.script\": {},\n  \"liquid.format.style\": {},\n  \"liquid.format.json\": {}\n}"
+        },
+        "liquid.engine": {
+          "type": "string",
+          "default": "shopify",
+          "markdownDescription": "The `liquid.engine` option is used to determine the Liquid variation you are working with.",
+          "enum": [
+            "standard",
+            "shopify"
+          ]
         },
         "liquid.config.baseUrl": {
           "type": "string",
@@ -769,7 +774,8 @@
       "parse-json",
       "strip-json-comments",
       "anymatch",
-      "rambdax"
+      "rambdax",
+      "vscode-languageserver-types"
     ],
     "external": [
       "vscode"
@@ -795,10 +801,12 @@
     "type-fest": "^3.0.0"
   },
   "dependencies": {
+    "@liquify/liquid-language-specs": "^0.1.4",
     "@liquify/prettify": "0.1.0-beta.1",
     "anymatch": "^3.1.2",
     "parse-json": "^6.0.2",
     "rambdax": "8.1.0",
-    "strip-json-comments": "^5.0.0"
+    "strip-json-comments": "^5.0.0",
+    "vscode-languageserver-types": "^3.17.2"
   }
 }
