@@ -798,7 +798,8 @@
     "eslint": "^8.24.0",
     "prettier": "^2.7.1",
     "tsup": "^6.2.3",
-    "type-fest": "^3.0.0"
+    "type-fest": "^3.0.0",
+    "vsce": "^2.11.0"
   },
   "dependencies": {
     "@liquify/liquid-language-specs": "^0.1.4",
