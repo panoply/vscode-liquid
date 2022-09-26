@@ -35,12 +35,13 @@
 
 # Liquid <small style="color:#999;">(vscode)</small>
 
-A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template language. Supports formatting, syntax highlighting, snippet auto-completion, validations and respects HTML Intellisense features.
+A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template language. Supports formatting, syntax highlighting, tag, filter and object auto-completions, snippets, validations and respects HTML Intellisense features.
 
 ### Key Features
 
 - Syntax support for Liquid in CSS, SCSS, JavaScript, Markdown and more!
 - Formatting and beautification support using [Prettify](https://github.com/panoply/prettify).
+- Auto-Completions for Liquid tags, objects and filters.
 - Snippet auto-completion for Liquid tags, filters and more!
 - Supports Liquid embedded code blocks syntax highlighting.
 - Integrated Schema stores to provide IntelliSense capabilities within Shopify JSON files.
@@ -65,6 +66,10 @@ A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template 
   - [Liquid in JSON, YAML and Markdown](#liquid-in-json-yaml-and-markdown)
   - [Liquid in CSS, SCSS, SASS and JavaScript](#liquid-in-css-scss-sass-and-javascript)
   - [Markdown Codeblock](#markdown-codeblock)
+- [Completions]
+  - [Tags](#)
+  - [Objects](#)
+  - [Filters](#)
 - [Formatting](#formatting)
   - [Prettify](#prettify)
   - [Setting Default Formatter](#setting-default-formatter)
@@ -125,11 +130,23 @@ By default, it is assumed you are using vscode workspace/user settings.
 ```jsonc
 {
 
+  // Defined the Liquid variation you are working with
+  "liquid.engine": "shopify",
+
   // Path location to a rule configuration file (relative to project root)
   "liquid.config.baseUrl": ".",
 
   // Controls how extension settings are applied (leave this to workspace)
   "liquid.settings.target": "workspace",
+
+  // Whether or not to enable tag completions
+  "liquid.completion.tags": true,
+
+  // Whether or not to enable object completions (disabled by default as its still experimental)
+  "liquid.completion.objects": false,
+
+  // Whether or not to enable filter completions
+  "liquid.completion.filters": true,
 
   // Controls whether formatting is enabled or disabled
   "liquid.format.enable": true,
@@ -414,6 +431,22 @@ Liquid markdown embedded code block regions are supported in `.md` files.
 {% comment %} Liquid code {% endcomment %}
 ```
 ````
+
+# Completions
+
+The extension supports completion capabilities. This is a **preview** feature and will be improved upon as the extension progresses to Liquify, as such the integration is elementary. Completions are similar to snippets but a little more refined. The completions will be invoked and made available depending on the trigger previous character sequence or trigger.
+
+### Tags
+
+Liquid Tag completions are made available by typing the `%` character.
+
+### Objects
+
+Liquid object completions will be invoked within tokens at different points.
+
+### Filters
+
+Liquid filter completions are made available by typing the `|` character.
 
 # Formatting
 
