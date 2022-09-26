@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@liquify/eslint-config': ^1.1.0
+  '@liquify/liquid-language-specs': ^0.1.4
   '@liquify/prettier-config': ^1.0.1
   '@liquify/prettify': 0.1.0-beta.1
   '@types/vscode': ^1.71.0
@@ -13,13 +14,16 @@ specifiers:
   strip-json-comments: ^5.0.0
   tsup: ^6.2.3
   type-fest: ^3.0.0
+  vscode-languageserver-types: ^3.17.2
 
 dependencies:
+  '@liquify/liquid-language-specs': 0.1.4
   '@liquify/prettify': 0.1.0-beta.1
   anymatch: 3.1.2
   parse-json: 6.0.2
   rambdax: 8.1.0
   strip-json-comments: 5.0.0
+  vscode-languageserver-types: 3.17.2
 
 devDependencies:
   '@liquify/eslint-config': 1.1.0
@@ -130,6 +134,11 @@ packages:
       - eslint-import-resolver-webpack
       - supports-color
     dev: true
+
+  /@liquify/liquid-language-specs/0.1.4:
+    resolution: {integrity: sha512-5ntZvjjg0gFK4BCzCLPEstGEMhS/MPgKj7amxvTywt3CleVNjHLJYBX5NJxM0glROJsofBPeIHh+dvRDTBHmHQ==}
+    engines: {node: '>=12', pnpm: '>=4'}
+    dev: false
 
   /@liquify/prettier-config/1.0.1_prettier@2.7.1:
     resolution: {integrity: sha512-QiT45qCppCRUBMuMREy2nb9k+z7BWZ7K8qCG5Aps1SwVhaCOTU2UfKb/9upA1kDEvq4LPeuby1ElHsv48xYmIg==}
@@ -2168,6 +2177,10 @@ packages:
     dependencies:
       punycode: 2.1.1
     dev: true
+
+  /vscode-languageserver-types/3.17.2:
+    resolution: {integrity: sha512-zHhCWatviizPIq9B7Vh9uvrH6x3sK8itC84HkamnBWoDFJtzBf7SWlpLCZUit72b3os45h6RWQNC9xHRDF8dRA==}
+    dev: false
 
   /webidl-conversions/4.0.2:
     resolution: {integrity: sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg==}
