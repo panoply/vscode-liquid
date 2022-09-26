@@ -11,10 +11,36 @@
 </div>
 
 
+{% capture foo %}
 
+  {% for %}
+  {% endfor %}
+{% endcapture %}
+
+
+{% assign foo = %}
+
+{% capture pros %}
+
+
+  {{ pro | append: '' | append }}
+
+{% endcapture %}
+{% if %}
+
+{% endif %}
+{%- liquid
+  if
+    foo == bar
+  elsif
+    'foo'
+  endif
+  assign name = 'bar' | filter: 100 -%}
 
 
 <script></script>
+
+
 <!-- @prettify-ignore-start -->
 
 {%- liquid
@@ -44,3 +70,4 @@
     }
   }
 {% endschema %}
+
