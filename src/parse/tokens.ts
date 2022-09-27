@@ -1,4 +1,4 @@
-import { q, liquid, Tag, Filter, Object as IObject, $, Type, Types as ITypes } from '@liquify/liquid-language-specs';
+import { q, liquid, Tag, Filter, Object as IObject, Type, Types as ITypes, Properties } from '@liquify/liquid-language-specs';
 import { has } from 'rambdax';
 import {
   CompletionItemKind,
@@ -6,11 +6,6 @@ import {
   CompletionItem,
   SnippetString,
   CompletionItemTag,
-  CompletionTriggerKind,
-  TextDocument,
-  Position,
-  CancellationToken,
-  TextEdit
 } from 'vscode';
 import { Char, Token, Words } from './enums';
 
@@ -158,11 +153,11 @@ export function getObjectCompletions ([ label, spec ]: [ string, IObject ]): Com
 };
 
 
-export function prevWord (content: string, offset: number, word: Words) {
+export function prevWord (content: string, offset: number, word: Words[]) {
 
   const prev = content.slice(0, offset)
 
-  return new RegExp(`\\s\\b${word}\\b\\s+$`).test(prev)
+  return word.some(w => new RegExp(`\\s\\b${w}\\b\\s+$`).test(prev))
 
 }
 
@@ -173,6 +168,8 @@ export function prevChar (content: string, offset: number, code: Char[]) {
   const char = content
     .slice(0, offset)
     .replace(/\s+$/, '').length - 1
+
+  if(!content[char]) return null
 
   return code.includes(content[char].charCodeAt(0))
 
@@ -189,6 +186,64 @@ export function isEmptyTag(content: string) {
 
   return /{%-?-?%}/.test(content.replace(/\s+/, ''))
 
+}
+
+/**
+ * Set Completion Items
+ *
+ * Sets the completion items that are passed to the completion resolver.
+ * Extracts necessary values from the passed in specification record.
+ */
+export function ProvideProps ([ label, { description, snippet = label } ]) {
+
+  return {
+    label,
+    kind: CompletionItemKind.Property,
+    insertText: snippet,
+    documentation: new MarkdownString(description)
+  }
+}
+
+/**
+ * Parse Object
+ *
+ */
+export function parseObject(content: string, offset: number) {
+
+  const slice = content.slice(2, offset - 1)
+  const match = slice.match(/[^\s{<=>:]*?$/)
+
+  if (match === null) return null
+
+  const props = match[0].split('.').filter(Boolean)
+
+  console.log(slice, props)
+
+  if (!has(props[0], liquid.shopify.objects)) return null
+
+  if (props.length === 1) {
+    const { properties = null } = liquid.shopify.objects[props[0]]
+    if (properties === null) return null
+    return Object.entries(properties).map(ProvideProps as any)
+  }
+
+
+  return (function walk (props: string[], value: Properties) {
+
+    if (!value) return null;
+    if (!has(props[0], value)) return null
+    if (!has('properties', value[props[0]])) return null
+
+    const object = value[props[0]].properties;
+
+    // We check if we have walked to the last property
+    // to which we can then provide properties, if we haven't
+    // we continuall walk the values
+    return props.length > 1
+      ? object && walk(props.slice(1), object)
+      : object ? Object.entries(object).map(ProvideProps as any) : null;
+
+  }(props.slice(1), liquid.shopify.objects[props[0]].properties));
 }
 
 
