@@ -170,12 +170,58 @@ export class WorkspaceSettings extends OutputChannel {
   public getWorkspace () {
 
     const liquid = workspace.getConfiguration('liquid');
+    const engine = liquid.get<Workspace.Engine>('engine');
+    const completions = liquid.get<Workspace.Completions>('completions');
     const target = liquid.get<Workspace.Target>('settings.target');
     const format = liquid.get<Workspace.Format>('format');
     const baseUrl = liquid.get<string>('config.baseUrl');
 
     // No configuration defined for the extension
-    if (isNil(target) && isNil(format) && isNil(baseUrl)) return Setting.WorkspaceUndefined;
+    if (
+      isNil(target) &&
+      isNil(format) &&
+      isNil(baseUrl) &&
+      isNil(engine) &&
+      isNil(completions)
+    ) return Setting.WorkspaceUndefined;
+
+    if (u.isString(engine) && this.engine !== engine) this.engine = engine
+
+    if (u.isObject(completions)) {
+
+      if (has('tags', completions)) {
+        this.completions.tags = completions.tags
+        if (completions.tags) {
+          this.info('Completions are enabled for: tags')
+        } else {
+          this.info('Completions are disabled for: tags')
+        }
+      }
+
+      if (has('filters', completions)) {
+        this.completions.filters = completions.filters
+        if (completions.filters) {
+          this.info('Completions are enabled for: filters')
+        } else {
+          this.info('Completions are disabled for: filters')
+        }
+      }
+
+      if (has('objects', completions)) {
+        if (this.engine === 'shopify') {
+          this.completions.objects = completions.objects
+          if (completions.objects) {
+            this.info('Completions are enabled for: objects')
+          } else {
+            this.info('Completions are disabled for: object')
+          }
+        } else {
+          if (completions.objects) {
+            this.warn('Completion for objects will not work in Liquid Standard')
+          }
+        }
+      }
+    }
 
     if (u.isString(baseUrl)) {
       const newRoot = join(this.rootPath, baseUrl);
