@@ -785,6 +785,7 @@
       "extension": "./src/extension.ts"
     },
     "noExternal": [
+      "@liquify/liquid-language-specs",
       "@liquify/prettify",
       "parse-json",
       "strip-json-comments",
