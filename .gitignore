@@ -2,10 +2,10 @@ node_modules
 .vscode-test/
 yarn.lock
 test/components/*.html
-.vscode/settings.json
 versions
 docs
 dist
+example
 
 ### OSX ###
 # General

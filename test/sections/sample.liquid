@@ -11,10 +11,41 @@
 </div>
 
 
+<div  class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}" data-carousel-desktop-value="1"
+  data-carousel-draggable-value="{{ section.settings.draggable }}" data-carousel-duration-value="{{ section.settings.duration }}"
+   {%- if condition -%}
+  data-carousel-hydrate-value="true"
+
+
+                               data-carousel-id-value="{{ section.id | base64_encode }}"
+  {%- else -%}
+  data-carousel-interval-value="{{ section.settings.interval }}" {% endif %}
+  data-carousel-loop-value="{{ section.settings.loop }}" data-carousel-mobile-value="1"
+  data-carousel-tablet-value="1" data-controller="carousel">
+
+  {%- if section.settings.buttons -%}
+    <div class="previous d-flex ai-center">
+      <button aria-label="Previous" data-action="click->carousel#prev"
+        type="button">
+        <icon name="chevron-left" />
+      </button>
+    </div>
+    <div
+
+class="next d-flex ai-center">
+      <button
+        aria-label="Next"  data-action="click->carousel#next"
+        type="button">  <icon name="chevron-right" />
+      </button>
+    </div>
+  {%- endif -%}
+
+</div>
+
+
 {% capture foo %}
 
-  {% for %}
-  {% endfor %}
+
 {% endcapture %}
 
 
@@ -58,16 +89,253 @@
 
 
 <!-- TEST: Shopify Schema Tag Block -->
+<div
+  class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}" data-carousel-desktop-value="1"
+  data-carousel-draggable-value="{{ section.settings.draggable }}" data-carousel-duration-value="{{ section.settings.duration }}"
+  data-carousel-hydrate-value="true"  data-carousel-id-value="{{ section.id | base64_encode }}"
+  data-carousel-interval-value="{{ section.settings.interval }}"
+  data-carousel-loop-value="{{ section.settings.loop }}" data-carousel-mobile-value="1"
+  data-carousel-tablet-value="1" data-controller="carousel">
+
+  {%- if section.settings.buttons -%}
+    <div class="previous d-flex ai-center">
+      <button aria-label="Previous" data-action="click->carousel#prev"
+        type="button">
+        <icon name="chevron-left" />
+      </button>
+    </div>
+    <div class="next d-flex ai-center">
+      <button
+        aria-label="Next"  data-action="click->carousel#next"
+        type="button">  <icon name="chevron-right" />
+      </button>
+    </div>
+  {%- endif -%}
+</div>
+
+{% comment %}
+
+The JSON in this emebedded code region will be formatted.
+Press: cmd + s
+
+{% endcomment %}
 {% schema %}
+{
+"name": "Collection list",
+"tag": "section",
+"class": "collection-list",
+"max_blocks": 4,
+"settings": [
+{
+"type": "header",
+"content": "Style",
+"info": "Customize a block list of collections"
+},
+
+
+{
+"type": "range",
+"id": "gutter",
+"label": "Gutter",
+"min": 0,
+"max": 5,
+"step": 1,
+"default": 2
+},
+{
+"type": "range",
+"id": "overlay",
+"label": "Overlay",
+"min": 0,
+"max": 1,
+"step": 0.1,
+"default": 0,
+"info": "Use an overlay to better distinguish text"
+},
+
+
+{
+"type": "select",
+"id": "align",
+"label": "Align",
+"default": "jc-center ai-end",
+"options": [
   {
-    "name": "string",
-    "blocks": "",
-    "class": "$1",
-    "tag": $1,
-    "defaults": [$1],
-    "locales": {
-      $1
+    "value": "jc-start ai-start",
+    "label": "Top Left"
+  },
+  {
+    "value": "jc-center ai-start",
+    "label": "Top Center"
+  },
+  {
+    "value": "jc-end ai-start",
+    "label": "Top Right"
+  },
+  {
+    "value": "jc-start ai-center",
+    "label": "Middle Left"
+  },
+  {
+    "value": "jc-center ai-center",
+    "label": "Middle Center"
+  },
+  {
+    "value": "jc-end ai-center",
+    "label": "Middle Right"
+  },
+  {
+    "value": "jc-start ai-end",
+    "label": "Bottom Left"
+  },
+  {
+    "value": "jc-center ai-end",
+    "label": "Bottom Center"
+  },
+  {
+    "value": "jc-end ai-end",
+    "label": "Bottom Right"
+  }
+]
+},
+{
+"type": "header",
+                           "content": "Caption",
+"info": "Customize the text caption to be displayed on each collection image block"
+},
+{
+"type": "radio",
+"id": "type",
+"label": "Text Type",
+"default": "text-normal",
+"options": [
+  {
+                        "value": "text-normal",
+    "label": "Normal"
+  },
+  {
+    "value": "text-button",
+                               "label": "Button"
+  }
+]
+},
+{
+"type": "range",
+"id": "text_size",
+"label": "Text Size",
+"min": 1,
+"max": 6,
+"step": 1,
+"default": 3
+},
+{
+"type": "color",
+"label": "Text Colour",
+"id": "text_color",
+"default": "#ffffff"
+},
+{
+"type": "color",
+"label": "Button Colour",
+"id": "button_color",
+"info": "Only applicable when Text Type is \"Button\", otherwise the preset is ignored.",
+"default": "#111111"
+}
+],
+"blocks": [
+{
+"type": "collection_gender",
+"name": {
+  "en": "Collection Gender"
+},
+"settings": [
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Title"
+  },
+  {
+    "type": "collection",
+    "id": "url_men",
+    "label": "URL"
+  },
+  {
+    "type": "collection",
+    "id": "url_women",
+    "label": "URL"
+  },
+  {
+    "type": "image_picker",
+    "id": "image",
+    "label": "Image"
+  }
+]
+},
+{
+"type": "collection_links",
+"name": {
+  "en": "Collection Item"
+},
+"settings": [
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Title"
+  },
+  {
+    "id": "collection",
+    "type": "collection",
+    "label": {
+      "en": "Collection",
+      "de": "Kategorie",
+      "fr": "Collection"
+    }
+  },
+  {
+    "type": "checkbox",
+    "id": "gender_popup",
+    "default": false,
+    "label": "Gender Popup",
+    "info": "Should a gender popup overlay be applied onClick?"
+  },
+  {
+    "type": "image_picker",
+    "id": "image",
+    "label": "Image"
+  }
+]
+}
+],
+"presets": [
+{
+"name": "Collection List",
+"category": "Collection",
+"settings": {
+  "align": "jc-center ai-end"
+},
+"blocks": [
+  {
+    "type": "collection_links",
+    "settings": {
+      "title": "Collection Name"
+    }
+  },
+  {
+    "type": "collection_links",
+    "settings": {
+      "title": "Collection Name"
+    }
+  },
+  {
+    "type": "collection_links",
+    "settings": {
+      "title": "Collection Name"
     }
   }
+]
+}
+]
+}
 {% endschema %}
+
 
