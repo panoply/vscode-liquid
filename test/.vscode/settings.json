@@ -5,9 +5,9 @@
   // "editor.bracketPairColorization.enabled": false
   // },
   "liquid.format.enable": true,
-  "liquid.completions.tags": true,
-  "liquid.completions.filters": true,
-  "liquid.completions.objects": true,
+  "liquid.completion.tags": true,
+  "liquid.completion.filters": true,
+  "liquid.completion.objects": true,
   "liquid.format.ignore": ["**/ignore.liquid"],
   "json.validate.enable": false,
 
