@@ -1,4 +1,4 @@
-import { q, liquid, Object as IObject,  Engine, Engines } from '@liquify/liquid-language-specs';
+import { q, liquid, Engine, Engines } from '@liquify/liquid-language-specs';
 import { Char, Token, Words } from 'parse/enums';
 import {
   getFilterCompletions,
@@ -9,8 +9,10 @@ import {
   isEmptyObject,
   isEmptyTag,
   getObjectKind,
-  prevWord
+  prevWord,
+  parseObject
 } from 'parse/tokens';
+import { Workspace } from 'types';
 import {
   CompletionItem,
   CompletionItemProvider,
@@ -38,89 +40,100 @@ import {
  */
 export class CompletionProvider implements CompletionItemProvider<CompletionItem> {
 
-  constructor(engine: Engines) {
+  constructor(engine: Engines, enable: Workspace.Completions) {
+
+    for (const active in enable) this.enable[active] = enable[active]
+
 
     if (engine === 'shopify') {
       q.setEngine(Engine.shopify)
-      this.engine = engine === 'shopify' ? Engine.shopify : Engine.standard
+      this.engine = engine === 'shopify'
+        ? Engine.shopify
+        : Engine.standard
     }
 
+    if (this.enable.tags) {
+      this.tags = Object.entries(liquid.shopify.tags).map(getTagCompletions);
+    }
 
-    this.tags = Object.entries(liquid.shopify.tags).map(getTagCompletions);
-    this.filters = Object.entries(liquid.shopify.filters).map(getFilterCompletions);
+    if (this.enable.filters) {
+      this.filters = Object.entries(liquid.shopify.filters).map(getFilterCompletions);
+    }
 
     if (this.engine === Engine.shopify) {
       this.objects = Object.entries(liquid.shopify.objects).map(getObjectCompletions)
       this.common = getObjectKind(this.objects, [ CompletionItemKind.Module ])
-      this.arrays = getObjectKind(this.objects, [ CompletionItemKind.Field ])
+    } else {
+      this.enable.objects = false
     }
+  }
+
+  public update(enable: Workspace.Completions) {
+    for (const active in enable) {
+      this.enable[active] = enable[active]
+    }
+  }
+
+  private enable: Workspace.Completions = {
+    tags: true,
+    filters: true,
+    objects: true
   }
 
   /**
    * The variation engine
    */
   private engine: Engine;
+
+  /**
+   * An additional text edit to be passed to the resolver
+   */
   private textEdit: TextEdit[] = [];
-  private padding: Position
-  private delimeter: boolean
 
   /**
    * Tag Completions
    */
-  private tags = Object
-    .entries(liquid.shopify.tags)
-    .map(getFilterCompletions);
+  private tags:  CompletionItem[]
 
   /**
    * Filter Completions
    */
-  private filters = Object
-    .entries(liquid.shopify.filters)
-    .map(getFilterCompletions)
+  private filters: CompletionItem[]
 
   /**
    * Object Completions
    */
-  private objects: CompletionItem[] = []
+  private objects: CompletionItem[]
 
   /**
    * Common Objects Completions
    */
-  private common: CompletionItem[] = []
+  private common: CompletionItem[]
 
   /**
-   * Common Objects Completions
+   * Trigger Characters
    */
-  private arrays: CompletionItem[] = []
-
   public triggers = [
     '%',
     '|',
     ':',
+    '.',
     ' '
   ];
 
+
   resolveCompletionItem(item: CompletionItem) {
 
-    if (this.padding) item.label = item.label + ' '
-
-    if (this.delimeter) {
-      item.insertText = '{{ ' + item.label + ' }}'
-    }
-
-    if (this.textEdit) {
-      item.additionalTextEdits = this.textEdit;
-    }
+    if (this.textEdit) item.additionalTextEdits = this.textEdit;
 
     return item;
 
   }
 
-  provideCompletionItems (document: TextDocument, position: Position, _token: CancellationToken, {
+  provideCompletionItems (document: TextDocument, position: Position, token: CancellationToken, {
     triggerCharacter,
     triggerKind
   }) {
-
 
     const trigger = CompletionTriggerKind.TriggerCharacter === triggerKind
       ? triggerCharacter.charCodeAt(0)
@@ -129,36 +142,35 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
     const content = document.getText();
     const offset = document.offsetAt(position);
 
-    q.reset()
-
-    this.padding = null
-    this.delimeter = null
     this.textEdit = null
 
-
     if (trigger === Char.PER) { // %
+      if(!this.enable.tags) return null
       const character = position.character - (trigger === ' ' ? 3 : 1);
       this.textEdit = [ TextEdit.insert(new Position(position.line, character), '{') ];
       return this.tags;
     }
 
-
-
     const object = parseToken(Token.Object, content, offset)
 
     if (object.within) {
 
-      if (isEmptyObject(object.text)) return this.objects
+      if (isEmptyObject(object.text) && this.enable.objects) return this.objects
 
-      if (q.setObject(object.tagName) && q.isAllowed('filters')) {
-        if (prevChar(object.text, object.offset, [Char.PIP])) {
-          return this.filters
-        }
+      if (trigger === Char.PIP || prevChar(object.text, object.offset, [Char.PIP])) {
+        return this.enable.filters ? this.filters : null
       }
+
 
       if (trigger === Char.COL || prevChar(object.text, object.offset, [ Char.COL ])) {
-        return this.common
+        return this.enable.objects ? this.common : null
       }
+
+      if (trigger === Char.DOT && this.enable.objects) {
+        return parseObject(object.text, object.offset)
+      }
+
+      return null
 
     }
 
@@ -167,33 +179,32 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
 
     if (tag.within) {
 
+      if (isEmptyTag(object.text) && this.enable.tags) return this.tags
 
-      if (isEmptyTag(object.text)) return this.tags
-
-      if (prevWord(tag.text, tag.offset, Words.IN)) {
-        return this.arrays
-      }
-
-      if (prevWord(tag.text, tag.offset, Words.AND) || Words.OR) {
+      if (this.enable.objects && prevWord(tag.text, tag.offset, [
+        Words.AND,
+        Words.IN,
+        Words.OR,
+        Words.CONTAINS
+      ])) {
         return this.common
       }
 
       // Proceed accordingly, else cancel the completion
       if ((trigger === Char.PIP || prevChar(tag.text, tag.offset, [ Char.PIP ]))) {
-        return this.filters;
+        return this.enable.filters ? this.filters : null
       }
 
       if (prevChar(tag.text, tag.offset, [ Char.COL, Char.EQL, Char.LAN, Char.RAN])) {
-        return this.common
+         return this.enable.objects ? this.common : null
       }
 
+      if (trigger === Char.DOT  && this.enable.objects) {
+        return parseObject(tag.text, tag.offset)
+      }
 
+      return null
     }
-
-
-
-   // this.delimeter = true
-   // return this.objects;
 
   }
 
