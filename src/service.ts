@@ -5,13 +5,11 @@ import {
   languages,
   Range,
   TextDocument,
-  TextDocumentChangeEvent,
   TextEdit,
   TextEditor,
   window,
   workspace
 } from 'vscode';
-import { Engine, q } from '@liquify/liquid-language-specs';
 import prettify from '@liquify/prettify';
 import { Config, LanguageIds, Setting } from 'types';
 import { CommandPalette } from 'providers/CommandPalette';
@@ -20,6 +18,8 @@ import * as u from 'utils';
 import { CompletionProvider } from 'providers/CompletionProvider';
 
 export class VSCodeLiquid extends CommandPalette {
+
+  private completion: CompletionProvider
 
   /**
    * Restart Extension
@@ -63,7 +63,8 @@ export class VSCodeLiquid extends CommandPalette {
   public async onActiveEditor (subscriptions: { dispose(): void; }[]) {
 
     const config = this.getWorkspace();
-    const completions = new CompletionProvider('shopify');
+
+    this.completion = new CompletionProvider('shopify', this.completions);
 
     // Using deprecated settings
     if (u.hasDeprecatedSettings()) {
@@ -107,16 +108,10 @@ export class VSCodeLiquid extends CommandPalette {
       commands.registerCommand('liquid.restartExtension', this.restart(subscriptions)),
       languages.registerCompletionItemProvider(
         this.selector.liquid,
-        completions,
-        ...completions.triggers
+        this.completion,
+        ...this.completion.triggers
       )
     );
-
-    workspace.onDidChangeTextDocument(
-      this.onDidEditTextDocument,
-      this,
-      subscriptions
-    )
 
     workspace.onDidChangeConfiguration(
       this.onConfigChange,
@@ -141,18 +136,6 @@ export class VSCodeLiquid extends CommandPalette {
     this.isReady = true;
 
   };
-
-  public onDidEditTextDocument({ contentChanges, document }: TextDocumentChangeEvent) {
-
-    if (contentChanges.length > 1) return
-
-
-
-    //console.log(contentChanges)
-
-
-
-  }
 
   /**
    * onIgnoreFile
@@ -300,6 +283,7 @@ export class VSCodeLiquid extends CommandPalette {
     if (config.affectsConfiguration('liquid')) {
 
       this.getSettings();
+      this.completion.update(this.completions)
 
       if (config.affectsConfiguration('liquid.format')) {
 
