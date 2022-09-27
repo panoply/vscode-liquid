@@ -64,7 +64,7 @@ export class VSCodeLiquid extends CommandPalette {
 
     const config = this.getWorkspace();
 
-    this.completion = new CompletionProvider('shopify', this.completions);
+    this.completion = new CompletionProvider('shopify', this.canComplete);
 
     // Using deprecated settings
     if (u.hasDeprecatedSettings()) {
@@ -283,7 +283,7 @@ export class VSCodeLiquid extends CommandPalette {
     if (config.affectsConfiguration('liquid')) {
 
       this.getSettings();
-      this.completion.update(this.completions)
+      this.completion.update(this.canComplete)
 
       if (config.affectsConfiguration('liquid.format')) {
 

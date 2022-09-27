@@ -330,7 +330,7 @@ export namespace Workspace {
    *
    * The accepted options for completions
    */
-  export interface Completions {
+  export interface Completion {
     /**
      * Whether or not tag completions are enabled
      *

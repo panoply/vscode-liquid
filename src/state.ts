@@ -44,7 +44,7 @@ export class State {
    *
    * @default 'shopify'
    */
-  completions: {
+  canComplete: {
     tags: boolean;
     filters: boolean;
     objects: boolean;

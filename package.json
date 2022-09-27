@@ -341,17 +341,17 @@
             "shopify"
           ]
         },
-        "liquid.completions.tags": {
+        "liquid.completion.tags": {
           "type": "boolean",
           "default": true,
           "markdownDescription": "Whether or not to enable Liquid tag completions. When enabled, typing `%` will provide all tag completions."
         },
-        "liquid.completions.objects": {
+        "liquid.completion.objects": {
           "type": "boolean",
           "default": true,
-          "markdownDescription": "Whether or not to enable Liquid object completions. This option requires the Liquid `engine` to be set to `shopify` and is currently experimental. When enabled object completions will be invoked within tokens and tags."
+          "markdownDescription": "Whether or not to enable Liquid object completions. This option requires the Liquid `engine` to be set to `shopify`. When enabled object completions will be invoked within tokens and tags."
         },
-        "liquid.completions.filters": {
+        "liquid.completion.filters": {
           "type": "boolean",
           "default": true,
           "markdownDescription": "Whether or not to enable Liquid filter completions. When enabled, typing `|` will provide all filter completions. "

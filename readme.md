@@ -142,8 +142,8 @@ By default, it is assumed you are using vscode workspace/user settings.
   // Whether or not to enable tag completions
   "liquid.completion.tags": true,
 
-  // Whether or not to enable object completions (disabled by default as its still experimental)
-  "liquid.completion.objects": false,
+  // Whether or not to enable object completions
+  "liquid.completion.objects": true,
 
   // Whether or not to enable filter completions
   "liquid.completion.filters": true,

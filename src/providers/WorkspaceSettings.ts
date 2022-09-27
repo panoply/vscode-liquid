@@ -171,7 +171,7 @@ export class WorkspaceSettings extends OutputChannel {
 
     const liquid = workspace.getConfiguration('liquid');
     const engine = liquid.get<Workspace.Engine>('engine');
-    const completions = liquid.get<Workspace.Completions>('completions');
+    const completions = liquid.get<Workspace.Completion>('completion');
     const target = liquid.get<Workspace.Target>('settings.target');
     const format = liquid.get<Workspace.Format>('format');
     const baseUrl = liquid.get<string>('config.baseUrl');
@@ -190,7 +190,7 @@ export class WorkspaceSettings extends OutputChannel {
     if (u.isObject(completions)) {
 
       if (has('tags', completions)) {
-        this.completions.tags = completions.tags
+        this.canComplete.tags = completions.tags
         if (completions.tags) {
           this.info('Completions are enabled for: tags')
         } else {
@@ -199,7 +199,7 @@ export class WorkspaceSettings extends OutputChannel {
       }
 
       if (has('filters', completions)) {
-        this.completions.filters = completions.filters
+        this.canComplete.filters = completions.filters
         if (completions.filters) {
           this.info('Completions are enabled for: filters')
         } else {
@@ -209,7 +209,7 @@ export class WorkspaceSettings extends OutputChannel {
 
       if (has('objects', completions)) {
         if (this.engine === 'shopify') {
-          this.completions.objects = completions.objects
+          this.canComplete.objects = completions.objects
           if (completions.objects) {
             this.info('Completions are enabled for: objects')
           } else {

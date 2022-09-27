@@ -40,7 +40,7 @@ import {
  */
 export class CompletionProvider implements CompletionItemProvider<CompletionItem> {
 
-  constructor(engine: Engines, enable: Workspace.Completions) {
+  constructor(engine: Engines, enable: Workspace.Completion) {
 
     for (const active in enable) this.enable[active] = enable[active]
 
@@ -68,13 +68,13 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
     }
   }
 
-  public update(enable: Workspace.Completions) {
+  public update(enable: Workspace.Completion) {
     for (const active in enable) {
       this.enable[active] = enable[active]
     }
   }
 
-  private enable: Workspace.Completions = {
+  private enable: Workspace.Completion = {
     tags: true,
     filters: true,
     objects: true
