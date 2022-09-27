@@ -5,8 +5,11 @@
   // "editor.bracketPairColorization.enabled": false
   // },
   "liquid.format.enable": true,
-  "json.validate.enable": false,
+  "liquid.completions.tags": true,
+  "liquid.completions.filters": true,
+  "liquid.completions.objects": true,
   "liquid.format.ignore": ["**/ignore.liquid"],
+  "json.validate.enable": false,
 
   // "html.validate.scripts": false,
   // "html.validate.styles": false
