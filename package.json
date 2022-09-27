@@ -341,6 +341,21 @@
             "shopify"
           ]
         },
+        "liquid.completions.tags": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Whether or not to enable Liquid tag completions. When enabled, typing `%` will provide all tag completions."
+        },
+        "liquid.completions.objects": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Whether or not to enable Liquid object completions. This option requires the Liquid `engine` to be set to `shopify` and is currently experimental. When enabled object completions will be invoked within tokens and tags."
+        },
+        "liquid.completions.filters": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Whether or not to enable Liquid filter completions. When enabled, typing `|` will provide all filter completions. "
+        },
         "liquid.config.baseUrl": {
           "type": "string",
           "markdownDescription": "The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving config files. The option is will only work in projects that use `.liquidrc` files or define rules on a package.json `prettify` field"
