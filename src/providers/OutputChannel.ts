@@ -72,7 +72,7 @@ export class OutputChannel extends StatusLanguageItem {
    */
   public error (message: string, context?: string[] | string) {
 
-    this.status.error();
+    if (this.deprecatedConfig === false) this.status.error();
 
     if (u.isUndefined(context)) {
 
