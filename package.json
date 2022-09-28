@@ -135,6 +135,12 @@
         "title": "Generate .liquidrc (recommended)",
         "icon": "$(file-add)",
         "category": "Liquid"
+      },
+      {
+        "command": "liquid.releaseNotes",
+        "title": "Release Notes",
+        "icon": "$(file-add)",
+        "category": "Liquid"
       }
     ],
     "languages": [
@@ -289,7 +295,8 @@
     "configurationDefaults": {
       "[liquid]": {
         "editor.bracketPairColorization.enabled": false,
-        "editor.defaultFormatter": "sissel.shopify-liquid"
+        "editor.defaultFormatter": "sissel.shopify-liquid",
+        "editor.formatOnSave": true
       },
       "[liquid-css]": {
         "editor.bracketPairColorization.enabled": false,
@@ -723,7 +730,7 @@
             "arrayFormat": {
               "type": "string",
               "default": "default",
-              "description": "Determines if all array indexes should be indented, never indented, or left to the default.",
+              "markdownDescription": "The `arrayFormat` rule controls how arrays on objects are formatted. This rules will determines if all array indexes should be indented, never indented, or left to the default.",
               "enum": [
                 "default",
                 "indent",
@@ -733,17 +740,17 @@
             "braceAllman": {
               "type": "boolean",
               "default": false,
-              "description": "Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. (Allman style indentation)"
+              "markdownDescription": "Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. (Allman style indentation)\n#### Disabled\n\n```json\n[\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" }\n]\n```\n#### Enabled\n\n```json\n[\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  }\n]\n```"
             },
             "bracePadding": {
               "type": "boolean",
               "default": false,
-              "description": "If true an empty line will be inserted after opening curly braces and before closing curly braces"
+              "markdownDescription": "If true an empty line will be inserted after opening curly braces and before closing curly braces"
             },
             "braceStyle": {
               "type": "string",
               "default": "none",
-              "description": "Emulates JSBeautify's brace_style option",
+              "markdownDescription": "Emulates JSBeautify's brace_style option",
               "oneOf": [
                 "collapse",
                 "collapse-preserve-inline",
@@ -751,22 +758,11 @@
                 "none"
               ]
             },
-            "formatArray": {
-              "type": "string",
-              "default": "default",
-              "title": "Formatting Arrays",
-              "description": "Determines if all array indexes should be indented, never indented, or left to the default.",
-              "enum": [
-                "default",
-                "indent",
-                "inline"
-              ]
-            },
             "objectIndent": {
               "type": "string",
               "default": "default",
               "title": "Formatting Objects",
-              "description": "Determines if all object keys should be indented, never indented, or left to the default",
+              "markdownDescription": "Determines if all object keys should be indented, never indented, or left to the default",
               "enum": [
                 "default",
                 "indent",
