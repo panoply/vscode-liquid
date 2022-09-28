@@ -183,8 +183,7 @@
       "\t\"placeholder\": \"${1:placeholder}\"",
       "}"
     ],
-    "scope": "liquid","description": "schema: number
-    "
+    "description": "schema: number"
   },
   "schema: range": {
     "scope": "liquid",
