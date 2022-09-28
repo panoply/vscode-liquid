@@ -4,7 +4,7 @@ specifiers:
   '@liquify/eslint-config': ^1.1.0
   '@liquify/liquid-language-specs': ^0.1.4
   '@liquify/prettier-config': ^1.0.1
-  '@liquify/prettify': 0.1.4-beta.1
+  '@liquify/prettify': 0.1.6-beta.1
   '@types/vscode': ^1.71.0
   anymatch: ^3.1.2
   eslint: ^8.24.0
@@ -19,7 +19,7 @@ specifiers:
 
 dependencies:
   '@liquify/liquid-language-specs': 0.1.4
-  '@liquify/prettify': 0.1.4-beta.1
+  '@liquify/prettify': 0.1.6-beta.1
   anymatch: 3.1.2
   parse-json: 6.0.2
   rambdax: 8.1.0
@@ -151,8 +151,8 @@ packages:
       prettier: 2.7.1
     dev: true
 
-  /@liquify/prettify/0.1.4-beta.1:
-    resolution: {integrity: sha512-blRaTPj8+ftGIdZX++m1ehlwEjtatn14p8V6dPAon1IDaLMmEyC3dBO1MlTWY8scwadvU/1ypEYBypHKazt01A==}
+  /@liquify/prettify/0.1.6-beta.1:
+    resolution: {integrity: sha512-8a5kKXgYBIXYxGb4blUUvdFgwylJkgqbCkbpXeobrfoc8JjfFvMoT2d1bDn4YbG9fFDHg6wy0JTj7FnYHNY+2w==}
     engines: {node: '>=12', pnpm: '>=4'}
     dev: false
 
