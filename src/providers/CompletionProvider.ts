@@ -24,8 +24,6 @@ import {
   CompletionItemKind
 } from 'vscode';
 
-
-
 /**
  * Completion Provider
  *
@@ -40,16 +38,15 @@ import {
  */
 export class CompletionProvider implements CompletionItemProvider<CompletionItem> {
 
-  constructor(engine: Engines, enable: Workspace.Completion) {
+  constructor (engine: Engines, enable: Workspace.Completion) {
 
-    for (const active in enable) this.enable[active] = enable[active]
-
+    for (const active in enable) this.enable[active] = enable[active];
 
     if (engine === 'shopify') {
-      q.setEngine(Engine.shopify)
+      q.setEngine(Engine.shopify);
       this.engine = engine === 'shopify'
         ? Engine.shopify
-        : Engine.standard
+        : Engine.standard;
     }
 
     if (this.enable.tags) {
@@ -61,16 +58,16 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
     }
 
     if (this.engine === Engine.shopify) {
-      this.objects = Object.entries(liquid.shopify.objects).map(getObjectCompletions)
-      this.common = getObjectKind(this.objects, [ CompletionItemKind.Module ])
+      this.objects = Object.entries(liquid.shopify.objects).map(getObjectCompletions);
+      this.common = getObjectKind(this.objects, [ CompletionItemKind.Module ]);
     } else {
-      this.enable.objects = false
+      this.enable.objects = false;
     }
   }
 
-  public update(enable: Workspace.Completion) {
+  public update (enable: Workspace.Completion) {
     for (const active in enable) {
-      this.enable[active] = enable[active]
+      this.enable[active] = enable[active];
     }
   }
 
@@ -78,7 +75,7 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
     tags: true,
     filters: true,
     objects: true
-  }
+  };
 
   /**
    * The variation engine
@@ -93,22 +90,22 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
   /**
    * Tag Completions
    */
-  private tags:  CompletionItem[]
+  private tags: CompletionItem[];
 
   /**
    * Filter Completions
    */
-  private filters: CompletionItem[]
+  private filters: CompletionItem[];
 
   /**
    * Object Completions
    */
-  private objects: CompletionItem[]
+  private objects: CompletionItem[];
 
   /**
    * Common Objects Completions
    */
-  private common: CompletionItem[]
+  private common: CompletionItem[];
 
   /**
    * Trigger Characters
@@ -121,8 +118,7 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
     ' '
   ];
 
-
-  resolveCompletionItem(item: CompletionItem) {
+  resolveCompletionItem (item: CompletionItem) {
 
     if (this.textEdit) item.additionalTextEdits = this.textEdit;
 
@@ -142,44 +138,42 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
     const content = document.getText();
     const offset = document.offsetAt(position);
 
-    this.textEdit = null
+    this.textEdit = null;
 
     if (trigger === Char.PER) { // %
-      if(!this.enable.tags) return null
+      if (!this.enable.tags) return null;
       const character = position.character - (trigger === ' ' ? 3 : 1);
       this.textEdit = [ TextEdit.insert(new Position(position.line, character), '{') ];
       return this.tags;
     }
 
-    const object = parseToken(Token.Object, content, offset)
+    const object = parseToken(Token.Object, content, offset);
 
     if (object.within) {
 
-      if (isEmptyObject(object.text) && this.enable.objects) return this.objects
+      if (isEmptyObject(object.text) && this.enable.objects) return this.objects;
 
-      if (trigger === Char.PIP || prevChar(object.text, object.offset, [Char.PIP])) {
-        return this.enable.filters ? this.filters : null
+      if (trigger === Char.PIP || prevChar(object.text, object.offset, [ Char.PIP ])) {
+        return this.enable.filters ? this.filters : null;
       }
 
-
       if (trigger === Char.COL || prevChar(object.text, object.offset, [ Char.COL ])) {
-        return this.enable.objects ? this.common : null
+        return this.enable.objects ? this.common : null;
       }
 
       if (trigger === Char.DOT && this.enable.objects) {
-        return parseObject(object.text, object.offset)
+        return parseObject(object.text, object.offset);
       }
 
-      return null
+      return null;
 
     }
 
-    const tag = parseToken(Token.Tag, content, offset)
-
+    const tag = parseToken(Token.Tag, content, offset);
 
     if (tag.within) {
 
-      if (isEmptyTag(object.text) && this.enable.tags) return this.tags
+      if (isEmptyTag(object.text) && this.enable.tags) return this.tags;
 
       if (this.enable.objects && prevWord(tag.text, tag.offset, [
         Words.AND,
@@ -187,23 +181,23 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
         Words.OR,
         Words.CONTAINS
       ])) {
-        return this.common
+        return this.common;
       }
 
       // Proceed accordingly, else cancel the completion
       if ((trigger === Char.PIP || prevChar(tag.text, tag.offset, [ Char.PIP ]))) {
-        return this.enable.filters ? this.filters : null
+        return this.enable.filters ? this.filters : null;
       }
 
-      if (prevChar(tag.text, tag.offset, [ Char.COL, Char.EQL, Char.LAN, Char.RAN])) {
-         return this.enable.objects ? this.common : null
+      if (prevChar(tag.text, tag.offset, [ Char.COL, Char.EQL, Char.LAN, Char.RAN ])) {
+        return this.enable.objects ? this.common : null;
       }
 
-      if (trigger === Char.DOT  && this.enable.objects) {
-        return parseObject(tag.text, tag.offset)
+      if (trigger === Char.DOT && this.enable.objects) {
+        return parseObject(tag.text, tag.offset);
       }
 
-      return null
+      return null;
     }
 
   }

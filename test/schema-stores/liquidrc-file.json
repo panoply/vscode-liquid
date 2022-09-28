@@ -1,6 +1,67 @@
 {
   "$schema": "../../schema/liquidrc.json",
+  "ignore": [],
+  "wrap": 0,
+  "commentIndent": true,
+  "crlf": false,
+  "indentSize": 2,
+  "preserveComment": true,
+  "preserveLine": 2,
+  "endNewLine": true,
   "markup": {
-    "forceAttribute": false
+    "commentNewline": true,
+    "forceLeadAttribute": false,
+    "forceAttribute": false,
+    "forceIndent": false,
+    "attributeCasing": "preserve",
+    "attributeSort": false,
+    "attributeSortList": [],
+    "correct": false,
+    "delimiterSpacing": false,
+    "preserveAttributes": false,
+    "preserveText": true,
+    "quoteConvert": "none",
+    "selfCloseSpace": false
+  },
+  "json": {
+    "arrayFormat": "default",
+    "braceAllman": false,
+    "bracePadding": false,
+    "objectIndent": "default",
+    "objectSort": false
+  },
+  "style": {
+    "braceAllman": false,
+    "classPadding": false,
+    "sortProperties": false,
+    "sortSelectors": false,
+    "selectorList": false,
+    "comments": false,
+    "correct": false,
+    "noLeadZero": false,
+    "quoteConvert": "none"
+  },
+  "script": {
+    "correct": false,
+    "arrayFormat": "indent",
+    "braceAllman": false,
+    "methodChain": 3,
+    "caseSpace": true,
+    "endComma": "never",
+    "quoteConvert": "single",
+    "elseNewline": true,
+    "functionNameSpace": false,
+    "functionSpace": true,
+    "ternaryLine": true,
+    "braceNewline": false,
+    "bracePadding": true,
+    "braceStyle": "none",
+    "neverFlatten": false,
+    "noCaseIndent": true,
+    "noSemicolon": false,
+    "objectIndent": "indent",
+    "objectSort": false,
+    "vertical": false,
+    "variableList": false
   }
 }

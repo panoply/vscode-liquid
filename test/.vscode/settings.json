@@ -33,7 +33,8 @@
     "editor.defaultFormatter": "sissel.shopify-liquid"
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid"
+    "editor.defaultFormatter": "sissel.shopify-liquid",
+    "editor.formatOnSave": true
   },
   "[json]": {
     "editor.defaultFormatter": "sissel.shopify-liquid"
