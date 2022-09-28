@@ -99,6 +99,7 @@ A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template 
 Users who were upgraded to version **3.0.0** will need to align their configurations. The options defined in the **v2.3.0** `.liquidrc` file are no longer supported or valid in **v3.0.0**. File validations will inform about the changes but take a look at the release notes for a complete overview.
 
 - [Release Notes](/release-notes.md)
+- [Sample Project](https://github.com/panoply/vscode-liquid-sample)
 
 ### Continue using v2.3.0
 
@@ -119,6 +120,7 @@ Below are the available commands exposed to the vscode command palette (`cmd + s
 | Liquid: Generate .liquidrc (recommend) | _Generate a `.liquidrc` file with recommended rules_ |
 | Liquid: Open Output                    | _Open the Liquid output panel_                       |
 | Liquid: Restart Extension              | _Restarts the extension_                             |
+| Liquid: Release Notes                  | _Visit the Release notes (opens in browser)_         |
 
 # Workspace Settings
 
