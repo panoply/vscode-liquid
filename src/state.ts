@@ -2,10 +2,11 @@
 /* eslint-disable quote-props */
 
 import { ConfigurationTarget, Disposable, Extension, workspace } from 'vscode';
-import { Config, LanguageIds, PackageJSON, Selectors } from 'types';
-import { join, relative } from 'node:path';
+import { Config, LanguageIds, PackageJSON, Selectors, Workspace } from 'types';
+import { relative } from 'node:path';
 import { Tester } from 'anymatch';
 import prettify, { Options } from '@liquify/prettify';
+import { Engines } from '@liquify/liquid-language-specs';
 
 /**
  * Extension State - Localized store for the extension
@@ -30,6 +31,28 @@ export class State {
    * using the `fsPath` base location.
    */
   relative = (path: string) => relative(this.rootPath, path);
+
+  /**
+   * Deprecated Configurations
+   */
+  deprecatedConfig: boolean = false;
+  /**
+   * The  Liquid engine
+   *
+   * @default 'shopify'
+   */
+  engine: Engines = 'shopify';
+
+  /**
+   * Which completions are enabled
+   *
+   * @default 'shopify'
+   */
+  canComplete: Workspace.Completion = {
+    tags: true,
+    filters: true,
+    objects: true
+  };
 
   /**
    * The extension official identifier, ie: sissel.vscode-liquid

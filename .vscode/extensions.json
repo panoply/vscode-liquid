@@ -4,5 +4,10 @@
   "recommendations": [
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode"
+  ],
+  "unwantedRecommendations": [
+    "neilding.language-liquid",
+    "Shopify.theme-check-vscode",
+    "killalau.vscode-liquid-snippets"
   ]
 }

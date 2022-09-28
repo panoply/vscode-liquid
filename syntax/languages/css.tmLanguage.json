@@ -3,6 +3,12 @@
   "scopeName": "source.css.liquid",
   "injectionSelector": "L:source.css",
   "injections": {
+    "L:meta": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    },
     "L:string": {
       "patterns": [
         { "include": "source.liquid#tags" },

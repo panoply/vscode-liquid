@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 
+import { Engines } from '@liquify/liquid-language-specs';
 import { Options } from '@liquify/prettify';
 import { Tester } from 'anymatch';
 import { LiteralUnion, Merge } from 'type-fest';
@@ -315,6 +316,39 @@ export namespace Workspace {
    * The accepted values of the settings target
    */
   export type Target = 'workspace' | 'user';
+
+  /**
+   * `liquid.engine`
+   *
+   * The Liquid variation engine
+   */
+  export type Engine = Engines;
+
+  /**
+   * `liquid.completions.*`
+   *
+   * The accepted options for completions
+   */
+  export interface Completion {
+    /**
+     * Whether or not tag completions are enabled
+     *
+     * @default true
+     */
+    tags?: boolean;
+    /**
+     * Whether or not filter completions are enabled
+     *
+     * @default true
+     */
+    filters?: boolean;
+    /**
+     * Whether or not object completions are enabled
+     *
+     * @default true
+     */
+    objects?: boolean;
+  }
 
   /**
    * `liquid.settings.*`

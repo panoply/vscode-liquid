@@ -1,13 +1,30 @@
-const foo = "bar"
+const foo = 'bar'
 
 
-function() {
+function () {
 
 
-  const x = 100
+  const x = 100;
 
 
+  const x = function ( param ) {
 
+
+    const i = {%- if link.active -%}
+      'hello'
+    {%- else -%}
+      'world'
+    {%- endif -%};
+
+    const o = [{% for i in arr %}'{{ i }}',{% endif %}];
+
+    console.log( param['string'][20] );
+
+    window.prop()
+
+    const c = new Class()
+
+  }
 
 
 }
@@ -15,14 +32,11 @@ function() {
 
 {% if link.active -%}
 
-
   {%- assign link_class = 'link mb-2 d-block ' | append: 'active' -%}
-
 
 {%- else -%}
 
-
   {%- assign link_class = 'link mb-2 d-block' -%}
 
-
 {%- endif -%}
+

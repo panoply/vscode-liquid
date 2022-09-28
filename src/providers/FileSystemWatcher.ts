@@ -1,5 +1,5 @@
 import { basename } from 'node:path';
-import { FileSystemWatcher, Uri, workspace } from 'vscode';
+import { commands, FileSystemWatcher, Uri, workspace } from 'vscode';
 import prettify from '@liquify/prettify';
 import { Config, Setting } from 'types';
 import { isFile } from 'utils';
@@ -115,6 +115,10 @@ export class FSWatch extends FSUtils {
         prettify.options(this.prettifyRules);
         this.info('Updated Prettify beautification rules');
         this.changed = true;
+        if (this.deprecatedConfig === true) {
+          this.deprecatedConfig = false;
+          this.languageDispose();
+        }
       }
     }
 
@@ -122,9 +126,14 @@ export class FSWatch extends FSUtils {
 
   private async onDidCreate ({ fsPath }: Uri) {
 
-    if (this.isMatch(fsPath)) return null;
-
     const isPackage = isFile(fsPath, 'package.json');
+
+    if (this.liquidrcPath === null && isPackage === false) {
+      this.liquidrcPath = fsPath;
+      this.info('Created .liquidrc file, this will be used for formatting setting');
+    }
+
+    if (this.isMatch(fsPath)) return null;
 
     this.dispose();
 
@@ -136,7 +145,7 @@ export class FSWatch extends FSUtils {
 
       if (pkg === Setting.PrettifyFieldDefined) {
         prettify.options(this.prettifyRules);
-        this.info('Using "prettify" field in package.json file');
+        commands.executeCommand('liquid.restartExtension');
       }
 
     } else {
@@ -156,10 +165,16 @@ export class FSWatch extends FSUtils {
       const liquidrc = await this.getLiquidrc();
 
       if (liquidrc === Setting.LiquidrcDefined) {
+
+        if (this.deprecatedConfig === true) {
+          this.deprecatedConfig = false;
+          this.languageDispose();
+        }
+
         this.status.enable();
-        prettify.options(this.prettifyRules);
-        this.info('Updated Prettify beautification rules');
         this.changed = true;
+
+        commands.executeCommand('liquid.restartExtension');
       }
     }
 

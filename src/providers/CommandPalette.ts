@@ -1,4 +1,4 @@
-import { window, workspace } from 'vscode';
+import { env, Uri, window, workspace } from 'vscode';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import prettify from '@liquify/prettify';
@@ -27,6 +27,13 @@ export class CommandPalette extends FSWatch {
       }
     });
 
+  }
+
+  public async releaseNotes () {
+
+    return env.openExternal(
+      Uri.parse('https://github.com/panoply/vscode-liquid/releases/tag/v' + this.version)
+    );
   }
 
   private async generateLiquidrc (type: 'default' | 'recommended') {

@@ -2,6 +2,8 @@
 <html
   lang="{{ shop_locale.iso_code }}">
   <head>
+
+
     <meta
       charset="utf-8">
     <title>
@@ -17,6 +19,7 @@
         {{ shop.name | prepend: " &ndash;" }}
       {%- endunless -%}
     </title>
+
 
     {%- render "favicons" -%}
     {%- render "meta_tags" -%}
@@ -108,7 +111,7 @@
       defer
       src="{{ 'bundle.js' | asset_url }}"
       type="module">
-      window.app ();
+      window.app();
     </script>
 
     <script
@@ -134,6 +137,9 @@
 
   <body
     attr="{{ object.prop.prop['string'][10] | filter: false }}">
+
+    <h1></h1>
+
 
     <div
       id="foo"

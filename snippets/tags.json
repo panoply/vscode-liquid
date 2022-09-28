@@ -1,332 +1,238 @@
 {
-  "{% schema %}, name": {
-    "description": "Schema property: \"name\"",
-    "prefix": "schema: name",
-    "body": "\"name\": \"$1\"$0"
+  "Jekyll frontmatter": {
+    "prefix": "---",
+    "description": "Frontmatter",
+    "body": ["---", "$2", "---"]
   },
-  "{% schema %}, tag": {
-    "description": "Schema property: \"tag\"",
-    "prefix": "schema: tag",
-    "body": "\"tag\": \"${1|article,aside,div,footer,header,section|}\",${2:,}"
-  },
-  "{% schema %}, class": {
-    "description": "Schema property: \"class\"",
-    "prefix": "schema: class",
-    "body": "\"class\": \"$1\"${2:,}$0"
-  },
-  "{% schema %}, settings": {
-    "prefix": "schema: settings",
-    "description": "Schema property: \"settings\"",
-    "body": ["\"settings\": [", "\t$0", "]"]
-  },
-  "{% schema %}, max blocks": {
-    "description": "Schema property: \"max_blocks\"",
-    "prefix": "schema: max_blocks",
-    "body": "\"max_blocks\": ${1:5}${2:,}$0"
-  },
-  "{% schema %}, type": {
-    "description": "Schema settings property: \"type\"",
-    "prefix": "schema: type",
-    "body": "\"type\": \"${2|header,paragraph,text,textarea,image_picker,radio,select,checkbox,range,color,font_picker,collection,product,blog,page,link_list,url,video_url,richtext,html,article|}\""
-  },
-  "{% schema %}, placeholder": {
-    "description": "Schema settings property: \"placeholder\"",
-    "prefix": "schema: placeholder",
-    "body": "\"placeholder\": \"$1\"${2:,}$0"
-  },
-  "{% schema %}, info": {
-    "description": "Schema settings property: \"info\"",
-    "prefix": "schema: info",
-    "body": "\"info\": \"$1\"${2:,}$0"
-  },
-  "{% schema %}, default": {
-    "description": "Schema property: \"default\"",
-    "prefix": "schema: default",
-    "body": "\"default\": \"$1\"${2:,}$0"
-  },
-  "{% schema %}, header": {
-    "description": "Schema input setting: \"header\"",
-    "prefix": "schema: header",
+  "if": {
+    "prefix": "%if",
     "body": [
-      "{",
-      "\t\"type\": \"header\",",
-      "\t\"content\": \"$1\"${2:,\n\t\"info\": \"$3\"}${4:,}",
-      "}${5:,}$0"
+      "{%${1:-} if ${2:condition} ${1:-}%}",
+      "\t$3",
+      "{%${1:-} endif ${1:-}%}"
     ]
   },
-  "{% schema %}, paragraph": {
-    "description": "Schema input setting: \"paragraph\"",
-    "prefix": "schema: paragraph",
+  "else": {
+    "prefix": "else",
+    "body": ["{%${1:-} else ${1:-}%}", "\t"]
+  },
+  "elsif": {
+    "prefix": "elsif",
+    "body": ["{%${1:-} elsif ${2:condition} ${1:-}%}", "\t"]
+  },
+  "if, elsif": {
+    "prefix": "if elsif",
     "body": [
-      "{",
-      "\t\"type\": \"paragraph\",",
-      "\t\"content\": \"$1\"",
-      "}${2:,}$0"
+      "{%${1:-} if ${2:condition} ${1:-}%}",
+      "\t$3",
+      "{%${1:-} elsif ${4:condition} ${1:-}%}",
+      "\t$5",
+      "{%${1:-} endif ${1:-}%}"
     ]
   },
-  "{% schema %}, text": {
-    "description": "Schema input setting: \"text\"",
-    "prefix": "schema: text",
+  "if, else": {
+    "prefix": "if else",
     "body": [
-      "{",
-      "\t\"type\": \"text\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"$4\"}${5:,\n\t\"info\": \"$6\"}${7:,\n\t\"placeholder\": \"$8\"}",
-      "}${9:,}$0"
+      "{%${1:-} if ${2:condition} ${1:-}%}",
+      "\t$3",
+      "{%${1:-} else ${1:-}%}",
+      "\t$4",
+      "{%${1:-} endif ${1:-}%}"
     ]
   },
-  "{% schema %}, textarea": {
-    "description": "Schema input setting: \"textarea\"",
-    "prefix": "schema: textarea",
+  "unless": {
+    "prefix": "unless",
     "body": [
-      "{",
-      "\t\"type\": \"textarea\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"$4\"}${5:,\n\t\"info\": \"$6\"}${7:,\n\t\"placeholder\": \"$8\"}",
-      "}${9:,}$0"
+      "{%${1:-} unless ${2:condition} ${1:-}%}",
+      "\t$3",
+      "{%${1:-} endunless ${1:-}%}"
     ]
   },
-  "{% schema %}, richtext": {
-    "description": "Schema input setting: \"richtext\"",
-    "prefix": "schema: richtext",
+  "case, else": {
+    "prefix": "case",
     "body": [
-      "{",
-      "\t\"type\": \"richtext\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"$4\"}${5:,\n\t\"info\": \"$6\"}",
-      "}${7:,}$0"
+      "{%${1:-} case ${2:variable} ${1:-}%}",
+      "\t{%${1:-} when ${3:condition} ${1:-}%}",
+      "\t\t$4",
+      "\t{%${1:-} else ${1:-}%}",
+      "\t\t$5",
+      "{%${1:-} endcase ${1:-}%}"
     ]
   },
-  "{% schema %}, select": {
-    "description": "Schema input setting: \"select\"",
-    "prefix": "schema: select",
+  "when": {
+    "prefix": "when",
+    "description": "Control flow tag: when",
+    "body": ["{%${1:-} when ${2:condition} ${1:-}%}", "$0"]
+  },
+  "cycle": {
+    "prefix": "cycle",
+    "description": "Iteration tag: cycle",
     "body": [
-      "{",
-      "\t\"type\": \"select\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\",",
-      "\t\"options\": [",
-      "\t\t{",
-      "\t\t\t\"value\": \"$3\",",
-      "\t\t\t\"label\": \"$4\"${5:,\n\t\t\t\"group\": \"$6\"}",
-      "\t\t}",
-      "\t]",
-      "}${7:,}$0"
+      "{%${1:-} cycle '${2:odd}', '${3:even}' ${1:-}%}"
     ]
   },
-  "{% schema %}, radio": {
-    "description": "Schema input setting: \"radio\"",
-    "prefix": "schema: radio",
+  "cycle group": {
+    "prefix": "cyclegroup",
+    "description": "Iteration tag: cycle group",
     "body": [
-      "{",
-      "\t\"type\": \"radio\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\",${3:\n\t\"default\": \"$4\",}${5:\n\t\"info\": \"$6\",}",
-      "\t\"options\": [",
-      "\t\t{",
-      "\t\t\t\"value\": \"$7\",",
-      "\t\t\t\"label\": \"$8\"",
-      "\t\t}",
-      "\t]",
-      "}${9:,}$0"
+      "{%${1:-} cycle '${2:group name}': '${3:odd}', '${4:even}' ${1:-}%}"
     ]
   },
-  "{% schema %}, option": {
-    "description": "Schema input select/radio option setting",
-    "prefix": "schema: select/radio option",
+  "for": {
+    "prefix": "for",
     "body": [
-      "{",
-      "\t\"value\": \"$1\",",
-      "\t\"label\": \"$2\"${3:,\n\t\"group\": \"$4\"}",
-      "}${5:,}$0"
+      "{%${1:-} for ${2:item} in ${3:collection} ${1:-}%}",
+      "\t$4",
+      "{%${1:-} endfor ${1:-}%}"
     ]
   },
-  "{% schema %}, checkbox": {
-    "description": "Schema input setting: \"checkbox\"",
-    "prefix": "schema: checkbox",
+  "limit": {
+    "prefix": "limit",
+    "body": ["limit: ${1:5}"]
+  },
+  "offset": {
+    "prefix": "offset",
+    "body": ["offset: ${1:0}"]
+  },
+  "reversed": {
+    "prefix": "reversed",
+    "body": ["reversed"]
+  },
+  "break": {
+    "prefix": "break",
+    "body": ["{%${1:-} break ${1:-}%}"]
+  },
+  "continue": {
+    "prefix": "continue",
+    "body": ["{%${1:-} continue ${1:-}%}"]
+  },
+  "tablerow": {
+    "prefix": "tablerow",
     "body": [
-      "{",
-      "\t\"type\": \"checkbox\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\",",
-      "\t\"default\": ${3|true,false|}",
-      "}"
+      "{%${1:-} tablerow ${2:item} in ${3:collection} cols: ${4:2} ${1:-}%}",
+      "\t$5",
+      "{%${1:-} endtablerow ${1:-}%}"
     ]
   },
-  "{% schema %}, number": {
-    "prefix": "schema: number",
+  "assign": {
+    "prefix": "% assign",
     "body": [
-      "{",
-      "\t\"type\": \"number\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${1:label}\",",
-      "\t\"default\": ${1:20},",
-      "\t\"placeholder\": \"${1:placeholder}\"",
-      "}"
-    ],
-    "description": "{% schema %}, number"
-  },
-  "{% schema %}, range": {
-    "description": "Schema input setting: \"range\"",
-    "prefix": "schema: range",
-    "body": [
-      "{",
-      "\t\"type\": \"range\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\",",
-      "\t\"unit\": \"${3:unit}\",",
-      "\t\"min\": ${4:1},",
-      "\t\"max\": ${5:10},",
-      "\t\"step\": ${6:1},",
-      "\t\"default\": ${7:1}",
-      "}${8:,}$0"
+      "{%${1:-} assign ${2:variable} = ${3:value} ${1:-}%}"
     ]
   },
-  "{% schema %}, image picker": {
-    "description": "Schema input setting: \"image_picker\"",
-    "prefix": "schema: image_picker",
+  "increment": {
+    "prefix": "increment",
+    "body": ["{%${1:-} increment ${2:variable} ${1:-}%}"]
+  },
+  "decrement": {
+    "prefix": "decrement",
+    "body": ["{%${1:-} decrement ${2:variable} ${1:-}%}"]
+  },
+  "capture": {
+    "prefix": "capture",
     "body": [
-      "{",
-      "\t\"type\": \"image_picker\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"",
-      "}${3:,}$0"
+      "{%${1:-} capture ${2:variable} ${1:-}%}",
+      "\t$3",
+      "{%${1:-} endcapture ${1:-}%}"
     ]
   },
-  "{% schema %}, link list": {
-    "description": "Schema input setting: \"link_list\"",
-    "prefix": "schema: link_list",
+  "liquid": {
+    "prefix": "liquid",
+    "body": ["{%${1:-} liquid", "\t$2", "${1:-}%}"]
+  },
+  "render": {
+    "prefix": "render",
+    "body": ["{%${1:-} render '${2:snippet}' ${1:-}%}"]
+  },
+  "include": {
+    "prefix": "include",
+    "body": ["{%${1:-} include '${2:snippet}' ${1:-}%}"]
+  },
+  "include with parameters": {
+    "prefix": "includewith",
     "body": [
-      "{",
-      "\t\"type\": \"link_list\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"$4\"}${5:,\n\t\"info\": \"$6\"}",
-      "}${7:,}$0"
+      "{%${1:-} include '${2:snippet}', ${3:variable}: ${4:value} ${1:-}%}"
     ]
   },
-  "{% schema %}, color": {
-    "description": "Schema input setting: \"color\"",
-    "prefix": "schema: color",
+  "section": {
+    "prefix": "section",
+    "body": ["{%${1:-} section '${2:section}' ${1:-}%}"]
+  },
+  "raw": {
+    "prefix": "raw",
+    "description": "Theme tag: raw",
     "body": [
-      "{",
-      "\t\"type\": \"color\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"#$4\"}${5:,\n\t\"info\": \"$6\"}",
-      "}${7:,}$0"
+      "{%${1:-} raw ${1:-}%}",
+      "\t$2",
+      "{%${1:-} endraw ${1:-}%}"
     ]
   },
-  "{% schema %}, font picker": {
-    "description": "Schema input setting: \"font_picker\"",
-    "prefix": "schema: font_picker",
+  "layout": {
+    "prefix": "layout",
+    "body": ["{%${1:-} layout '${2:layout}' ${1:-}%}"]
+  },
+  "form": {
+    "prefix": "form",
     "body": [
-      "{",
-      "\t\"type\": \"font_picker\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"#$4\"}${5:,\n\t\"info\": \"$6\"}",
-      "}${7:,}$0"
+      "{%${1:-} form '${2:product}', ${3:product} ${1:-}%}",
+      "\t$4",
+      "{%${1:-} endform ${1:-}%}"
     ]
   },
-  "{% schema %}, collection": {
-    "description": "Schema input setting: \"collection\"",
-    "prefix": "schema: collection",
+  "paginate": {
+    "prefix": "paginate",
     "body": [
-      "{",
-      "\t\"type\": \"collection\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"info\": \"$4\"}",
-      "}${5:,}$0"
+      "{%${1:-} paginate ${1:collection.products} by ${2:12} ${1:-}%}",
+      "\t{%${1:-} for ${3:product} in ${1:collection.products} ${1:-}%}",
+      "\t\t$4",
+      "\t{%${1:-} endfor ${1:-}%}",
+      "{%${1:-} endpaginate ${1:-}%}"
     ]
   },
-  "{% schema %}, product": {
-    "description": "Schema input setting: \"product\"",
-    "prefix": "schema: product",
+  "schema": {
+    "prefix": "schema",
     "body": [
+      "{%${1:-} schema ${1:-}%}",
       "{",
-      "\t\"type\": \"product\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"info\": \"$4\"}",
-      "}${5:,}$0"
+      "\t$0",
+      "}",
+      "{%${1:-} endschema ${1:-}%}"
     ]
   },
-  "{% schema %}, blog": {
-    "description": "Schema input setting: \"blog\"",
-    "prefix": "schema: blog",
+  "style": {
+    "prefix": "style",
     "body": [
-      "{",
-      "\t\"type\": \"blog\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"info\": \"$4\"}",
-      "}${5:,}$0"
+      "{%${1:-} style ${1:-}%}",
+      "\t$0",
+      "{%${1:-} endstyle ${1:-}%}"
     ]
   },
-  "{% schema %}, article": {
-    "description": "Schema input setting: \"article\"",
-    "prefix": "schema: article",
+  "stylesheet": {
+    "prefix": "stylesheet",
     "body": [
-      "{",
-      "\t\"type\": \"article\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"info\": \"$4\"}",
-      "}${5:,}$0"
+      "{%${1:-} stylesheet ${1:-}%}",
+      "\t$0",
+      "{%${1:-} endstylesheet ${1:-}%}"
     ]
   },
-  "{% schema %}, page": {
-    "description": "Schema input setting: \"page\"",
-    "prefix": "schema: page",
+  "javascript": {
+    "prefix": "javascript",
     "body": [
-      "{",
-      "\t\"type\": \"page\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"info\": \"$4\"}",
-      "}${5:,}$0"
+      "{%${1:-} javascript ${1:-}%}",
+      "\t$1",
+      "{%${1:-} endjavascript ${1:-}%}"
     ]
   },
-  "{% schema %}, url": {
-    "description": "Schema input setting: \"url\"",
-    "prefix": "schema: url",
-    "body": [
-      "{",
-      "\t\"type\": \"url\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"default\": \"$4\"}",
-      "}${5:,}$0"
-    ]
+  "comment, inline": {
+    "prefix": "#",
+    "body": ["{%${1:-} # $2 ${1:-}%}"]
   },
-  "{% schema %}, video url": {
-    "description": "Schema input setting: \"video_url\"",
-    "prefix": "schema: video_url",
+  "comment, block": {
+    "prefix": "#",
     "body": [
-      "{",
-      "\t\"type\": \"video_url\",",
-      "\t\"id\": \"$1\",",
-      "\t\"accept\": [",
-      "\t\t${2:\"youtube\"}${4:,}${3:\n\t\t\"vimeo\"}",
-      "\t],",
-      "\t\"label\": \"${5:label}\"${6:,\n\t\"default\": \"$7\"}${8:,\n\t\"info\": \"$9\"}${10:,\n\t\"placeholder\": \"$11\"}",
-      "}${12:,}$0"
-    ]
-  },
-  "{% schema %}, html": {
-    "description": "Schema input setting: \"html\"",
-    "prefix": "schema: html",
-    "body": [
-      "{",
-      "\t\"type\": \"html\",",
-      "\t\"id\": \"${1:id}\",",
-      "\t\"label\": \"${2:label}\"${3:,\n\t\"info\": \"$4\"}",
-      "}${5:,}$0"
-    ]
-  },
-  "{% schema %}, presets": {
-    "description": "Schema property: \"presets\"",
-    "prefix": "schema: presets",
-    "body": [
-      "\"presets\": [",
-      "\t{",
-      "\t\t\"category\": \"$1\",",
-      "\t\t\"name\":\"$2\"",
-      "\t}",
-      "]${4:,}$0"
+      "{%${1:-} comment ${1:-}%}",
+      "\t$0",
+      "{%${1:-} endcomment ${1:-}%}"
     ]
   }
 }

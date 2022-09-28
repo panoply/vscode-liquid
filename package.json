@@ -135,6 +135,12 @@
         "title": "Generate .liquidrc (recommended)",
         "icon": "$(file-add)",
         "category": "Liquid"
+      },
+      {
+        "command": "liquid.releaseNotes",
+        "title": "Release Notes",
+        "icon": "$(file-add)",
+        "category": "Liquid"
       }
     ],
     "languages": [
@@ -284,28 +290,28 @@
       {
         "language": "liquid",
         "path": "./snippets/tags.json"
-      },
-      {
-        "language": "liquid",
-        "path": "./snippets/tags.json"
       }
     ],
     "configurationDefaults": {
       "[liquid]": {
         "editor.bracketPairColorization.enabled": false,
-        "editor.defaultFormatter": "sissel.shopify-liquid"
+        "editor.defaultFormatter": "sissel.shopify-liquid",
+        "editor.formatOnSave": true
       },
       "[liquid-css]": {
         "editor.bracketPairColorization.enabled": false,
-        "editor.defaultFormatter": "sissel.shopify-liquid"
+        "editor.defaultFormatter": "sissel.shopify-liquid",
+        "editor.formatOnSave": true
       },
       "[liquid-scss]": {
         "editor.bracketPairColorization.enabled": false,
-        "editor.defaultFormatter": "sissel.shopify-liquid"
+        "editor.defaultFormatter": "sissel.shopify-liquid",
+        "editor.formatOnSave": true
       },
       "[liquid-javascript]": {
         "editor.bracketPairColorization.enabled": false,
-        "editor.defaultFormatter": "sissel.shopify-liquid"
+        "editor.defaultFormatter": "sissel.shopify-liquid",
+        "editor.formatOnSave": true
       },
       "files.associations": {
         "*.json.liquid": "json",
@@ -335,6 +341,30 @@
         "liquid.rules": {
           "type": "null",
           "markdownDeprecationMessage": "This option is now deprecated. You will need to update the options in order for the extension to work. Formatting rules now use the following structure:\n{\n  \"liquid.format.markup\": {},\n  \"liquid.format.script\": {},\n  \"liquid.format.style\": {},\n  \"liquid.format.json\": {}\n}"
+        },
+        "liquid.engine": {
+          "type": "string",
+          "default": "shopify",
+          "markdownDescription": "The `liquid.engine` option is used to determine the Liquid variation you are working with.",
+          "enum": [
+            "standard",
+            "shopify"
+          ]
+        },
+        "liquid.completion.tags": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Whether or not to enable Liquid tag completions. When enabled, typing `%` will provide all tag completions."
+        },
+        "liquid.completion.objects": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Whether or not to enable Liquid object completions. This option requires the Liquid `engine` to be set to `shopify`. When enabled object completions will be invoked within tokens and tags."
+        },
+        "liquid.completion.filters": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Whether or not to enable Liquid filter completions. When enabled, typing `|` will provide all filter completions. "
         },
         "liquid.config.baseUrl": {
           "type": "string",
@@ -700,7 +730,7 @@
             "arrayFormat": {
               "type": "string",
               "default": "default",
-              "description": "Determines if all array indexes should be indented, never indented, or left to the default.",
+              "markdownDescription": "The `arrayFormat` rule controls how arrays on objects are formatted. This rules will determines if all array indexes should be indented, never indented, or left to the default.",
               "enum": [
                 "default",
                 "indent",
@@ -710,17 +740,17 @@
             "braceAllman": {
               "type": "boolean",
               "default": false,
-              "description": "Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. (Allman style indentation)"
+              "markdownDescription": "Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. (Allman style indentation)\n#### Disabled\n\n```json\n[\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" }\n]\n```\n#### Enabled\n\n```json\n[\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  }\n]\n```"
             },
             "bracePadding": {
               "type": "boolean",
               "default": false,
-              "description": "If true an empty line will be inserted after opening curly braces and before closing curly braces"
+              "markdownDescription": "If true an empty line will be inserted after opening curly braces and before closing curly braces"
             },
             "braceStyle": {
               "type": "string",
               "default": "none",
-              "description": "Emulates JSBeautify's brace_style option",
+              "markdownDescription": "Emulates JSBeautify's brace_style option",
               "oneOf": [
                 "collapse",
                 "collapse-preserve-inline",
@@ -728,22 +758,11 @@
                 "none"
               ]
             },
-            "formatArray": {
-              "type": "string",
-              "default": "default",
-              "title": "Formatting Arrays",
-              "description": "Determines if all array indexes should be indented, never indented, or left to the default.",
-              "enum": [
-                "default",
-                "indent",
-                "inline"
-              ]
-            },
             "objectIndent": {
               "type": "string",
               "default": "default",
               "title": "Formatting Objects",
-              "description": "Determines if all object keys should be indented, never indented, or left to the default",
+              "markdownDescription": "Determines if all object keys should be indented, never indented, or left to the default",
               "enum": [
                 "default",
                 "indent",
@@ -765,11 +784,13 @@
       "extension": "./src/extension.ts"
     },
     "noExternal": [
+      "@liquify/liquid-language-specs",
       "@liquify/prettify",
       "parse-json",
       "strip-json-comments",
       "anymatch",
-      "rambdax"
+      "rambdax",
+      "vscode-languageserver-types"
     ],
     "external": [
       "vscode"
@@ -792,13 +813,16 @@
     "eslint": "^8.24.0",
     "prettier": "^2.7.1",
     "tsup": "^6.2.3",
-    "type-fest": "^3.0.0"
+    "type-fest": "^3.0.0",
+    "vsce": "^2.11.0"
   },
   "dependencies": {
-    "@liquify/prettify": "0.1.0-beta.1",
+    "@liquify/liquid-language-specs": "^0.1.4",
+    "@liquify/prettify": "0.1.4-beta.1",
     "anymatch": "^3.1.2",
     "parse-json": "^6.0.2",
     "rambdax": "8.1.0",
-    "strip-json-comments": "^5.0.0"
+    "strip-json-comments": "^5.0.0",
+    "vscode-languageserver-types": "^3.17.2"
   }
 }

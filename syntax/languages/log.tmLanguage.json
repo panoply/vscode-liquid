@@ -69,6 +69,43 @@
       }
     },
     {
+      "match": "(Completions)\\sare\\s(enabled)\\sfor(\\:)\\s(.*)",
+      "captures": {
+        "1": {
+          "name": "string log.string"
+        },
+        "2": {
+          "name": "support.class log.support"
+        },
+        "3": {
+          "name": "punctuation.definition.tag log.control"
+        },
+        "4": {
+          "name": "constant.language log.constant"
+        }
+      }
+    },
+    {
+      "match": "(Completions)\\sare\\s(disabled)\\sfor(\\:)\\s(.*)",
+      "captures": {
+        "1": {
+          "name": "string log.string"
+        },
+        "2": {
+          "name": "invalid log.error"
+        },
+        "3": {
+          "name": "punctuation.definition.tag log.control"
+        },
+        "4": {
+          "name": "constant.language log.constant"
+        }
+      }
+    },
+    {
+      "match": "Completions\\sare\\senabled\\sfor(\\:)\\s(.*)"
+    },
+    {
       "match": "Using\\s(workspace\\ssettings)\\sfor\\sconfiguration",
       "captures": {
         "1": {

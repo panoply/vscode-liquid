@@ -170,12 +170,69 @@ export class WorkspaceSettings extends OutputChannel {
   public getWorkspace () {
 
     const liquid = workspace.getConfiguration('liquid');
+    const engine = liquid.get<Workspace.Engine>('engine');
+    const completions = liquid.get<Workspace.Completion>('completion');
     const target = liquid.get<Workspace.Target>('settings.target');
     const format = liquid.get<Workspace.Format>('format');
     const baseUrl = liquid.get<string>('config.baseUrl');
+    const rules = liquid.get('rules');
+
+    if (u.isBoolean(format) || u.isObject(rules)) {
+
+      if (this.deprecatedConfig) {
+        this.error('Deprecated settings are still existent in workspace');
+      }
+
+      return Setting.DeprecatedWorkspaceSettings;
+
+    }
 
     // No configuration defined for the extension
-    if (isNil(target) && isNil(format) && isNil(baseUrl)) return Setting.WorkspaceUndefined;
+    if (
+      isNil(target) &&
+      isNil(format) &&
+      isNil(baseUrl) &&
+      isNil(engine) &&
+      isNil(completions)
+    ) return Setting.WorkspaceUndefined;
+
+    if (u.isString(engine) && this.engine !== engine) this.engine = engine;
+
+    if (u.isObject(completions)) {
+
+      if (has('tags', completions)) {
+        this.canComplete.tags = completions.tags;
+        if (completions.tags) {
+          this.info('Completions are enabled for: tags');
+        } else {
+          this.info('Completions are disabled for: tags');
+        }
+      }
+
+      if (has('filters', completions)) {
+        this.canComplete.filters = completions.filters;
+        if (completions.filters) {
+          this.info('Completions are enabled for: filters');
+        } else {
+          this.info('Completions are disabled for: filters');
+        }
+      }
+
+      if (has('objects', completions)) {
+        if (this.engine === 'shopify') {
+          this.canComplete.objects = completions.objects;
+          if (completions.objects) {
+            this.info('Completions are enabled for: objects');
+          } else {
+            this.info('Completions are disabled for: object');
+          }
+        } else {
+          if (completions.objects) {
+            this.warn('Completion for objects will not work in Liquid Standard');
+          }
+        }
+      }
+    }
 
     if (u.isString(baseUrl)) {
       const newRoot = join(this.rootPath, baseUrl);
@@ -214,6 +271,11 @@ export class WorkspaceSettings extends OutputChannel {
 
       // if we are using editor settings lets apply prettify rules
       if (def) this.prettifyRules = u.rulesNormalize(format);
+
+      if (this.deprecatedConfig && opt === Setting.WorkspaceUndefined) {
+        this.deprecatedConfig = false;
+        this.languageDispose();
+      }
 
       return opt;
 
@@ -317,7 +379,12 @@ export class WorkspaceSettings extends OutputChannel {
 
       if (u.hasDeprecatedSettings(rules)) {
         this.canFormat = false;
-        this.status.error();
+        this.status.error('Your .liquidrc file is using a deperecated configuration');
+        this.error('Deprecated configuration provided in .liquidrc file', [
+          'You are now using v3.0.0 of the Liquid extension and the old configuration is no longer',
+          'supported. You need to fix and align with the new configuration.'
+        ]);
+
         return Setting.DeprecatedLiquidrc;
       }
 
