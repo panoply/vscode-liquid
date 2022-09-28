@@ -124,7 +124,7 @@ Below are the available commands exposed to the vscode command palette (`cmd + s
 
 # Workspace Settings
 
-The extension provides various workspace/user settings. The options available to `liquid.format` can be controlled using a `.liquidrc` configuration file or alternatively you can define format option on a `prettify` field in a node `package.json` file. Take a look at the [configuration](#configuration) section for more information.
+The extension provides various workspace/user settings. The options available to `liquid.format` can be controlled using a `.liquidrc` configuration file or alternatively you can define format options via a `prettify` field in a node `package.json` file. Take a look at the [configuration](#configuration) section for more information.
 
 By default, it is assumed you are using vscode workspace/user settings.
 
@@ -338,7 +338,7 @@ By default, it is assumed you are using vscode workspace/user settings.
 
 ### Config Base URL
 
-The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving config files. The option will only work in projects that use `.liquidrc` files or define formatting rules on a package.json `prettify` field (see: [Configuration](#configuration)). Consider the following directory layout:
+The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving config files. The option will only work in projects that use `.liquidrc` files or define formatting rules in as package.json `prettify` field (see: [Configuration](#configuration)). Consider the following directory layout:
 
 ```bash
  root
@@ -477,26 +477,28 @@ _Be sure to define only the languages you wish to have formatted by the extensio
 {
   // Enables formatting of .liquid files
   "[liquid]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid"
+    "editor.defaultFormatter": "sissel.shopify-liquid",
+    "editor.formatOnSave": true
   },
   // Enables formatting of all .js.liquid files
   "[liquid-javascript]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid"
+    "editor.defaultFormatter": "sissel.shopify-liquid",
+    "editor.formatOnSave": false
   },
   // Enables formatting of all .css.liquid files
   "[liquid-css]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid"
+    "editor.defaultFormatter": "sissel.shopify-liquid",
+    "editor.formatOnSave": false
   },
   // Enables formatting of all .scss.liquid files
   "[liquid-scss]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid"
+    "editor.defaultFormatter": "sissel.shopify-liquid",
+    "editor.formatOnSave": false
   }
 }
 ```
 
-In addition the above defaults, you can also choose to have Prettify beautify other supported languages. Please note, that when extending to the below languages that Prettify is still in its early stages so results may not be perfect.
-
-> Liquid syntax contained in any of these languages is supported!
+In addition the above defaults, you can also choose to have Prettify beautify other supported languages. Please note, that when extending to the below languages that Prettify is still in its early stages so results may not be perfect. Liquid syntax contained in any of these languages is supported!
 
 ```jsonc
 {
@@ -619,63 +621,68 @@ Below is the **default** rules. It is important to note that if the `liquid.form
 ```jsonc
 {
   "ignore": [],
-  "crlf": false,
-  "commentIndent": true,
-  "endNewline": false,
-  "indentChar": " ",
-  "indentSize": 2,
-  "preserveComment": false,
-  "preserveLine": 2,
   "wrap": 0,
+  "commentIndent": true,
+  "crlf": false,
+  "indentSize": 2,
+  "preserveComment": true,
+  "preserveLine": 2,
+  "endNewLine": true,
   "markup": {
-    "correct": false,
-    "commentNewline": false,
+    "commentNewline": true,
+    "forceLeadAttribute": false,
+    "forceAttribute": false,
+    "forceIndent": false,
     "attributeCasing": "preserve",
-    "attributeValues": "preserve",
     "attributeSort": false,
     "attributeSortList": [],
-    "forceAttribute": false,
-    "forceLeadAttribute": false,
-    "forceIndent": false,
-    "preserveText": false,
+    "correct": false,
+    "delimiterSpacing": false,
     "preserveAttributes": false,
-    "selfCloseSpace": false,
-    "quoteConvert": "none"
-  },
-  "style": {
-    "correct": false,
-    "classPadding": false,
-    "noLeadZero": false,
-    "sortSelectors": false,
-    "sortProperties": false
-  },
-  "script": {
-    "correct": false,
-    "braceNewline": false,
-    "bracePadding": false,
-    "braceStyle": "none",
-    "braceAllman": false,
-    "caseSpace": false,
-    "inlineReturn": true,
-    "elseNewline": false,
-    "endComma": "never",
-    "arrayFormat": "default",
-    "objectIndent": "default",
-    "functionNameSpace": false,
-    "functionSpace": false,
-    "styleGuide": "none",
-    "ternaryLine": false,
-    "methodChain": 4,
-    "neverFlatten": false,
-    "noCaseIndent": false,
-    "noSemicolon": false,
-    "quoteConvert": "none"
+    "preserveText": true,
+    "quoteConvert": "none",
+    "selfCloseSpace": false
   },
   "json": {
     "arrayFormat": "default",
     "braceAllman": false,
     "bracePadding": false,
-    "objectIndent": "default"
+    "objectIndent": "default",
+    "objectSort": false
+  },
+  "style": {
+    "braceAllman": false,
+    "classPadding": false,
+    "sortProperties": false,
+    "sortSelectors": false,
+    "selectorList": false,
+    "comments": false,
+    "correct": false,
+    "noLeadZero": false,
+    "quoteConvert": "none"
+  },
+  "script": {
+    "correct": false,
+    "arrayFormat": "indent",
+    "braceAllman": false,
+    "methodChain": 3,
+    "caseSpace": true,
+    "endComma": "never",
+    "quoteConvert": "single",
+    "elseNewline": true,
+    "functionNameSpace": false,
+    "functionSpace": true,
+    "ternaryLine": true,
+    "braceNewline": false,
+    "bracePadding": true,
+    "braceStyle": "none",
+    "neverFlatten": false,
+    "noCaseIndent": true,
+    "noSemicolon": false,
+    "objectIndent": "indent",
+    "objectSort": false,
+    "vertical": false,
+    "variableList": false
   }
 }
 ```
