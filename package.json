@@ -293,15 +293,18 @@
       },
       "[liquid-css]": {
         "editor.bracketPairColorization.enabled": false,
-        "editor.defaultFormatter": "sissel.shopify-liquid"
+        "editor.defaultFormatter": "sissel.shopify-liquid",
+        "editor.formatOnSave": true
       },
       "[liquid-scss]": {
         "editor.bracketPairColorization.enabled": false,
-        "editor.defaultFormatter": "sissel.shopify-liquid"
+        "editor.defaultFormatter": "sissel.shopify-liquid",
+        "editor.formatOnSave": true
       },
       "[liquid-javascript]": {
         "editor.bracketPairColorization.enabled": false,
-        "editor.defaultFormatter": "sissel.shopify-liquid"
+        "editor.defaultFormatter": "sissel.shopify-liquid",
+        "editor.formatOnSave": true
       },
       "files.associations": {
         "*.json.liquid": "json",
@@ -819,7 +822,7 @@
   },
   "dependencies": {
     "@liquify/liquid-language-specs": "^0.1.4",
-    "@liquify/prettify": "0.1.0-beta.1",
+    "@liquify/prettify": "0.1.2-beta.1",
     "anymatch": "^3.1.2",
     "parse-json": "^6.0.2",
     "rambdax": "8.1.0",
