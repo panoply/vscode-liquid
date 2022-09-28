@@ -8,7 +8,8 @@ export class StatusLanguageItem extends State {
   /**
    * Dispose Language Status Items
    */
-  dispose () {
+  languageDispose () {
+
     if (this.items.size > 0) {
       for (const item of this.items) {
         item.dispose();
@@ -16,35 +17,11 @@ export class StatusLanguageItem extends State {
     }
   }
 
-  configFile (config: string, command?: Command) {
+  languageError (message: string[], command?: Command) {
 
-    const status = languages.createLanguageStatusItem('Liquid Language', this.liquidSelectors);
-    status.severity = LanguageStatusSeverity.Information;
-    status.text = config;
-
-    if (command) status.command = command;
-
-    return status;
-
-  }
-
-  configWarning (message: string, command?: Command) {
-
-    const warning = languages.createLanguageStatusItem('Liquid Warning', this.liquidSelectors);
-    warning.severity = LanguageStatusSeverity.Warning;
-    warning.text = message;
-
-    if (command) warning.command = command;
-
-    this.items.add(warning);
-
-  }
-
-  configError (message: string, command?: Command) {
-
-    const error = languages.createLanguageStatusItem('Liquid Errors', this.liquidSelectors);
+    const error = languages.createLanguageStatusItem('Liquid Errors', this.selector.active);
     error.severity = LanguageStatusSeverity.Error;
-    error.text = message;
+    error.text = message.join(' ');
 
     if (command) error.command = command;
 
