@@ -1,0 +1,27 @@
+{
+  "name": "Liquid JavaScript",
+  "scopeName": "source.js.liquid",
+  "fileTypes": ["liquid"],
+  "injectionSelector": "L:source.js",
+  "injections": {
+    "L:meta": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    },
+    "L:string": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    }
+  },
+  "patterns": [
+    { "include": "source.liquid#comment-inline" },
+    { "include": "source.liquid#comment-block" },
+    { "include": "source.liquid#tags" },
+    { "include": "source.liquid#output" },
+    { "include": "source.js" }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Liquid SCSS",
+  "scopeName": "source.scss.liquid",
+  "injectionSelector": "L:source.scss",
+  "injections": {
+    "L:meta": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    },
+    "L:string": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    }
+  },
+  "patterns": [
+    { "include": "source.liquid#comment-inline" },
+    { "include": "source.liquid#comment-block" },
+    { "include": "source.liquid#tags" },
+    { "include": "source.liquid#output" },
+    { "include": "source.scss" }
+  ]
+}

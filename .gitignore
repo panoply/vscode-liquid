@@ -1,11 +1,11 @@
 node_modules
 .vscode-test/
-*.vsix
 yarn.lock
 test/components/*.html
-.vscode/settings.json
 versions
 docs
+dist
+example
 
 ### OSX ###
 # General
@@ -34,4 +34,4 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-test/
+

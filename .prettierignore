@@ -3,3 +3,5 @@ src/language/liquid.configuration.json
 test/format.html
 *.ts
 *.js
+*.cjs
+example

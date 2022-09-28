@@ -1,0 +1,279 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Liquid",
+  "scopeName": "source.liquid",
+  "injections": {
+    "L:meta -(meta.embedded.block.liquid)": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    },
+    "L:entity.other.attribute-name.class.css": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    },
+    "L:string - (string.quoted.*.html)": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    }
+  },
+  "patterns": [
+    { "include": "#comment-block" },
+    { "include": "#comment-line" },
+    { "include": "#tags" },
+    { "include": "#output" },
+    { "include": "text.html.derivative" }
+  ],
+  "repository": {
+    "comment-block": {
+      "name": "comment.block.liquid",
+      "begin": "{%-?\\s*\\bcomment\\b\\s*-?%}",
+      "end": "{%-?\\s*\\bendcomment\\b\\s*-?%}"
+    },
+    "comment-line": {
+      "name": "comment.block.liquid",
+      "begin": "{%-?\\s*#\\s+",
+      "end": "-?%}"
+    },
+    "tags": {
+      "name": "punctuation.output.liquid",
+      "begin": "({%)(-)?",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.liquid"
+        },
+        "2": {
+          "name": "keyword.other.whitespace.liquid"
+        }
+      },
+      "patterns": [
+        {
+          "name": "entity.name.tag.liquid",
+          "match": "(?<={%-?)\\s*\\w+\\s*"
+        },
+        { "include": "#liquid" },
+        { "include": "#objects" },
+        { "include": "#numeric" },
+        { "include": "#constants" },
+        { "include": "#parameters" },
+        { "include": "#invalid" },
+        { "include": "#operators" },
+        { "include": "#strings" },
+        { "include": "#filters" }
+      ],
+      "end": "(-)?(%})",
+      "endCaptures": {
+        "1": { "name": "keyword.other.whitespace.liquid" },
+        "2": {
+          "name": "punctuation.definition.tag.end.liquid"
+        }
+      }
+    },
+    "output": {
+      "name": "punctuation.output.liquid",
+      "begin": "({{)(-)?",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.liquid"
+        },
+        "2": {
+          "name": "keyword.other.whitespace.liquid"
+        }
+      },
+      "patterns": [
+        { "include": "#objects" },
+        { "include": "#numeric" },
+        { "include": "#constants" },
+        { "include": "#parameters" },
+        { "include": "#invalid" },
+        { "include": "#operators" },
+        { "include": "#strings" },
+        { "include": "#filters" }
+      ],
+      "end": "(-)?(}})",
+      "endCaptures": {
+        "1": {
+          "name": "keyword.other.whitespace.liquid"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.end.liquid"
+        }
+      }
+    },
+    "objects": {
+      "patterns": [
+        {
+          "name": "support.class.liquid",
+          "match": "(?:(?<=[{%}>=!\\[\\]\\-|:])|(?<=\\s))(\\w+)(?=\\.)"
+        }
+      ]
+    },
+    "parameters": {
+      "patterns": [
+        {
+          "name": "variable.parameter.liquid",
+          "match": "(?!\\|\\s*)\\b([a-zA-Z0-9_-]+)(?=:\\s*)"
+        }
+      ]
+    },
+    "numeric": {
+      "patterns": [
+        {
+          "name": "constant.numeric.float.liquid",
+          "match": "(-|\\+)?\\s*[0-9]+(\\.[0-9]+)?"
+        },
+        {
+          "name": "constant.numeric.integer.liquid",
+          "match": "(\\+|\\-)[\\d]+"
+        },
+        {
+          "name": "constant.numeric.natural.liquid",
+          "match": "[\\d]+"
+        }
+      ]
+    },
+    "liquid": {
+      "patterns": [
+        {
+          "name": "support.class.liquid",
+          "match": "\\s+(end)?(if|else|for|elsif|unless|form|assign)\\s+"
+        },
+        {
+          "name": "variable.parameter.liquid",
+          "match": "\\s+(\\w+)\\s+"
+        },
+        { "include": "#operators" },
+        { "include": "#strings" },
+        { "include": "#filters" }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.liquid",
+          "match": "(false|true|nil|null|empty|blank)"
+        },
+        {
+          "name": "constant.character.entity.liquid",
+          "match": "(&)([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+)(;)",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.entity.html"
+            },
+            "3": {
+              "name": "punctuation.definition.entity.html"
+            }
+          }
+        }
+      ]
+    },
+    "invalid": {
+      "patterns": [
+        {
+          "match": "&",
+          "name": "invalid.illegal.bad-ampersand.liquid"
+        },
+        {
+          "match": "(\\[)(\\|)(?=[^\\]]*)(?=\\])",
+          "captures": {
+            "2": {
+              "name": "invalid.illegal.filter.liquid"
+            },
+            "3": { "name": "invalid.illegal.filter.liquid" }
+          }
+        },
+        {
+          "match": "(?=if|unless|elsif)\\s*[^%}]+\\s(in)\\s+",
+          "captures": {
+            "3": {
+              "name": "invalid.illegal.operator.liquid"
+            }
+          }
+        },
+        {
+          "name": "invalid.illegal.filter.liquid",
+          "match": "(?<=\\s)(\\+|\\-|\\/|\\*)(?=\\s)"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "match": "\\=",
+          "name": "keyword.operator.assignment.augmented.liquid"
+        },
+        {
+          "match": "\\.",
+          "name": "keyword.other.dot.liquid"
+        },
+        {
+          "name": "keyword.operator.logical.liquid",
+          "match": "\\s+(and|or|contains|in)\\s+"
+        },
+        {
+          "name": "keyword.operator.equality.liquid",
+          "match": "\\s+(\\!=|\\=\\=|\\<|\\>|\\>\\=|\\<\\=)\\s+"
+        },
+        {
+          "name": "keyword.other.colon.liquid",
+          "match": ":"
+        },
+        {
+          "name": "keyword.other.array-item.liquid",
+          "match": "\\[|\\]"
+        },
+        {
+          "name": "variable.parameter.liquid",
+          "match": "(?<=\\s)(as|with|offset|limit|reverse|cols)"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.single.liquid",
+          "begin": "'",
+          "end": "'"
+        },
+        {
+          "name": "string.quoted.double.liquid",
+          "begin": "\"",
+          "end": "\""
+        }
+      ]
+    },
+    "filters": {
+      "patterns": [
+        {
+          "name": "support.function.with-args.liquid",
+          "match": "(\\|\\s*)(?![\\.0-9])([a-zA-Z0-9_-]+)(?=\\:\\s*)",
+          "captures": {
+            "1": {
+              "name": "keyword.separator.pipe.liquid"
+            },
+            "2": {
+              "name": "support.function.filter.liquid"
+            }
+          }
+        },
+        {
+          "name": "support.function.without-args.liquid",
+          "match": "(\\|\\s*)(?![\\.0-9])([a-zA-Z0-9_-]+)\\s*",
+          "captures": {
+            "1": {
+              "name": "keyword.separator.pipe.liquid"
+            },
+            "2": {
+              "name": "support.function.filter.liquid"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

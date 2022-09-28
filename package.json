@@ -1,15 +1,19 @@
 {
   "name": "shopify-liquid",
   "displayName": "Liquid",
-  "description": "Syntax highlighting, formatting and snippet support for the liquid template language. Supports both Jekyll and Shopify variations.",
+  "description": "Liquid Template Language. Supports Formatting, Syntax Highlighting, Snippets, HTML IntelliSense and other essential features for working with Liquid.",
   "publisher": "sissel",
   "icon": "images/logo.png",
-  "author": "Nikolas Savvidis <nicos@gmx.com>",
-  "version": "2.4.0",
+  "author": "Νίκος Σαβίδης <n.savvidis@gmx.com>",
+  "version": "3.0.0",
   "keywords": [
     "liquid",
     "shopify",
+    "formatter",
+    "html",
     "jekyll",
+    "syntax",
+    "snippets",
     "language",
     "formatting"
   ],
@@ -18,10 +22,12 @@
     "url": "https://github.com/panoply/vscode-liquid.git"
   },
   "bugs": {
+    "email": "n.savvidis@gmx.com",
     "url": "https://github.com/panoply/vscode-liquid/issues"
   },
   "engines": {
-    "vscode": "^1.69.0"
+    "vscode": "^1.71.0",
+    "node": "v16.15.0"
   },
   "categories": [
     "Formatters",
@@ -29,96 +35,165 @@
     "Snippets",
     "Other"
   ],
-  "bundledDependencies": true,
   "activationEvents": [
-    "onLanguage:html",
-    "onCommand:liquid.liquidrc"
+    "onStartupFinished"
   ],
-  "main": "./extension/extension",
+  "main": "./dist/extension.js",
+  "extensionDependencies": [
+    "vscode.html-language-features"
+  ],
   "contributes": {
+    "enabledApiProposals": [
+      "outputChannelLanguage"
+    ],
+    "htmlLanguageParticipants": [
+      {
+        "autoInsert": true,
+        "languageId": "liquid"
+      }
+    ],
     "jsonValidation": [
       {
+        "url": "./schema/prettify.json",
+        "fileMatch": "package.json"
+      },
+      {
+        "url": "./schema/liquidrc.json",
         "fileMatch": [
           ".liquidrc",
           ".liquidrc.json"
-        ],
-        "url": "./liquidrc.json"
+        ]
+      },
+      {
+        "url": "./schema/shopify-settings.json",
+        "fileMatch": [
+          "settings_schema.json"
+        ]
+      },
+      {
+        "url": "./schema/shopify-templates.json",
+        "fileMatch": [
+          "index.json",
+          "index.*.json",
+          "404.json",
+          "article.json",
+          "blog.json",
+          "cart.json",
+          "cart.*.json",
+          "collection.json",
+          "collection.*.json",
+          "list-collection.json",
+          "page.*.json",
+          "page.json",
+          "password.json",
+          "search.json",
+          "search.*.json",
+          "product.json",
+          "product.*.json"
+        ]
       }
     ],
     "commands": [
       {
-        "command": "liquid.disableFormatting",
-        "title": "Liquid: Disable Formatting"
+        "command": "liquid.restartExtension",
+        "title": "Restart Extension",
+        "icon": "$(refresh)",
+        "category": "Liquid"
       },
       {
         "command": "liquid.enableFormatting",
-        "title": "Liquid: Enable Formatting"
+        "title": "Enable Formatting",
+        "icon": "$(check)",
+        "category": "Liquid"
       },
       {
-        "command": "liquid.toggleOutput",
-        "title": "Liquid: Toggle Output"
+        "command": "liquid.disableFormatting",
+        "title": "Disable Formatting",
+        "icon": "$(x)",
+        "category": "Liquid"
+      },
+      {
+        "command": "liquid.openOutput",
+        "title": "Open Output",
+        "icon": "$(note)",
+        "category": "Liquid"
       },
       {
         "command": "liquid.formatDocument",
-        "title": "Liquid: Format Document"
+        "title": "Format Document",
+        "icon": "$(list-selection)",
+        "category": "Liquid"
       },
       {
-        "command": "liquid.formatSelection",
-        "title": "Liquid: Format Selection"
+        "command": "liquid.liquidrcDefaults",
+        "title": "Generate .liquidrc (defaults)",
+        "icon": "$(file-add)",
+        "category": "Liquid"
       },
       {
-        "command": "liquid.liquidrc",
-        "title": "Liquid: Generate a .liquidrc rule file"
-      }
-    ],
-    "keybindings": [
+        "command": "liquid.liquidrcRecommend",
+        "title": "Generate .liquidrc (recommended)",
+        "icon": "$(file-add)",
+        "category": "Liquid"
+      },
       {
-        "command": "liquid.formatDocument",
-        "key": "ctrl+shift+l",
-        "mac": "cmd+shift+l",
-        "when": "editorTextFocus"
+        "command": "liquid.releaseNotes",
+        "title": "Release Notes",
+        "icon": "$(file-add)",
+        "category": "Liquid"
       }
     ],
     "languages": [
       {
+        "id": "log-liquid",
+        "aliases": [
+          "Log Liquid"
+        ]
+      },
+      {
         "id": "liquid",
-        "configuration": "./src/language/liquid.configuration.json",
+        "configuration": "./language/liquid.language-configuration.json",
+        "extensions": [
+          ".liquid",
+          ".jekyll"
+        ],
         "aliases": [
           "Liquid"
         ]
       },
       {
-        "id": "html",
-        "extensions": [
-          ".liquid",
-          ".jekyll",
-          ".jkyl"
-        ]
-      },
-      {
-        "id": "javascript",
-        "extensions": [
-          ".js.liquid",
-          ".ts.liquid"
-        ]
-      },
-      {
-        "id": "css",
+        "id": "liquid-css",
+        "configuration": "./language/liquid-css.language-configuration.json",
         "extensions": [
           ".css.liquid"
+        ],
+        "aliases": [
+          "Liquid CSS"
         ]
       },
       {
-        "id": "scss",
+        "id": "liquid-scss",
+        "configuration": "./language/liquid-css.language-configuration.json",
         "extensions": [
-          ".scss.liquid",
-          ".sass.liquid"
+          ".scss.liquid"
+        ],
+        "aliases": [
+          "Liquid SCSS"
         ]
       },
       {
-        "id": "json",
+        "id": "liquid-javascript",
+        "configuration": "./language/liquid-javascript.language-configuration.json",
+        "extensions": [
+          ".js.liquid"
+        ],
+        "aliases": [
+          "Liquid JavaScript"
+        ]
+      },
+      {
+        "id": "jsonc",
         "filenames": [
-          ".liquid",
           ".liquidrc",
           ".liquidrc.json"
         ]
@@ -126,71 +201,628 @@
     ],
     "grammars": [
       {
+        "language": "log-liquid",
+        "scopeName": "liquid.log",
+        "path": "./syntax/languages/log.tmLanguage.json"
+      },
+      {
         "language": "liquid",
         "scopeName": "source.liquid",
-        "path": "./src/syntax/liquid.tmLanguage.json",
+        "path": "./syntax/liquid.tmLanguage.json"
+      },
+      {
+        "scopeName": "source.liquid.embedded",
+        "path": "./syntax/injections/embedded.tmLanguage.json",
         "injectTo": [
-          "text.html"
+          "source.liquid"
+        ],
+        "embeddedLanguages": {
+          "meta.embedded.block.schema.liquid": "json",
+          "meta.embedded.block.javascript.liquid": "javascript",
+          "meta.embedded.block.stylesheet.liquid": "css",
+          "meta.embedded.block.stylesheet.scss.liquid": "scss",
+          "meta.embedded.block.style.liquid": "liquid-css"
+        }
+      },
+      {
+        "scopeName": "source.liquid.frontmatter",
+        "path": "./syntax/injections/frontmatter.tmLanguage.json",
+        "injectTo": [
+          "source.liquid",
+          "source.json.liquid",
+          "source.yaml.liquid",
+          "source.css.liquid",
+          "source.scss.liquid",
+          "source.js.liquid"
+        ],
+        "embeddedLanguages": {
+          "meta.embedded.block.frontmatter.liquid": "yaml"
+        }
+      },
+      {
+        "scopeName": "source.markdown.liquid",
+        "path": "./syntax/injections/markdown.tmLanguage.json",
+        "injectTo": [
+          "text.html.markdown"
         ]
+      },
+      {
+        "scopeName": "source.json.liquid",
+        "path": "./syntax/injections/json.tmLanguage.json",
+        "injectTo": [
+          "source.json"
+        ]
+      },
+      {
+        "scopeName": "source.yaml.liquid",
+        "path": "./syntax/injections/yaml.tmLanguage.json",
+        "injectTo": [
+          "source.yaml"
+        ]
+      },
+      {
+        "language": "liquid-css",
+        "scopeName": "source.css.liquid",
+        "path": "./syntax/languages/css.tmLanguage.json"
+      },
+      {
+        "language": "liquid-scss",
+        "scopeName": "source.scss.liquid",
+        "path": "./syntax/languages/scss.tmLanguage.json"
+      },
+      {
+        "language": "liquid-javascript",
+        "scopeName": "source.js.liquid",
+        "path": "./syntax/languages/javascript.tmLanguage.json"
+      },
+      {
+        "scopeName": "markdown.liquid.codeblock",
+        "path": "./syntax/injections/code-block.tmLanguage.json",
+        "injectTo": [
+          "text.html.markdown"
+        ],
+        "embeddedLanguages": {
+          "meta.embedded.block.liquid": "liquid"
+        }
       }
     ],
     "snippets": [
       {
-        "language": "html",
-        "path": "./src/snippets/snippets.json"
+        "language": "liquid",
+        "path": "./snippets/tags.json"
       }
     ],
+    "configurationDefaults": {
+      "[liquid]": {
+        "editor.bracketPairColorization.enabled": false,
+        "editor.defaultFormatter": "sissel.shopify-liquid",
+        "editor.formatOnSave": true
+      },
+      "[liquid-css]": {
+        "editor.bracketPairColorization.enabled": false,
+        "editor.defaultFormatter": "sissel.shopify-liquid",
+        "editor.formatOnSave": true
+      },
+      "[liquid-scss]": {
+        "editor.bracketPairColorization.enabled": false,
+        "editor.defaultFormatter": "sissel.shopify-liquid",
+        "editor.formatOnSave": true
+      },
+      "[liquid-javascript]": {
+        "editor.bracketPairColorization.enabled": false,
+        "editor.defaultFormatter": "sissel.shopify-liquid",
+        "editor.formatOnSave": true
+      },
+      "files.associations": {
+        "*.json.liquid": "json",
+        "*.yaml.liquid": "yaml",
+        "*.md.liquid": "markdown",
+        "*.js.liquid": "liquid-javascript",
+        "*.css.liquid": "liquid-css",
+        "*.scss.liquid": "liquid-scss"
+      },
+      "vsicons.associations.files": [
+        {
+          "icon": "liquid",
+          "filename": true,
+          "format": "svg",
+          "extensions": [
+            ".liquidrc",
+            ".liquidrc.json"
+          ]
+        }
+      ]
+    },
     "configuration": {
       "type": "object",
       "title": "Liquid Language configuration",
+      "markdownDescription": "The Liquid extension will look for a `.liquidrc` or `.liquidrc.json` in the root of your project. When no such files exists it will check for the presence of a `prettify` field in `package.json` files.When neither are detected the extension will use the `.vscode/settings.json` file or alternatively your global user settings.",
       "properties": {
-        "liquid.format": {
+        "liquid.rules": {
+          "type": "null",
+          "markdownDeprecationMessage": "This option is now deprecated. You will need to update the options in order for the extension to work. Formatting rules now use the following structure:\n{\n  \"liquid.format.markup\": {},\n  \"liquid.format.script\": {},\n  \"liquid.format.style\": {},\n  \"liquid.format.json\": {}\n}"
+        },
+        "liquid.engine": {
+          "type": "string",
+          "default": "shopify",
+          "markdownDescription": "The `liquid.engine` option is used to determine the Liquid variation you are working with.",
+          "enum": [
+            "standard",
+            "shopify"
+          ]
+        },
+        "liquid.completion.tags": {
           "type": "boolean",
           "default": true,
-          "description": "Whether to enable/disable Liquid formatting."
+          "markdownDescription": "Whether or not to enable Liquid tag completions. When enabled, typing `%` will provide all tag completions."
         },
-        "liquid.rules": {
+        "liquid.completion.objects": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Whether or not to enable Liquid object completions. This option requires the Liquid `engine` to be set to `shopify`. When enabled object completions will be invoked within tokens and tags."
+        },
+        "liquid.completion.filters": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Whether or not to enable Liquid filter completions. When enabled, typing `|` will provide all filter completions. "
+        },
+        "liquid.config.baseUrl": {
+          "type": "string",
+          "markdownDescription": "The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving config files. The option is will only work in projects that use `.liquidrc` files or define rules on a package.json `prettify` field"
+        },
+        "liquid.settings.target": {
+          "type": "string",
+          "default": "workspace",
+          "markdownDescription": "The configuration preferences to use. This option defaults to `workspace`. It is **highly discouraged** to target `user` settings and could lead to unexpected issues outside of Liquid projects. The `workspace` default will write to the `.vscode/settings.json` relative to project root.",
+          "enum": [
+            "workspace",
+            "user"
+          ]
+        },
+        "liquid.format.enable": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Whether to enable or disable beautification support for Liquid. The extension uses [Prettify](https://github.com/panoply/prettify) for formatting and supports the following languages:\n\n- Liquid\n- JavaScript\n- CSS\n- SCSS\n- JSON\n- HTML\n- XML\n- JavaScript\n\nPrettify is a _new generation_ beautification tool that runs atop of the powerful sparser lexing algorithm. Prettify can be used as an alternative to Prettier and has been developed for usage for Liquid. It's fast, exposes a grandular set of rules and is far from opinionated.\n\nHelp me by choosing Prettify and reporting bugs and defects."
+        },
+        "liquid.format.ignore": {
+          "type": "array",
+          "markdownDescription": "Glob pattern of file's and/or directories to be ignored from formatting. Use relative paths to exclude or ignore formatting.\n\nYou can also leverage inline ignore comments. Place a Prettify ignore comment at the top of files you to exclude from beautification.\n\n**Example:**\n```liquid\n{% # @prettify-ignore %}\n\nOR\n\n<!-- @prettify-ignore -->\n```",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "liquid.format.wrap": {
+          "type": "number",
+          "title": "Wrap Limit",
+          "default": 0,
+          "markdownDescription": "Character width limit before applying word wrap. A `0` value disables this option. Typically, you can omit this option, as it will defaults to the word wrap limit set within workspace/user settings of your text editor."
+        },
+        "liquid.format.indentSize": {
+          "type": "number",
+          "default": 2,
+          "markdownDescription": "The level of indentation to be applied to HTML and Liquid syntax. This option does not apply to embedded regions."
+        },
+        "liquid.format.commentIndent": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "If a blank new line should be forced above comments."
+        },
+        "liquid.format.preserveLine": {
+          "type": "number",
+          "default": 3,
+          "markdownDescription": "The maximum number of consecutive empty lines to retain."
+        },
+        "liquid.format.preserveComment": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Eliminate Word Wrap Upon Comments, ie: Prevent comment reformatting due to option wrap."
+        },
+        "liquid.format.endNewLine": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Whether or not to insert a final line. When this rule is undefined in a `.liquidrc` file the Text Editors settings will be used, in vscode that is `*.endWithNewline` where `*` is a language name.  If an `.editorconfig` file is found present in root, those rules will be applied in **precedence** over Text Editor"
+        },
+        "liquid.format.crlf": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "If line termination should be Windows (CRLF) format. Unix (LF) format is the default."
+        },
+        "liquid.format.markup": {
           "type": "object",
-          "description": "Format code style ruleset settings.",
-          "$ref": "#/definitions/markup"
+          "additionalProperties": false,
+          "markdownDescription": "Beautification rules applied to the following markup languages:\n\n- **HTML**\n- **Liquid**\n- **XML**\n- **XHTML**",
+          "properties": {
+            "correct": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "Automatically attempts to correct some sloppiness in code."
+            },
+            "attributeCasing": {
+              "type": "string",
+              "markdownDescription": "Control the casing of attributes.",
+              "default": "preserve",
+              "enum": [
+                "preserve",
+                "lowercase",
+                "lowercase-name",
+                "lowercase-value"
+              ]
+            },
+            "attributeSort": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "Alphanumerically sort HTML attributes from A to Z."
+            },
+            "attributeSortList": {
+              "type": "array",
+              "title": "Sort Attribute List",
+              "items": {
+                "type": "string"
+              },
+              "markdownDescription": "A list of HTML attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires `attributeSort` have a value of `true` and does not support Liquid tag names, only HTML names are applicable."
+            },
+            "delimiterSpacing": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "Whether or not Liquid delimiter characters should apply a single space at the start and end points."
+            },
+            "commentNewline": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "This will determine whether comments should always start at position `0` of each line or if comments should be indented according to the code."
+            },
+            "forceLeadAttribute": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "Whether the leading attribute should be forced onto a newline when word `wrap` limit is exceeded or if it should be preserved. By default, Prettify preserves the leading attribute when applying wrap indentation. Enabling this option will force indent all attributes if wrap is exceeded. This rule requires a `wrap` level to be defined. If you have `forceAttribute` enabled or using a force attribute limit value it will override this option. If you desire wrap based attribute indentation, set `forceAttribute` to `false` and ensure a `wrap` level is defined.\n#### Disabled (default)\n*Below is an example of how this rule works if it's disabled (ie: `false`) and attributes have exceeded a defined wrap limit. Notice how leading attributes are preserved that have not exceeded wrap, but proceeding attributes are indented onto their own lines, this is the default behavior Prettify uses.*\n```liquid\n<!-- Leading attribute is preserved -->\n<div class=\"x\"\n  id=\"{{ foo }}\"\n  data-attribute-example=\"100\"\n  data-x=\"xx\"></div>\n```#### Enabled\n*Below is an example of how this rule works if it's enabled (ie: `true`) and attributes have exceeded the defined wrap limit. Notice how all attributes and indented onto their own line, including the leading attribute.*\n```liquid\n<!-- All attributes are forced including the leading attribute -->\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-attribute-example=\"100\"\n  data-x=\"xx\"></div>\n```"
+            },
+            "forceIndent": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "Will force indentation upon all content and tags without regard for the text nodes."
+            },
+            "forceAttribute": {
+              "type": [
+                "boolean",
+                "number"
+              ],
+              "default": false,
+              "markdownDescription": "If all markup attributes should be indented each onto their own line. You can optionally provide an integer value of `1` or more. When an integer value is passed, attributes will be forced only if the number of attributes contained on the tag exceeds the supplied value limit. When you define a `wrap` level then attributes will be automatically forced. This is typically a better solution than forcing all attributes onto newlines or an even better solution would be to set a limit level.\n\n#### Disabled Example\n*Below is the default, wherein attributes are only forced when wrap is exceeded.*\n```liquid\n<div class=\"x\" id=\"{{ foo }}\" data-x=\"xx\">\n</div>\n```\n#### Enabled Example\n*Below is an example of how this rule works if it's enabled, ie: `true`*\n```liquid\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-x=\"xx\">\n</div>\n```\n#### Limit Example\n*Below we provide a value of `2` so formatting will be applied as such:*\n```liquid\n<!-- Tag contains 2 attributes, they will not be forced-->\n<div class=\"x\" id=\"{{ foo }}\"></div>\n\n<!-- Tag contains 3 attributes, thus they will be forced -->\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-x=\"xx\"></div>\n\n<!-- Tag contains 1 attribute, it will not be forced-->\n<div class=\"x\"></div>\n```"
+            },
+            "preserveText": {
+              "type": "boolean",
+              "default": true,
+              "markdownDescription": "If text in the provided document code should be preserved exactly as provided. This option eliminates beautification and wrapping of text content."
+            },
+            "selfCloseSpace": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "Markup self-closing tags end will end with ' />' instead of '/>' on the ending delimeters. Please note, that self-closing tags are no longer required as of HTML5, so use this how you wish."
+            },
+            "preserveAttributes": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "If HTML tags should have their insides (attributes) preserved. This option will prevent attributes from being formatted."
+            },
+            "quoteConvert": {
+              "type": "string",
+              "default": "none",
+              "markdownDescription": "If quotation character should be converted to specific type or not.",
+              "enum": [
+                "none",
+                "double",
+                "single"
+              ]
+            }
+          }
+        },
+        "liquid.format.script": {
+          "type": "object",
+          "markdownDescription": "Beautification rules for the following _script_ languages:\n\n- **JavaScript**\n- **TypeScript**\n\n Options provided here will also be applied to following markup embedded language blocks.",
+          "properties": {
+            "correct": {
+              "type": "boolean",
+              "default": false,
+              "description": "Automatically attempts to correct some sloppiness in code."
+            },
+            "braceAllman": {
+              "type": "boolean",
+              "default": false,
+              "title": "Style of Indent",
+              "description": "Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. (Allman style indentation)"
+            },
+            "braceNewline": {
+              "type": "boolean",
+              "default": false,
+              "title": "Brace Lines",
+              "description": "If true an empty line will be inserted after opening curly braces and before closing curly braces"
+            },
+            "bracePadding": {
+              "type": "boolean",
+              "default": false,
+              "title": "Brace Padding",
+              "description": "Inserts a space after the start of a container and before the end of the container if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings"
+            },
+            "braceStyle": {
+              "type": "string",
+              "default": "none",
+              "title": "Brace Style",
+              "description": "Emulates JSBeautify's brace_style option",
+              "enum": [
+                "collapse",
+                "collapse-preserve-inline",
+                "expand",
+                "none"
+              ]
+            },
+            "caseSpace": {
+              "type": "boolean",
+              "default": false,
+              "title": "Space Following Case",
+              "description": "If the colon separating a case's expression (of a switch/case block) from its statement should be followed by a space instead of indentation, thereby keeping the case on a single line of code"
+            },
+            "commentIndent": {
+              "type": "boolean",
+              "default": false,
+              "title": "Comment Indentation",
+              "description": "This will determine whether comments should always start at position 0 of each line or if comments should be indented according to the code"
+            },
+            "elseNewline": {
+              "type": "boolean",
+              "default": false,
+              "title": "Else On New Line",
+              "description": "If else_line is true then the keyword 'else' is forced onto a new line."
+            },
+            "endComma": {
+              "type": "string",
+              "default": "none",
+              "title": "Trailing Comma",
+              "description": "If there should be a trailing comma in arrays and objects",
+              "enum": [
+                "none",
+                "always",
+                "never"
+              ]
+            },
+            "arrayFormat": {
+              "type": "string",
+              "default": "default",
+              "description": "Determines if all array indexes should be indented, never indented, or left to the default.",
+              "enum": [
+                "default",
+                "indent",
+                "inline"
+              ]
+            },
+            "objectIndent": {
+              "type": "string",
+              "default": "default",
+              "title": "Formatting Arrays",
+              "description": "Determines if all object keys should be indented, never indented, or left to the default",
+              "enum": [
+                "default",
+                "indent",
+                "inline"
+              ]
+            },
+            "functionNameSpace": {
+              "type": "boolean",
+              "default": false,
+              "title": "Space After Function Name",
+              "description": "If a space should follow a JavaScript function name"
+            },
+            "methodChain": {
+              "type": "number",
+              "default": 3,
+              "title": "Method Chains",
+              "description": "When to break consecutively chained methods and properties onto separate lines. A negative value disables this option. A value of 0 ensures method chains are never broken"
+            },
+            "neverFlatten": {
+              "type": "boolean",
+              "default": false,
+              "title": "Never Flatten Destructured Lists",
+              "description": "If destructured lists in script should never be flattend"
+            },
+            "noCaseIndent": {
+              "type": "boolean",
+              "default": false,
+              "title": "Case Indentation",
+              "description": "If a case statement should receive the same indentation as the containing switch block."
+            },
+            "noSemicolon": {
+              "type": "boolean",
+              "default": false,
+              "title": "No Semicolons",
+              "description": "Removes semicolons that would be inserted by ASI. This option is in conflict with option 'correct' and takes precedence over conflicting features. Use of this option is a possible security/stability risk"
+            },
+            "preserveComment": {
+              "type": "boolean",
+              "default": false,
+              "title": "Eliminate Word Wrap Upon Comments",
+              "description": "Prevent comment reformatting due to option wrap"
+            },
+            "quoteConvert": {
+              "default": "none",
+              "title": "Convert Quotes",
+              "description": "If the quotes of script strings or document attributes should be converted to single quotes or double quotes",
+              "type": "string",
+              "enum": [
+                "none",
+                "double",
+                "single"
+              ]
+            },
+            "functionSpace": {
+              "type": "boolean",
+              "default": false,
+              "title": "Function Space",
+              "description": "Inserts a space following the function keyword for anonymous functions"
+            },
+            "ternaryLine": {
+              "type": "boolean",
+              "default": false,
+              "title": "Keep Ternary Statements On One Line",
+              "description": "If ternary operators in JavaScript ? and : should remain on the same line"
+            },
+            "variableList": {
+              "type": "boolean",
+              "default": false,
+              "title": "Variable Declaration Lists",
+              "description": "If consecutive JavaScript variables should be merged into a comma separated list or if variables in a list should be separated"
+            }
+          }
+        },
+        "liquid.format.style": {
+          "type": "object",
+          "additionalProperties": false,
+          "markdownDescription": "Beautification rules for the following _style_ languages:\n\n- **CSS**\n- **SCSS**\n- **\n- **SASS**\n- **LESS**\n\n. Options provided here will also be applied to the following markup embedded language blocks.",
+          "properties": {
+            "correct": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "Automatically attempts to correct some sloppiness in code."
+            },
+            "braceAllman": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. (Allman style indentation)"
+            },
+            "comments": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "This will determine whether comments should always start at position `0` of each line or if comments should be indented according to the code"
+            },
+            "sortSelectors": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "Sorts CSS Selectors in an alphanumerical order"
+            },
+            "sortProperties": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "Sort Selectors in an alphanumerical order"
+            },
+            "classPadding": {
+              "type": "boolean",
+              "default": false,
+              "title": "Insert Empty Lines",
+              "markdownDescription": "Inserts new line characters between every CSS code block."
+            },
+            "noLeadZero": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "Whether leading `0s` in CSS values immediately preceding a decimal should be removed or prevented."
+            },
+            "selectorList": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "If comma separated CSS selectors should present on a single line of code."
+            }
+          }
+        },
+        "liquid.format.json": {
+          "type": "object",
+          "additionalProperties": false,
+          "markdownDescription": "Beautification rules for the **JSON** language. Options provided here will also be applied to markup embedded language blocks.",
+          "properties": {
+            "arrayFormat": {
+              "type": "string",
+              "default": "default",
+              "markdownDescription": "The `arrayFormat` rule controls how arrays on objects are formatted. This rules will determines if all array indexes should be indented, never indented, or left to the default.",
+              "enum": [
+                "default",
+                "indent",
+                "inline"
+              ]
+            },
+            "braceAllman": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. (Allman style indentation)\n#### Disabled\n\n```json\n[\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" }\n]\n```\n#### Enabled\n\n```json\n[\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  }\n]\n```"
+            },
+            "bracePadding": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "If true an empty line will be inserted after opening curly braces and before closing curly braces"
+            },
+            "braceStyle": {
+              "type": "string",
+              "default": "none",
+              "markdownDescription": "Emulates JSBeautify's brace_style option",
+              "oneOf": [
+                "collapse",
+                "collapse-preserve-inline",
+                "expand",
+                "none"
+              ]
+            },
+            "objectIndent": {
+              "type": "string",
+              "default": "default",
+              "title": "Formatting Objects",
+              "markdownDescription": "Determines if all object keys should be indented, never indented, or left to the default",
+              "enum": [
+                "default",
+                "indent",
+                "inline"
+              ]
+            }
+          }
         }
       }
     }
   },
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup --minify-identifiers --minify-whitespace"
+    "build": "tsup --minify-identifiers --minify-whitespace --onSuccess \"vsce package --no-dependencies\"",
+    "dry": "vsce ls package --no-dependencies"
   },
   "tsup": {
     "entry": {
       "extension": "./src/extension.ts"
     },
-    "outDir": "./extension",
     "noExternal": [
-      "@liquify/prettify"
+      "@liquify/liquid-language-specs",
+      "@liquify/prettify",
+      "parse-json",
+      "strip-json-comments",
+      "anymatch",
+      "rambdax",
+      "vscode-languageserver-types"
     ],
     "external": [
       "vscode"
     ],
-    "treeshake": false,
+    "treeshake": "smallest",
     "splitting": false,
     "format": "cjs"
   },
   "prettier": "@liquify/prettier-config",
   "eslintConfig": {
+    "ignorePatterns": [
+      "dist/extension.js"
+    ],
     "extends": "@liquify/eslint-config"
   },
   "devDependencies": {
     "@liquify/eslint-config": "^1.1.0",
     "@liquify/prettier-config": "^1.0.1",
-    "@types/node": "^18.7.15",
     "@types/vscode": "^1.71.0",
-    "eslint": "^8.23.0",
+    "eslint": "^8.24.0",
     "prettier": "^2.7.1",
     "tsup": "^6.2.3",
-    "vscode": "^1.1.37"
+    "type-fest": "^3.0.0",
+    "vsce": "^2.11.0"
   },
   "dependencies": {
-    "@liquify/prettify": "0.0.3-beta.1"
+    "@liquify/liquid-language-specs": "^0.1.4",
+    "@liquify/prettify": "0.1.4-beta.1",
+    "anymatch": "^3.1.2",
+    "parse-json": "^6.0.2",
+    "rambdax": "8.1.0",
+    "strip-json-comments": "^5.0.0",
+    "vscode-languageserver-types": "^3.17.2"
   }
 }

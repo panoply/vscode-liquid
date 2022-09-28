@@ -1,0 +1,18 @@
+{
+  "scopeName": "source.yaml.liquid",
+  "injectionSelector": "L:source.yaml",
+  "injections": {
+    "L:string - (string.quoted.*.yaml)": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    }
+  },
+  "patterns": [
+    { "include": "source.liquid#comment-inline" },
+    { "include": "source.liquid#comment-block" },
+    { "include": "source.liquid#tags" },
+    { "include": "source.liquid#output" }
+  ]
+}

@@ -1,0 +1,606 @@
+{
+  "title": "VSCode Liquid Extension Configuration",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "markdownDescription": "Accepts formatting rules and options that will be passed to Prettify",
+  "definitions": {
+    "markup": {
+      "properties": {
+        "correct": {
+          "type": "boolean",
+          "default": false,
+          "title": "Fix Sloppy Code",
+          "markdownDescription": "Automatically attempts to correct some sloppiness in code. Use this option with care, it may wreak havoc in some cases."
+        },
+        "attributeCasing": {
+          "type": "string",
+          "default": "preserve",
+          "markdownDescription": "Control the casing of attributes",
+          "oneOf": [
+            {
+              "enum": ["preserve"]
+            },
+            {
+              "enum": ["lowercase"]
+            },
+            {
+              "enum": ["lowercase-name"]
+            },
+            {
+              "enum": ["lowercase-value"]
+            }
+          ]
+        },
+        "attributeSort": {
+          "type": "boolean",
+          "default": false,
+          "title": "Sort Attributes",
+          "markdownDescription": "Alphanumerically sort HTML attributes from A to Z."
+        },
+        "attributeSortList": {
+          "type": "array",
+          "title": "Sort Attribute List",
+          "items": {
+            "type": "string"
+          },
+          "markdownDescription": "A list of HTML attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires \"attribute_sort\" have a value of true and does not support Liquid tag names, only HTML names are applicable.",
+          "markdownDescription": "A list of HTML attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires `attribute_sort` have a value of `true` and does not accept Liquid tag names, only HTML names are applicable."
+        },
+        "attributeValues": {
+          "default": "preserve",
+          "type": "string",
+          "markdownDescription": "How attribute values should be handled. By default, Prettify strips extraneous whitespaces from HTML attribute values but preserves newlines. You can control how attribute values should be processed.\\n\\nPlease note that this option is experimental and may not fully work as intended.",
+          "oneOf": [
+            {
+              "enum": ["preserve"]
+            },
+            {
+              "enum": ["wrap"]
+            },
+            {
+              "enum": ["strip"]
+            },
+            {
+              "enum": ["collapse"]
+            }
+          ]
+        },
+        "delimiterSpacing": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Whether or not delimiter characters should apply a single space at the start and end points."
+        },
+        "commentNewline": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "This will determine whether comments should always start at position 0 of each line or if comments should be indented according to the code.",
+          "markdownDescription": "This will determine whether comments should always start at position `0` of each line or if comments should be indented according to the code."
+        },
+        "forceLeadAttribute": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Whether the leading attribute should be forced onto a newline when word `wrap` limit is exceeded or if it should be preserved. By default, Prettify preserves the leading attribute when applying wrap indentation. Enabling this option will force indent all attributes if wrap is exceeded. This rule requires a `wrap` level to be defined. If you have `forceAttribute` enabled or using a force attribute limit value it will override this option. If you desire wrap based attribute indentation, set `forceAttribute` to `false` and ensure a `wrap` level is defined.\n#### Disabled (default)\n*Below is an example of how this rule works if it's disabled (ie: `false`) and attributes have exceeded a defined wrap limit. Notice how leading attributes are preserved that have not exceeded wrap, but proceeding attributes are indented onto their own lines, this is the default behavior Prettify uses.*\n```liquid\n<!-- Leading attribute is preserved -->\n<div class=\"x\"\n  id=\"{{ foo }}\"\n  data-attribute-example=\"100\"\n  data-x=\"xx\"></div>\n```\n#### Enabled\n*Below is an example of how this rule works if it's enabled (ie: `true`) and attributes have exceeded the defined wrap limit. Notice how all attributes and indented onto their own line, including the leading attribute.*\n```liquid\n<!-- All attributes are forced including the leading attribute -->\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-attribute-example=\"100\"\n  data-x=\"xx\"></div>\n```"
+        },
+        "forceIndent": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Will force indentation upon all content and tags without regard for the text nodes."
+        },
+        "forceAttribute": {
+          "type": ["boolean", "number"],
+          "default": false,
+          "markdownDescription": "If all markup attributes should be indented each onto their own line. You can optionally provide an integer value of `1` or more. When an integer value is passed, attributes will be forced only if the number of attributes contained on the tag exceeds the supplied value limit. When you define a `wrap` level then attributes will be automatically forced. This is typically a better solution than forcing all attributes onto newlines or an even better solution would be to set a limit level.\n\n#### Disabled Example\n*Below is the default, wherein attributes are only forced when wrap is exceeded.*\n```liquid\n<div class=\"x\" id=\"{{ foo }}\" data-x=\"xx\">\n</div>\n```\n#### Enabled Example\n*Below is an example of how this rule works if it's enabled, ie: `true`*\n```liquid\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-x=\"xx\"></div>\n```\n#### Limit Example\n*Below we provide a value of `2` so formatting will be applied as such:*\n```liquid\n<!-- Tag contains 2 attributes, they will not be forced-->\n<div class=\"x\" id=\"{{ foo }}\"></div>\n\n<!-- Tag contains 3 attributes, thus they will be forced -->\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-x=\"xx\"></div>\n\n<!-- Tag contains 1 attribute, it will not be forced-->\n<div class=\"x\"></div>\n```"
+        },
+        "preserveText": {
+          "type": "boolean",
+          "default": true,
+          "title": "Preserve Markup Text White Space",
+          "markdownDescription": "If text in the provided document code should be preserved exactly as provided. This option eliminates beautification and wrapping of text content."
+        },
+        "selfCloseSpace": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Markup self-closing tags end will end with ' />' instead of '/>'",
+          "markdownDescription": "Markup self-closing tags end will end with ' />' instead of '/>' on the ending delimeters.\n\n---\n\n**Disabled**:\n\n\t<meta charset=\"UTF-8\">\n\n**Enabled**:\n\n\t<meta charset=\"UTF-8\" />\n\n---\n\n**NOTE:**\n\nThis is optional and self-closing tags are no longer required as of HTML5, so use this how you wish."
+        },
+        "preserveAttributes": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "If HTML tags should have their insides (attributes) preserved. This option will prevent attributes from being formatted.",
+          "markdownDescription": "If HTML tags should have their insides (attributes) preserved. This option will prevent attributes from being formatted.\n\n---\n\n**Disabled** 👎\n\n\t<div   id=\"a\"\n  \tclass=\"b\" data-attr=\"c\">\n\n**Enabled** 👍\n\n\t<div\n\t id=\"a\"\n\t class=\"b\"\n\t data-attr=\"c\">\n\n---\n\n**NOTE:**\n\nThere might be some situations where you do not desire attributes to be formatted, in such case use this option."
+        },
+        "quoteConvert": {
+          "default": "none",
+          "markdownDescription": "If quotation character should be converted to specific type or not.",
+          "oneOf": [
+            {
+              "enum": ["double"],
+              "markdownDescription": "Converts single quotes to double quotes"
+            },
+            {
+              "enum": ["none"],
+              "markdownDescription": "Ignores this option"
+            },
+            {
+              "enum": ["single"],
+              "markdownDescription": "Converts double quotes to single quotes"
+            }
+          ]
+        }
+      }
+    },
+    "style": {
+      "properties": {
+        "correct": {
+          "type": "boolean",
+          "default": false,
+          "title": "Fix Sloppy Code",
+          "markdownDescription": "Automatically attempts to correct some sloppiness in code. Use this option with care, it may wreak havoc in some cases."
+        },
+        "braceAllman": {
+          "type": "boolean",
+          "default": false,
+          "title": "Style of Indent",
+          "markdownDescription": "Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. (Allman style indentation)"
+        },
+        "comments": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "This will determine whether comments should always start at position 0 of each line or if comments should be indented according to the code"
+        },
+        "sortSelectors": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Sort Selectors"
+        },
+        "sortProperties": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Sort Selectors"
+        },
+        "classPadding": {
+          "type": "boolean",
+          "default": false,
+          "title": "Insert Empty Lines",
+          "markdownDescription": "Inserts new line characters between every CSS code block."
+        },
+        "noLeadZero": {
+          "type": "boolean",
+          "default": false,
+          "title": "Leading 0s",
+          "markdownDescription": "Whether leading 0s in CSS values immediately preceding a decimal should be removed or prevented."
+        },
+        "selectorList": {
+          "type": "boolean",
+          "default": false,
+          "title": "Single Lined Selectors",
+          "markdownDescription": "If comma separated CSS selectors should present on a single line of code."
+        }
+      }
+    },
+    "script": {
+      "properties": {
+        "correct": {
+          "type": "boolean",
+          "default": false,
+          "title": "Fix Sloppy Code",
+          "markdownDescription": "Automatically attempts to correct some sloppiness in code. Use this option with care, it may wreak havoc in some cases."
+        },
+        "braceAllman": {
+          "type": "boolean",
+          "default": false,
+          "title": "Style of Indent",
+          "markdownDescription": "Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. (Allman style indentation)"
+        },
+        "braceNewline": {
+          "type": "boolean",
+          "default": false,
+          "title": "Brace Lines",
+          "markdownDescription": "If true an empty line will be inserted after opening curly braces and before closing curly braces"
+        },
+        "bracePadding": {
+          "type": "boolean",
+          "default": false,
+          "title": "Brace Padding",
+          "markdownDescription": "Inserts a space after the start of a container and before the end of the container if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings"
+        },
+        "braceStyle": {
+          "type": "string",
+          "default": "none",
+          "title": "Brace Style",
+          "markdownDescription": "Emulates JSBeautify's brace_style option",
+          "oneOf": [
+            {
+              "enum": ["collapse"],
+              "markdownDescription": "Sets options.format_object to 'indent' and options.neverflatten to true"
+            },
+            {
+              "enum": ["collapse-preserve-inline"],
+              "markdownDescription": "Sets options.bracepadding to true and options.format_object to 'inline'"
+            },
+            {
+              "enum": ["expand"],
+              "markdownDescription": "Sets options.braces to true, options.format_object to 'indent', and options.never flatten to true."
+            },
+            {
+              "enum": ["none"],
+              "markdownDescription": "Ignores this option"
+            }
+          ]
+        },
+        "caseSpace": {
+          "type": "boolean",
+          "default": false,
+          "title": "Space Following Case",
+          "markdownDescription": "If the colon separating a case's expression (of a switch/case block) from its statement should be followed by a space instead of indentation, thereby keeping the case on a single line of code"
+        },
+        "commentIndent": {
+          "type": "boolean",
+          "default": false,
+          "title": "Comment Indentation",
+          "markdownDescription": "This will determine whether comments should always start at position 0 of each line or if comments should be indented according to the code"
+        },
+        "inlineReturn": {
+          "type": "boolean",
+          "default": false,
+          "title": "If can return inline"
+        },
+        "elseNewline": {
+          "type": "boolean",
+          "default": false,
+          "title": "Else On New Line",
+          "markdownDescription": "If else_line is true then the keyword 'else' is forced onto a new line."
+        },
+        "endComma": {
+          "type": "string",
+          "default": "none",
+          "title": "Trailing Comma",
+          "markdownDescription": "If there should be a trailing comma in arrays and objects",
+          "oneOf": [
+            {
+              "enum": ["always"],
+              "markdownDescription": "Always ensure there is a tailing comma"
+            },
+            {
+              "enum": ["never"],
+              "markdownDescription": "Remove trailing commas"
+            },
+            {
+              "enum": ["none"],
+              "markdownDescription": "Ignore this option"
+            }
+          ]
+        },
+        "arrayFormat": {
+          "type": "string",
+          "default": "default",
+          "title": "Formatting Arrays",
+          "markdownDescription": "Determines if all array indexes should be indented, never indented, or left to the default.",
+          "oneOf": [
+            {
+              "enum": ["default"],
+              "markdownDescription": "Default formatting"
+            },
+            {
+              "enum": ["indent"],
+              "markdownDescription": "Always indent each index of an array"
+            },
+            {
+              "enum": ["inline"],
+              "markdownDescription": "Ensure all array indexes appear on a single line"
+            }
+          ]
+        },
+        "objectIndent": {
+          "type": "string",
+          "default": "default",
+          "title": "Formatting Arrays",
+          "markdownDescription": "Determines if all object keys should be indented, never indented, or left to the default",
+          "oneOf": [
+            {
+              "enum": ["default"],
+              "markdownDescription": "Default formatting"
+            },
+            {
+              "enum": ["indent"],
+              "markdownDescription": "Always indent each key/value pair"
+            },
+            {
+              "enum": ["inline"],
+              "markdownDescription": "Ensure all key/value pairs appear on the same single line"
+            }
+          ]
+        },
+        "functionNameSpace": {
+          "type": "boolean",
+          "default": false,
+          "title": "Space After Function Name",
+          "markdownDescription": "If a space should follow a JavaScript function name"
+        },
+        "methodChain": {
+          "type": "number",
+          "default": 3,
+          "title": "Method Chains",
+          "markdownDescription": "When to break consecutively chained methods and properties onto separate lines. A negative value disables this option. A value of 0 ensures method chains are never broken"
+        },
+        "neverFlatten": {
+          "type": "boolean",
+          "default": false,
+          "title": "Never Flatten Destructured Lists",
+          "markdownDescription": "If destructured lists in script should never be flattend"
+        },
+        "noCaseIndent": {
+          "type": "boolean",
+          "default": false,
+          "title": "Case Indentation",
+          "markdownDescription": "If a case statement should receive the same indentation as the containing switch block."
+        },
+        "noSemicolon": {
+          "type": "boolean",
+          "default": false,
+          "title": "No Semicolons",
+          "markdownDescription": "Removes semicolons that would be inserted by ASI. This option is in conflict with option 'correct' and takes precedence over conflicting features. Use of this option is a possible security/stability risk"
+        },
+        "preserveComment": {
+          "type": "boolean",
+          "default": false,
+          "title": "Eliminate Word Wrap Upon Comments",
+          "markdownDescription": "Prevent comment reformatting due to option wrap"
+        },
+        "quoteConvert": {
+          "default": "none",
+          "title": "Convert Quotes",
+          "markdownDescription": "If the quotes of script strings or document attributes should be converted to single quotes or double quotes",
+          "oneOf": [
+            {
+              "enum": ["double"],
+              "markdownDescription": "Converts single quotes to double quotes"
+            },
+            {
+              "enum": ["none"],
+              "markdownDescription": "Ignores this option"
+            },
+            {
+              "enum": ["single"],
+              "markdownDescription": "Converts double quotes to single quotes"
+            }
+          ]
+        },
+        "functionSpace": {
+          "type": "boolean",
+          "default": false,
+          "title": "Function Space",
+          "markdownDescription": "Inserts a space following the function keyword for anonymous functions"
+        },
+        "styleGuide": {
+          "type": "string",
+          "default": "none",
+          "title": "Script Styleguide",
+          "markdownDescription": "Provides a collection of option presets to easily conform to popular JavaScript style guides.",
+          "oneOf": [
+            {
+              "enum": ["none"]
+            },
+            {
+              "enum": ["airbnb"]
+            },
+            {
+              "enum": ["crockford"]
+            },
+            {
+              "enum": ["google"]
+            },
+            {
+              "enum": ["jquery"]
+            },
+            {
+              "enum": ["mediawiki"]
+            },
+            {
+              "enum": ["semistandard"]
+            },
+            {
+              "enum": ["standard"]
+            },
+            {
+              "enum": ["yandex"]
+            }
+          ]
+        },
+        "ternaryLine": {
+          "type": "boolean",
+          "default": false,
+          "title": "Keep Ternary Statements On One Line",
+          "markdownDescription": "If ternary operators in JavaScript ? and : should remain on the same line"
+        },
+        "variableList": {
+          "type": "boolean",
+          "default": false,
+          "title": "Variable Declaration Lists",
+          "markdownDescription": "If consecutive JavaScript variables should be merged into a comma separated list or if variables in a list should be separated"
+        }
+      }
+    },
+    "json": {
+      "properties": {
+        "arrayFormat": {
+          "type": "string",
+          "default": "default",
+          "title": "Formatting Arrays",
+          "markdownDescription": "Determines if all array indexes should be indented, never indented, or left to the default.",
+          "oneOf": [
+            {
+              "enum": ["default"],
+              "markdownDescription": "Default formatting"
+            },
+            {
+              "enum": ["indent"],
+              "markdownDescription": "Always indent each index of an array"
+            },
+            {
+              "enum": ["inline"],
+              "markdownDescription": "Ensure all array indexes appear on a single line"
+            }
+          ]
+        },
+        "braceAllman": {
+          "type": "boolean",
+          "default": false,
+          "title": "Style of Indent",
+          "markdownDescription": "Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. (Allman style indentation)\n#### Disabled\n\n```json\n[\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" }\n]\n```\n#### Enabled\n\n```json\n[\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  }\n]\n```"
+        },
+        "bracePadding": {
+          "type": "boolean",
+          "default": false,
+          "title": "Brace Lines",
+          "markdownDescription": "If true an empty line will be inserted after opening curly braces and before closing curly braces"
+        },
+        "braceStyle": {
+          "type": "string",
+          "default": "none",
+          "title": "Brace Style",
+          "markdownDescription": "Emulates JSBeautify's brace_style option",
+          "oneOf": [
+            {
+              "enum": ["collapse"],
+              "markdownDescription": "Sets options.format_object to 'indent' and options.neverflatten to true"
+            },
+            {
+              "enum": ["collapse-preserve-inline"],
+              "markdownDescription": "Sets options.bracepadding to true and options.format_object to 'inline'"
+            },
+            {
+              "enum": ["expand"],
+              "markdownDescription": "Sets options.braces to true, options.format_object to 'indent', and options.never flatten to true."
+            },
+            {
+              "enum": ["none"],
+              "markdownDescription": "Ignores this option"
+            }
+          ]
+        },
+        "formatArray": {
+          "type": "string",
+          "default": "default",
+          "title": "Formatting Arrays",
+          "markdownDescription": "Determines if all array indexes should be indented, never indented, or left to the default.",
+          "oneOf": [
+            {
+              "enum": ["default"],
+              "markdownDescription": "Default formatting"
+            },
+            {
+              "enum": ["indent"],
+              "markdownDescription": "Always indent each index of an array"
+            },
+            {
+              "enum": ["inline"],
+              "markdownDescription": "Ensure all array indexes appear on a single line"
+            }
+          ]
+        },
+        "objectIndent": {
+          "type": "string",
+          "default": "default",
+          "title": "Formatting Objects",
+          "markdownDescription": "Determines if all object keys should be indented, never indented, or left to the default",
+          "oneOf": [
+            {
+              "enum": ["default"],
+              "markdownDescription": "Default formatting"
+            },
+            {
+              "enum": ["indent"],
+              "markdownDescription": "Always indent each key/value pair"
+            },
+            {
+              "enum": ["inline"],
+              "markdownDescription": "Ensure all key/value pairs appear on the same single line"
+            }
+          ]
+        }
+      }
+    },
+    "exclude": {
+      "items": [
+        {
+          "type": "string",
+          "markdownDescription": "Glob pattern of file's and/or directories to be ignored from formatting. Use relative paths to exclude or ignore formatting.\n\nYou can also leverage inline ignore comments. Place a Prettify ignore comment at the top of files you to exclude from beautification.\n\n**Example:**\n```liquid\n{% # @prettify-ignore %}\n\nOR\n\n<!-- @prettify-ignore -->\n```"
+        }
+      ]
+    }
+  },
+  "properties": {
+    "format": {
+      "markdownDeprecationMessage": "This option is now deprecated. Use the workspace `liquid.format.enable` instead."
+    },
+    "rules": {
+      "markdownDeprecationMessage": "This option is now deprecated. You will need to update the options in order for the extension to work. Formatting rules now use the following structure:\n{\n  \"markup\": {},\n  \"script\": {},\n  \"style\": {},\n  \"json\": {}\n}"
+    },
+    "ignore": {
+      "$ref": "#/definitions/exclude"
+    },
+
+    "wrap": {
+      "type": "number",
+      "title": "Wrap Limit",
+      "markdownDescription": "Character width limit before applying word wrap. A `0` value disables this option. Typically, you can leave this option, as it will defaults to the word wrap limit set within workspace/user settings of your text editor."
+    },
+    "indentSize": {
+      "type": "number",
+      "default": 2,
+      "markdownDescription": "The level of indentation to be applied to HTML and Liquid syntax. This option does not apply to embedded regions."
+    },
+    "commentIndent": {
+      "type": "boolean",
+      "default": false,
+      "markdownDescription": "If a blank new line should be forced above comments."
+    },
+    "preserveLine": {
+      "type": "number",
+      "default": 3,
+      "markdownDescription": "The maximum number of consecutive empty lines to retain."
+    },
+    "preserveComment": {
+      "type": "boolean",
+      "default": false,
+      "title": "Eliminate Word Wrap Upon Comments",
+      "markdownDescription": "Prevent comment reformatting due to option wrap."
+    },
+    "endNewLine": {
+      "type": "boolean",
+      "default": false,
+      "markdownDescription": "Whether or not to insert a final line. When this rule is undefined in a `.liquidrc` file the Text Editors settings will be used, in vscode that is `*.endWithNewline` where `*` is a language name.  If an `.editorconfig` file is found present in root, those rules will be applied in **precedence** over Text Editor"
+    },
+    "crlf": {
+      "type": "boolean",
+      "default": false,
+      "markdownDescription": "If line termination should be Windows (CRLF) format. Unix (LF) format is the default."
+    },
+    "markup": {
+      "type": "object",
+      "additionalProperties": false,
+      "markdownDescription": "Liquid + HTML beautification formatting options and rules",
+      "$ref": "#/definitions/markup"
+    },
+    "script": {
+      "type": "object",
+      "additionalProperties": false,
+      "markdownDescription": "JavaScript beautification formatting options and rules. Applied to any defined files, HTML <script> tags and Liquid \"javascript\" tags",
+      "$ref": "#/definitions/script"
+    },
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "markdownDescription": "CSS beautification formatting options and rules. Applied to defined \"files[]\", HTML <style> tags and Liquid \"stylesheet\" / \"style\" tags",
+      "$ref": "#/definitions/style"
+    },
+    "json": {
+      "type": "object",
+      "additionalProperties": false,
+      "markdownDescription": "JSON beautification formattingoptions and rules. Applied to any defined files, HTML <script type=\"application/json\"> tags and Liquid \"schema\" tags",
+      "$ref": "#/definitions/json"
+    }
+  }
+}

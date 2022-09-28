@@ -1,0 +1,6 @@
+{
+  "$schema": "../../schema/liquidrc.json",
+  "markup": {
+    "forceAttribute": false
+  }
+}

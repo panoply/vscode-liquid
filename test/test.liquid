@@ -1,0 +1,167 @@
+<!doctype html>
+<html
+  lang="{{ shop_locale.iso_code }}">
+  <head>
+
+
+    <meta
+      charset="utf-8">
+    <title>
+      {{- page_title -}}
+      {%- if current_tags -%}
+        {%- assign meta_tags = current_tags | join: ", " -%}
+        {{ "general.meta.tags" | t: tags: meta_tags | prepend: " &ndash; " }}
+      {%- endif -%}
+      {%- if current_page != 1 -%}
+        {{ "general.meta.page" | t: page: current_page | prepend: " &ndash; " }}
+      {%- endif -%}
+      {%- unless page_title contains shop.name -%}
+        {{ shop.name | prepend: " &ndash;" }}
+      {%- endunless -%}
+    </title>
+
+
+    {%- render "favicons" -%}
+    {%- render "meta_tags" -%}
+
+    <link
+      crossorigin
+      href="https://api.ipstack.com"
+      rel="dns-prefetch">
+    <link
+      crossorigin
+      href="https://api.brixtol.com"
+      rel="dns-prefetch">
+    <link
+      crossorigin
+      href="https://s.pinimg.com"
+      rel="dns-prefetch">
+    <link
+      crossorigin
+      href="https://brixtol.cloud"
+      rel="dns-prefetch">
+    <link
+      crossorigin
+      href="https://cdn.shopify.com"
+      rel="preconnect">
+    <link
+      crossorigin
+      href="https://use.typekit.net"
+      rel="preconnect">
+    <link
+      crossorigin
+      href="https://brixtol.cloud"
+      rel="preconnect">
+    <link
+      as="font"
+      crossorigin
+      href="{{ 'catalogue-ll-regular.woff2' | asset_url }}"
+      rel="preload"
+      type="font/woff2">
+    <link
+      as="font"
+      crossorigin
+      href="{{ 'catalogue-ll-italic.woff2' | asset_url }}"
+      rel="preload"
+      type="font/woff2">
+    <link
+      as="style"
+      crossorigin
+      href="{{ 'stylesheet.css' | asset_url }}"
+      rel="preload">
+    <link
+      as="style"
+      crossorigin
+      href="{{ 'theme.css' | asset_url }}"
+      rel="preload">
+    <link
+      as="script"
+      crossorigin
+      href="{{ 'bundle.js' | asset_url -}}"
+      rel="preload">
+
+
+    <style>
+      {%- render 'vars.css' %}
+    </style>
+
+
+    <link
+      href="{{ 'stylesheet.css' | asset_url }}"
+      rel="stylesheet">
+    <link
+      href="{{ 'theme.css' | asset_url }}"
+      rel="stylesheet">
+
+    <script
+      data-spx-eval="false">
+      {%- render 'shop.js' -%}
+      {%- if condition -%}
+        const foo = {};
+        {{ object.prop.prop['string'][10] | filter: false }}
+      {%- endif -%}
+    </script>
+
+    <script
+      data-spx-eval="false">
+      {%- render 'i18n.js' -%}
+    </script>
+    <script
+      data-spx-eval="false"
+      defer
+      src="{{ 'bundle.js' | asset_url }}"
+      type="module">
+      window.app();
+    </script>
+
+    <script
+      async
+      defer
+      src="https://www.googletagmanager.com/gtag/js?id=g-htnv2npht6"></script>
+
+    {%- if template contains "customers" -%}
+      <script
+        async
+        src="{{ 'shopify_common.js' | shopify_asset_url -}}"></script>
+      <script
+        async
+        src="{{ 'customer_area.js' | shopify_asset_url }}"></script>
+    {%- endif -%}
+
+    {%- capture content_header -%}
+      {{ content_for_header }}
+    {%- endcapture -%}
+
+    {{ content_header | replace: "<script", "<script data-spx-eval="false"" }}
+  </head>
+
+  <body
+    attr="{{ object.prop.prop['string'][10] | filter: false }}">
+
+    <h1></h1>
+
+
+    <div
+      id="foo"
+      {{ object.prop.prop[string][10] | filter: false }}></div>
+    {%- if condition -%}
+    {%- endif -%}
+
+
+    {%- render "drawer_menu", overlay: "drawer-overlay" -%}
+    {%- render "drawer_cart", overlay: "drawer-overlay" -%}
+    {%- section "header" -%}
+    {{ content_for_layout }}
+
+
+    {%- section "footer" -%}
+    {%- render "icons" -%}
+    {%- render "nodes" -%}
+    {%- render "gdrp", overlay: "bg-visible" -%}
+    {%- render "discounts" -%}
+
+
+  </body>
+
+</html>
+
