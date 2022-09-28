@@ -1,0 +1,866 @@
+{%- comment -%}
+
+  HERO SLIDESHOW
+
+  Renders a carousel slideshow components
+  that can contain image or video content.
+  Each slide can apply text overlay content
+  identical to that of which can be set in
+  the hero_image section. Single slides are
+  enforced on the carousel.{%- endcomment -%}
+<div
+  class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}"
+  data-carousel-desktop-value="1"
+  data-carousel-draggable-value="{{ section.settings.draggable }}"
+  data-carousel-duration-value="{{ section.settings.duration }}"
+  data-carousel-hydrate-value="true"
+  data-carousel-id-value="{{ section.id | base64_encode }}"
+  data-carousel-interval-value="{{ section.settings.interval }}"
+  data-carousel-loop-value="{{ section.settings.loop }}"
+  data-carousel-mobile-value="1"
+  data-carousel-tablet-value="1"
+  data-controller="carousel">
+
+
+  {%- if section.settings.buttons -%}
+    <div
+      class="previous d-flex ai-center">
+      <button
+        aria-label="Previous"
+        data-action="click->carousel#prev"
+        type="button">
+        <icon
+          name="chevron-left" />
+      </button>
+    </div>
+    <div
+      class="next d-flex ai-center">
+      <button
+        aria-label="Next"
+        data-action="click->carousel#next"
+        type="button">
+        <icon
+          name="chevron-right" />
+      </button>
+    </div>
+  {%- endif -%}
+
+  <div
+    data-carousel-target="siema">
+
+    {%- for block in section.blocks -%}
+
+      {%- assign item = block.settings -%}
+
+      <div
+        class=" {%- unless forloop.first %}col px-0 d-none{% else %}col px-0{% endunless %}"
+        data-carousel-target="slide">
+
+        {%- if block.type == 'image_with_content' -%}
+
+          {%- capture spacing -%}
+            mb-
+            {{- item.py_mobile }}
+            mb-sm-
+            {{- item.py_desktop }}
+          {%- endcapture -%}
+
+          {%- capture gutter -%}
+            px-
+            {{- item.mx_mobile }}
+            py-
+            {{- item.my_mobile }}
+            px-sm-
+            {{- item.mx_desktop }}
+          {%- endcapture -%}
+
+          <div
+            class="hero-caption d-flex p-3 p-sm-5 {{ item.pos_mobile }} {{ item.pos_desktop }}">
+            <div
+              class="{{ gutter }} py-sm-{{ item.my_desktop }} {{ item.ta_mobile }} {{ item.ta_desktop }}">
+
+              {%- if item.title != blank -%}
+
+                {%- capture styles -%}
+                  color:
+                  {{- item.title_fc | default: 'inherit' -}}
+                  ;
+                  letter-spacing:
+                  {{- item.title_ls | default: 'inherit' -}}
+                  px;
+                  font-size:
+                  {{- item.title_fs | default: 'inherit' -}}
+                  px;
+                  font-weight:
+                  {{- item.title_fw | default: 'inherit' -}}
+                  ;
+                {%- endcapture -%}
+
+                <h1
+                  class="{{ spacing }}"
+                  style="{{ styles }}">
+                  {{- item.title -}}
+                </h1>
+
+              {%- endif -%}
+
+              {%- if item.subtitle != blank -%}
+
+                {%- capture style -%}
+                  color:
+                  {{- item.subtitle_fc | default: 'inherit' -}}
+                  ;
+                  letter-spacing:
+                  {{- item.subtitle_ls | default: 'inherit' -}}
+                  px;
+                  font-size:
+                  {{- item.subtitle_fs | default: 'inherit' -}}
+                  px;
+                  font-weight:
+                  {{- item.subtitle_fw | default: 'inherit' -}}
+                  ;
+                {%- endcapture -%}
+
+                <h1
+                  class="{{ spacing }}"
+                  style="{{ style }}">
+                  {{- item.subtitle -}}
+                </h1>
+
+              {%- endif -%}
+
+              {%- if item.caption != blank -%}
+
+                {%- capture style -%}
+                  color:
+                  {{- item.caption_fc | default: 'inherit' -}}
+                  ;
+                  letter-spacing:
+                  {{- item.caption_ls | default: 'inherit' -}}
+                  px;
+                  font-size:
+                  {{- item.caption_fs | default: 'inherit' -}}
+                  px;
+                  font-weight:
+                  {{- item.caption_fw | default: 'inherit' -}}
+                  ;
+                  max-width:
+                  {{- item.caption_width -}}
+                  px;
+                  {%- if item.caption_lh != 0 -%}
+                    line-height:
+                    {{- item.caption_lh -}}
+                    px;
+                  {%- endif -%}
+                {%- endcapture -%}
+
+                <p
+                  class="{{ spacing }}"
+                  style="{{ style }}">
+                  {{- item.caption | remove: '<p>' | remove: '</p>' -}}
+                </p>
+
+              {%- endif -%}
+
+              {%- if item.btn != blank -%}
+
+                {%- capture style -%}
+                  color:
+                  {{- item.btn_fc | default: 'inherit' -}}
+                  ;
+                  background-color:
+                  {{- item.btn_bg | default: 'inherit' -}}
+                  ;
+                  font-size:
+                  {{- item.btn_fs | default: 'inherit' -}}
+                  px;
+                  font-weight:
+                  {{- item.btn_fw | default: 'inherit' -}}
+                  ;
+                  height:
+                  {{- item.btn_height }}
+                  px;
+                  max-width:
+                  {{- item.btn_width }}
+                  px;
+                {%- endcapture -%}
+
+                {%- capture class -%}
+                  {%- if item.btn_radius and item.btn_shadow -%}
+                    btn-radius btn-shadow mt-
+                    {{ item.btn_mt }}
+                  {%- elsif item.btn_shadow -%}
+                    btn-shadow mt-
+                    {{ item.btn_mt }}
+                  {%- elsif item.btn_radius -%}
+                    btn-radius mt-
+                    {{ item.btn_mt }}
+                  {%- else -%}
+                    mt-
+                    {{ item.btn_mt }}
+                  {%- endif -%}
+                {%- endcapture -%}
+
+                <a
+                  class="btn btn-line {{ class }}"
+                  href="{{ item.url }}"
+                  style="{{ style }}">
+                  {{- item.btn -}}
+                </a>
+
+              {%- endif -%}
+
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- unless block.type contains 'video' -%}
+
+          {%- capture aspect_ratio -%}
+            --ratio-width:
+            {{- item.img_desktop.width -}}
+            ;
+            --ratio-height:
+            {{- item.img_desktop.height -}}
+            ;
+            --ratio-width-sm:
+            {{- item.img_mobile.width -}}
+            ;
+            --ratio-height-sm:
+            {{- item.img_mobile.height -}}
+            ;
+          {%- endcapture -%}
+
+          <div
+            class="aspect-ratio"
+            style="{{ aspect_ratio }}">
+            {%- if item.img_desktop != blank and item.img_mobile != blank -%}
+              <picture>
+                <source
+                  data-srcset="{{ item.img_desktop | img_url: '1440x' | format: 'pjpg' }}"
+                  media="lg" />
+                <source
+                  data-srcset="{{ item.img_desktop | img_url: '1240x' | format: 'pjpg' }}"
+                  media="md" />
+                <source
+                  data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}"
+                  media="sm" />
+                <source
+                  data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}"
+                  media="xs" />
+                <img
+                  class="img-fluid lazy"
+                  data-src=" {{- item.img_desktop | img_url: '1440x' | format: 'pjpg' }}">
+              </picture>
+            {%- else -%}
+              {%- render 'placeholder', type: 'hero_image' -%}
+            {%- endif -%}
+          </div>
+        {%- endunless -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Hero Slideshow",
+    "tag": "section",
+    "class": "row jc-center ai-center",
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Image",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Link",
+            "info": "Renders a href link on the hero image"
+          },
+          {
+            "type": "url",
+            "id": "href",
+            "label": "Link"
+          },
+          {
+            "type": "header",
+            "content": "Images",
+            "info": "Choose or upload desktop and mobile images"
+          },
+          {
+            "type": "image_picker",
+            "id": "img_desktop",
+            "label": "Desktop Image",
+            "info": "Dimensions: 1440x"
+          },
+          {
+
+            "type": "image_picker",
+            "id": "img_mobile",
+            "label": "Mobile Image",
+            "info": "Dimensions: 1024x1024"
+          }
+        ]
+      },
+      {
+        "type": "image_with_content",
+        "name": "Image with Content",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Desktop Layout",
+            "info": "Controls the viewport content position and text alignment"
+          },
+          {
+            "type": "select",
+            "id": "pos_desktop",
+            "label": "Desktop Position",
+            "default": "jc-sm-center ai-sm-center",
+            "options": [
+              {
+                "value": "jc-sm-start ai-sm-start",
+                "label": "Top Left"
+              },
+              {
+                "value": "jc-sm-center ai-sm-start",
+                "label": "Top Center"
+              },
+              {
+                "value": "jc-sm-end ai-sm-start",
+                "label": "Top Right"
+              },
+              {
+                "value": "jc-sm-start ai-sm-center",
+                "label": "Middle Left"
+              },
+              {
+                "value": "jc-sm-center ai-sm-center",
+                "label": "Middle Center"
+              },
+              {
+                "value": "jc-sm-end ai-sm-center",
+                "label": "Middle Right"
+              },
+              {
+                "value": "jc-sm-start ai-sm-end",
+                "label": "Bottom Left"
+              },
+              {
+                "value": "jc-sm-center ai-sm-end",
+                "label": "Bottom Center"
+              },
+              {
+                "value": "jc-sm-end ai-sm-end",
+                "label": "Bottom Right"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "ta_desktop",
+            "label": "Text Alignment",
+            "default": "text-sm-center",
+            "options": [
+              {
+                "value": "text-sm-left",
+                "label": "Left"
+              },
+              {
+                "value": "text-sm-center",
+                "label": "Center"
+              },
+              {
+                "value": "text-sm-right",
+                "label": "Right"
+              }
+            ]
+          },
+          {
+            "type": "range",
+            "id": "mx_desktop",
+            "label": "Gutters X",
+            "info": "The X (left and right) spacing gutters surrounding the content",
+            "min": 0,
+            "max": 5,
+            "step": 1,
+            "default": 2
+          },
+          {
+            "type": "range",
+            "id": "my_desktop",
+            "label": "Gutters Y",
+            "info": "The Y (top and bottom) spacing gutters surrounding the content",
+            "min": 0,
+            "max": 5,
+            "step": 1,
+            "default": 2
+          },
+          {
+            "type": "range",
+            "id": "py_desktop",
+            "label": "Spacing",
+            "info": "The inner Y spacing between each text element",
+            "min": 1,
+            "max": 5,
+            "step": 1,
+            "default": 2
+          },
+          {
+            "type": "header",
+            "content": "Mobile Layout",
+            "info": "Controls the viewport content position and text alignment. This is optional if no settings are defined options will inherit desktop definitions."
+          },
+          {
+            "type": "select",
+            "id": "pos_mobile",
+            "label": "Mobile Position",
+            "default": "jc-center ai-center",
+            "options": [
+              {
+                "value": "jc-start ai-start",
+                "label": "Top Left"
+              },
+              {
+                "value": "jc-center ai-start",
+                "label": "Top Center"
+              },
+              {
+                "value": "jc-end ai-start",
+                "label": "Top Right"
+              },
+              {
+                "value": "jc-start ai-center",
+                "label": "Middle Left"
+              },
+              {
+                "value": "jc-center ai-center",
+                "label": "Middle Center"
+              },
+              {
+                "value": "jc-end ai-center",
+                "label": "Middle Right"
+              },
+              {
+                "value": "jc-start ai-end",
+                "label": "Bottom Left"
+              },
+              {
+                "value": "jc-center ai-end",
+                "label": "Bottom Center"
+              },
+              {
+                "value": "jc-end ai-end",
+                "label": "Bottom Right"
+              }
+            ]
+          },
+          {
+            "type": "select",
+            "id": "ta_mobile",
+            "label": "Text Alignment",
+            "default": "text-center",
+            "options": [
+              {
+                "value": "text-left",
+                "label": "Left"
+              },
+              {
+                "value": "text-center",
+                "label": "Center"
+              },
+              {
+                "value": "text-right",
+                "label": "Right"
+              }
+            ]
+          },
+          {
+            "type": "range",
+            "id": "mx_mobile",
+            "label": "Gutters X",
+            "info": "The X (left and right) spacing gutters surrounding the content",
+            "min": 0,
+            "max": 5,
+            "step": 1,
+            "default": 2
+          },
+          {
+            "type": "range",
+            "id": "my_mobile",
+            "label": "Gutters Y",
+            "info": "The Y (top and bottom) spacing gutters surrounding the content",
+            "min": 0,
+            "max": 5,
+            "step": 1,
+            "default": 2
+          },
+          {
+            "type": "range",
+            "id": "py_mobile",
+            "label": "Spacing",
+            "info": "The inner Y spacing between each text element",
+            "min": 1,
+            "max": 5,
+            "step": 1,
+            "default": 2
+          },
+          {
+            "type": "header",
+            "content": "Title",
+            "info": "Define a title text overlay to the image."
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "color",
+            "label": "Font Colour",
+            "id": "title_fc"
+          },
+          {
+            "type": "range",
+            "id": "title_fs",
+            "label": "Font Size",
+            "min": 1,
+            "max": 50,
+            "step": 0.5,
+            "default": 15,
+            "unit": "px"
+          },
+          {
+            "type": "range",
+            "id": "title_ls",
+            "label": "Letter Spacing",
+            "min": 0.1,
+            "max": 3,
+            "step": 0.1,
+            "default": 0.5,
+            "unit": "px"
+          },
+          {
+            "type": "range",
+            "id": "title_fw",
+            "label": "Font Weight",
+            "min": 100,
+            "max": 600,
+            "step": 100,
+            "default": 300
+          },
+          {
+            "type": "header",
+            "content": "Subtitle",
+            "info": "Define a subtitle text overlay to the image."
+          },
+          {
+            "type": "text",
+            "id": "subtitle",
+            "label": "Subtitle"
+          },
+          {
+            "type": "color",
+            "label": "Font Colour",
+            "id": "subtitle_fc"
+          },
+          {
+            "type": "range",
+            "id": "subtitle_fs",
+            "label": "Font Size",
+            "min": 1,
+            "max": 50,
+            "step": 0.5,
+            "default": 15,
+            "unit": "px"
+          },
+          {
+            "type": "range",
+            "id": "subtitle_ls",
+            "label": "Letter Spacing",
+            "min": 0.1,
+            "max": 3,
+            "step": 0.1,
+            "default": 0.5,
+            "unit": "px"
+          },
+          {
+            "type": "range",
+            "id": "subtitle_fw",
+            "label": "Font Weight",
+            "min": 100,
+            "max": 600,
+            "step": 100,
+            "default": 300
+          },
+          {
+            "type": "header",
+            "content": "Caption",
+            "info": "Define a caption text overlay to the image"
+          },
+          {
+            "type": "textarea",
+            "id": "caption",
+            "label": "Description"
+          },
+          {
+            "type": "color",
+            "label": "Font Colour",
+            "id": "caption_fc"
+          },
+          {
+            "type": "range",
+            "id": "caption_fs",
+            "label": "Font Size",
+            "min": 1,
+            "max": 50,
+            "step": 0.5,
+            "default": 15,
+            "unit": "px"
+          },
+          {
+            "type": "range",
+            "id": "caption_ls",
+            "label": "Letter Spacing",
+            "min": 0.1,
+            "max": 3,
+            "step": 0.1,
+            "default": 0.5,
+            "unit": "px"
+          },
+          {
+            "type": "range",
+            "id": "caption_lh",
+            "label": "Line Height",
+            "info": "Use a 0 value for default",
+            "min": 0,
+            "max": 50,
+            "step": 0.5,
+
+
+            "default": 0,
+            "unit": "px"
+          },
+          {
+            "type": "range",
+            "id": "caption_fw",
+            "label": "Font Weight",
+            "min": 100,
+            "max": 600,
+            "step": 100,
+            "default": 300
+          },
+          {
+            "type": "range",
+            "id": "caption_width",
+            "label": "Width",
+            "info": "The maximum width which contains the caption text",
+            "unit": "px",
+            "min": 0,
+            "max": 1000,
+            "step": 50,
+            "default": 300
+          },
+          {
+            "type": "header",
+            "content": "Button",
+            "info": "Add a button to the content overlay"
+          },
+          {
+            "type": "text",
+            "id": "btn",
+            "label": "Label"
+          },
+          {
+            "type": "url",
+            "id": "btn_url",
+            "label": "Link"
+          },
+          {
+            "type": "color",
+            "label": "Text Colour",
+            "id": "btn_fc"
+          },
+          {
+            "type": "color",
+            "label": "Button Background",
+            "id": "btn_bg"
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_shadow",
+            "label": "Button Shadow",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "btn_radius",
+            "label": "Button Radius",
+            "default": true
+          },
+          {
+            "type": "range",
+            "id": "btn_width",
+            "label": "Button Width",
+            "min": 10,
+            "max": 250,
+            "step": 5,
+            "default": 100,
+            "unit": "px"
+          },
+          {
+            "type": "range",
+            "id": "btn_height",
+            "label": "Button Height",
+            "min": 10,
+            "max": 100,
+            "step": 1,
+            "default": 25
+          },
+          {
+            "type": "range",
+            "id": "btn_fs",
+            "label": "Font Size",
+            "min": 1,
+            "max": 30,
+            "step": 0.5,
+            "default": 15,
+            "unit": "px"
+          },
+          {
+            "type": "range",
+            "id": "btn_fw",
+            "label": "Font Weight",
+            "min": 100,
+            "max": 600,
+            "step": 100,
+            "default": 300
+          },
+          {
+            "type": "range",
+            "id": "btn_mt",
+            "label": "Gutter Top",
+            "min": 0,
+            "max": 5,
+            "step": 1,
+            "default": 3
+          },
+          {
+            "type": "header",
+            "content": "Link",
+            "info": "Make the image a link"
+          },
+          {
+            "type": "url",
+            "id": "href",
+            "label": "Link"
+          },
+          {
+            "type": "checkbox",
+            "id": "href_btn",
+            "label": "Button Precedence",
+            "info": "Whether or not to disable if button links are defined",
+            "default": true
+          },
+          {
+            "type": "header",
+            "content": "Images",
+            "info": "Choose or upload desktop and mobile images"
+          },
+          {
+            "type": "image_picker",
+            "id": "img_desktop",
+            "label": "Desktop Image",
+            "info": "Dimensions: 1440x"
+          },
+          {
+            "type": "image_picker",
+            "id": "img_mobile",
+            "label": "Mobile Image",
+            "info": "Dimensions: 1024x1024"
+          }
+        ]
+      }
+    ],
+    "settings": [
+      {
+        "type": "header",
+        "content": "Gutters",
+        "info": "Applies gutter margins to the section layout"
+      },
+      {
+        "type": "range",
+        "id": "mt",
+        "label": "Gutter Top",
+        "min": 0,
+        "max": 5,
+        "step": 1,
+        "default": 2
+      },
+      {
+        "type": "range",
+        "id": "mb",
+        "label": "Gutter Bottom",
+        "min": 0,
+        "max": 5,
+        "step": 1,
+        "default": 2
+      },
+      {
+        "type": "header",
+        "content": "Carousel",
+        "info": "Control settings for the carousel component"
+      },
+      {
+        "type": "checkbox",
+        "id": "loop",
+        "label": "Loop",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "draggable",
+        "label": "Draggable",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "buttons",
+        "label": "Show Buttons",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "interval",
+        "label": "Interval (Autoplay)",
+        "info": "The autoplay interval timing, use a value of 0 to disable.",
+        "unit": "ms",
+        "min": 0,
+        "max": 9000,
+        "step": 100,
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "duration",
+
+
+        "label": "Duration",
+        "info": "The slide animation duration",
+        "unit": "ms",
+        "min": 100,
+        "max": 1000,
+        "step": 50,
+        "default": 300
+      }
+
+    ],
+    "presets": [
+      {
+
+        "name": "Hero Slideshow",
+        "category": "Image"
+      }
+    ]
+  }
+{% endschema %}
+

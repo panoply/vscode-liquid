@@ -1,8 +1,13 @@
-.class {
-  background-color: aqua;
-  color: 
-    {{- - - foo | filter: 'ddd' }};
-}
+{% if condition %}
 
+  .class-name
+  {
+    background: #FFF;
+    font-size: {{ object.prop | append: 'px' }};
+    {% if some_condition %}
+      margin: {{ x }};
+    {% endif %}
+  }
 
-{% if x == 'ekek' %}{% endif %}
+{% endif %}
+

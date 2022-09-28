@@ -1,4 +1,6 @@
+
 {
+
   "ignore": [],
   "wrap": 0,
   "commentIndent": true,
@@ -15,7 +17,7 @@
     "selfCloseSpace": true,
     "commentNewline": true,
     "forceIndent": true,
-    "attributeSort": true,
+    "attributeSort": false,
     "attributeSortList": [],
     "attributeCasing": "preserve",
     "forceAttribute": true,
@@ -28,9 +30,11 @@
     "braceAllman": true,
     "arrayFormat": "indent",
     "objectIndent": "indent",
-    "objectSort": false
+    "objectSort": false,
+    "quoteConvert": "double"
   },
   "style": {
+    "braceAllman": false,
     "correct": false,
     "sortProperties": true,
     "sortSelectors": true,
@@ -40,7 +44,7 @@
     "compressCSS": false
   },
   "script": {
-    "correct": true,
+    "correct": false,
     "arrayFormat": "indent",
     "objectIndent": "indent",
     "braceAllman": false,
@@ -49,11 +53,11 @@
     "endComma": "never",
     "quoteConvert": "single",
     "elseNewline": true,
-    "functionNameSpace": true,
+    "functionNameSpace": false,
     "functionSpace": true,
     "ternaryLine": true,
     "braceNewline": false,
-    "bracePadding": false,
+    "bracePadding": true,
     "braceStyle": "none",
     "commentNewline": true,
     "neverFlatten": false,
