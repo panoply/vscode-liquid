@@ -47,25 +47,6 @@
           "markdownDescription": "A list of HTML attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires \"attribute_sort\" have a value of true and does not support Liquid tag names, only HTML names are applicable.",
           "markdownDescription": "A list of HTML attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires `attribute_sort` have a value of `true` and does not accept Liquid tag names, only HTML names are applicable."
         },
-        "attributeValues": {
-          "default": "preserve",
-          "type": "string",
-          "markdownDescription": "How attribute values should be handled. By default, Prettify strips extraneous whitespaces from HTML attribute values but preserves newlines. You can control how attribute values should be processed.\\n\\nPlease note that this option is experimental and may not fully work as intended.",
-          "oneOf": [
-            {
-              "enum": ["preserve"]
-            },
-            {
-              "enum": ["wrap"]
-            },
-            {
-              "enum": ["strip"]
-            },
-            {
-              "enum": ["collapse"]
-            }
-          ]
-        },
         "delimiterSpacing": {
           "type": "boolean",
           "default": false,
@@ -80,17 +61,17 @@
         "forceLeadAttribute": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "Whether the leading attribute should be forced onto a newline when word `wrap` limit is exceeded or if it should be preserved. By default, Prettify preserves the leading attribute when applying wrap indentation. Enabling this option will force indent all attributes if wrap is exceeded. This rule requires a `wrap` level to be defined. If you have `forceAttribute` enabled or using a force attribute limit value it will override this option. If you desire wrap based attribute indentation, set `forceAttribute` to `false` and ensure a `wrap` level is defined.\n#### Disabled (default)\n*Below is an example of how this rule works if it's disabled (ie: `false`) and attributes have exceeded a defined wrap limit. Notice how leading attributes are preserved that have not exceeded wrap, but proceeding attributes are indented onto their own lines, this is the default behavior Prettify uses.*\n```liquid\n<!-- Leading attribute is preserved -->\n<div class=\"x\"\n  id=\"{{ foo }}\"\n  data-attribute-example=\"100\"\n  data-x=\"xx\"></div>\n```\n#### Enabled\n*Below is an example of how this rule works if it's enabled (ie: `true`) and attributes have exceeded the defined wrap limit. Notice how all attributes and indented onto their own line, including the leading attribute.*\n```liquid\n<!-- All attributes are forced including the leading attribute -->\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-attribute-example=\"100\"\n  data-x=\"xx\"></div>\n```"
+          "markdownDescription": "**_FORCE LEAD ATTRIBUTE_**\n\n_Whether the leading attribute should be forced onto a newline when word `wrap` limit is exceeded or if it should be preserved. By default, Prettify preserves the leading attribute when applying wrap indentation. Enabling this option will force indent all attributes if wrap is exceeded._\n\n_This rule requires a `wrap` level to be defined. If you have `forceAttribute` enabled or using a force attribute limit value it will override this option. If you desire wrap based attribute indentation, set `forceAttribute` to `false` and ensure a `wrap` level is defined._\n\n---\n\n#### Disabled (default)\nBelow is an example of how this rule works if it's disabled (ie: `false`) and attributes have exceeded a defined wrap limit. Notice how leading attributes are preserved that have not exceeded wrap, but proceeding attributes are indented onto their own lines, this is the default behavior Prettify uses.*\n```liquid\n\n<!-- Leading attribute is preserved -->\n<div class=\"x\"\n  id=\"{{ foo }}\"\n  data-attribute-example=\"100\"\n  data-x=\"xx\"></div>\n\n\n```\n\n---\n\n#### Enabled\nBelow is an example of how this rule works if it's enabled (ie: `true`) and attributes have exceeded the defined wrap limit. Notice how all attributes and indented onto their own line, including the leading attribute.\n\n```liquid\n\n<!-- All attributes are forced including the leading attribute -->\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-attribute-example=\"100\"\n  data-x=\"xx\"></div>\n\n\n```"
         },
         "forceIndent": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "Will force indentation upon all content and tags without regard for the text nodes."
+          "markdownDescription": "**_FORCE INDENT_**\n\n_Will force indentation upon all content and tags without regard for the text nodes._\n#### Disabled&nbsp;&nbsp;&nbsp;👎\n```liquid\n<span>Hello World</span>\n\n\n```\n\n---\n\n#### Enabled&nbsp;&nbsp;&nbsp;👍\n```liquid\n<span>\n  Hello World\n</span>\n\n\n```"
         },
         "forceAttribute": {
           "type": ["boolean", "number"],
           "default": false,
-          "markdownDescription": "If all markup attributes should be indented each onto their own line. You can optionally provide an integer value of `1` or more. When an integer value is passed, attributes will be forced only if the number of attributes contained on the tag exceeds the supplied value limit. When you define a `wrap` level then attributes will be automatically forced. This is typically a better solution than forcing all attributes onto newlines or an even better solution would be to set a limit level.\n\n#### Disabled Example\n*Below is the default, wherein attributes are only forced when wrap is exceeded.*\n```liquid\n<div class=\"x\" id=\"{{ foo }}\" data-x=\"xx\">\n</div>\n```\n#### Enabled Example\n*Below is an example of how this rule works if it's enabled, ie: `true`*\n```liquid\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-x=\"xx\"></div>\n```\n#### Limit Example\n*Below we provide a value of `2` so formatting will be applied as such:*\n```liquid\n<!-- Tag contains 2 attributes, they will not be forced-->\n<div class=\"x\" id=\"{{ foo }}\"></div>\n\n<!-- Tag contains 3 attributes, thus they will be forced -->\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-x=\"xx\"></div>\n\n<!-- Tag contains 1 attribute, it will not be forced-->\n<div class=\"x\"></div>\n```"
+          "markdownDescription": "**_FORCE ATTRIBUTE_**\n\n_Whether all markup attributes should be indented each onto their own line. You can optionally provide an integer value of `1` or more. When an integer value is passed, attributes will be forced only if the number of attributes contained on the tag exceeds the supplied value limit. When you define a `wrap` level then attributes will be automatically forced. This is typically a better solution than forcing all attributes onto newlines or an even better solution would be to set a limit level._\n\n---\n\n#### Disabled&nbsp;&nbsp;&nbsp;👎\nBelow is the default, wherein attributes are only forced when wrap is exceeded.\n```liquid\n\n<div class=\"x\" id=\"{{ foo }}\" data-x=\"xx\">\n</div>\n\n\n```\n\n---\n\n#### Enabled&nbsp;&nbsp;&nbsp;👍\nBelow is an example of how this rule works if it's enabled, ie: `true`\n```liquid\n\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-x=\"xx\"></div>\n```\n\n---\n\n#### Limit Example&nbsp;&nbsp;&nbsp;👍&nbsp;👍\n*Below we provide a value of `2` so formatting will be applied as such:*\n```liquid\n<!-- Tag contains 2 attributes, they will not be forced-->\n<div class=\"x\" id=\"{{ foo }}\"></div>\n\n<!-- Tag contains 3 attributes, thus they will be forced -->\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-x=\"xx\"></div>\n\n<!-- Tag contains 1 attribute, it will not be forced-->\n<div class=\"x\"></div>\n\n\n```"
         },
         "preserveText": {
           "type": "boolean",
@@ -157,7 +138,7 @@
         "sortProperties": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "Sort Selectors"
+          "markdownDescription": "**_SORT PROPERTIES_**\n\n_This option will alphabetically sort object properties (keys). This can be an expensive operation when dealing with large objects with over 2k properties._\n\n---\n#### Before&nbsp;&nbsp;&nbsp;\nWhen disabled, ie: `false` properties will not be sorted.\n```css\n.class {\n  width: 100px;\n  color: blue;\n  font-size: 20px;\n  background: pink\n}\n\n```\n\n---\n\n#### After&nbsp;&nbsp;&nbsp;👎\nWhen set to `true` all properties are alphanumerically sorted\n```json\n\n.class {\n  color: blue;\n  background: pink;\n  font-size: 20px;\n  width: 100px;\n}\n\n```"
         },
         "classPadding": {
           "type": "boolean",
@@ -176,6 +157,25 @@
           "default": false,
           "title": "Single Lined Selectors",
           "markdownDescription": "If comma separated CSS selectors should present on a single line of code."
+        },
+        "quoteConvert": {
+          "default": "none",
+          "title": "Convert Quotes",
+          "markdownDescription": "If the quotes of script strings or document attributes should be converted to single quotes or double quotes",
+          "oneOf": [
+            {
+              "enum": ["double"],
+              "markdownDescription": "Converts single quotes to double quotes"
+            },
+            {
+              "enum": ["none"],
+              "markdownDescription": "Ignores this option"
+            },
+            {
+              "enum": ["single"],
+              "markdownDescription": "Converts double quotes to single quotes"
+            }
+          ]
         }
       }
     },
@@ -234,17 +234,6 @@
           "default": false,
           "title": "Space Following Case",
           "markdownDescription": "If the colon separating a case's expression (of a switch/case block) from its statement should be followed by a space instead of indentation, thereby keeping the case on a single line of code"
-        },
-        "commentIndent": {
-          "type": "boolean",
-          "default": false,
-          "title": "Comment Indentation",
-          "markdownDescription": "This will determine whether comments should always start at position 0 of each line or if comments should be indented according to the code"
-        },
-        "inlineReturn": {
-          "type": "boolean",
-          "default": false,
-          "title": "If can return inline"
         },
         "elseNewline": {
           "type": "boolean",
@@ -321,8 +310,7 @@
         "methodChain": {
           "type": "number",
           "default": 3,
-          "title": "Method Chains",
-          "markdownDescription": "When to break consecutively chained methods and properties onto separate lines. A negative value disables this option. A value of 0 ensures method chains are never broken"
+          "markdownDescription": "**_METHOD CHAINING_**\n\n_When to break consecutively chained methods and properties onto separate lines. A negative value (eg: `-1`) disables this option. A value of `0` ensures method chains are never broken_\n\n---\n#### `0`\nPassing a value of `0` will never break chained methods.\n```js\n\nwindow.property.method(() => {}).foo(() => {})\n\n\n```\n\n---\n\n#### `3` (default)\nWhen there are more than `3` methods and/or properties they will be split onto separate lines.\n```js\n\nwindow\n  .property\n  .method(() => {})\n  .foo(() => {})\n\n\n```"
         },
         "neverFlatten": {
           "type": "boolean",
@@ -342,11 +330,10 @@
           "title": "No Semicolons",
           "markdownDescription": "Removes semicolons that would be inserted by ASI. This option is in conflict with option 'correct' and takes precedence over conflicting features. Use of this option is a possible security/stability risk"
         },
-        "preserveComment": {
+        "objectSort": {
           "type": "boolean",
           "default": false,
-          "title": "Eliminate Word Wrap Upon Comments",
-          "markdownDescription": "Prevent comment reformatting due to option wrap"
+          "markdownDescription": "**_OBJECT SORT_**\n\n_This option will alphabetically sort object properties (keys). This can be an expensive operation when dealing with large objects with over 2k properties._\n\n---\n#### Disabled&nbsp;&nbsp;&nbsp;👍\nWhen disabled, ie: `false` properties will not be sorted.\n```js\n\n{\n  e: \"5\",\n  b: \"2\",\n  d: \"4\",\n  a: \"1\",\n  f: \"6\",\n  c: \"3\"\n}\n\n\n```\n\n---\n\n#### Enabled&nbsp;&nbsp;&nbsp;👎\nWhen set to `true` all properties are alphanumerically sorted\n```js\n\n{\n  a: \"1\",\n  b: \"2\",\n  c: \"3\",\n  d: \"4\",\n  e: \"5\",\n  f: \"6\"\n}\n\n\n```"
         },
         "quoteConvert": {
           "default": "none",
@@ -373,41 +360,6 @@
           "title": "Function Space",
           "markdownDescription": "Inserts a space following the function keyword for anonymous functions"
         },
-        "styleGuide": {
-          "type": "string",
-          "default": "none",
-          "title": "Script Styleguide",
-          "markdownDescription": "Provides a collection of option presets to easily conform to popular JavaScript style guides.",
-          "oneOf": [
-            {
-              "enum": ["none"]
-            },
-            {
-              "enum": ["airbnb"]
-            },
-            {
-              "enum": ["crockford"]
-            },
-            {
-              "enum": ["google"]
-            },
-            {
-              "enum": ["jquery"]
-            },
-            {
-              "enum": ["mediawiki"]
-            },
-            {
-              "enum": ["semistandard"]
-            },
-            {
-              "enum": ["standard"]
-            },
-            {
-              "enum": ["yandex"]
-            }
-          ]
-        },
         "ternaryLine": {
           "type": "boolean",
           "default": false,
@@ -419,6 +371,11 @@
           "default": false,
           "title": "Variable Declaration Lists",
           "markdownDescription": "If consecutive JavaScript variables should be merged into a comma separated list or if variables in a list should be separated"
+        },
+        "vertical": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "**_VERTICAL LIST_**\n\n_If consecutive JavaScript variables should be merged into a comma separated list or if variables in a list should be separated_\n\n---\n#### Before Formatting\nBelow is an example of how this rule works if it's enabled, ie: `true`\n```js\n\nconst object = {\n  someProperty: 'x',\n  anotherProperty: 'x',\n  fooProperty: 'x'\n};\n\n\n```\n\n---\n\n#### After Formatting\nAfter formatting all declaration lists will be aligned in a vertical manner.\n```js\n\nconst object = {\n  someProperty    : 'x',\n  anotherProperty : 'x',\n  fooProperty     : 'x'\n};\n\n\n```"
         }
       }
     },
@@ -427,98 +384,30 @@
         "arrayFormat": {
           "type": "string",
           "default": "default",
-          "title": "Formatting Arrays",
-          "markdownDescription": "Determines if all array indexes should be indented, never indented, or left to the default.",
-          "oneOf": [
-            {
-              "enum": ["default"],
-              "markdownDescription": "Default formatting"
-            },
-            {
-              "enum": ["indent"],
-              "markdownDescription": "Always indent each index of an array"
-            },
-            {
-              "enum": ["inline"],
-              "markdownDescription": "Ensure all array indexes appear on a single line"
-            }
-          ]
+          "markdownDescription": "**_ARRAY FORMAT_**\n\n_Determines if all array indexes should be indented, never indented, or left to the default. The `default` option will leave array indexes intact and not apply any formatting._\n\n---\n#### `inline`&nbsp;&nbsp;&nbsp;👎\nEnsure all array indexes appear on a single line\n```json\n\n{\n  \"object\": [1,2,3,4]\n}\n\n```\n---\n#### `indent`&nbsp;&nbsp;&nbsp;👍\nAlways indent each index of an array\n\n```json\n\n{\n  \"object\": [\n    1,\n    2,\n    3,\n    4\n  ]\n}\n\n```",
+          "enum": ["default", "indent", "inline"]
         },
         "braceAllman": {
           "type": "boolean",
           "default": false,
-          "title": "Style of Indent",
-          "markdownDescription": "Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. (Allman style indentation)\n#### Disabled\n\n```json\n[\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" }\n]\n```\n#### Enabled\n\n```json\n[\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  }\n]\n```"
+          "markdownDescription": "**_BRACE ALLMAN_**\n\n_Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. The formatting structure is known as [Allman](https://en.wikipedia.org/wiki/Indentation_style#Allman_style) style indentation_.\n\n---\n\n#### Disabled&nbsp;&nbsp;&nbsp;👎\nBelow is an example when this option is set to `false` and each object in the array starts curly braces inline.\n```json\n\n[\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" }\n]\n\n```\n---\n#### Enabled&nbsp;&nbsp;&nbsp;👍\nBelow is an example when this option is set to `true` and each object in the array starts on a newline.\n```json\n\n[\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  }\n]\n\n```"
         },
         "bracePadding": {
           "type": "boolean",
           "default": false,
           "title": "Brace Lines",
-          "markdownDescription": "If true an empty line will be inserted after opening curly braces and before closing curly braces"
-        },
-        "braceStyle": {
-          "type": "string",
-          "default": "none",
-          "title": "Brace Style",
-          "markdownDescription": "Emulates JSBeautify's brace_style option",
-          "oneOf": [
-            {
-              "enum": ["collapse"],
-              "markdownDescription": "Sets options.format_object to 'indent' and options.neverflatten to true"
-            },
-            {
-              "enum": ["collapse-preserve-inline"],
-              "markdownDescription": "Sets options.bracepadding to true and options.format_object to 'inline'"
-            },
-            {
-              "enum": ["expand"],
-              "markdownDescription": "Sets options.braces to true, options.format_object to 'indent', and options.never flatten to true."
-            },
-            {
-              "enum": ["none"],
-              "markdownDescription": "Ignores this option"
-            }
-          ]
-        },
-        "formatArray": {
-          "type": "string",
-          "default": "default",
-          "title": "Formatting Arrays",
-          "markdownDescription": "Determines if all array indexes should be indented, never indented, or left to the default.",
-          "oneOf": [
-            {
-              "enum": ["default"],
-              "markdownDescription": "Default formatting"
-            },
-            {
-              "enum": ["indent"],
-              "markdownDescription": "Always indent each index of an array"
-            },
-            {
-              "enum": ["inline"],
-              "markdownDescription": "Ensure all array indexes appear on a single line"
-            }
-          ]
+          "markdownDescription": "**_BRACE PADDING_**\n\n_The `bracePadding` rule will insert newlines at the top and bottom of nested properties._\n\n---\n#### Disabled&nbsp;&nbsp;&nbsp;👍\nBelow is an example when this option is set to `true`\n```json\n\n{\n \"one\": {\n    \"xx\": {\n      \"xx\": false\n    }\n  }\n}\n\n```\n\n---\n\n#### Enabled&nbsp;&nbsp;&nbsp;👎\nBelow is an example when this option is set to `false`\n```json\n\n{\n \"one\": {\n\n    \"xx\": {\n\n      \"xx\": false\n\n    }\n\n  }\n}\n\n```"
         },
         "objectIndent": {
           "type": "string",
           "default": "default",
-          "title": "Formatting Objects",
-          "markdownDescription": "Determines if all object keys should be indented, never indented, or left to the default",
-          "oneOf": [
-            {
-              "enum": ["default"],
-              "markdownDescription": "Default formatting"
-            },
-            {
-              "enum": ["indent"],
-              "markdownDescription": "Always indent each key/value pair"
-            },
-            {
-              "enum": ["inline"],
-              "markdownDescription": "Ensure all key/value pairs appear on the same single line"
-            }
-          ]
+          "markdownDescription": "**Object Indent**\n\nControls how arrays on objects are formatted. We will exclude the `inline` option to prevent unreadable objects. If all object keys should be indented, never indented, or left to the default.",
+          "enum": ["default", "indent", "inline"]
+        },
+        "objectSort": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "**_OBJECT SORT_**\n\n_This option will alphabetically sort object properties (keys). This can be an expensive operation when dealing with large objects with over 2k properties._\n\n---\n#### Disabled&nbsp;&nbsp;&nbsp;👍\nWhen disabled, ie: `false` properties will not be sorted.\n```json\n\n{\n  \"e\": \"5\",\n  \"b\": \"2\",\n  \"d\": \"4\",\n  \"a\": \"1\",\n  \"f\": \"6\",\n  \"c\": \"3\"\n}\n\n```\n\n---\n\n#### Enabled&nbsp;&nbsp;&nbsp;👎\nWhen set to `true` all properties are alphanumerically sorted\n```json\n\n{\n  \"a\": \"1\",\n  \"b\": \"2\",\n  \"c\": \"3\",\n  \"d\": \"4\",\n  \"e\": \"5\",\n  \"f\": \"6\"\n}\n\n```"
         }
       }
     },
