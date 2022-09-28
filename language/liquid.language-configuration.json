@@ -1,11 +1,8 @@
 {
 	"comments": {
-		"lineComment": "{% #",
 		"blockComment": [
 			"{%- comment -%}",
-			"{%- endcomment -%}",
-			"{% comment %}",
-			"{% endcomment %}"
+			"{%- endcomment -%}"
 		]
 	},
 	"brackets": [
