@@ -170,7 +170,6 @@ export const enum Setting {
 /* TYPES                                        */
 /* -------------------------------------------- */
 
-
 /**
  * Extension Package.json
  */
@@ -337,7 +336,7 @@ export namespace Workspace {
      * @default true
      */
     tags?: boolean;
-   /**
+    /**
      * Whether or not filter completions are enabled
      *
      * @default true
