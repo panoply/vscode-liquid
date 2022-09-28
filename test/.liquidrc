@@ -1,4 +1,3 @@
-
 {
 
   "ignore": [],
@@ -6,6 +5,8 @@
   "commentIndent": true,
   "crlf": false,
   "indentSize": 2,
+
+
   "preserveComment": false,
   "preserveLine": 2,
   "endNewline": true,
