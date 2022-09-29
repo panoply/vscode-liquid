@@ -98,7 +98,7 @@ A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template 
 
 Users who were upgraded to version **3.0.0** will need to align their configurations. The options defined in the **v2.3.0** `.liquidrc` file are no longer supported or valid in **v3.0.0**. File validations will inform about the changes but take a look at the release notes for a complete overview.
 
-- [Release Notes](/release-notes.md)
+- [Release Notes](https://github.com/panoply/vscode-liquid/releases/tag/v3.0.0)
 - [Sample Project](https://github.com/panoply/vscode-liquid-sample)
 
 ### Continue using v2.3.0
@@ -352,7 +352,7 @@ The `liquid.config.baseUrl` option can be used to define a **relative** director
     └─ views
 ```
 
-By default, when no `.liquidrc` or `package.json` file (containing a `prettify` field) exist in a projects root, it will assume beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace file then the default Prettify rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseUrl` to the directory containing a the supported file types.
+By default, when no `.liquidrc` or `package.json` file (containing a `prettify` field) exist in a projects root, it will assume beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace file then the default Prettify rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseUrl` to the directory containing one of the supported file types.
 
 Targeting the `.liquidrc.json` file located in `docs` directory:
 

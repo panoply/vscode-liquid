@@ -6,6 +6,7 @@ versions
 docs
 dist
 example
+vsix
 
 ### OSX ###
 # General
