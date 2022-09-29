@@ -143,13 +143,18 @@
           "name": "support.class.liquid",
           "match": "\\s+(end)?(if|else|for|elsif|unless|form|assign)\\s+"
         },
-        {
-          "name": "variable.parameter.liquid",
-          "match": "\\s+(\\w+)\\s+"
-        },
         { "include": "#operators" },
         { "include": "#strings" },
-        { "include": "#filters" }
+        { "include": "#filters" },
+        {
+          "name": "comment.block.liquid",
+          "begin": "\\s*\\bcomment\\b\\s*\\Z",
+          "end": "\\s*\\bendcomment\\b\\s*"
+        },
+        {
+          "name": "comment.block.liquid",
+          "match": "\\s*#.*"
+        }
       ]
     },
     "constants": {
@@ -213,7 +218,7 @@
         },
         {
           "name": "keyword.operator.logical.liquid",
-          "match": "\\s+(and|or|contains|in)\\s+"
+          "match": "\\s+\\b(and|or|contains|in|with)\\b\\s+"
         },
         {
           "name": "keyword.operator.equality.liquid",
