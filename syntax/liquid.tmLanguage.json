@@ -52,10 +52,7 @@
         }
       },
       "patterns": [
-        {
-          "name": "entity.name.tag.liquid",
-          "match": "(?<={%-?)\\s*\\w+\\s*"
-        },
+        { "include": "#entities" },
         { "include": "#liquid" },
         { "include": "#objects" },
         { "include": "#numeric" },
@@ -139,22 +136,11 @@
     },
     "liquid": {
       "patterns": [
-        {
-          "name": "support.class.liquid",
-          "match": "\\s+(end)?(if|else|for|elsif|unless|form|assign)\\s+"
-        },
+        { "include": "#comments" },
+        { "include": "#entities" },
         { "include": "#operators" },
         { "include": "#strings" },
-        { "include": "#filters" },
-        {
-          "name": "comment.block.liquid",
-          "begin": "\\s*\\bcomment\\b\\s*\\Z",
-          "end": "\\s*\\bendcomment\\b\\s*"
-        },
-        {
-          "name": "comment.block.liquid",
-          "match": "\\s*#.*"
-        }
+        { "include": "#filters" }
       ]
     },
     "constants": {
@@ -277,6 +263,56 @@
               "name": "support.function.filter.liquid"
             }
           }
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.liquid",
+          "begin": "\\b(comment)\\s*",
+          "end": "\\b(endcomment)\\s"
+        },
+        {
+          "name": "comment.line.liquid",
+          "begin": "\\#\\s+",
+          "end": "\\Z"
+        }
+      ]
+    },
+    "entities": {
+      "patterns": [
+        {
+          "name": "entity.name.tag.iteration.liquid",
+          "match": "\\b(?:end)?(for|tablerow|paginate)\\s+"
+        },
+        {
+          "name": "entity.name.tag.control.liquid",
+          "match": "\\b(break|continue|cycle|else|when)\\s+"
+        },
+        {
+          "name": "entity.name.tag.conditional.liquid",
+          "match": "\\b(?:end)?(if|unless|case)\\b\\s+"
+        },
+        {
+          "name": "entity.name.tag.embedded.liquid",
+          "match": "\\b(?:end)?(form|style|schema|javascript)\\b\\s+"
+        },
+        {
+          "name": "entity.name.tag.syntax.liquid",
+          "match": "\\b(?:end)?(raw|echo)\\b\\s+"
+        },
+        {
+          "name": "entity.name.tag.import.liquid",
+          "match": "\\b(include|layout|render|section)\\b\\s+"
+        },
+        {
+          "name": "entity.name.tag.variable.liquid",
+          "match": "\\b(?:end)?(assign|capture|decrement|increment)\\b\\s+"
+        },
+        {
+          "name": "entity.name.tag.other.liquid",
+          "match": "(?<={%-?)\\s*\\b(\\w+)\\b\\s+"
         }
       ]
     }
