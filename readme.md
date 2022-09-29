@@ -352,7 +352,7 @@ The `liquid.config.baseUrl` option can be used to define a **relative** director
     └─ views
 ```
 
-By default, when no `.liquidrc` or `package.json` file (containing a `prettify` field) exist in a projects root, it will assume beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace file then the default Prettify rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseUrl` to the directory containing a the supported file types.
+By default, when no `.liquidrc` or `package.json` file (containing a `prettify` field) exist in a projects root, it will assume beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace file then the default Prettify rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseUrl` to the directory containing one of the supported file types.
 
 Targeting the `.liquidrc.json` file located in `docs` directory:
 
