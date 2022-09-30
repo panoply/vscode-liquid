@@ -5,7 +5,7 @@ import {
   MarkdownString,
   CompletionItem,
   SnippetString,
-  CompletionItemTag,
+  CompletionItemTag
 } from 'vscode';
 import { Char, Token, Words } from './enums';
 
@@ -15,15 +15,13 @@ import { Char, Token, Words } from './enums';
 
 function documentation (description: string, reference: { name?: string; url: string; }) {
 
-
   if (reference && has('name', reference) && has('url', reference)) {
     return new MarkdownString(`${description}\n\n[${reference.name}](${reference.url})`);
   }
 
- return new MarkdownString(description);
+  return new MarkdownString(description);
 
 }
-
 
 /**
  * Set Object Type
@@ -32,15 +30,13 @@ function documentation (description: string, reference: { name?: string; url: st
  * This is also used for filtering completions so
  * otherwise invalid items don't show up at certain entries.
  */
-function setObjectType(type: Type | ITypes.Basic): CompletionItemKind {
+function setObjectType (type: Type | ITypes.Basic): CompletionItemKind {
 
-  if (type === Type.array) return CompletionItemKind.Field
-  if (type === Type.object) return CompletionItemKind.Module
-  if (type === Type.data) return CompletionItemKind.Value
+  if (type === Type.array) return CompletionItemKind.Field;
+  if (type === Type.object) return CompletionItemKind.Module;
+  if (type === Type.data) return CompletionItemKind.Value;
 
 };
-
-
 
 /* -------------------------------------------- */
 /* EXPORTS                                      */
@@ -62,7 +58,8 @@ export function getTagCompletions ([
     singular = false,
     snippet = '$1'
   }
-]: [ string, Tag ]): CompletionItem {
+]: [ string, Tag
+]): CompletionItem {
 
   const insertText = singular
     ? new SnippetString(` ${label} ${snippet} %}$0`)
@@ -96,8 +93,8 @@ export function getFilterCompletions ([
     reference = null,
     snippet
   }
-]: [ string, Filter ]): CompletionItem {
-
+]: [ string, Filter
+]): CompletionItem {
 
   const insertText = new SnippetString(snippet || label);
 
@@ -121,9 +118,9 @@ export function getFilterCompletions ([
  * partially lifted from the specs. It's a temporary solution
  * as this is handled in Liquify.
  */
-export function getObjectKind(items: CompletionItem[], kind: CompletionItemKind[]): CompletionItem[] {
+export function getObjectKind (items: CompletionItem[], kind: CompletionItemKind[]): CompletionItem[] {
 
-  return items.filter(item => kind.includes(item.kind))
+  return items.filter(item => kind.includes(item.kind));
 
 };
 
@@ -135,8 +132,6 @@ export function getObjectKind(items: CompletionItem[], kind: CompletionItemKind[
  * as this is handled in Liquify.
  */
 export function getObjectCompletions ([ label, spec ]: [ string, IObject ]): CompletionItem {
-
-
 
   return {
     label,
@@ -152,39 +147,35 @@ export function getObjectCompletions ([ label, spec ]: [ string, IObject ]): Com
 
 };
 
-
 export function prevWord (content: string, offset: number, word: Words[]) {
 
-  const prev = content.slice(0, offset)
+  const prev = content.slice(0, offset);
 
-  return word.some(w => new RegExp(`\\s\\b${w}\\b\\s+$`).test(prev))
+  return word.some(w => new RegExp(`\\s\\b${w}\\b\\s+$`).test(prev));
 
 }
-
-
 
 export function prevChar (content: string, offset: number, code: Char[]) {
 
   const char = content
     .slice(0, offset)
-    .replace(/\s+$/, '').length - 1
+    .replace(/\s+$/, '').length - 1;
 
-  if(!content[char]) return null
+  if (!content[char]) return null;
 
-  return code.includes(content[char].charCodeAt(0))
-
-}
-
-export function isEmptyObject(content: string) {
-
-  return /{{-?-?}}/.test(content.replace(/\s+/, ''))
+  return code.includes(content[char].charCodeAt(0));
 
 }
 
-export function isEmptyTag(content: string) {
+export function isEmptyObject (content: string) {
 
+  return /{{-?-?}}/.test(content.replace(/\s+/, ''));
 
-  return /{%-?-?%}/.test(content.replace(/\s+/, ''))
+}
+
+export function isEmptyTag (content: string) {
+
+  return /{%-?-?%}/.test(content.replace(/\s+/, ''));
 
 }
 
@@ -201,38 +192,37 @@ export function ProvideProps ([ label, { description, snippet = label } ]) {
     kind: CompletionItemKind.Property,
     insertText: snippet,
     documentation: new MarkdownString(description)
-  }
+  };
 }
 
 /**
  * Parse Object
  *
  */
-export function parseObject(content: string, offset: number) {
+export function parseObject (content: string, offset: number) {
 
-  const slice = content.slice(2, offset - 1)
-  const match = slice.match(/[^\s{<=>:]*?$/)
+  const slice = content.slice(2, offset - 1);
+  const match = slice.match(/[^\s{<=>:]*?$/);
 
-  if (match === null) return null
+  if (match === null) return null;
 
-  const props = match[0].split('.').filter(Boolean)
+  const props = match[0].split('.').filter(Boolean);
 
-  console.log(slice, props)
+  console.log(slice, props);
 
-  if (!has(props[0], liquid.shopify.objects)) return null
+  if (!has(props[0], liquid.shopify.objects)) return null;
 
   if (props.length === 1) {
-    const { properties = null } = liquid.shopify.objects[props[0]]
-    if (properties === null) return null
-    return Object.entries(properties).map(ProvideProps as any)
+    const { properties = null } = liquid.shopify.objects[props[0]];
+    if (properties === null) return null;
+    return Object.entries(properties).map(ProvideProps as any);
   }
-
 
   return (function walk (props: string[], value: Properties) {
 
     if (!value) return null;
-    if (!has(props[0], value)) return null
-    if (!has('properties', value[props[0]])) return null
+    if (!has(props[0], value)) return null;
+    if (!has('properties', value[props[0]])) return null;
 
     const object = value[props[0]].properties;
 
@@ -246,7 +236,6 @@ export function parseObject(content: string, offset: number) {
   }(props.slice(1), liquid.shopify.objects[props[0]].properties));
 }
 
-
 /**
  * Parse Token
  *
@@ -259,15 +248,13 @@ export function parseObject(content: string, offset: number) {
  */
 export function parseToken (kind: Token, content: string, offset: number) {
 
+  const begin = content.slice(0, offset).lastIndexOf(kind === Token.Tag ? '{%' : '{{');
+  const ender = content.indexOf(kind === Token.Tag ? '%}' : '}}', begin) + 2;
+  const within = offset > (begin + 2) && offset < (ender - 2);
 
-  const begin = content.slice(0, offset).lastIndexOf(kind === Token.Tag ? '{%' : '{{')
-  const ender = content.indexOf(kind === Token.Tag ? '%}' : '}}', begin) + 2
-  const within = offset > (begin + 2) && offset < (ender - 2)
-
-  const text = content.slice(begin, ender)
-  const startTrim = text.charCodeAt(2) === 45
-  const endTrim = text.charCodeAt(ender - 3) === 45
-
+  const text = content.slice(begin, ender);
+  const startTrim = text.charCodeAt(2) === 45;
+  const endTrim = text.charCodeAt(ender - 3) === 45;
 
   return {
     within,
@@ -276,7 +263,7 @@ export function parseToken (kind: Token, content: string, offset: number) {
     startTrim,
     endTrim,
     text,
-    get tagName() {  return text.slice(startTrim ? 3 : 3).match(/\w+/i)[0] },
-    offset: offset - ender,
-  }
+    get tagName () { return text.slice(startTrim ? 3 : 3).match(/\w+/i)[0]; },
+    offset: offset - ender
+  };
 }
