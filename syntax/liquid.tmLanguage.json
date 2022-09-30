@@ -212,7 +212,32 @@
           "include": "#comments"
         },
         {
-          "include": "#entities"
+          "name": "entity.name.tag.iteration.liquid",
+          "match": "\\b(?:end)?(for|tablerow|paginate)\\s+"
+        },
+        {
+          "name": "entity.name.tag.control.liquid",
+          "match": "\\b(break|continue|cycle|else|when)\\s+"
+        },
+        {
+          "name": "entity.name.tag.conditional.liquid",
+          "match": "\\b(?:end)?(if|unless|case)\\b\\s*"
+        },
+        {
+          "name": "entity.name.tag.embedded.liquid",
+          "match": "\\b(?:end)?(form|style|schema|javascript)\\b\\s+"
+        },
+        {
+          "name": "entity.name.tag.syntax.liquid",
+          "match": "\\b(?:end)?(raw|echo)\\b\\s*"
+        },
+        {
+          "name": "entity.name.tag.import.liquid",
+          "match": "\\b(layout|render|section)\\b\\s+"
+        },
+        {
+          "name": "entity.name.tag.variable.liquid",
+          "match": "\\b(?:end)?(assign|capture|decrement|increment)\\b\\s+"
         },
         {
           "include": "#operators"
@@ -372,31 +397,31 @@
       "patterns": [
         {
           "name": "entity.name.tag.iteration.liquid",
-          "match": "\\b(?:end)?(for|tablerow|paginate)\\s*"
+          "match": "(?<={%-?)\\s*\\b(?:end)?(for|tablerow|paginate)\\s*"
         },
         {
           "name": "entity.name.tag.control.liquid",
-          "match": "\\b(break|continue|cycle|else|when)\\s*"
+          "match": "(?<={%-?)\\s*\\b(break|continue|cycle|else|when)\\s*"
         },
         {
           "name": "entity.name.tag.conditional.liquid",
-          "match": "\\b(?:end)?(if|unless|case)\\b\\s*"
+          "match": "(?<={%-?)\\s*\\b(?:end)?(if|unless|case)\\b\\s*"
         },
         {
           "name": "entity.name.tag.embedded.liquid",
-          "match": "\\b(?:end)?(form|style|schema|javascript)\\b\\s*"
+          "match": "(?<={%-?)\\s*\\b(?:end)?(form|style|schema|javascript)\\b\\s*"
         },
         {
           "name": "entity.name.tag.syntax.liquid",
-          "match": "\\b(?:end)?(raw|echo)\\b\\s*"
+          "match": "(?<={%-?)\\s*\\b(?:end)?(raw|echo)\\b\\s*"
         },
         {
           "name": "entity.name.tag.import.liquid",
-          "match": "\\b(layout|render|section)\\b\\s*"
+          "match": "(?<={%-?)\\s*\\b(layout|render|section)\\b\\s*"
         },
         {
           "name": "entity.name.tag.variable.liquid",
-          "match": "\\b(?:end)?(assign|capture|decrement|increment)\\b\\s*"
+          "match": "(?<={%-?)\\s*\\b(?:end)?(assign|capture|decrement|increment)\\b\\s*"
         },
         {
           "name": "entity.name.tag.other.liquid",
