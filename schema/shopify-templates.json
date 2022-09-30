@@ -66,17 +66,25 @@
           },
           "blocks": {
             "type": "object",
-            "required": ["type"],
             "description": "Settings as defined in the schema of the section or the block.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "description": "The type of block to render, as defined in the schema of the section file."
-              },
-              "settings": {
-                "type": "object",
-                "description": "Settings as defined in the schema of the section or the block.",
-                "additionalProperties": true
+            "additionalProperties": {
+              "type": "object",
+              "required": ["type"],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "The type of block to render, as defined in the schema of the section file."
+                },
+                "disabled": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "When true, the block is not rendered but can still be customized in the theme editor. Is false by default."
+                },
+                "settings": {
+                  "type": "object",
+                  "description": "Settings as defined in the schema of the section or the block.",
+                  "additionalProperties": true
+                }
               }
             }
           }
