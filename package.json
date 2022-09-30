@@ -763,7 +763,8 @@
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup --minify-identifiers --minify-whitespace --onSuccess \"vsce package --no-dependencies\"",
-    "dry": "vsce ls package --no-dependencies"
+    "dry": "vsce ls package --no-dependencies",
+    "grammar": "node ./scripts/grammars.cjs"
   },
   "tsup": {
     "entry": {
@@ -803,7 +804,7 @@
     "vsce": "^2.11.0"
   },
   "dependencies": {
-    "@liquify/liquid-language-specs": "^0.1.4",
+    "@liquify/liquid-language-specs": "^0.1.6",
     "@liquify/prettify": "0.1.6-beta.1",
     "anymatch": "^3.1.2",
     "parse-json": "^6.0.2",
