@@ -62,6 +62,7 @@ A vscode extension for the [Liquid](https://shopify.github.io/liquid/) template 
   - [Controlling Capabilities](#controlling-capabilities)
 - [Syntax Support](#syntax-support)
   - [Supported Languages](#supported-languages)
+  - [Object Scopes](#object-scopes)
   - [Grammar Injections](#grammar-injections)
   - [Liquid in JSON, YAML and Markdown](#liquid-in-json-yaml-and-markdown)
   - [Liquid in CSS, SCSS, SASS and JavaScript](#liquid-in-css-scss-sass-and-javascript)
@@ -384,6 +385,14 @@ Liquid syntax highlighting is applied using detailed token captures which extend
 | liquid-css          | Liquid CSS        | .css.liquid               | 𐄂                    |
 | liquid-scss         | Liquid SCSS       | .scss.liquid, sass.liquid | 𐄂                    |
 | liquid-javascript   | Liquid JavaScript | .js.liquid                | 𐄂                    |
+
+### Object Scopes
+
+The extension has context of objects used in the Shopify Liquid variation and applies scoped highlighting based on the object type values. What this means is, whenever your object points to `string`, `boolean` or `integer` then the last known property key of the object will be highlighted according to its type. For example:
+
+<img src="/images/syntax-scopes.png">
+
+Notice that in the above code sample how the different values of object properties have different syntax highlighting. The strings will be highlighted as a string, booleans as booleans and numbers as numbers. This is a great way for you to distinguish against the _type_ of property you are referencing.
 
 ### Grammar Injections
 
@@ -751,6 +760,7 @@ The project uses [tsup](https://tsup.egoist.sh) for producing the distributed bu
 ```bash
 pnpm dev         # Development in watch mode
 pnpm build       # Builds extension and packages VSIX
+pnpm grammar     # Generates object grammars and applies them to liquid.tmLanguage.json
 pnpm dry         # Prints list of files that are packages into VSIX
 ```
 
