@@ -13,8 +13,8 @@ import {
 import prettify from '@liquify/prettify';
 import { Config, Setting } from 'types';
 import { CommandPalette } from 'providers/CommandPalette';
-import * as u from 'utils';
 import { CompletionProvider } from 'providers/CompletionProvider';
+import * as u from 'utils';
 
 export class VSCodeLiquid extends CommandPalette {
 
