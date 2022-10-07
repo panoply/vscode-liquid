@@ -309,6 +309,11 @@
         "*.css.liquid": "liquid-css",
         "*.scss.liquid": "liquid-scss"
       },
+      "emmet.includeLanguages": {
+        "liquid": "html",
+        "liquid-css": "css",
+        "liquid-scss": "scss"
+      },
       "vsicons.associations.files": [
         {
           "icon": "liquid",
