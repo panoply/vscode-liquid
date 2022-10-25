@@ -1,0 +1,25 @@
+{%- liquid
+
+  comment
+  block comment
+  endcomment
+
+  if foo == bar
+  object.property['foo'][0]
+  endif
+
+  # inline comment
+
+  assign bar = '' | filter: 'string' | ceil: 10
+
+  for i in x (1..10)
+
+  capture name
+
+  endcapture
+
+  render 'snipper' with collection.products as product, param: object[product.id]
+
+  endfor
+
+-%}

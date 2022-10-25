@@ -1,13 +1,13 @@
-
 {{ object.prop[1200] | form: 'string' }}
 
 integerValue1: 1                   # integer value
-floatingValue3: 0.1                  # floating vale
+floatingValue3: 1                  # floating vale
 
-stringValue: "{{ object.prop[1200] | form: 'string' }}"  # string with double quotes
-stringValue2: '{{ object.prop[1200] | form: "string" }}' # string with single quotes
-stringValue3: {{ object.prop[1200] | form: 'string' }}   # string without quotes
-stringValue4: string                  # string without quotes
+stringValue: "{{ object.prop[1200] | form: 'string' }}" # string with double quotes
+stringValue2: '{{ liquid.value }}'                        # string with single quotes
+stringValue1: wer                  # string without quotes
+
+
 booleanValue: true                 # boolean values - true or false
 
 

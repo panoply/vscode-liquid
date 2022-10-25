@@ -1,0 +1,190 @@
+{
+  "$schema": "../../schema/shopify-templates.json",
+  "wrapper": "main#main",
+  "sections": {
+    "sustainable_categories": {
+      "type": "sustainable_categories",
+      "blocks": {
+        "69c6468c-c8f1-4a5c-a10a-d861b5f6704d": {
+          "type": "row",
+          "settings": {
+            "reverse": false,
+            "title": "sustainability and production",
+            "value": "<p>Since the start we have produced each garment in close cooperation with \ncarefully selected manufacturers. Each chosen for their know-how and \nexperience in the making of a specific fabric or garment, that matches what \nwe have set out to produce.\n</p>\n<p>\nBrixtol Textiles specializes in the making of outer-wear, we are \nfueled by an aspiration and focus to evolve this category. This strive has \npushed us to constantly explore new and interesting materials, everything \nfrom waxed cotton and nylons to recycled wools and fabrics. A continuous \nexploration to make demanding garments that stand the test of time.</p>",
+            "img": "shopify://shop_images/photo1.jpg",
+            "desktop": 6,
+            "tablet": 6,
+            "mobile": 12
+          }
+        },
+        "bccaf873-5164-43f9-9a24-0601b7b39123": {
+          "type": "row",
+          "settings": {
+            "reverse": true,
+            "title": "Made in england",
+            "value": "With British aesthetics as our core inspiration we have been producing \nour waxed products in birmingham england since the very first collection. 10 Years later we still work with the same family owned factory.",
+            "img": "shopify://shop_images/made_in_england_646fb4f9-bd0f-4489-8199-fc122c67a3a9.jpg",
+            "desktop": 6,
+            "tablet": 6,
+            "mobile": 12
+          }
+        },
+        "f983ba0a-84d9-4fad-ade6-4f23e72d345f": {
+          "type": "row",
+          "settings": {
+            "reverse": false,
+            "title": "European Wool",
+            "value": "Our ambition is to use as much recycled wool as possible. However this is not always possible since we don't want to compromise the quality and the life span of a product. In this case we always use 100% european wool. We mostly use portuguese and British wool.",
+            "img": "shopify://shop_images/100_European_Wool.jpg",
+            "desktop": 6,
+            "tablet": 6,
+            "mobile": 12
+          }
+        },
+        "da67ec0b-4cb4-45cc-82a5-5f174e472757": {
+          "type": "row",
+          "settings": {
+            "reverse": true,
+            "title": "Recycled Wool",
+            "value": "We use recycled wool to the furthest extent. The recycled wool is derived \nfrom old wool garments and acquire extensive manual labour such as \nsorting by colour and composition, as well as picking off trims and labels.  Occasionally the material does not live up to our desired finish. That is when we use One hundred percent European wool. Australia produces more than three quarters of the wolds best merino wool. By using European wool we skip the long freight and got ourselves an environmental win.",
+            "img": "shopify://shop_images/recycled_wool_f0f0a44e-c9cc-4c67-9a85-17bc736c2c6e.jpg",
+            "desktop": 6,
+            "tablet": 6,
+            "mobile": 12
+          }
+        },
+        "320901bb-1868-40d7-be33-eb7a3117c96c": {
+          "type": "row",
+          "settings": {
+            "reverse": false,
+            "title": "Recyled post consumer waste",
+            "value": "By recycling old clothing and plastic products it is now possible to extract \nthe polyester and nylon fibers to make new fabrics. Among others we use fabrics made from recycled PET bottles, fishing nets  and old clothes.",
+            "img": "shopify://shop_images/Post_consumer_waste.jpg",
+            "desktop": 6,
+            "tablet": 6,
+            "mobile": 12
+          }
+        },
+        "7755202c-9c79-4a9f-a89d-df52abb79b75": {
+          "type": "row",
+          "settings": {
+            "reverse": true,
+            "title": "Organic Cotton",
+            "value": "Since autumn/winter 2019 we use GOTS Certified Organic cotton in untreated twills and canvas.",
+            "img": "shopify://shop_images/organic_cotton.jpg",
+            "desktop": 6,
+            "tablet": 6,
+            "mobile": 12
+          }
+        },
+        "f6320537-bc0a-410c-b8cb-88c48a5dc5ac": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "title": "sustainability and production",
+            "value": "<p>Since the start we have produced each garment in close cooperation with \ncarefully selected manufacturers. Each chosen for their know-how and \nexperience in the making of a specific fabric or garment, that matches what \nwe have set out to produce.\n</p>\n<p>\nBrixtol Textiles specializes in the making of outer-wear, we are \nfueled by an aspiration and focus to evolve this category. This strive has \npushed us to constantly explore new and interesting materials, everything \nfrom waxed cotton and nylons to recycled wools and fabrics. A continuous \nexploration to make demanding garments that stand the test of time.</p>",
+            "desktop": 6,
+            "tablet": 6,
+            "mobile": 12
+          }
+        },
+        "261a9c7e-dd73-4578-a49d-e477c5462094": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "title": "sustainable production goals",
+            "value": "<h5 class=\"fw-bold fs-4\">2020</h5>\n<ul class=\"list-clear\">\n<li>– 90% of our polyester styles to be made from recycled fibers</li>\n<li>– 90% of our padding is to be made from recycled fibers</li>\n<li>– 70% of our wool collection to be made in recycled wool</li>\n<li>– 70% of the cotton used is to have either gots or grs certification</li>\n<li>– 100% of the wool styles are to be made in of european origin</li>\n</ul>\n<h5 class=\"fw-bold fs-4\">2025</h5>\n<ul class=\"list-clear\">\n<li>– 100% of our polyester styles to be made from recycled fibers</li>\n<li>– 100% of our padding is to be made from recycled fibers</li>\n<li>– 80% of our wool collection to be made in recycled wool</li>\n<li>– 100% of the cotton used is to have either gots or grs certification</li>\n<li>– 100% of product line is to have a sustainable angle</li>\n<li>– 100% of the wool styles are to be made in of european origin</li>\n</ul>",
+            "desktop": 6,
+            "tablet": 6,
+            "mobile": 12
+          }
+        },
+        "cb5a84b1-30a1-4938-aca2-fd660ef382ff": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "title": "Made in england",
+            "value": "With British aesthetics as our core inspiration we have been producing \nour waxed products in birmingham england since the very first collection. 10 Years later we still work with the same family owned factory.",
+            "desktop": 6,
+            "tablet": 6,
+            "mobile": 12
+          }
+        },
+        "704b6108-b012-412c-9517-5e0eabd1f129": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "title": "European Wool",
+            "value": "Our ambition is to use as much recycled wool as possible. However this is not always possible since we don't want to compromise the quality and the life span of a product. In this case we always use 100% european wool. We mostly use portuguese and British wool.",
+            "desktop": 6,
+            "tablet": 6,
+            "mobile": 12
+          }
+        },
+        "7e7d412a-1111-44bf-bd2d-a1fb8aafac43": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "title": "Recycled Wool",
+            "value": "We use recycled wool to the furthest extent. The recycled wool is derived \nfrom old wool garments and acquire extensive manual labour such as \nsorting by colour and composition, as well as picking off trims and labels.  Occasionally the material does not live up to our desired finish. That is when we use One hundred percent European wool. Australia produces more than three quarters of the wolds best merino wool. By using European wool we skip the long freight and got ourselves an environmental win.",
+            "desktop": 6,
+            "tablet": 6,
+            "mobile": 12
+          }
+        },
+        "a1388c9d-638c-436b-8610-0d970d803799": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "title": "Recyled post consumer waste",
+            "value": "By recycling old clothing and plastic products it is now possible to extract \nthe polyester and nylon fibers to make new fabrics. Among others we use fabrics made from recycled PET bottles, fishing nets  and old clothes.",
+            "desktop": 6,
+            "tablet": 6,
+            "mobile": 12
+          }
+        },
+        "643eb4d3-471c-4e13-86cd-530008e2da85": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "title": "Organic cotton",
+            "value": "Since autumn/winter 2019 we use GOTS Certified Organic cotton in untreated twills and canvas.",
+            "desktop": 6,
+            "tablet": 6,
+            "mobile": 12
+          }
+        }
+      },
+      "block_order": [
+        "69c6468c-c8f1-4a5c-a10a-d861b5f6704d",
+        "bccaf873-5164-43f9-9a24-0601b7b39123",
+        "f983ba0a-84d9-4fad-ade6-4f23e72d345f",
+        "da67ec0b-4cb4-45cc-82a5-5f174e472757",
+        "320901bb-1868-40d7-be33-eb7a3117c96c",
+        "7755202c-9c79-4a9f-a89d-df52abb79b75",
+        "f6320537-bc0a-410c-b8cb-88c48a5dc5ac",
+        "261a9c7e-dd73-4578-a49d-e477c5462094",
+        "cb5a84b1-30a1-4938-aca2-fd660ef382ff",
+        "704b6108-b012-412c-9517-5e0eabd1f129",
+        "7e7d412a-1111-44bf-bd2d-a1fb8aafac43",
+        "a1388c9d-638c-436b-8610-0d970d803799",
+        "643eb4d3-471c-4e13-86cd-530008e2da85"
+      ],
+      "settings": {
+        "fs_text": 13,
+        "fs_title": 14.5
+      }
+    },
+    "sustainable_collection": {
+      "type": "sustainable_collection",
+      "settings": {
+        "gutter": 1,
+        "columns": 6
+      }
+    }
+  },
+  "order": [
+    "sustainable_categories",
+    "sustainable_collection"
+  ]
+}

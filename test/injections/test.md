@@ -21,6 +21,7 @@ array: [
   {{ object.prop | filter: 'string' }}
 {% endif %}
 
+{
 
 # Hello World
 

@@ -5,29 +5,51 @@
   "injections": {
     "L:meta -(meta.embedded.block.liquid)": {
       "patterns": [
-        { "include": "source.liquid#tags" },
-        { "include": "source.liquid#output" }
+        {
+          "include": "source.liquid#tags"
+        },
+        {
+          "include": "source.liquid#output"
+        }
       ]
     },
     "L:entity.other.attribute-name.class.css": {
       "patterns": [
-        { "include": "source.liquid#tags" },
-        { "include": "source.liquid#output" }
+        {
+          "include": "source.liquid#tags"
+        },
+        {
+          "include": "source.liquid#output"
+        }
       ]
     },
     "L:string - (string.quoted.*.html)": {
       "patterns": [
-        { "include": "source.liquid#tags" },
-        { "include": "source.liquid#output" }
+        {
+          "include": "source.liquid#tags"
+        },
+        {
+          "include": "source.liquid#output"
+        }
       ]
     }
   },
   "patterns": [
-    { "include": "#comment-block" },
-    { "include": "#comment-line" },
-    { "include": "#tags" },
-    { "include": "#output" },
-    { "include": "text.html.derivative" }
+    {
+      "include": "#comment-block"
+    },
+    {
+      "include": "#comment-line"
+    },
+    {
+      "include": "#tags"
+    },
+    {
+      "include": "#output"
+    },
+    {
+      "include": "text.html.derivative"
+    }
   ],
   "repository": {
     "comment-block": {
@@ -53,22 +75,44 @@
       },
       "patterns": [
         {
-          "name": "entity.name.tag.liquid",
-          "match": "(?<={%-?)\\s*\\w+\\s*"
+          "include": "#entities"
         },
-        { "include": "#liquid" },
-        { "include": "#objects" },
-        { "include": "#numeric" },
-        { "include": "#constants" },
-        { "include": "#parameters" },
-        { "include": "#invalid" },
-        { "include": "#operators" },
-        { "include": "#strings" },
-        { "include": "#filters" }
+        {
+          "include": "#liquid"
+        },
+        {
+          "include": "#objects"
+        },
+        {
+          "include": "#numeric"
+        },
+        {
+          "include": "#range"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#parameters"
+        },
+        {
+          "include": "#invalid"
+        },
+        {
+          "include": "#operators"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#filters"
+        }
       ],
       "end": "(-)?(%})",
       "endCaptures": {
-        "1": { "name": "keyword.other.whitespace.liquid" },
+        "1": {
+          "name": "keyword.other.whitespace.liquid"
+        },
         "2": {
           "name": "punctuation.definition.tag.end.liquid"
         }
@@ -86,14 +130,30 @@
         }
       },
       "patterns": [
-        { "include": "#objects" },
-        { "include": "#numeric" },
-        { "include": "#constants" },
-        { "include": "#parameters" },
-        { "include": "#invalid" },
-        { "include": "#operators" },
-        { "include": "#strings" },
-        { "include": "#filters" }
+        {
+          "include": "#objects"
+        },
+        {
+          "include": "#numeric"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#parameters"
+        },
+        {
+          "include": "#invalid"
+        },
+        {
+          "include": "#operators"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#filters"
+        }
       ],
       "end": "(-)?(}})",
       "endCaptures": {
@@ -105,19 +165,11 @@
         }
       }
     },
-    "objects": {
-      "patterns": [
-        {
-          "name": "support.class.liquid",
-          "match": "(?:(?<=[{%}>=!\\[\\]\\-|:])|(?<=\\s))(\\w+)(?=\\.)"
-        }
-      ]
-    },
     "parameters": {
       "patterns": [
         {
           "name": "variable.parameter.liquid",
-          "match": "(?!\\|\\s*)\\b([a-zA-Z0-9_-]+)(?=:\\s*)"
+          "match": "(?!\\|)\\s*\\b([a-zA-Z0-9_-]+)\\b\\s*(?=:)"
         }
       ]
     },
@@ -125,7 +177,7 @@
       "patterns": [
         {
           "name": "constant.numeric.float.liquid",
-          "match": "(-|\\+)?\\s*[0-9]+(\\.[0-9]+)?"
+          "match": "(?!\\B)([\\-|\\+])?([0-9]{1,}((?:\\.)[0-9]{1,})?)"
         },
         {
           "name": "constant.numeric.integer.liquid",
@@ -133,23 +185,69 @@
         },
         {
           "name": "constant.numeric.natural.liquid",
-          "match": "[\\d]+"
+          "match": "\\B([\\d]+)\\B"
+        }
+      ]
+    },
+    "range": {
+      "name": "punctuation.definition.tag.range.liquid",
+      "begin": "\\(",
+      "end": "\\)",
+      "patterns": [
+        {
+          "name": "keyword.operator.spread.liquid",
+          "match": "\\.{2}"
+        },
+        {
+          "include": "#objects"
+        },
+        {
+          "include": "#numeric"
         }
       ]
     },
     "liquid": {
       "patterns": [
         {
-          "name": "support.class.liquid",
-          "match": "\\s+(end)?(if|else|for|elsif|unless|form|assign)\\s+"
+          "include": "#comments"
         },
         {
-          "name": "variable.parameter.liquid",
-          "match": "\\s+(\\w+)\\s+"
+          "name": "entity.name.tag.iteration.liquid",
+          "match": "\\b(for|endfor|tablerow|endtablerow|paginate|endpaginate)\\b"
         },
-        { "include": "#operators" },
-        { "include": "#strings" },
-        { "include": "#filters" }
+        {
+          "name": "entity.name.tag.control.liquid",
+          "match": "\\b(break|continue|cycle|else|elsif|when)\\b"
+        },
+        {
+          "name": "entity.name.tag.conditional.liquid",
+          "match": "\\b(if|endif|unless|endunless|case|endcase)\\b"
+        },
+        {
+          "name": "entity.name.tag.embedded.liquid",
+          "match": "\\b(form|endform|style|endstyle|schema|endschema|javascript|endjavascript)\\b"
+        },
+        {
+          "name": "entity.name.tag.syntax.liquid",
+          "match": "\\b(raw|endraw|echo)\\b\\s*"
+        },
+        {
+          "name": "entity.name.tag.import.liquid",
+          "match": "\\b(layout|render|section)\\b"
+        },
+        {
+          "name": "entity.name.tag.variable.liquid",
+          "match": "\\b(assign|capture|endcapture|decrement|increment)\\b"
+        },
+        {
+          "include": "#operators"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#filters"
+        }
       ]
     },
     "constants": {
@@ -184,7 +282,9 @@
             "2": {
               "name": "invalid.illegal.filter.liquid"
             },
-            "3": { "name": "invalid.illegal.filter.liquid" }
+            "3": {
+              "name": "invalid.illegal.filter.liquid"
+            }
           }
         },
         {
@@ -213,23 +313,27 @@
         },
         {
           "name": "keyword.operator.logical.liquid",
-          "match": "\\s+(and|or|contains|in)\\s+"
+          "match": "\\s+\\b(and|or|contains)\\b\\s+"
         },
         {
           "name": "keyword.operator.equality.liquid",
           "match": "\\s+(\\!=|\\=\\=|\\<|\\>|\\>\\=|\\<\\=)\\s+"
         },
         {
-          "name": "keyword.other.colon.liquid",
-          "match": ":"
+          "name": "keyword.operator.assignment.colon.liquid",
+          "match": "\\:"
         },
         {
           "name": "keyword.other.array-item.liquid",
           "match": "\\[|\\]"
         },
         {
+          "name": "entity.name.tag.method.liquid",
+          "match": "\\s+\\b(in|as|with)\\b"
+        },
+        {
           "name": "variable.parameter.liquid",
-          "match": "(?<=\\s)(as|with|offset|limit|reverse|cols)"
+          "match": "\\s+\\b(offset|limit|reverse|cols|reversed)\\b"
         }
       ]
     },
@@ -272,6 +376,96 @@
               "name": "support.function.filter.liquid"
             }
           }
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.liquid",
+          "begin": "\\b(comment)\\s*",
+          "end": "\\b(endcomment)\\s"
+        },
+        {
+          "name": "comment.line.liquid",
+          "begin": "\\#\\s+",
+          "end": "\\Z"
+        }
+      ]
+    },
+    "entities": {
+      "patterns": [
+        {
+          "name": "entity.name.tag.iteration.liquid",
+          "match": "(?<={%-?)\\s*\\b(?:end)?(for|tablerow|paginate)\\b\\s*"
+        },
+        {
+          "name": "entity.name.tag.control.liquid",
+          "match": "(?<={%-?)\\s*\\b(break|continue|cycle|else|when)\\b\\s*"
+        },
+        {
+          "name": "entity.name.tag.conditional.liquid",
+          "match": "(?<={%-?)\\s*\\b(?:end)?(if|unless|case)\\b\\s*"
+        },
+        {
+          "name": "entity.name.tag.embedded.liquid",
+          "match": "(?<={%-?)\\s*\\b(?:end)?(form|style|schema|javascript)\\b\\s*"
+        },
+        {
+          "name": "entity.name.tag.syntax.liquid",
+          "match": "(?<={%-?)\\s*\\b(?:end)?(raw|echo)\\b\\s*"
+        },
+        {
+          "name": "entity.name.tag.import.liquid",
+          "match": "(?<={%-?)\\s*\\b(layout|render|section)\\b\\s*"
+        },
+        {
+          "name": "entity.name.tag.variable.liquid",
+          "match": "(?<={%-?)\\s*\\b(?:end)?(assign|capture|decrement|increment)\\b\\s*"
+        },
+        {
+          "name": "entity.name.tag.other.liquid",
+          "match": "(?<={%-?)\\s*\\b(\\w+)\\b\\s*"
+        }
+      ]
+    },
+    "objects": {
+      "patterns": [
+        {
+          "name": "support.class.object.liquid",
+          "match": "(?<=[\\s,:=<>\\[])\\s*(?!\\.)\\b([a-zA-Z_][a-zA-Z0-9_-]*)\\b\\s*(?=\\.)"
+        },
+        {
+          "name": "entity.name.tag.object.liquid",
+          "match": "\\b(content_for_additional_checkout_buttons|content_for_header|content_for_index|content_for_layout|country_option_tags)\\b"
+        },
+        {
+          "name": "support.class.object-value.liquid",
+          "match": "(?!\\.)\\b(address|article|block|blog|cart|checkout|collection|color|comment|country|currency|customer|customer_address|discount_allocation|discount_application|external_video|font|form|forloop|fulfillment|gift_card|group|image|line_item|link|linklist|localization|page|product|product_options|location|order|recommendations|request|robots|routes|rule|script|scripts|search|section|selling_plan|selling_plan_allocation|selling_plan_allocation_price_adjustment|selling_plan_checkout_charge|selling_plan_group|selling_plan_group_option|selling_plan_option|selling_plan_price_adjustment|shipping_method|shop|shop_locale|sitemap|sort_option|store_availability|tablerowloop|tax_line|template|theme|transaction|transaction_payment_details|unit_price_measurement|user_agent|model|model_source|media|variant|video|video_source)\\b(?![\\.])"
+        },
+        {
+          "name": "support.class.object-value.liquid",
+          "match": "(?<=\\.\\s*)\\b(address|article|block|blog|cart|checkout|collection|color|comment|country|currency|customer|customer_address|discount_allocation|discount_application|external_video|font|form|forloop|fulfillment|gift_card|group|image|line_item|link|linklist|localization|page|product|product_options|location|order|recommendations|request|robots|routes|rule|script|scripts|search|section|selling_plan|selling_plan_allocation|selling_plan_allocation_price_adjustment|selling_plan_checkout_charge|selling_plan_group|selling_plan_group_option|selling_plan_option|selling_plan_price_adjustment|shipping_method|shop|shop_locale|sitemap|sort_option|store_availability|tablerowloop|tax_line|template|theme|transaction|transaction_payment_details|unit_price_measurement|user_agent|model|model_source|media|variant|video|video_source)\\b"
+        },
+        {
+          "name": "string.other.object-value.liquid",
+          "match": "\\b(handle|page_description|page_image|page_title)\\b"
+        },
+        {
+          "name": "constant.numeric.object-value.liquid",
+          "match": "\\b(current_page)\\b"
+        },
+        {
+          "name": "string.other.property-value.liquid",
+          "match": "(?<=(?:address|article|block|blog|cart|checkout|collection|comment|country|currency|customer|customer_address|discount_allocation|discount_application|external_video|font|form|fulfillment|gift_card|image|line_item|link|linklist|page|product|product_options|location|order|request|routes|rule|script|scripts|search|selling_plan|selling_plan_allocation|selling_plan_checkout_charge|selling_plan_group|selling_plan_group_option|selling_plan_option|selling_plan_price_adjustment|shipping_method|shop|shop_locale|sitemap|sort_option|store_availability|tax_line|template|theme|transaction|transaction_payment_details|unit_price_measurement|user_agent|model|model_source|media|variant|video|video_source)\\s*\\.)\\s*\\b(province_code|street|url|address1|address2|city|company|country_code|country|first_name|last_name|phone|zip|province|name|excerpt_or_content|content|excerpt|author|handle|comment_post_url|created_at|title|shopify_attributes|type|next_article|previous_article|link|attributes|currency|note|billing_address|email|order_name|shipping_address|shipping_method|tax_price|published_at|description|image|template_suffix|next_product|previous_product|current_type|sort_by|default_sort_by|current_vendor|status|updated_at|iso_code|unit_system|symbol|default_address|last_order|total_spent|discount_application|target_selection|target_type|value_type|alt|aspect_ratio|video_host|position|media_type|family|baseline_ratio|style|weight|fallback_families|body|tracking_company|tracking_number|tracking_url|customer|expires_on|src|fulfillment|fulfillment_service|message|id|featured_image|vendor|selected_value|address|latitude|longitude|cancelled|cancelled_at|cancel_reason|cancel_reason_label|customer_url|discount_applications|financial_status|financial_status_label|fulfillment_status|fulfillment_status_label|line_items_subtotal_price|location|order_status_url|shipping_methods|shipping_price|subtotal_price|tax_lines|total_discounts|total_net_amount|total_price|total_refunded_amount|host|locale|path|page_type|root_url|account_url|account_login_url|account_logout_url|account_register_url|account_addresses_url|collections_url|all_products_collection_url|search_url|cart_url|cart_add_url|cart_change_url|cart_clear_url|cart_update_url|product_recommendations_url|directive|value|terms|checkout_charge_amount|selling_plan_group_id|order_count|domain|money_format|money_with_currency_format|password_message|permanent_domain|secure_url|endonym_name|pick_up_time|rate_percentage|directory|suffix|amount|gateway|kind|receipt|status_label|credit_card_company|credit_card_number|measured_type|reference_unit|reference_value|preview_image|mime_type|format|barcode|compare_at_price|featured_media|inventory_management|inventory_policy|next_incoming_date|option1|option2|option3|price|sku|unit_price)\\b"
+        },
+        {
+          "name": "constant.numeric.property-value.liquid",
+          "match": "(?<=(?:article|block|blog|cart|checkout|collection|color|comment|customer|customer_address|discount_allocation|discount_application|external_video|form|forloop|gift_card|image|line_item|link|linklist|product|product_options|order|recommendations|script|scripts|search|section|selling_plan|selling_plan_allocation|selling_plan_allocation_price_adjustment|selling_plan_checkout_charge|selling_plan_group|selling_plan_group_option|selling_plan_option|selling_plan_price_adjustment|shipping_method|shop|tablerowloop|tax_line|transaction|unit_price_measurement|model|media|variant|video|video_source)\\s*\\.)\\s*\\b(id|comments_count|articles_count|item_count|original_total_price|items_subtotal_price|total_discount|total_price|total_weight|discounts_amount|discounts_savings|gift_cards_amount|line_items_subtotal_price|order_id|order_number|shipping_price|products_count|all_products_count|alpha|blue|green|hue|lightness|red|saturation|addresses_count|orders_count|amount|total_allocated_amount|value|external_id|rindex|rindex0|index0|index|length|balance|code|initial_value|last_four_characters|height|product_id|position|width|final_line_price|final_price|grams|key|original_line_price|original_price|quantity|sku|successfully_fulfilled_quantity|unit_price|variant_id|levels|compare_at_price_max|price_max|compare_at_price_min|price|price_min|results_count|group_id|recurring_deliveries|compare_at_price|per_delivery_price|remaining_balance_charge_amount|app_id|collections_count|col|col0|row|rate|created_at|quantity_unit|quantity_value|inventory_quantity|selected_selling_plan_allocation|weight|weight_unit|weight_in_unit|aspect_ratio|duration)\\b"
+        },
+        {
+          "name": "constant.language.object-value.liquid",
+          "match": "(?<=(?:article|blog|checkout|customer|form|forloop|gift_card|image|line_item|link|product|recommendations|request|search|selling_plan|selling_plan_group|shop|shop_locale|store_availability|tablerowloop|variant)\\s*\\.)\\s*\\b(comments_enabled|moderated|buyer_accepts_marketing|requires_shipping|accepts_marketing|has_account|tax_exempt|password_needed|posted_successfully?|first|last|enabled|expired|attached_to_variant|gift_card|taxable|active|child_active|child_current|current|available|compare_at_price_varies|has_only_default_variant|price_varies|performed|design_mode|selected|selling_plan_selected|customer_accounts_enabled|customer_accounts_optional|primary|pick_up_enabled|col_first|col_last|incoming|requires_selling_plan)\\b"
         }
       ]
     }

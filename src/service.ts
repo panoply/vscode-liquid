@@ -13,8 +13,8 @@ import {
 import prettify from '@liquify/prettify';
 import { Config, Setting } from 'types';
 import { CommandPalette } from 'providers/CommandPalette';
-import * as u from 'utils';
 import { CompletionProvider } from 'providers/CompletionProvider';
+import * as u from 'utils';
 
 export class VSCodeLiquid extends CommandPalette {
 
@@ -162,7 +162,7 @@ export class VSCodeLiquid extends CommandPalette {
     );
 
     workspace.onDidChangeConfiguration(
-      this.onConfigChange,
+      this.onDidChangeConfiguration,
       this,
       subscriptions
     );
@@ -174,13 +174,13 @@ export class VSCodeLiquid extends CommandPalette {
     );
 
     window.onDidChangeActiveTextEditor(
-      this.onDidChangeTextEditor,
+      this.onDidChangeActiveTextEditor,
       this,
       subscriptions
     );
 
     if (this.deprecatedConfig === false) {
-      this.onDidChangeTextEditor(window.activeTextEditor);
+      this.onDidChangeActiveTextEditor(window.activeTextEditor);
     }
 
     this.isReady = true;
@@ -222,7 +222,7 @@ export class VSCodeLiquid extends CommandPalette {
    *
    * Invoked when the text document is opened.
    */
-  public onDidChangeTextEditor (textDocument: TextEditor | undefined) {
+  public onDidChangeActiveTextEditor (textDocument: TextEditor | undefined) {
 
     if (!textDocument) {
       this.dispose();
@@ -278,20 +278,18 @@ export class VSCodeLiquid extends CommandPalette {
     if (dispose) this.dispose();
 
     this.formatHandler = languages.registerDocumentFormattingEditProvider(this.selector.active, {
-      provideDocumentFormattingEdits: async (document: TextDocument) => {
+      provideDocumentFormattingEdits: (textDocument: TextDocument) => {
 
         if (this.canFormat === false) return [];
-        if (this.formatIgnore.has(document.uri.fsPath)) return [];
+        if (this.formatIgnore.has(textDocument.uri.fsPath)) return [];
 
-        const input = document.getText();
-        const first = document.positionAt(0);
-        const last = document.positionAt(input.length - 1);
-        const range = new Range(first, last);
+        const findRange = new Range(0, 0, textDocument.lineCount, 0);
+        const fullRange = textDocument.validateRange(findRange);
 
         try {
 
-          const output = await prettify.format(input, {
-            language: u.getLanguage(document.languageId)
+          const output = prettify.formatSync(textDocument.getText(), {
+            language: u.getLanguage(textDocument.languageId)
           });
 
           if (this.hasError) {
@@ -300,13 +298,14 @@ export class VSCodeLiquid extends CommandPalette {
             this.status.enable();
           }
 
-          return [ TextEdit.replace(range, output) ];
+          return [ TextEdit.replace(fullRange, output) ];
 
         } catch (e) {
+
           if (this.hasError === false || this.errorCache !== e) {
-            this.errorCache = e;
+            this.errorCache = e.message;
             this.hasError = true;
-            this.error('Parse error occured when formatting document', e);
+            this.error('Parse error occured when formatting document', e.message);
           }
         }
 
@@ -319,7 +318,7 @@ export class VSCodeLiquid extends CommandPalette {
 
   }
 
-  public onConfigChange (config: ConfigurationChangeEvent) {
+  public onDidChangeConfiguration (config: ConfigurationChangeEvent) {
 
     if (config.affectsConfiguration('liquid')) {
 

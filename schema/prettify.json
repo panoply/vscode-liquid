@@ -4,12 +4,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "properties": {
     "prettify": {
-      "type": "object",
-      "properties": {
-        "prettify": {
-          "$ref": "./liquidrc.json"
-        }
-      }
+      "$ref": "./liquidrc.json"
     }
   }
 }

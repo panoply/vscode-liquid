@@ -1,12 +1,6 @@
----
-foo: 'bar'
-
----
-
 <!doctype html>
 <html lang="{{ shop_locale.iso_code }}">
   <head>
-
 
     <meta charset="utf-8">
 
@@ -24,28 +18,16 @@ foo: 'bar'
       {%- endunless -%}
     </title>
 
-
     {%- render "favicons" -%}
     {%- render "meta_tags" -%}
 
-    <link crossorigin href="https://api.ipstack.com" rel="dns-prefetch">
-    <link crossorigin href="https://api.brixtol.com" rel="dns-prefetch">
-    <link crossorigin href="https://s.pinimg.com" rel="dns-prefetch">
-    <link crossorigin href="https://brixtol.cloud" rel="dns-prefetch">
-    <link crossorigin href="https://cdn.shopify.com" rel="preconnect">
-    <link crossorigin href="https://use.typekit.net" rel="preconnect">
-    <link crossorigin href="https://brixtol.cloud" rel="preconnect">
-    <link as="font" crossorigin href="{{ 'catalogue-ll-regular.woff2' | asset_url }}" rel="preload" type="font/woff2">
-    <link as="font" crossorigin href="{{ 'catalogue-ll-italic.woff2' | asset_url }}" rel="preload" type="font/woff2">
-    <link as="style" crossorigin href="{{ 'stylesheet.css' | asset_url }}" rel="preload">
-    <link as="style" crossorigin href="{{ 'theme.css' | asset_url }}" rel="preload">
-    <link as="script" crossorigin href="{{ 'bundle.js' | asset_url -}}" rel="preload">
-
+    {% render 'snippet', product: product.compare_at_price_max %}
 
     <style>
       {%- render 'vars.css' %}
     </style>
 
+    {% render 'xoxo', param: 1, param2: foo.prop.foo.bar, param3: 'string', param5: false %}
 
     <link href="{{ 'stylesheet.css' | asset_url }}" rel="stylesheet">
     <link href="{{ 'theme.css' | asset_url }}" rel="stylesheet">
@@ -81,28 +63,47 @@ foo: 'bar'
 
   <body attr="{{ object.prop.prop['string'][10] | filter: false }}">
 
-    <h1>
+    <div>
+      <div>
+        {%- if condition == address.address1 -%}
 
-      {{ }}
-    </h1>
+          {% render 'snippet'
+           , class: 'some-long string'
+           , type: "header"
+           , param: "foo" %}
+
+          {{ product.title
+           | downcase
+           | append: 'something' }}
+
+        {%- endif -%}
+      </div>
+    </div>
 
 
-    <div id="foo" {{ object.prop.prop[string][10] | filter: false }}></div>
-    {%- if condition -%}{%- endif -%}
+    some-strange data
+    {{ object.prop.text | abs }}
+    suffix
 
+    {% capture foo %}{% endcapture %}
+
+    {% foo %}
+
+    <div id="foo" {{ object.prop.prop[product.name][10] | filter: false }}></div>
+    {%- if condition -%}
+      {% else %}
+    {%- endif -%}
 
     {%- render "drawer_menu", overlay: "drawer-overlay" -%}
     {%- render "drawer_cart", overlay: "drawer-overlay" -%}
     {%- section "header" -%}
     {{ content_for_layout }}
 
-
     {%- section "footer" -%}
     {%- render "icons" -%}
     {%- render "nodes" -%}
     {%- render "gdrp", overlay: "bg-visible" -%}
     {%- render "discounts" -%}
-
 
   </body>
 
