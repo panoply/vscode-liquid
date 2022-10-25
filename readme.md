@@ -193,6 +193,9 @@ By default, it is assumed you are using vscode workspace/user settings.
     // Sort attributes according to this list, requires attributeSort  to be true
     "attributeSortList": [],
 
+    // Control Liquid delimiter trims, eg: '{%-' and '{-'
+    "delimiterTrims": "preserve",
+
     // Strip extraneous spacing from Liquid delimiters
     "delimiterSpacing": false,
 
@@ -489,18 +492,8 @@ _Be sure to define only the languages you wish to have formatted by the extensio
     "editor.defaultFormatter": "sissel.shopify-liquid",
     "editor.formatOnSave": true
   },
-  // Enables formatting of all .js.liquid files
-  "[liquid-javascript]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid",
-    "editor.formatOnSave": false
-  },
   // Enables formatting of all .css.liquid files
   "[liquid-css]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid",
-    "editor.formatOnSave": false
-  },
-  // Enables formatting of all .scss.liquid files
-  "[liquid-scss]": {
     "editor.defaultFormatter": "sissel.shopify-liquid",
     "editor.formatOnSave": false
   }
