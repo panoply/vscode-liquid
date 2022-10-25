@@ -213,31 +213,31 @@
         },
         {
           "name": "entity.name.tag.iteration.liquid",
-          "match": "\\b(?:end)?(for|tablerow|paginate)\\s+"
+          "match": "\\b(for|endform|tablerow|endtablerow|paginate|endpaginate)\\b"
         },
         {
           "name": "entity.name.tag.control.liquid",
-          "match": "\\b(break|continue|cycle|else|when)\\s+"
+          "match": "\\b(break|continue|cycle|else|elsif|when)\\b"
         },
         {
           "name": "entity.name.tag.conditional.liquid",
-          "match": "\\b(?:end)?(if|unless|case)\\b\\s*"
+          "match": "\\b(if|endif|unless|endunless|case|endcase)\\b"
         },
         {
           "name": "entity.name.tag.embedded.liquid",
-          "match": "\\b(?:end)?(form|style|schema|javascript)\\b\\s+"
+          "match": "\\b(form|endform|style|endstyle|schema|endschema|javascript|endjavascript)\\b"
         },
         {
           "name": "entity.name.tag.syntax.liquid",
-          "match": "\\b(?:end)?(raw|echo)\\b\\s*"
+          "match": "\\b(raw|end|echo)\\b\\s*"
         },
         {
           "name": "entity.name.tag.import.liquid",
-          "match": "\\b(layout|render|section)\\b\\s+"
+          "match": "\\b(layout|render|section)\\b"
         },
         {
           "name": "entity.name.tag.variable.liquid",
-          "match": "\\b(?:end)?(assign|capture|decrement|increment)\\b\\s+"
+          "match": "\\b(assign|capture|endcapture|decrement|increment)\\b"
         },
         {
           "include": "#operators"
@@ -397,11 +397,11 @@
       "patterns": [
         {
           "name": "entity.name.tag.iteration.liquid",
-          "match": "(?<={%-?)\\s*\\b(?:end)?(for|tablerow|paginate)\\s*"
+          "match": "(?<={%-?)\\s*\\b(?:end)?(for|tablerow|paginate)\\b\\s*"
         },
         {
           "name": "entity.name.tag.control.liquid",
-          "match": "(?<={%-?)\\s*\\b(break|continue|cycle|else|when)\\s*"
+          "match": "(?<={%-?)\\s*\\b(break|continue|cycle|else|when)\\b\\s*"
         },
         {
           "name": "entity.name.tag.conditional.liquid",
