@@ -34,6 +34,7 @@ function setObjectType (type: Type | ITypes.Basic): CompletionItemKind {
 
   if (type === Type.array) return CompletionItemKind.Field;
   if (type === Type.object) return CompletionItemKind.Module;
+  //@ts-ignore
   if (type === Type.data) return CompletionItemKind.Value;
 
 };
@@ -61,7 +62,9 @@ export function getTagCompletions ([
 ]: [ string, Tag
 ]): CompletionItem {
 
-  const insertText = singular
+  const insertText = label === 'liquid'
+  ? new SnippetString(` ${label} ${snippet} %}$0`)
+  : singular
     ? new SnippetString(` ${label} ${snippet} %}$0`)
     : new SnippetString(` ${label} ${snippet} %} $0 {% end${label} %}`);
 
@@ -151,7 +154,7 @@ export function prevWord (content: string, offset: number, word: Words[]) {
 
   const prev = content.slice(0, offset);
 
-  return word.some(w => new RegExp(`\\s\\b${w}\\b\\s+$`).test(prev));
+  return word.some(w => new RegExp(`[\\s\\|\\%\\{]\\b${w}\\b[\\s\\|\\%\\}]$`).test(prev));
 
 }
 
