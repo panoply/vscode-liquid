@@ -5,7 +5,7 @@
     "body": ["---", "$2", "---"]
   },
   "if": {
-    "prefix": "%if",
+    "prefix": "if",
     "body": [
       "{%${1:-} if ${2:condition} ${1:-}%}",
       "\t$3",
@@ -115,7 +115,7 @@
     ]
   },
   "assign": {
-    "prefix": "% assign",
+    "prefix": "assign",
     "body": [
       "{%${1:-} assign ${2:variable} = ${3:value} ${1:-}%}"
     ]
