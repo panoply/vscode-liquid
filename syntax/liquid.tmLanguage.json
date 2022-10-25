@@ -213,7 +213,7 @@
         },
         {
           "name": "entity.name.tag.iteration.liquid",
-          "match": "\\b(for|endform|tablerow|endtablerow|paginate|endpaginate)\\b"
+          "match": "\\b(for|endfor|tablerow|endtablerow|paginate|endpaginate)\\b"
         },
         {
           "name": "entity.name.tag.control.liquid",
@@ -229,7 +229,7 @@
         },
         {
           "name": "entity.name.tag.syntax.liquid",
-          "match": "\\b(raw|end|echo)\\b\\s*"
+          "match": "\\b(raw|endraw|echo)\\b\\s*"
         },
         {
           "name": "entity.name.tag.import.liquid",
