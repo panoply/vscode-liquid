@@ -4,7 +4,7 @@ specifiers:
   '@liquify/eslint-config': ^1.1.0
   '@liquify/liquid-language-specs': ^0.1.7
   '@liquify/prettier-config': ^1.0.1
-  '@liquify/prettify': link:../liquify/packages/prettify
+  '@liquify/prettify': 0.2.1-beta.1
   '@types/vscode': ^1.72.0
   anymatch: ^3.1.2
   eslint: ^8.26.0
@@ -18,8 +18,8 @@ specifiers:
   vscode-languageserver-types: ^3.17.2
 
 dependencies:
-  '@liquify/liquid-language-specs': link:../liquify/packages/specs
-  '@liquify/prettify': link:../liquify/packages/prettify
+  '@liquify/liquid-language-specs': 0.1.7
+  '@liquify/prettify': 0.2.1-beta.1
   anymatch: 3.1.2
   parse-json: 6.0.2
   rambdax: 8.1.0
@@ -133,6 +133,11 @@ packages:
       - supports-color
     dev: true
 
+  /@liquify/liquid-language-specs/0.1.7:
+    resolution: {integrity: sha512-Q33X76Ws1ud45V//A817BS9KDtxre1Ey8cN3Qge+LjxQOUCx8UZk0kTbYkpXI8LTPYRaDc71Husm2Eb37RhU/g==}
+    engines: {node: '>=12', pnpm: '>=4'}
+    dev: false
+
   /@liquify/prettier-config/1.0.1_prettier@2.7.1:
     resolution: {integrity: sha512-QiT45qCppCRUBMuMREy2nb9k+z7BWZ7K8qCG5Aps1SwVhaCOTU2UfKb/9upA1kDEvq4LPeuby1ElHsv48xYmIg==}
     engines: {pnpm: '>=6'}
@@ -141,6 +146,11 @@ packages:
     dependencies:
       prettier: 2.7.1
     dev: true
+
+  /@liquify/prettify/0.2.1-beta.1:
+    resolution: {integrity: sha512-VD+gDVCTwIKFHnog0wuElW8UTTd+2YBkhPaoKmVSZoul+umJWSMCEMlpitCoHncxUhzAVcGA+O9inXPRV8bkdw==}
+    engines: {node: '>=12', pnpm: '>=4'}
+    dev: false
 
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
