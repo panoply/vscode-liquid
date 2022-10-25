@@ -2,7 +2,7 @@
   "title": "VSCode Liquid Extension Configuration",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "additionalProperties": false,
+  "additionalProperties": true,
   "markdownDescription": "Accepts formatting rules and options that will be passed to Prettify",
   "definitions": {
     "markup": {
@@ -16,7 +16,7 @@
         "attributeCasing": {
           "type": "string",
           "default": "preserve",
-          "markdownDescription": "Control the casing of attributes",
+          "markdownDescription": "**Default** `preserve`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `preserve`\n\nHow markup attribute names and value casing should be processed. This defaults to `preserve` which will leave casing intact and _typically_ the best option to use.\n\n**Options**\n\nThe rule accepts one of the following options:\n\n- `preserve`\n- `lowercase`\n- `lowercase-name`\n- `lowercase-value`\n\n---\n\n#### 👍 &nbsp;&nbsp; `preserve`\n\n_Below is an example of how this rule works when it is set to `preserve`. This is the default and the safest option to use._\n\n```html\n\n<!-- Before Formatting -->\n<div data-attr=\"FOO-BAR\"></div>\n\n<!-- After Formatting -->\n<div data-attr=\"FOO-BAR\"></div>\n\n```\n\n---\n\n#### 👎 &nbsp;&nbsp; `lowercase`\n\n_Below is an example of how this rule work it it's set to `lowercase`. This might be problematic to use projects where casing needs to be respected as both attribute names and values will be converted to lowercase_\n\n```html\n<!-- Before Formatting -->\n<div data-attr=\"FOO-BAR\"></div>\n\n<!-- After Formatting -->\n<div data-attr=\"foo-bar\"></div>\n```\n\n---\n\n#### 👎 &nbsp;&nbsp; `lowercase-name`\n\n_Below is an example of how this rule work it it's set to `lowercase-name`. This will leave attribute values intact but convert attribute names to lowercase_\n\n```html\n<!-- Before Formatting -->\n<div data-attr=\"FOO-BAR\"></div>\n\n<!-- After Formatting -->\n<div class=\"FOO-BAR\"></div>\n```\n\n---\n\n#### 👎 &nbsp;&nbsp; `lowercase-value`\n\n_Below is an example of how this rule work it it's set to `lowercase-value`. This will leave attribute names intact but convert attribute values to lowercase_\n\n```html\n<!-- Before Formatting -->\n<div data-attr=\"FOO-BAR\"></div>\n\n<!-- After Formatting -->\n<div data-attr=\"foo-bar\"></div>\n```",
           "oneOf": [
             {
               "enum": ["preserve"]
@@ -44,7 +44,6 @@
           "items": {
             "type": "string"
           },
-          "markdownDescription": "A list of HTML attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires \"attribute_sort\" have a value of true and does not support Liquid tag names, only HTML names are applicable.",
           "markdownDescription": "A list of HTML attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires `attribute_sort` have a value of `true` and does not accept Liquid tag names, only HTML names are applicable."
         },
         "delimiterSpacing": {
@@ -52,11 +51,22 @@
           "default": false,
           "markdownDescription": "Whether or not delimiter characters should apply a single space at the start and end points."
         },
+        "delimiterTrims": {
+          "type": "string",
+          "enum": [
+            "preserve",
+            "tags",
+            "outputs",
+            "strip",
+            "force"
+          ],
+          "default": "preserve",
+          "markdownDescription": "**Default** `preserve`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is: `tags`\n\nHow delimiter whitespace trim dashes (`{%-`, `-%}`, `{{-` and `-}}`) should handled in Liquid tags and output object tokens. You should _maybe_ avoid setting this to `force` in order to avoid stripping whitespace in cases where text content contains Liquid.\n\n**Note**\n\nThis rule will not touch Liquid tokens encapsulated within strings, ie: `\"{{ foo }}\"` or `'{{ foo }}'` are left intact.\n\n**Options**\n\nThe rule accepts one of the following options:\n\n- `preserve`\n- `tags`\n- `outputs`\n- `strip`\n- `force`\n\n---\n\n#### 👍 &nbsp;&nbsp; `preserve`\n\n_Below is an example of how this rule works if set to `preserve` which is the **default** and will leave all occurrences of trims on Liquid tokens intact_\n\n```liquid\n\n<!-- Before Formatting -->\n{% if x -%}\n  {{- foo }} {{- bar }}\n{% endif -%}\n\n<!-- After Formatting -->\n{% if x -%}\n  {{- foo }} {{- bar }}\n{% endif -%}\n\n```\n\n---\n\n#### 👍 👍 &nbsp;&nbsp; `tags`\n\n_Below is an example of how this rule works if set to `tags` which will apply trims to Liquid tag tokens but leave object output tokens intact. This is typically the best option to use._\n\n```liquid\n\n<!-- Before formatting -->\n{% if x %}\n {{ foo -}} {{- bar }}\n{% endof %}\n\n<!-- Before formatting -->\n{%- if x -%}\n {{ foo -}} {{- bar }}\n{%- endof -%}\n\n```\n\n---\n\n#### 👎 &nbsp;&nbsp; `outputs`\n\n_Below is an example of how this rule works if set to `outputs` which will apply trims to Liquid object output tokens but leave tag tokens intact. Notice how the `if` and `endif` tag is not touched but the `{{ foo }}` and `{{ bar }}` tokens have trims applied **after** formatting._\n\n```liquid\n\n<!-- Before formatting -->\n{% if x -%}\n {{ foo }} {{ bar }}\n{%- endof %}\n\n<!-- After formatting -->\n{% if x -%}\n  {{- foo -}} {{- bar -}}\n{%- endof %}\n\n```\n\n---\n\n#### 👎 &nbsp;&nbsp; `strip`\n\n_Below is an example of how this rule works if set to `strip` which will remove all occurrences of trims from Liquid tokens. Notice how the all tags and output object token trims are removed  **after** formatting._\n\n```liquid\n\n<!-- Before Formatting -->\n{%- if x -%}\n  {{- foo -}} {{- bar -}}\n{%- endif -%}\n\n<!-- After Formatting -->\n{% if x %}\n  {{ foo }} {{ bar }}\n{% endif %}\n\n```\n---\n\n#### 👎 👎 &nbsp;&nbsp; `force`\n\n_Below is an example of how this rule works if set to `force` which will apply trims to all Liquid tokens. You should maybe avoid using this option unless you are completely sure it will not cause issues when Liquid code is rendered in your project_\n\n```liquid\n\n<!-- Before Formatting -->\n{% if x %}\n  {{ foo }} {{ bar }}\n{% endof %}\n\n\n<!-- After Formatting -->\n{% if x %}\n  {{ foo }} {{ bar }}\n{% endof %}\n\n```"
+        },
         "commentNewline": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "This will determine whether comments should always start at position 0 of each line or if comments should be indented according to the code.",
-          "markdownDescription": "This will determine whether comments should always start at position `0` of each line or if comments should be indented according to the code."
+          "markdownDescription": "This will determine whether comments should always start at position 0 of each line or if comments should be indented according to the code."
         },
         "forceLeadAttribute": {
           "type": "boolean",
@@ -82,13 +92,11 @@
         "selfCloseSpace": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "Markup self-closing tags end will end with ' />' instead of '/>'",
           "markdownDescription": "Markup self-closing tags end will end with ' />' instead of '/>' on the ending delimeters.\n\n---\n\n**Disabled**:\n\n\t<meta charset=\"UTF-8\">\n\n**Enabled**:\n\n\t<meta charset=\"UTF-8\" />\n\n---\n\n**NOTE:**\n\nThis is optional and self-closing tags are no longer required as of HTML5, so use this how you wish."
         },
         "preserveAttributes": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "If HTML tags should have their insides (attributes) preserved. This option will prevent attributes from being formatted.",
           "markdownDescription": "If HTML tags should have their insides (attributes) preserved. This option will prevent attributes from being formatted.\n\n---\n\n**Disabled** 👎\n\n\t<div   id=\"a\"\n  \tclass=\"b\" data-attr=\"c\">\n\n**Enabled** 👍\n\n\t<div\n\t id=\"a\"\n\t class=\"b\"\n\t data-attr=\"c\">\n\n---\n\n**NOTE:**\n\nThere might be some situations where you do not desire attributes to be formatted, in such case use this option."
         },
         "quoteConvert": {
