@@ -10,6 +10,20 @@
 
 {% render 'filename', param: 1, param2: foo.prop.foo.bar, param3: 'string', param5: false %}
 
+{% # FOR LOOP %}
+
+{% for product in collection.products limit: 2 -%}
+
+  {{ product.title }}
+
+{%- endfor %}
+
+{% for variable in (1..200) %}
+
+  expression
+
+{% endfor %}
+
 {% render 'filename',
 
   param: 1.20,
@@ -35,6 +49,7 @@
   {%- else -%}
 
 {%- endcase -%}
+
 {% # FOR LOOP %}
 
 {% for product in collection.products limit: 2 -%}

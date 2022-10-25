@@ -4,17 +4,20 @@
   // "editor.defaultFormatter": "sissel.shopify-liquid",
   // "editor.bracketPairColorization.enabled": false
   // },
-  //"liquid.format.enable": true,
-  //"liquid.completion.tags": true,
-  //"liquid.completion.filters": true,
-  //"liquid.completion.objects": true,
-  //"liquid.format.ignore": ["**/ignore.liquid"],
-  //"json.validate.enable": false,
+  // "liquid.format.enable": true,
+  // "liquid.completion.tags": true,
+  // "liquid.completion.filters": true,
+  // "liquid.completion.objects": true,
+  // "liquid.format.ignore": ["**/ignore.liquid"],
+  // "json.validate.enable": false,
 
-
+  "editor.foldingStrategy": "indentation",
   "[liquid]": {
     "editor.defaultFormatter": "sissel.shopify-liquid",
     "editor.formatOnSave": true
+  },
+  "emmet.includeLanguages": {
+    "liquid": "html"
   },
 
   "[liquid-javascript]": {
@@ -35,10 +38,14 @@
   "[jsonc]": {
     "editor.defaultFormatter": "sissel.shopify-liquid",
     "editor.formatOnSave": true
+
+
   },
   "[json]": {
     "editor.defaultFormatter": "sissel.shopify-liquid"
-  }
+  },
+
+  "liquid.format.enable": true
   /* -------------------------------------------- */
   /* VSCODE NATIVES                               */
   /* -------------------------------------------- */
@@ -120,4 +127,3 @@
   "objectIndent": "default"
   }*/
 }
-

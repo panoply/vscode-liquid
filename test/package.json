@@ -1,6 +1,5 @@
 {
   "prettify": {
-
     "preserveLine": 1,
     "wrap": 0,
     "markup": {
@@ -8,16 +7,15 @@
       "delimiterSpacing": true,
       "commentNewline": false,
       "attributeCasing": "preserve",
-      "attributeValues": "preserve",
+
       "attributeSort": false,
       "attributeSortList": [],
-      "forceAttribute": 2,
+      "forceAttribute": false,
       "forceLeadAttribute": false,
       "forceIndent": false,
       "preserveText": false,
       "preserveAttributes": false,
       "selfCloseSpace": false
-
 
     },
 
@@ -37,4 +35,3 @@
     }
   }
 }
-

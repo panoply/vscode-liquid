@@ -7,54 +7,31 @@
   Each slide can apply text overlay content
   identical to that of which can be set in
   the hero_image section. Single slides are
-  enforced on the carousel.{%- endcomment -%}
-<div
-  class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}"
-  data-carousel-desktop-value="1"
-  data-carousel-draggable-value="{{ section.settings.draggable }}"
-  data-carousel-duration-value="{{ section.settings.duration }}"
-  data-carousel-hydrate-value="true"
-  data-carousel-id-value="{{ section.id | base64_encode }}"
-  data-carousel-interval-value="{{ section.settings.interval }}"
-  data-carousel-loop-value="{{ section.settings.loop }}"
-  data-carousel-mobile-value="1"
-  data-carousel-tablet-value="1"
-  data-controller="carousel">
+  enforced on the carousel.
+{%- endcomment -%}
+<div class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}" data-carousel-desktop-value="1" data-carousel-draggable-value="{{ section.settings.draggable }}" data-carousel-duration-value="{{ section.settings.duration }}" data-carousel-hydrate-value="true" data-carousel-id-value="{{ section.id | base64_encode }}" data-carousel-interval-value="{{ section.settings.interval }}" data-carousel-loop-value="{{ section.settings.loop }}" data-carousel-mobile-value="1" data-carousel-tablet-value="1" data-controller="carousel">
 
 
   {%- if section.settings.buttons -%}
-    <div
-      class="previous d-flex ai-center">
-      <button
-        aria-label="Previous"
-        data-action="click->carousel#prev"
-        type="button">
-        <icon
-          name="chevron-left" />
+    <div class="previous d-flex ai-center">
+      <button aria-label="Previous" data-action="click->carousel#prev" type="button">
+        <icon name="chevron-left" />
       </button>
     </div>
-    <div
-      class="next d-flex ai-center">
-      <button
-        aria-label="Next"
-        data-action="click->carousel#next"
-        type="button">
-        <icon
-          name="chevron-right" />
+    <div class="next d-flex ai-center">
+      <button aria-label="Next" data-action="click->carousel#next" type="button">
+        <icon name="chevron-right" />
       </button>
     </div>
   {%- endif -%}
 
-  <div
-    data-carousel-target="siema">
+  <div data-carousel-target="siema">
 
     {%- for block in section.blocks -%}
 
       {%- assign item = block.settings -%}
 
-      <div
-        class=" {%- unless forloop.first %}col px-0 d-none{% else %}col px-0{% endunless %}"
-        data-carousel-target="slide">
+      <div class=" {%- unless forloop.first %}col px-0 d-none{% else %}col px-0{% endunless %}" data-carousel-target="slide">
 
         {%- if block.type == 'image_with_content' -%}
 
@@ -66,18 +43,13 @@
           {%- endcapture -%}
 
           {%- capture gutter -%}
-            px-
-            {{- item.mx_mobile }}
-            py-
-            {{- item.my_mobile }}
-            px-sm-
-            {{- item.mx_desktop }}
+            px-{{- item.mx_mobile }}
+            py-{{- item.my_mobile }}
+            px-sm-{{- item.mx_desktop }}
           {%- endcapture -%}
 
-          <div
-            class="hero-caption d-flex p-3 p-sm-5 {{ item.pos_mobile }} {{ item.pos_desktop }}">
-            <div
-              class="{{ gutter }} py-sm-{{ item.my_desktop }} {{ item.ta_mobile }} {{ item.ta_desktop }}">
+          <div class="hero-caption d-flex p-3 p-sm-5 {{ item.pos_mobile }} {{ item.pos_desktop }}">
+            <div class="{{ gutter }} py-sm-{{ item.my_desktop }} {{ item.ta_mobile }} {{ item.ta_desktop }}">
 
               {%- if item.title != blank -%}
 
@@ -96,9 +68,7 @@
                   ;
                 {%- endcapture -%}
 
-                <h1
-                  class="{{ spacing }}"
-                  style="{{ styles }}">
+                <h1 class="{{ spacing }}" style="{{ styles }}">
                   {{- item.title -}}
                 </h1>
 
@@ -121,9 +91,7 @@
                   ;
                 {%- endcapture -%}
 
-                <h1
-                  class="{{ spacing }}"
-                  style="{{ style }}">
+                <h1 class="{{ spacing }}" style="{{ style }}">
                   {{- item.subtitle -}}
                 </h1>
 
@@ -154,9 +122,7 @@
                   {%- endif -%}
                 {%- endcapture -%}
 
-                <p
-                  class="{{ spacing }}"
-                  style="{{ style }}">
+                <p class="{{ spacing }}" style="{{ style }}">
                   {{- item.caption | remove: '<p>' | remove: '</p>' -}}
                 </p>
 
@@ -201,10 +167,7 @@
                   {%- endif -%}
                 {%- endcapture -%}
 
-                <a
-                  class="btn btn-line {{ class }}"
-                  href="{{ item.url }}"
-                  style="{{ style }}">
+                <a class="btn btn-line {{ class }}" href="{{ item.url }}" style="{{ style }}">
                   {{- item.btn -}}
                 </a>
 
@@ -231,26 +194,14 @@
             ;
           {%- endcapture -%}
 
-          <div
-            class="aspect-ratio"
-            style="{{ aspect_ratio }}">
+          <div class="aspect-ratio" style="{{ aspect_ratio }}">
             {%- if item.img_desktop != blank and item.img_mobile != blank -%}
               <picture>
-                <source
-                  data-srcset="{{ item.img_desktop | img_url: '1440x' | format: 'pjpg' }}"
-                  media="lg" />
-                <source
-                  data-srcset="{{ item.img_desktop | img_url: '1240x' | format: 'pjpg' }}"
-                  media="md" />
-                <source
-                  data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}"
-                  media="sm" />
-                <source
-                  data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}"
-                  media="xs" />
-                <img
-                  class="img-fluid lazy"
-                  data-src=" {{- item.img_desktop | img_url: '1440x' | format: 'pjpg' }}">
+                <source data-srcset="{{ item.img_desktop | img_url: '1440x' | format: 'pjpg' }}" media="lg" />
+                <source data-srcset="{{ item.img_desktop | img_url: '1240x' | format: 'pjpg' }}" media="md" />
+                <source data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}" media="sm" />
+                <source data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}" media="xs" />
+                <img class="img-fluid lazy" data-src=" {{- item.img_desktop | img_url: '1440x' | format: 'pjpg' }}">
               </picture>
             {%- else -%}
               {%- render 'placeholder', type: 'hero_image' -%}
@@ -863,4 +814,3 @@
     ]
   }
 {% endschema %}
-

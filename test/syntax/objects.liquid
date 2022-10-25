@@ -1,19 +1,49 @@
 
-{% # STRING OBJECT VALUES %}
+{% # OBJECT > STRING %}
 
 {{ page_title }}
 {{ page_description }}
 {{ page_image }}
 
-
-{% # NUMERIC OBJECT VALUES %}
+{% # OBJECT > NUMERIC %}
 
 {{ current_page }}
 
-{% # CONSTANT OBJECT VALUES %}
+{% # OBJECT > CONSTANT %}
 
 {{ content_for_header }}
 {{ content_for_layout }}
+
+{% # OBJECT > DROP %}
+
+{{ product }}
+{{ collection }}
+{{ article }}
+
+{% # OBJECT > PROPERTY DROP %}
+
+{{ product.variants }}
+{{ collection.products }}
+
+{% # OBJECT > PROPERTY DEEP DROP %}
+
+{{ article.user.image.src }}
+
+{% # OBJECT > PROPERTY NUMBER %}
+
+{{ product.compare_at_price_max }}
+{{ product.price_min }}
+
+{% # OBJECT > PROPERTY BOOLEAN %}
+
+{{ product.available }}
+{{ product.has_only_default_variant }}
+
+{% # OBJECT > PROPERTY STRING %}
+
+{{ product.description }}
+{{ customer.first_name }}
+
 
 {% # UNKNOWN OBJECT > PROPERTY %}
 
