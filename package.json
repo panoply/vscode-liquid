@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Νίκος Σαβίδης <n.savvidis@gmx.com>",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "keywords": [
     "liquid",
     "shopify",
@@ -26,7 +26,7 @@
     "url": "https://github.com/panoply/vscode-liquid/issues"
   },
   "engines": {
-    "vscode": "^1.71.0",
+    "vscode": "^1.72.0",
     "node": "v16.15.0"
   },
   "categories": [
@@ -290,6 +290,10 @@
       {
         "language": "liquid",
         "path": "./snippets/tags.json"
+      },
+      {
+        "language": "liquid",
+        "path": "./snippets/schema.json"
       }
     ],
     "configurationDefaults": {
@@ -379,7 +383,7 @@
         },
         "liquid.format.ignore": {
           "type": "array",
-          "markdownDescription": "Glob pattern of file's and/or directories to be ignored from formatting. Use relative paths to exclude or ignore formatting.\n\nYou can also leverage inline ignore comments. Place a Prettify ignore comment at the top of files you to exclude from beautification.\n\n**Example:**\n```liquid\n{% # @prettify-ignore %}\n\nOR\n\n<!-- @prettify-ignore -->\n```",
+          "markdownDescription": "Glob pattern of file's and/or directories to be ignored from formatting. Use relative paths to exclude or ignore formatting.\n\nYou can also leverage inline ignore comments. Place a Prettify ignore comment at the top of files you to exclude from beautification.\n\n**Example:**\n```liquid\n   {% # @prettify-ignore %}\n\nOR\n\n<!-- @prettify-ignore -->\n```",
           "items": [
             {
               "type": "string"
@@ -436,7 +440,7 @@
             "attributeCasing": {
               "type": "string",
               "default": "preserve",
-              "markdownDescription": "Control the casing of attributes",
+              "markdownDescription": "**Default** `preserve`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `preserve`\n\nHow markup attribute names and value casing should be processed. This defaults to `preserve` which will leave casing intact and _typically_ the best option to use.\n\n**Options**\n\nThe rule accepts one of the following options:\n\n- `preserve`\n- `lowercase`\n- `lowercase-name`\n- `lowercase-value`\n\n---\n\n#### 👍 &nbsp;&nbsp; `preserve`\n\n_Below is an example of how this rule works when it is set to `preserve`. This is the default and the safest option to use._\n\n```html\n\n<!-- Before Formatting -->\n<div data-attr=\"FOO-BAR\"></div>\n\n<!-- After Formatting -->\n<div data-attr=\"FOO-BAR\"></div>\n\n```\n\n---\n\n#### 👎 &nbsp;&nbsp; `lowercase`\n\n_Below is an example of how this rule work it it's set to `lowercase`. This might be problematic to use projects where casing needs to be respected as both attribute names and values will be converted to lowercase_\n\n```html\n<!-- Before Formatting -->\n<div data-attr=\"FOO-BAR\"></div>\n\n<!-- After Formatting -->\n<div data-attr=\"foo-bar\"></div>\n```\n\n---\n\n#### 👎 &nbsp;&nbsp; `lowercase-name`\n\n_Below is an example of how this rule work it it's set to `lowercase-name`. This will leave attribute values intact but convert attribute names to lowercase_\n\n```html\n<!-- Before Formatting -->\n<div data-attr=\"FOO-BAR\"></div>\n\n<!-- After Formatting -->\n<div class=\"FOO-BAR\"></div>\n```\n\n---\n\n#### 👎 &nbsp;&nbsp; `lowercase-value`\n\n_Below is an example of how this rule work it it's set to `lowercase-value`. This will leave attribute names intact but convert attribute values to lowercase_\n\n```html\n<!-- Before Formatting -->\n<div data-attr=\"FOO-BAR\"></div>\n\n<!-- After Formatting -->\n<div data-attr=\"foo-bar\"></div>\n```",
               "enum": [
                 "preserve",
                 "lowercase",
@@ -448,7 +452,7 @@
               "type": "boolean",
               "default": false,
               "title": "Sort Attributes",
-              "markdownDescription": "Alphanumerically sort HTML attributes from A to Z."
+              "markdownDescription": "**Default** `false`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is: `false`\n\nProvides sorting of HTML Attributes. When enabled it will sort attributes in an alpha-numeric order. Sorting is ignored on tags which contain or use Liquid tokens as attributes.\n\n**Related**\n\nWhen enabled you can use the `attributeSortList` rule to defined sorting order.\n\n---\n\n#### Example\n\n_Below is an example of how this rule works if it's enabled, ie: `true`. Notice how the attributes are not alphabetically sorted before formatting is applied whereas after formatting they are sorted alphabetically._\n\n```html\n\n<!-- Before formatting -->\n<div id=\"x\" data-b=\"100\" data-a=\"foo\" data-c=\"true\" class=\"xxx\"></div>\n\n<!-- After formatting -->\n<div class=\"xxx\" data-a=\"foo\" data-b=\"100\" data-c=\"true\" id=\"x\"></div>\n\n```"
             },
             "attributeSortList": {
               "type": "array",
@@ -456,12 +460,24 @@
               "items": {
                 "type": "string"
               },
-              "markdownDescription": "A list of HTML attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires `attribute_sort` have a value of `true` and does not accept Liquid tag names, only HTML names are applicable."
+              "markdownDescription": "**Default** `[]`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is: `[]`\n\nA comma separated list of attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires `attributeSort` to be enabled, ie: have a value of `true`. If you have not set `attributeSort` to `true` then this rule will have no effect.\n\n**Required**\n\nThe `attributeSort` rule must be enabled, ie: `true`\n\n---\n\n#### Example\n\n_Below is an example of how this rule works and you've defined the following attribute sorting structure_\n\n```js\n\n{\n  attributeSort: true, // must be true when using this rule\n  attributeSortList: [\n    'id',\n    'class',\n    'data-b',\n    'data-z'\n  ]\n}\n\n```\n\n_Using the above options, notice how `data-a`, `data-c` `data-d` and `data-e` are sorted in an alphabetical order following the sort list we provided. All attributes not defined in the `attributeSortList` will be sorted alphabetically._\n\n```html\n\n<!-- Before formatting -->\n<div data-z=\"\" data-a=\"\" id=\"x\" data-d=\"\" data-c=\"\" data-b=\"\" data-e=\"\" class=\"xx\"></div>\n\n<!-- After formatting -->\n<div id=\"x\" class=\"xx\" data-b=\"\" data-z=\"\" data-a=\"\" data-c=\"\" data-d=\"\"></div>\n\n```"
             },
             "delimiterSpacing": {
               "type": "boolean",
               "default": false,
-              "markdownDescription": "Whether or not delimiter characters should apply a single space at the start and end points."
+              "markdownDescription": "**Default** `false`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is: `true`\n\nWhether or not Liquid delimiters should apply a single space at the starting and ending points of their structure or be left intact.\n\n---\n\n#### Example\n\n_Below is an example of how this rule works if it's enabled, ie: `true`. Notice how the extraneous whitespace and newlines are removed **after** formatting was applied._\n\n```html\n\n<!-- Before formatting -->\n{%    for i in arr   %}\n\n  {{\n    i.object\n       }}\n\n  {%if x%}\n    {{foo}} {{bar   }} {{   baz   }}\n  {%   endif%}\n\n{%endfor              %}\n\n<!-- After formatting -->\n{% for i in arr %}\n  {{ i.object }}\n  {% if x %}\n    {{ foo }} {{ bar }} {{ baz }}\n  {% endif %}\n{% endfor %}\n\n```"
+            },
+            "delimiterTrims": {
+              "type": "string",
+              "enum": [
+                "preserve",
+                "tags",
+                "outputs",
+                "strip",
+                "force"
+              ],
+              "default": "preserve",
+              "markdownDescription": "**Default** `preserve`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is: `tags`\n\nHow delimiter whitespace trim dashes (`{%-`, `-%}`, `{{-` and `-}}`) should handled in Liquid tags and output object tokens. You should _maybe_ avoid setting this to `force` in order to avoid stripping whitespace in cases where text content contains Liquid.\n\n**Note**\n\nThis rule will not touch Liquid tokens encapsulated within strings, ie: `\"{{ foo }}\"` or `'{{ foo }}'` are left intact.\n\n**Options**\n\nThe rule accepts one of the following options:\n\n- `preserve`\n- `tags`\n- `outputs`\n- `strip`\n- `force`\n\n---\n\n#### 👍 &nbsp;&nbsp; `preserve`\n\n_Below is an example of how this rule works if set to `preserve` which is the **default** and will leave all occurrences of trims on Liquid tokens intact_\n\n```liquid\n\n<!-- Before Formatting -->\n{% if x -%}\n  {{- foo }} {{- bar }}\n{% endif -%}\n\n<!-- After Formatting -->\n{% if x -%}\n  {{- foo }} {{- bar }}\n{% endif -%}\n\n```\n\n---\n\n#### 👍 👍 &nbsp;&nbsp; `tags`\n\n_Below is an example of how this rule works if set to `tags` which will apply trims to Liquid tag tokens but leave object output tokens intact. This is typically the best option to use._\n\n```liquid\n\n<!-- Before formatting -->\n{% if x %}\n {{ foo -}} {{- bar }}\n{% endof %}\n\n<!-- Before formatting -->\n{%- if x -%}\n {{ foo -}} {{- bar }}\n{%- endof -%}\n\n```\n\n---\n\n#### 👎 &nbsp;&nbsp; `outputs`\n\n_Below is an example of how this rule works if set to `outputs` which will apply trims to Liquid object output tokens but leave tag tokens intact. Notice how the `if` and `endif` tag is not touched but the `{{ foo }}` and `{{ bar }}` tokens have trims applied **after** formatting._\n\n```liquid\n\n<!-- Before formatting -->\n{% if x -%}\n {{ foo }} {{ bar }}\n{%- endof %}\n\n<!-- After formatting -->\n{% if x -%}\n  {{- foo -}} {{- bar -}}\n{%- endof %}\n\n```\n\n---\n\n#### 👎 &nbsp;&nbsp; `strip`\n\n_Below is an example of how this rule works if set to `strip` which will remove all occurrences of trims from Liquid tokens. Notice how the all tags and output object token trims are removed  **after** formatting._\n\n```liquid\n\n<!-- Before Formatting -->\n{%- if x -%}\n  {{- foo -}} {{- bar -}}\n{%- endif -%}\n\n<!-- After Formatting -->\n{% if x %}\n  {{ foo }} {{ bar }}\n{% endif %}\n\n```\n---\n\n#### 👎 👎 &nbsp;&nbsp; `force`\n\n_Below is an example of how this rule works if set to `force` which will apply trims to all Liquid tokens. You should maybe avoid using this option unless you are completely sure it will not cause issues when Liquid code is rendered in your project_\n\n```liquid\n\n<!-- Before Formatting -->\n{% if x %}\n  {{ foo }} {{ bar }}\n{% endof %}\n\n\n<!-- After Formatting -->\n{% if x %}\n  {{ foo }} {{ bar }}\n{% endof %}\n\n```"
             },
             "commentNewline": {
               "type": "boolean",
@@ -471,12 +487,12 @@
             "forceLeadAttribute": {
               "type": "boolean",
               "default": false,
-              "markdownDescription": "**_FORCE LEAD ATTRIBUTE_**\n\n_Whether the leading attribute should be forced onto a newline when word `wrap` limit is exceeded or if it should be preserved. By default, Prettify preserves the leading attribute when applying wrap indentation. Enabling this option will force indent all attributes if wrap is exceeded._\n\n_This rule requires a `wrap` level to be defined. If you have `forceAttribute` enabled or using a force attribute limit value it will override this option. If you desire wrap based attribute indentation, set `forceAttribute` to `false` and ensure a `wrap` level is defined._\n\n---\n\n#### Disabled (default)\nBelow is an example of how this rule works if it's disabled (ie: `false`) and attributes have exceeded a defined wrap limit. Notice how leading attributes are preserved that have not exceeded wrap, but proceeding attributes are indented onto their own lines, this is the default behavior Prettify uses.*\n```liquid\n\n<!-- Leading attribute is preserved -->\n<div class=\"x\"\n  id=\"{{ foo }}\"\n  data-attribute-example=\"100\"\n  data-x=\"xx\"></div>\n\n\n```\n\n---\n\n#### Enabled\nBelow is an example of how this rule works if it's enabled (ie: `true`) and attributes have exceeded the defined wrap limit. Notice how all attributes and indented onto their own line, including the leading attribute.\n\n```liquid\n\n<!-- All attributes are forced including the leading attribute -->\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-attribute-example=\"100\"\n  data-x=\"xx\"></div>\n\n\n```"
+              "markdownDescription": "**Default** `false`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is: `true`\n\nWhether the leading attribute should be forced onto a newline when word `wrap` limit is exceeded or if it should be preserved. By default, Prettify preserves the leading attribute when applying wrap indentation. Enabling this option will force indent all attributes if wrap is exceeded.\n\n**Related**\n\nThis rule requires a `wrap` level to be defined.\n\n**Note**\n\nIf you have `forceAttribute` enabled or using a force attribute limit value it will override this option. If you desire wrap based attribute indentation, set `forceAttribute` to `false` and ensure a `wrap` level is defined.\n\n---\n\n#### 👎 &nbsp;&nbsp; Disabled\n\n_Below is an example of how this rule works if it's disabled (ie: `false`) and attributes have exceeded a defined wrap limit. Notice how leading attributes are preserved that have not exceeded wrap, but proceeding attributes are indented onto their own lines, this is the default behavior Prettify uses._\n\n```html\n\n<!-- Leading attribute is preserved -->\n<div class=\"x\" id=\"{{ foo }}\" data-attribute-example=\"100\" data-x=\"xx\"></div>\n\n```\n\n---\n\n#### 👍 &nbsp;&nbsp; Enabled\n\n_Below is an example of how this rule works if it's enabled (ie: `true`) and attributes have exceeded the defined wrap limit. Notice how all attributes and indented onto their own line, including the leading attribute._\n\n```html\n\n<!-- All attributes are forced including the leading attribute  -->\n<div class=\"x\" id=\"{{ foo }}\" data-attribute-example=\"100\" data-x=\"xx\"></div>\n\n```"
             },
             "forceIndent": {
               "type": "boolean",
               "default": false,
-              "markdownDescription": "**_FORCE INDENT_**\n\n_Will force indentation upon all content and tags without regard for the text nodes._\n#### Disabled&nbsp;&nbsp;&nbsp;👎\n```liquid\n<span>Hello World</span>\n\n\n```\n\n---\n\n#### Enabled&nbsp;&nbsp;&nbsp;👍\n```liquid\n<span>\n  Hello World\n</span>\n\n\n```"
+              "markdownDescription": "**Default** `false`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is: `true`\n\nWill force indentation upon all content and tags without regard for the text nodes. To some degree this rule emulates a result similar to that you'd expect in the Prettier uniform.\n\n**Note**\n\nInline preservation is respected in cases where a Liquid output object token is encapsulated between text nodes. In such scenarios the text content will only force indent the start and end portions.\n\n---\n\n#### Example\n\n_Below is an example of how this rule works if it's enabled, ie: `true`. Notice how text type node are indented onto newlines, which is typically going to result in better readability overall._\n\n```html\n\n<!-- Before Formatting -->\n<ul>\n <li>Hello</li>\n <li>World</li>\n</ul>\n\n<!-- After Formatting -->\n<ul>\n  <li>\n    Hello\n  </li>\n  <li>\n    World\n  </li>\n</ul>\n\n```"
             },
             "forceAttribute": {
               "type": [
@@ -484,7 +500,7 @@
                 "number"
               ],
               "default": false,
-              "markdownDescription": "**_FORCE ATTRIBUTE_**\n\n_Whether all markup attributes should be indented each onto their own line. You can optionally provide an integer value of `1` or more. When an integer value is passed, attributes will be forced only if the number of attributes contained on the tag exceeds the supplied value limit. When you define a `wrap` level then attributes will be automatically forced. This is typically a better solution than forcing all attributes onto newlines or an even better solution would be to set a limit level._\n\n---\n\n#### Disabled&nbsp;&nbsp;&nbsp;👎\nBelow is the default, wherein attributes are only forced when wrap is exceeded.\n```liquid\n\n<div class=\"x\" id=\"{{ foo }}\" data-x=\"xx\">\n</div>\n\n\n```\n\n---\n\n#### Enabled&nbsp;&nbsp;&nbsp;👍\nBelow is an example of how this rule works if it's enabled, ie: `true`\n```liquid\n\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-x=\"xx\"></div>\n```\n\n---\n\n#### Limit Example&nbsp;&nbsp;&nbsp;👍&nbsp;👍\n*Below we provide a value of `2` so formatting will be applied as such:*\n```liquid\n<!-- Tag contains 2 attributes, they will not be forced-->\n<div class=\"x\" id=\"{{ foo }}\"></div>\n\n<!-- Tag contains 3 attributes, thus they will be forced -->\n<div\n  class=\"x\"\n  id=\"{{ foo }}\"\n  data-x=\"xx\"></div>\n\n<!-- Tag contains 1 attribute, it will not be forced-->\n<div class=\"x\"></div>\n\n\n```"
+              "markdownDescription": "**Default** `false`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is: `3`\n\nHow or if markup attributes should be indented each onto their own line. You can optionally provide an integer value of `1` or more. When an integer value is passed, attributes will be forced only if the number of attributes contained on the tag exceeds the supplied value limit.\n\n**Note**\n\nWhen you define a `wrap` level then attributes will be automatically forced when limit is exceeded unless you've set this rule to `true` or provided an integer threshold.\n\n---\n\n#### 👎 &nbsp;&nbsp; Disabled\n\n_Below is the default, wherein attributes are not forced or indented._\n\n```html\n\n<div class=\"x\" id=\"{{ foo }}\" data-x=\"xx\"></div>\n\n```\n\n---\n\n#### 👍 &nbsp;&nbsp; Enabled\n\n_Below is an example of how this rule works if it's enabled, ie: `true`. When working with Liquid this is typically going to be the better option to use opposed when you desire a clear uniform across all your project._\n\n```html\n\n<div class=\"x\" id=\"{{ foo }}\" data-x=\"xx\"></div>\n\n```\n\n---\n\n#### 👍 👍 &nbsp;&nbsp; Limit\n\n_Below is an example of forced attributes when an integer value of `2` was provided. This is typically the best way method to control attribute indentation._\n\n```html\n\n<!-- Tag contains 2 attributes, they will not be forced -->\n<div class=\"x\" id=\"{{ foo }}\"></div>\n\n<!-- Tag contains 3 attributes, they will be forced -->\n<div class=\"x\" id=\"{{ foo }}\" data-x=\"xx\"></div>\n\n<!-- Tag contains 1 attribute, it will not be forced-->\n<div class=\"x\"></div>\n\n<!-- Tag contains 4 attributes, they will be forced -->\n<div class=\"x\" id=\"{{ foo }}\" data-x=\"xx\" data-xx=\"xxx\"></div>\n\n```"
             },
             "preserveText": {
               "type": "boolean",
@@ -495,17 +511,17 @@
             "selfCloseSpace": {
               "type": "boolean",
               "default": false,
-              "markdownDescription": "Markup self-closing tags end will end with ' />' instead of '/>' on the ending delimeters.\n\n---\n\n**Disabled**:\n\n\t<meta charset=\"UTF-8\">\n\n**Enabled**:\n\n\t<meta charset=\"UTF-8\" />\n\n---\n\n**NOTE:**\n\nThis is optional and self-closing tags are no longer required as of HTML5, so use this how you wish."
+              "markdownDescription": "**Default** `false`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is: `true`\n\nWhether markup self-closing (void) tags should apply a single space to ending portion of the delimiter which  results in the tag output to produce `' /&gt;'` instead of `'/&gt;'`.\n\n---\n\n#### Example\n\n_Below is an example of how this rule works if it's enabled, ie: `true`. Typically it is best to enable this option_\n\n```html\n\n<!-- Before formatting -->\n<picture>\n  <path srcset=\".\">\n  <path srcset=\".\">\n</path></path></picture>\n\n<!-- After Formatting - Notice the the space insertion applied -->\n<picture>\n  <path srcset=\".\">\n  <path srcset=\".\">\n</path></path></picture>\n\n```"
             },
             "preserveAttributes": {
               "type": "boolean",
               "default": false,
-              "markdownDescription": "If HTML tags should have their insides (attributes) preserved. This option will prevent attributes from being formatted.\n\n---\n\n**Disabled** 👎\n\n\t<div   id=\"a\"\n  \tclass=\"b\" data-attr=\"c\">\n\n**Enabled** 👍\n\n\t<div\n\t id=\"a\"\n\t class=\"b\"\n\t data-attr=\"c\">\n\n---\n\n**NOTE:**\n\nThere might be some situations where you do not desire attributes to be formatted, in such case use this option."
+              "markdownDescription": "**Default** `false`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is: `false`\n\nWhether or not markup tags should have their insides preserved, ie: attributes. This option is only available to markup and does not support child tokens that require a different lexer. When enabled, this rule will run precedence and override all attribute related rules.\n\n---\n\n#### Example\n\nBelow is an example of how this rule works if it's enabled, ie: `true`. There is no difference between the _before_ and _after_ version of the code when this option is enabled. Typically, you are not going to want to enable this rule unless of course your project is better off using it.\n\n```html\n\n<!-- Before Formatting -->\n<div id=\"x\" data-x=\"foo\" class=\"xx\"></div>\n\n<!-- After Formatting -->\n<div id=\"x\" data-x=\"foo\" class=\"xx\"></div>\n\n```"
             },
             "quoteConvert": {
               "default": "none",
               "type": "string",
-              "markdownDescription": "If quotation character should be converted to specific type or not.",
+              "markdownDescription": "**Default** `none`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is: `double`\n\nHow quotation character of markup attributes should be handler. Allows for conversion to single quotes or double quotes. Markup tag attributes should always use double quotations, it's the standard in languages like HTML.\n\n**Options**\n\nThe rule accepts one of the following options:\n\n- `none`\n- `double`\n- `single`\n\n**Tip**\n\nWhen working with Liquid, use `single` quotes for strings and always infer `double` in the markup.\n\n---\n\n#### 👍 &nbsp;&nbsp; `none`\n\n_Below is an example of how this rule works if set to `none` which is the **default** setting. No conversion of quotations is applied when using `none` as per the **before** and **after** examples_\n\n```html\n\n<!-- Before Formatting -->\n<div class=\"single\" id=\"double\"></div>\n\n<!-- After Formatting -->\n<div class=\"single\" id=\"double\"></div>\n\n```\n\n---\n\n#### 👍 👍 &nbsp;&nbsp; `double`\n\n_Below is an example of how this rule works if set to `double` which will go about converting and ensuring all markup quotations and using doubles._\n\n\n```html\n\n<!-- Before Formatting -->\n<div class=\"foo\" id=\"bar\"></div>\n\n<!-- After Formatting -->\n<div class=\"foo\" id=\"bar\"></div>\n\n```\n\n\n---\n\n#### 👎 &nbsp;&nbsp; `single`\n\n\n_Below is an example of how this rule works if set to `single` which will go about converting and ensuring all markup quotations and using singles._\n\n```html\n\n<!-- Before Formatting -->\n<div class=\"foo\" id=\"bar\"></div>\n\n<!-- After Formatting -->\n<div class=\"foo\" id=\"bar\"></div>\n\n```\n\n---",
               "enum": [
                 "none",
                 "double",
@@ -801,16 +817,16 @@
   "devDependencies": {
     "@liquify/eslint-config": "^1.1.0",
     "@liquify/prettier-config": "^1.0.1",
-    "@types/vscode": "^1.71.0",
-    "eslint": "^8.24.0",
+    "@types/vscode": "^1.72.0",
+    "eslint": "^8.26.0",
     "prettier": "^2.7.1",
-    "tsup": "^6.2.3",
-    "type-fest": "^3.0.0",
-    "vsce": "^2.11.0"
+    "tsup": "^6.3.0",
+    "type-fest": "^3.1.0",
+    "vsce": "^2.13.0"
   },
   "dependencies": {
-    "@liquify/liquid-language-specs": "^0.1.6",
-    "@liquify/prettify": "0.1.6-beta.1",
+    "@liquify/liquid-language-specs": "^0.1.7",
+    "@liquify/prettify": "link:../liquify/packages/prettify",
     "anymatch": "^3.1.2",
     "parse-json": "^6.0.2",
     "rambdax": "8.1.0",
