@@ -826,7 +826,7 @@
   },
   "dependencies": {
     "@liquify/liquid-language-specs": "^0.1.7",
-    "@liquify/prettify": "link:../liquify/packages/prettify",
+    "@liquify/prettify": "0.2.1-beta.1",
     "anymatch": "^3.1.2",
     "parse-json": "^6.0.2",
     "rambdax": "8.1.0",
