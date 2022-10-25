@@ -430,7 +430,6 @@
     "ignore": {
       "$ref": "#/definitions/exclude"
     },
-
     "wrap": {
       "type": "number",
       "title": "Wrap Limit",
