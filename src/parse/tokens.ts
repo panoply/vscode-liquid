@@ -211,7 +211,7 @@ export function parseObject (content: string, offset: number) {
 
   const props = match[0].split('.').filter(Boolean);
 
-  console.log(slice, props);
+  //console.log(slice, props);
 
   if (!has(props[0], liquid.shopify.objects)) return null;
 
