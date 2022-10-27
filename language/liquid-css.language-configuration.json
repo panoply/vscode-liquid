@@ -1,8 +1,6 @@
 {
 	"comments": {
-		"blockComment": [
-			["/*", "*/"]
-		]
+		"blockComment": ["/*", "*/"]
 	},
 	"brackets": [
 		["{", "}"],
