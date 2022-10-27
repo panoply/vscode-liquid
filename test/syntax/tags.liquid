@@ -24,22 +24,19 @@
 
 {% endfor %}
 
-{% render 'filename',
-
-  param: 1.20,
-  param2: foo.prop.foo.bar,
-  param3: 'string',
-  param5: false,
-  param_foo: nil,
-  123_param: product.available
-
-%}
+{% render 'filename'
+ , param: 1.20
+ , param2: foo.prop.foo.bar
+ , param3: 'string'
+ , param5: false
+ , param_foo: nil
+ , 123_param: product.available %}
 
 {% # CONDITION %}
 
 {%- if condition == product.available -%}
 
-{%- elsif condition -%}
+  {%- elsif condition -%}
 
 {%- endif -%}
 
@@ -70,7 +67,4 @@
 
 {%- endfor %}
 
-{%- for item in collection -%}
-
-{%- endfor -%}
-
+{%- for item in collection -%}{%- endfor -%}

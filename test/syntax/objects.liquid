@@ -1,4 +1,3 @@
-
 {% # OBJECT > STRING %}
 
 {{ page_title }}
@@ -50,8 +49,8 @@
 {{ foo.bar }}
 {{ FOO.bar }}
 {{ foo.bar.baz }}
-{{ foo.bar.baz | prepend: foo.bar | append: foo_bar.baz  }}
-{{ foo.bar.baz | prepend: f123.bar | append: foo_bar.baz[foo.bar]  }}
+{{ foo.bar.baz | prepend: foo.bar | append: foo_bar.baz }}
+{{ foo.bar.baz | prepend: f123.bar | append: foo_bar.baz[foo.bar] }}
 
 {% # UNKNOWN EDGE CASES OBJECT > PROPERTY %}
 
@@ -81,7 +80,3 @@
 
 {{ product.description }}
 {{ customer.first_name }}
-
-
-
-
