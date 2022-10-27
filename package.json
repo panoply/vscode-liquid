@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Νίκος Σαβίδης <n.savvidis@gmx.com>",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "keywords": [
     "liquid",
     "shopify",
@@ -302,7 +302,11 @@
         "editor.defaultFormatter": "sissel.shopify-liquid",
         "editor.formatOnSave": true
       },
-      "[liquid-css]": {},
+      "[liquid-css]": {
+        "editor.bracketPairColorization.enabled": false,
+        "editor.defaultFormatter": "sissel.shopify-liquid",
+        "editor.formatOnSave": true
+      },
       "[liquid-scss]": {},
       "[liquid-javascript]": {},
       "files.associations": {
