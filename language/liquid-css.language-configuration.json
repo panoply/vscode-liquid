@@ -1,14 +1,15 @@
 {
 	"comments": {
-		"lineComment": "{%\\s*#",
-		"blockComment": ["/*", "*/"]
+		"blockComment": [
+			["/*", "*/"]
+		]
 	},
 	"brackets": [
-		["{{", "}}"],
-		["{%", "%}"],
 		["{", "}"],
 		["[", "]"],
 		["(", ")"],
+		["{{", "}}"],
+		["{%", "%}"],
 		["---", "---"]
 	],
 	"autoClosingPairs": [
@@ -34,5 +35,6 @@
 	"indentationRules": {
 		"increaseIndentPattern": "(^.*\\{[^}]*$)",
 		"decreaseIndentPattern": "^\\s*\\}"
-	}
+	},
+	"wordPattern": "(#?-?\\d*\\.\\d\\w*%?)|(::?[\\w-]*(?=[^,{;]*[,{]))|(([@#.!])?[\\w-?]+%?|[@#!.])"
 }
