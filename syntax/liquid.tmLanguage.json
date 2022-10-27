@@ -3,34 +3,22 @@
   "name": "Liquid",
   "scopeName": "source.liquid",
   "injections": {
-    "L:meta -(meta.embedded.block.liquid)": {
+    "L:meta - (meta.embedded.block.liquid)": {
       "patterns": [
-        {
-          "include": "source.liquid#tags"
-        },
-        {
-          "include": "source.liquid#output"
-        }
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
       ]
     },
     "L:entity.other.attribute-name.class.css": {
       "patterns": [
-        {
-          "include": "source.liquid#tags"
-        },
-        {
-          "include": "source.liquid#output"
-        }
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
       ]
     },
     "L:string - (string.quoted.*.html)": {
       "patterns": [
-        {
-          "include": "source.liquid#tags"
-        },
-        {
-          "include": "source.liquid#output"
-        }
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
       ]
     }
   },
@@ -213,31 +201,35 @@
         },
         {
           "name": "entity.name.tag.iteration.liquid",
-          "match": "\\b(for|endfor|tablerow|endtablerow|paginate|endpaginate)\\b"
+          "match": "(?![a-z])\\s+\\b(for|endfor|tablerow|endtablerow|paginate|endpaginate)\\b"
         },
         {
           "name": "entity.name.tag.control.liquid",
-          "match": "\\b(break|continue|cycle|else|elsif|when)\\b"
+          "match": "(?![a-z])\\s+\\b(break|continue|cycle|else|elsif|when)\\b"
         },
         {
           "name": "entity.name.tag.conditional.liquid",
-          "match": "\\b(if|endif|unless|endunless|case|endcase)\\b"
+          "match": "(?![a-z])\\s+\\b(if|endif|unless|endunless|case|endcase)\\b"
         },
         {
           "name": "entity.name.tag.embedded.liquid",
-          "match": "\\b(form|endform|style|endstyle|schema|endschema|javascript|endjavascript)\\b"
+          "match": "(?![a-z])\\s+\\b(form|endform|stylesheet|endstylesheet|style|endstyle|schema|endschema|javascript|endjavascript)\\b"
         },
         {
           "name": "entity.name.tag.syntax.liquid",
-          "match": "\\b(raw|endraw|echo)\\b\\s*"
+          "match": "(?![a-z])\\s+\\b(raw|endraw|echo)\\b\\s*"
         },
         {
           "name": "entity.name.tag.import.liquid",
-          "match": "\\b(layout|render|section)\\b"
+          "match": "(?![a-z])\\s+\\b(layout|render)\\b"
         },
         {
           "name": "entity.name.tag.variable.liquid",
-          "match": "\\b(assign|capture|endcapture|decrement|increment)\\b"
+          "match": "(?![a-z])\\s+\\b(assign|capture|endcapture|decrement|increment)\\b"
+        },
+        {
+          "name": "entity.name.tag.import.liquid",
+          "match": "(?![a-z])\\s+\\b(section)\\b(?!\\s*[.\\[])"
         },
         {
           "include": "#operators"
@@ -397,23 +389,23 @@
       "patterns": [
         {
           "name": "entity.name.tag.iteration.liquid",
-          "match": "(?<={%-?)\\s*\\b(?:end)?(for|tablerow|paginate)\\b\\s*"
+          "match": "(?<={%-?)\\s*\\b(for|endfor|tablerow|endtablerow|paginate|endpaginate)\\b\\s*"
         },
         {
           "name": "entity.name.tag.control.liquid",
-          "match": "(?<={%-?)\\s*\\b(break|continue|cycle|else|when)\\b\\s*"
+          "match": "(?<={%-?)\\s*\\b(break|continue|cycle|else|elsif|when)\\b\\s*"
         },
         {
           "name": "entity.name.tag.conditional.liquid",
-          "match": "(?<={%-?)\\s*\\b(?:end)?(if|unless|case)\\b\\s*"
+          "match": "(?<={%-?)\\s*\\b(if|endif|unless|endunless|case|endcase)\\b\\s*"
         },
         {
           "name": "entity.name.tag.embedded.liquid",
-          "match": "(?<={%-?)\\s*\\b(?:end)?(form|style|schema|javascript)\\b\\s*"
+          "match": "(?<={%-?)\\s*\\b(form|endform|style|endstyle|stylesheet|endstylesheet|schema|endschema|javascript|endjavascript)\\b\\s*"
         },
         {
           "name": "entity.name.tag.syntax.liquid",
-          "match": "(?<={%-?)\\s*\\b(?:end)?(raw|echo)\\b\\s*"
+          "match": "(?<={%-?)\\s*\\b(raw|endraw|echo)\\b\\s*"
         },
         {
           "name": "entity.name.tag.import.liquid",
@@ -421,7 +413,7 @@
         },
         {
           "name": "entity.name.tag.variable.liquid",
-          "match": "(?<={%-?)\\s*\\b(?:end)?(assign|capture|decrement|increment)\\b\\s*"
+          "match": "(?<={%-?)\\s*\\b(assign|capture|endcapture|decrement|increment)\\b\\s*"
         },
         {
           "name": "entity.name.tag.other.liquid",
