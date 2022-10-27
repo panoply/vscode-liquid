@@ -1,110 +1,15 @@
-<!doctype html>
-<html lang="{{ shop_locale.iso_code }}">
-  <head>
-
-    <meta charset="utf-8">
-
-    <title>
-      {{- page_title -}}
-      {%- if current_tags -%}
-        {%- assign meta_tags = current_tags | join: ", " -%}
-        {{ "general.meta.tags" | t: tags: meta_tags | prepend: " &ndash; " }}
-      {%- endif -%}
-      {%- if current_page != 1 -%}
-        {{ "general.meta.page" | t: page: current_page | prepend: " &ndash; " }}
-      {%- endif -%}
-      {%- unless page_title contains shop.name -%}
-        {{ shop.name | prepend: " &ndash;" }}
-      {%- endunless -%}
-    </title>
-
-    {%- render "favicons" -%}
-    {%- render "meta_tags" -%}
-
-    {% render 'snippet', product: product.compare_at_price_max %}
-
-    <style>
-      {%- render 'vars.css' %}
-    </style>
-
-    {% render 'xoxo', param: 1, param2: foo.prop.foo.bar, param3: 'string', param5: false %}
-
-    <link href="{{ 'stylesheet.css' | asset_url }}" rel="stylesheet">
-    <link href="{{ 'theme.css' | asset_url }}" rel="stylesheet">
-
-    <script data-spx-eval="false">
-      {%- render 'shop.js' -%}
-      {%- if condition -%}
-        const foo = {};
-        {{ object.prop.prop['string'][10] | filter: false }}
-      {%- endif -%}
-    </script>
-
-    <script data-spx-eval="false">
-      {%- render 'i18n.js' -%}
-    </script>
-    <script data-spx-eval="false" defer src="{{ 'bundle.js' | asset_url }}" type="module">
-      window.app();
-    </script>
-
-    <script async defer src="https://www.googletagmanager.com/gtag/js?id=g-htnv2npht6"></script>
-
-    {%- if template contains "customers" -%}
-      <script async src="{{ 'shopify_common.js' | shopify_asset_url -}}"></script>
-      <script async src="{{ 'customer_area.js' | shopify_asset_url }}"></script>
-    {%- endif -%}
-
-    {%- capture content_header -%}
-      {{ content_for_header }}
-    {%- endcapture -%}
-
-    {{ content_header | replace: "<script", "<script data-spx-eval="false"" }}
-  </head>
-
-  <body attr="{{ object.prop.prop['string'][10] | filter: false }}">
-
-    <div>
-      <div>
-        {%- if condition == address.address1 -%}
-
-          {% render 'snippet'
-           , class: 'some-long string'
-           , type: "header"
-           , param: "foo" %}
-
-          {{ product.title
-           | downcase
-           | append: 'something' }}
-
-        {%- endif -%}
-      </div>
-    </div>
+<div>
+  <ul class="overflow-y-scroll">
+    {%- render 'global-nav-list'
+      , menu_item_class:'global-nav__menu-item relative my-xs overflow-y-hidden'
+      , menu_base_button_class:'text-h3 md:text-l-h3'
+      , menu_base_link_class:'text-h3 md:text-l-h3'
+      , submenu_wrapper_class:'global-nav-mobile__menu-item-with-subitem opacity-0 overflow-y-hidden max-h-0 ml-xs mt-0 mb-0 z-10 space-y-1' -%}
 
 
-    some-strange data
-    {{ object.prop.text | abs }}
-    suffix
-
-    {% capture foo %}{% endcapture %}
-
-    {% foo %}
-
-    <div id="foo" {{ object.prop.prop[product.name][10] | filter: false }}></div>
-    {%- if condition -%}
-      {% else %}
-    {%- endif -%}
-
-    {%- render "drawer_menu", overlay: "drawer-overlay" -%}
-    {%- render "drawer_cart", overlay: "drawer-overlay" -%}
-    {%- section "header" -%}
-    {{ content_for_layout }}
-
-    {%- section "footer" -%}
-    {%- render "icons" -%}
-    {%- render "nodes" -%}
-    {%- render "gdrp", overlay: "bg-visible" -%}
-    {%- render "discounts" -%}
-
-  </body>
-
-</html>
+    {%
+       render 'global-nav-cart-button'
+       , class: 'global-nav__cart-button relative mt-xs w-10 h-10 rounded-full border-neutral-300 border flex items-center justify-center'
+    %}
+  </ul>
+</div>
