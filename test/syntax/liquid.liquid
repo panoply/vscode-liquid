@@ -18,8 +18,13 @@
 
   endcapture
 
+  section 'section'
+
   render 'snipper' with collection.products as product, param: object[product.id]
 
   endfor
 
 -%}
+
+
+{% if section.settings %}{% endif %}
