@@ -284,6 +284,19 @@
         "embeddedLanguages": {
           "meta.embedded.block.liquid": "liquid"
         }
+      },
+      {
+        "scopeName": "source.liquid-literal",
+        "path": "./syntax/injections/template-literal.tmLanguage.json",
+        "injectTo": [
+          "source.js",
+          "source.jsx",
+          "source.ts",
+          "source.tsx"
+        ],
+        "embeddedLanguages": {
+          "meta.embedded.block.js": "js"
+        }
       }
     ],
     "snippets": [
