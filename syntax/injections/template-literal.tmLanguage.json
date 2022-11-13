@@ -20,10 +20,10 @@
       },
       "end": "(`)",
       "endCaptures": {
-        "0": {
+        "1": {
           "name": "string.js"
         },
-        "1": {
+        "2": {
           "name": "punctuation.definition.string.template.end.js"
         }
       },
