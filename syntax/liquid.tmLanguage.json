@@ -246,7 +246,7 @@
       "patterns": [
         {
           "name": "constant.language.liquid",
-          "match": "(false|true|nil|null|empty|blank)"
+          "match": "(?!(?<=(?:assign|increment|capture)\\s+))\\b(false|true|nil|null|empty|blank)\\b"
         },
         {
           "name": "constant.character.entity.liquid",
