@@ -375,8 +375,8 @@
       "patterns": [
         {
           "name": "comment.block.liquid",
-          "begin": "\\b(comment)\\s*",
-          "end": "\\b(endcomment)\\s"
+          "begin": "\\b(comment)\\b\\s*",
+          "end": "\\b(endcomment)\\b\\s"
         },
         {
           "name": "comment.line.liquid",
