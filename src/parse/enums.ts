@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 
 export const enum Token {
   /**
@@ -7,41 +8,23 @@ export const enum Token {
   /**
    * Liquid Object
    */
-  Object
-}
-
-
-export const enum Words {
+  Object,
   /**
-   * `in`
-   *
-   * @example {% for i in ar %}
+   * Liquid Object
    */
-  IN = 'in',
+  Property,
   /**
-   * `and`
-   *
-   * @example {% if x and y %}
+   * Liquid Filter
    */
-  AND = 'and',
+  Filter,
   /**
-   * `or`
-   *
-   * @example {% if x or y %}
+   * Liquid Parameter
    */
-  OR = 'or',
+  Param,
   /**
-   * `or`
-   *
-   * @example {% if x contains y %}
+   * Liquid Logical operators
    */
-  CONTAINS = 'contains',
-  /**
-   * `with`
-   *
-   * @example {% render 'x' with %}
-   */
-  WITH = 'with',
+  Logical
 }
 
 export const enum Char {
@@ -70,7 +53,7 @@ export const enum Char {
    */
   EQL = 61,
   /**
-   * `>`
+   * `|`
    */
   PIP = 124,
   /**
@@ -85,4 +68,16 @@ export const enum Char {
    * `.`
    */
   DOT = 46,
+  /**
+   * `"`
+   */
+  DQO = 34,
+  /**
+   * `'`
+   */
+  SQO = 39,
+  /**
+   * `[`
+   */
+  LSB = 91,
 }
