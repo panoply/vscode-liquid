@@ -1,5 +1,5 @@
-import { q, liquid, Tag, Filter, Object as IObject, Type, Types as ITypes, Properties } from '@liquify/liquid-language-specs';
-import { has } from 'rambdax';
+import { liquid, Tag, Filter, Object as IObject, Type, Types as ITypes, Properties } from '@liquify/liquid-language-specs';
+import { has, prop } from 'rambdax';
 import {
   CompletionItemKind,
   MarkdownString,
@@ -7,7 +7,7 @@ import {
   SnippetString,
   CompletionItemTag
 } from 'vscode';
-import { Char, Token, Words } from './enums';
+import { Char, Token } from './enums';
 
 /* -------------------------------------------- */
 /* UTILITIES                                    */
@@ -33,8 +33,10 @@ function documentation (description: string, reference: { name?: string; url: st
 function setObjectType (type: Type | ITypes.Basic): CompletionItemKind {
 
   if (type === Type.array) return CompletionItemKind.Field;
+
   if (type === Type.object) return CompletionItemKind.Module;
-  //@ts-ignore
+
+  // @ts-ignore
   if (type === Type.data) return CompletionItemKind.Value;
 
 };
@@ -59,14 +61,18 @@ export function getTagCompletions ([
     singular = false,
     snippet = '$1'
   }
-]: [ string, Tag
+]: [
+  string,
+  Tag
 ]): CompletionItem {
 
-  const insertText = label === 'liquid'
-  ? new SnippetString(` ${label} ${snippet} %}$0`)
-  : singular
-    ? new SnippetString(` ${label} ${snippet} %}$0`)
-    : new SnippetString(` ${label} ${snippet} %} $0 {% end${label} %}`);
+  const insertText = label === 'else'
+    ? new SnippetString(` ${label} %}$0`)
+    : label === 'liquid'
+      ? new SnippetString(` ${label} ${snippet} %}$0`)
+      : singular
+        ? new SnippetString(` ${label} ${snippet} %}$0`)
+        : new SnippetString(` ${label} ${snippet} %} $0 {% end${label} %}`);
 
   return {
     label,
@@ -114,6 +120,66 @@ export function getFilterCompletions ([
 
 }
 
+export function getLogicalCompletions (): CompletionItem[] {
+
+  return [
+    {
+      label: '==',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('=='),
+      documentation: new MarkdownString('Equals')
+    },
+    {
+      label: '!=',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('!='),
+      documentation: new MarkdownString('Does not equal')
+    },
+    {
+      label: '>',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('>'),
+      documentation: new MarkdownString('Greater than')
+    },
+    {
+      label: '<',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('<'),
+      documentation: new MarkdownString('Less than')
+    },
+    {
+      label: '>=',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('>='),
+      documentation: new MarkdownString('Greater than or equal to')
+    },
+    {
+      label: '<=',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('<='),
+      documentation: new MarkdownString('Less than or equal to')
+    },
+    {
+      label: 'and',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('and'),
+      documentation: new MarkdownString('Logical and')
+    },
+    {
+      label: 'or',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('or'),
+      documentation: new MarkdownString('Logical or')
+    },
+    {
+      label: 'contains',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('contains'),
+      documentation: new MarkdownString('contains checks for the presence of a substring inside a string and can also check for the presence of a string in an array of strings.\n\n**You cannot use it to check for an object in an array of objects.**')
+    }
+  ];
+}
+
 /**
  * Get Array Object Completion
  *
@@ -150,15 +216,56 @@ export function getObjectCompletions ([ label, spec ]: [ string, IObject ]): Com
 
 };
 
-export function prevWord (content: string, offset: number, word: Words[]) {
+export function prevChar (content: string, offset: number, tagName?: string) {
 
-  const prev = content.slice(0, offset);
+  const prev = content.slice(0, offset).trimEnd();
+  const last = prev.length - 1;
 
-  return word.some(w => new RegExp(`[\\s\\|\\%\\{]\\b${w}\\b[\\s\\|\\%\\}]$`).test(prev));
+  if (prev.charCodeAt(last) === Char.PIP) return Token.Filter;
+  if (prev.charCodeAt(last) === Char.COL) return Token.Object;
+  if (prev.charCodeAt(last) === Char.DOT) return Token.Property;
+  if (prev.charCodeAt(last - 1) === Char.LSB) {
+    if (prev.charCodeAt(last) === Char.SQO || prev.charCodeAt(last) === Char.DQO) {
+      return Token.Property;
+    }
+  }
+
+  const wsp = prev.lastIndexOf(' ');
+
+  if (wsp > -1) {
+
+    const word = prev.slice(wsp);
+
+    if (/([!=]=|[<>]=?|(?:and|or|contains|in|with)\b)/.test(word)) {
+      return Token.Object;
+    }
+  }
+
+  if (typeof tagName === 'string') {
+
+    const exp = new RegExp(`{%-?\\s*${tagName}\\s+-?%}`);
+
+    if (/(?:if|elsif|unless)/.test(tagName)) {
+
+      if (exp.test(content)) return Token.Object;
+      if (/^\s*-?%}/.test(content.slice(offset))) return Token.Logical;
+
+    } else if (/(?:case|when)/.test(tagName)) {
+
+      if (exp.test(content)) return Token.Object;
+
+    }
+  }
+
+  if (typeof tagName === 'string' && /(if|elsif|case|when|unless)/.test(tagName)) {
+    if (new RegExp(`{%-?\\s*${tagName}\\s+-?%}`).test(content)) return Token.Object;
+  }
+
+  return null;
 
 }
 
-export function prevChar (content: string, offset: number, code: Char[]) {
+export function prevChars (content: string, offset: number, code: Char[]) {
 
   const char = content
     .slice(0, offset)
@@ -172,13 +279,13 @@ export function prevChar (content: string, offset: number, code: Char[]) {
 
 export function isEmptyObject (content: string) {
 
-  return /{{-?-?}}/.test(content.replace(/\s+/, ''));
+  return /{{-?\s+-?}}/.test(content);
 
 }
 
 export function isEmptyTag (content: string) {
 
-  return /{%-?-?%}/.test(content.replace(/\s+/, ''));
+  return /{%-?\s+-?%}/.test(content);
 
 }
 
@@ -202,7 +309,10 @@ export function ProvideProps ([ label, { description, snippet = label } ]) {
  * Parse Object
  *
  */
-export function parseObject (content: string, offset: number) {
+export function parseObject (
+  content: string,
+  offset: number
+) {
 
   const slice = content.slice(2, offset - 1);
   const match = slice.match(/[^\s{<=>:]*?$/);
@@ -211,7 +321,9 @@ export function parseObject (content: string, offset: number) {
 
   const props = match[0].split('.').filter(Boolean);
 
-  //console.log(slice, props);
+  if (props[0] === 'section' && props[1] === 'settings') return 'settings';
+
+  // console.log(slice, props);
 
   if (!has(props[0], liquid.shopify.objects)) return null;
 
@@ -221,22 +333,34 @@ export function parseObject (content: string, offset: number) {
     return Object.entries(properties).map(ProvideProps as any);
   }
 
-  return (function walk (props: string[], value: Properties) {
+  return (function walk (next: string[], value: Properties) {
 
     if (!value) return null;
-    if (!has(props[0], value)) return null;
-    if (!has('properties', value[props[0]])) return null;
+    if (!has(next[0], value)) return null;
+    if (!has('properties', value[next[0]])) return null;
 
-    const object = value[props[0]].properties;
+    const object = value[next[0]].properties;
 
     // We check if we have walked to the last property
     // to which we can then provide properties, if we haven't
     // we continuall walk the values
-    return props.length > 1
-      ? object && walk(props.slice(1), object)
+    return next.length > 1
+      ? object && walk(next.slice(1), object)
       : object ? Object.entries(object).map(ProvideProps as any) : null;
 
   }(props.slice(1), liquid.shopify.objects[props[0]].properties));
+}
+
+export function determineToken (content: string, offset: number) {
+
+  const begin = content.slice(0, offset).lastIndexOf('{');
+  const token = content.slice(begin, offset);
+
+  if (token.charCodeAt(1) === Char.PER) return Token.Tag;
+  if (content.charCodeAt(begin - 1) === Char.LCB) return Token.Object;
+
+  return null;
+
 }
 
 /**
@@ -251,7 +375,7 @@ export function parseObject (content: string, offset: number) {
  */
 export function parseToken (kind: Token, content: string, offset: number) {
 
-  const begin = content.slice(0, offset).lastIndexOf(kind === Token.Tag ? '{%' : '{{');
+  const begin = content.lastIndexOf(kind === Token.Tag ? '{%' : '{{', offset);
   const ender = content.indexOf(kind === Token.Tag ? '%}' : '}}', begin) + 2;
   const within = offset > (begin + 2) && offset < (ender - 2);
 
@@ -266,7 +390,7 @@ export function parseToken (kind: Token, content: string, offset: number) {
     startTrim,
     endTrim,
     text,
-    get tagName () { return text.slice(startTrim ? 3 : 3).match(/\w+/i)[0]; },
+    get tagName () { return text.slice(startTrim ? 3 : 2).match(/\w+/i)[0]; },
     offset: offset - ender
   };
 }
