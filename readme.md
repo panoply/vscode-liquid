@@ -151,6 +151,9 @@ By default, it is assumed you are using vscode workspace/user settings.
   // Whether or not to enable filter completions
   "liquid.completion.filters": true,
 
+  // Whether or not to enable control flow operator completions
+  "liquid.completion.operators": true,
+
   // Controls whether formatting is enabled or disabled
   "liquid.format.enable": true,
 
