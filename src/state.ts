@@ -51,7 +51,8 @@ export class State {
   canComplete: Workspace.Completion = {
     tags: true,
     filters: true,
-    objects: true
+    objects: true,
+    operators: true
   };
 
   /**
