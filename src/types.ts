@@ -354,6 +354,12 @@ export namespace Workspace {
      * @default true
      */
     operators?: boolean;
+    /**
+     * Whether or not section object completions are enabled
+     *
+     * @default true
+     */
+    section?: boolean;
   }
 
   /**

@@ -52,7 +52,8 @@ export class State {
     tags: true,
     filters: true,
     objects: true,
-    operators: true
+    operators: true,
+    section: true
   };
 
   /**
