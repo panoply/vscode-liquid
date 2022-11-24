@@ -24,7 +24,11 @@ export const enum Token {
   /**
    * Liquid Logical operators
    */
-  Logical
+  Logical,
+  /**
+   * Liquid Schema Block Type
+   */
+  Block
 }
 
 export const enum Char {
