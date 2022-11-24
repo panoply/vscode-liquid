@@ -59,65 +59,9 @@ function getCompletionKind (type: SchemaSettingTypes) {
 export class CompletionSchema {
 
   /**
-   * Settings Schema
-   */
-  settings: CompletionItem[] = [];
-
-  /**
-   * Block Types
-   */
-  types: CompletionItem[] = [];
-
-  /**
-   * Block Types
-   */
-  scopes: number[] = [];
-
-  /**
-   * Schema Settings Block item
-   */
-  blocks: {
-    /**
-     * Block Settings
-     */
-    [type: string]: CompletionItem[];
-
-  } = {};
-
-  /**
    * The parsed JSON contents of the tag.
    */
-  schema: SchemaSectionTag;
-
-  /**
-   * Cache store of the actual start/end tokens
-   */
-  tokens: {
-    /**
-     * The offset position after, ie: `{% schema %}^`
-     */
-    start: string;
-    /**
-      * The offset position before `^{% endschema %}`
-      */
-    end: string;
-
-  } = { start: null, end: null };
-
-  /**
-   * The offset locations of the token contents
-   */
-  location: {
-    /**
-     * The offset position after, ie: `{% schema %}^`
-     */
-    start: number;
-    /**
-     * The offset position before `^{% endschema %}`
-     */
-    end: number
-
-  } = { start: NaN, end: NaN };
+  public schema: SchemaSectionTag;
 
   /**
    * Generates completion items to provided on Liquid tokens
@@ -193,8 +137,6 @@ export class CompletionSchema {
       }
 
     }
-
-    console.log(prop, has('blocks', this.schema));
 
   }
 
