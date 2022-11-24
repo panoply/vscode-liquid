@@ -1,5 +1,6 @@
 import { liquid, Tag, Filter, Object as IObject, Type, Types as ITypes, Properties } from '@liquify/liquid-language-specs';
-import { has, prop } from 'rambdax';
+import { has } from 'rambdax';
+import { SchemaSettings } from 'types';
 import {
   CompletionItemKind,
   MarkdownString,
@@ -20,6 +21,14 @@ function documentation (description: string, reference: { name?: string; url: st
   }
 
   return new MarkdownString(description);
+
+}
+
+export function schemaDocumentation (setting: SchemaSettings & { default?: string}) {
+
+  const defaults = has('default', setting) ? `\nDefault: \`${setting.default}\`` : '';
+
+  return new MarkdownString(`${setting.info || setting.label}\n${defaults}`);
 
 }
 
@@ -216,6 +225,18 @@ export function getObjectCompletions ([ label, spec ]: [ string, IObject ]): Com
 
 };
 
+function isSchemaBlockType (content: string, operator: string, tagName: string) {
+
+  if (/(?:if|elsif)/.test(tagName) && /={2}/.test(operator)) {
+    const token = content.indexOf(tagName, 2) + tagName.length;
+    const condition = content.slice(token).trimLeft();
+    const logical = condition.slice(0, condition.indexOf(operator)).trim().split('.');
+    return logical[0] === 'block' && logical[1] === 'type';
+  }
+
+  return false;
+}
+
 export function prevChar (content: string, offset: number, tagName?: string) {
 
   const prev = content.slice(0, offset).trimEnd();
@@ -230,13 +251,20 @@ export function prevChar (content: string, offset: number, tagName?: string) {
     }
   }
 
-  const wsp = prev.lastIndexOf(' ');
+  let wsp: number;
+
+  if (prev.charCodeAt(last) === Char.SQO || prev.charCodeAt(last) === Char.DQO) {
+    wsp = content.slice(0, offset - 1).trimEnd().lastIndexOf(' ');
+  } else {
+    wsp = prev.lastIndexOf(' ');
+  }
 
   if (wsp > -1) {
 
     const word = prev.slice(wsp);
 
     if (/([!=]=|[<>]=?|(?:and|or|contains|in|with)\b)/.test(word)) {
+      if (isSchemaBlockType(content, word, tagName)) return Token.Block;
       return Token.Object;
     }
   }
@@ -309,10 +337,7 @@ export function ProvideProps ([ label, { description, snippet = label } ]) {
  * Parse Object
  *
  */
-export function parseObject (
-  content: string,
-  offset: number
-) {
+export function parseObject (content: string, offset: number) {
 
   const slice = content.slice(2, offset - 1);
   const match = slice.match(/[^\s{<=>:]*?$/);
@@ -321,9 +346,10 @@ export function parseObject (
 
   const props = match[0].split('.').filter(Boolean);
 
-  if (props[0] === 'section' && props[1] === 'settings') return 'settings';
-
-  // console.log(slice, props);
+  if (props[1] === 'settings') {
+    if (props[0] === 'section') return 'settings';
+    if (props[0] === 'block') return 'block';
+  }
 
   if (!has(props[0], liquid.shopify.objects)) return null;
 
