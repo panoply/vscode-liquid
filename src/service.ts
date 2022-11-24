@@ -285,12 +285,12 @@ export class VSCodeLiquid extends CommandPalette {
 
         const findRange = new Range(0, 0, textDocument.lineCount, 0);
         const fullRange = textDocument.validateRange(findRange);
+        const language = u.getLanguage(textDocument.languageId);
+        const source = textDocument.getText();
 
         try {
 
-          const output = prettify.formatSync(textDocument.getText(), {
-            language: u.getLanguage(textDocument.languageId)
-          });
+          const output = prettify.formatSync(source, { language });
 
           if (this.hasError) {
             this.hasError = false;
