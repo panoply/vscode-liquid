@@ -237,7 +237,7 @@ function isSchemaBlockType (content: string, operator: string, tagName: string) 
   return false;
 }
 
-export function prevChar (content: string, offset: number, tagName?: string) {
+export function prevChar (content: string, offset: number, tagName?: string): Token {
 
   const prev = content.slice(0, offset).trimEnd();
   const last = prev.length - 1;
@@ -264,8 +264,11 @@ export function prevChar (content: string, offset: number, tagName?: string) {
     const word = prev.slice(wsp);
 
     if (/([!=]=|[<>]=?|(?:and|or|contains|in|with)\b)/.test(word)) {
-      if (isSchemaBlockType(content, word, tagName)) return Token.Block;
-      return Token.Object;
+      if (isSchemaBlockType(content, word, tagName)) {
+        return Token.Block;
+      } else {
+        return Token.Object;
+      }
     }
   }
 
