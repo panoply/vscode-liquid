@@ -84,7 +84,8 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
     tags: true,
     filters: true,
     objects: true,
-    operators: true
+    operators: true,
+    section: true
   };
 
   /**
@@ -188,11 +189,13 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
 
           const schema = this.enable.objects ? parseObject(object.text, object.offset) : null;
 
-          if (schema === 'settings') return this.schema.completions(content, schema);
-
-          if (schema === 'block') {
-            const type = this.schema.scope(content, offset);
-            if (type !== null) return this.schema.completions(content, schema, type);
+          if (schema !== null && this.enable.section) {
+            if (schema === 'settings') {
+              return this.schema.completions(content, schema);
+            } else if (schema === 'block') {
+              const type = this.schema.scope(content, offset);
+              if (type !== null) return this.schema.completions(content, schema, type);
+            }
           }
 
           return schema;
@@ -229,8 +232,18 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
         }
 
         if (trigger === Char.DOT || prev === Token.Property) {
+
           const schema = this.enable.objects ? parseObject(tag.text, tag.offset) : null;
-          if (schema === 'settings') return this.schema.completions(content, schema);
+
+          if (schema !== null && this.enable.section) {
+            if (schema === 'settings') {
+              return this.schema.completions(content, schema);
+            } else if (schema === 'block') {
+              const type = this.schema.scope(content, offset);
+              if (type !== null) return this.schema.completions(content, schema, type);
+            }
+          }
+
           return schema;
         }
 
