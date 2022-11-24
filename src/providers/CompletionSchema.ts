@@ -1,4 +1,6 @@
 import parseJson from 'parse-json';
+import { Char } from 'parse/enums';
+import { schemaDocumentation } from 'parse/tokens';
 import { has } from 'rambdax';
 
 import { SchemaSectionTag, SchemaSettingTypes } from 'types';
@@ -21,7 +23,21 @@ function getCompletionKind (type: SchemaSettingTypes) {
     case 'html':
     case 'liquid':
     case 'url':
-      return CompletionItemKind.Text;
+      return CompletionItemKind.Value;
+    case 'article':
+    case 'blog':
+    case 'product':
+    case 'product_list':
+    case 'page':
+    case 'image_picker':
+    case 'font_picker':
+      return CompletionItemKind.Module;
+    case 'checkbox':
+    case 'range':
+    case 'select':
+    case 'number':
+    case 'radio':
+      return CompletionItemKind.Constant;
     default:
       return CompletionItemKind.Property;
   }
@@ -51,6 +67,11 @@ export class CompletionSchema {
    * Block Types
    */
   types: CompletionItem[] = [];
+
+  /**
+   * Block Types
+   */
+  scopes: number[] = [];
 
   /**
    * Schema Settings Block item
@@ -103,20 +124,19 @@ export class CompletionSchema {
    */
   completions (content: string, prop: 'settings' | 'block' | 'type', type?: string) {
 
-    console.log(prop, this.schema);
-
     this.schema = this.parse(content);
 
     if (has('settings', this.schema) && prop === 'settings') {
 
-      const r = this.schema.settings.reduce((item, setting) => {
+      return this.schema.settings.reduce((item, setting) => {
 
         if (setting.id === undefined) return item;
 
         item.push({
           label: setting.id,
           insertText: setting.id,
-          documentation: new MarkdownString(setting.info || setting.label),
+          detail: `${setting.type} (settings)`,
+          documentation: schemaDocumentation(setting as any),
           kind: getCompletionKind(setting.type)
         });
 
@@ -124,95 +144,100 @@ export class CompletionSchema {
 
       }, [] as CompletionItem[]);
 
-      console.log(r);
-
-      return r;
-
     }
 
     if (has('blocks', this.schema)) {
 
+      const complete: CompletionItem[] = [];
+
       if (prop === 'type') {
-        return this.schema.blocks.map(block => ({
-          label: block.type,
-          documentation: new MarkdownString(block.name),
-          insertText: block.type,
-          kind: CompletionItemKind.TypeParameter
-        }));
+
+        for (const block of this.schema.blocks) {
+          complete.push({
+            label: block.type,
+            documentation: new MarkdownString(block.type),
+            insertText: type === 'string' ? '"' + block.type + '"' : block.type,
+            kind: CompletionItemKind.TypeParameter
+          });
+        }
+
+        return complete;
+
       }
 
       if (prop === 'block') {
 
         const block = this.schema.blocks.find(block => block.type === type);
 
-        if (!block) return [];
+        if (!has('settings', block)) return [];
 
-        return block.settings.reduce((item, setting) => {
+        const complete: CompletionItem[] = [];
 
-          if (setting.id === undefined) return item;
+        for (const setting of block.settings) {
 
-          item.push({
-            label: setting.id,
-            documentation: new MarkdownString(setting.info || setting.label),
-            kind: getCompletionKind(setting.type),
-            insertText: setting.id,
-            detail: setting.type
-          });
+          if (setting.id === undefined) continue;
 
-          return item;
+          complete.push(
+            {
+              label: setting.id,
+              kind: getCompletionKind(setting.type),
+              insertText: setting.id,
+              detail: `${setting.type} (${type})`,
+              documentation: schemaDocumentation(setting as any)
+            }
+          );
+        }
 
-        }, [] as CompletionItem[]);
+        return complete;
 
       }
 
     }
 
-  }
-
-  /**
-   * Validates the cursor position, checking to see
-   * if changes are being applied within the schema token.
-   */
-  within (cursor: number) {
-
-    return cursor > this.location.start && cursor < this.location.end;
+    console.log(prop, has('blocks', this.schema));
 
   }
 
   /**
-   * Looks for the existence of a `{% schema %}` tag
-   * within the document. Invoked for every document changes.
-   * When no schema is detected within a view, then we skip
-   * the regex token search.
+   * Obtains regional based scope, based on the last
+   * known schema block type
    */
-  update (content: string) {
+  scope (content: string, offset: number) {
 
-    if (isNaN(this.location.start) && isNaN(this.location.end)) return this.update(content);
+    const string = content.slice(0, offset);
+    const match = string.match(/\bcase\b\s+\bblock\.type|block\.type\s*==\s*[^"']/g);
 
-    if (this.location.start === -1) return;
+    if (match !== null) {
 
-    this.location.start = content.indexOf(this.tokens.start);
-    this.location.end = content.indexOf(this.tokens.end, this.location.start);
+      const type = match.pop();
+      const last = string.lastIndexOf(type) + type.length;
+
+      if (type.startsWith('case')) {
+        const cond = string.lastIndexOf('when', offset) + 4;
+        const when = string.slice(cond).trimStart();
+        if (when.charCodeAt(0) !== Char.DQO && when.charCodeAt(0) !== Char.SQO) return null;
+        return when.slice(1, when.indexOf(when[0], 1));
+      }
+
+      return string.slice(last + 1, string.indexOf(type[type.length - 1], last) - 1);
+
+    }
+
+    return null;
 
   }
 
+  /**
+   * Parses the `{% schema %}` code region
+   */
   parse (content: string) {
 
     const begin = content.search(/{%-?\s*\bschema\b\s*-?%}/);
 
     if (begin > -1) {
-
       const start = content.indexOf('%}', begin + 2) + 2;
       const ender = content.search(/{%-?\s*\bendschema\b\s*-?%}/);
-
-      if (ender > -1) {
-        this.location.start = start;
-        this.location.end = ender;
-        this.tokens.start = content.slice(begin, start);
-        this.tokens.end = content.slice(ender, content.indexOf('%}', this.location.end + 2) + 2);
-        return parseJson(content.slice(this.location.start, this.location.end));
-      }
-
+      if (ender > -1) return parseJson(content.slice(start, ender));
     }
 
   }
