@@ -130,6 +130,8 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
     '|',
     ':',
     '.',
+    '"',
+    "'",
     ' '
   ];
 
@@ -144,7 +146,7 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
   provideCompletionItems (
     document: TextDocument,
     position: Position,
-    token: CancellationToken, {
+    _token: CancellationToken, {
       triggerCharacter,
       triggerKind
     }
@@ -182,16 +184,16 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
           return this.enable.filters ? this.filters : null;
         }
 
-        if (trigger === Char.DOT || prev === Token.Property) {
+        if (trigger === Char.DOT || prev === Token.Property || prev === Token.Block) {
 
-          const schema = this.enable.objects
-            ? parseObject(
-              object.text,
-              object.offset
-            )
-            : null;
+          const schema = this.enable.objects ? parseObject(object.text, object.offset) : null;
 
           if (schema === 'settings') return this.schema.completions(content, schema);
+
+          if (schema === 'block') {
+            const type = this.schema.scope(content, offset);
+            if (type !== null) return this.schema.completions(content, schema, type);
+          }
 
           return schema;
         }
@@ -214,18 +216,21 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
 
         const prev = prevChar(tag.text, tag.offset, tag.tagName);
 
+        if (prev === Token.Block) {
+          if (trigger === Char.DQO || trigger === Char.SQO) {
+            return this.schema.completions(content, 'type');
+          } else {
+            return this.schema.completions(content, 'type', 'string');
+          }
+        }
+
         if (trigger === Char.PIP || prev === Token.Filter) {
           return this.enable.filters ? this.filters : null;
         }
 
         if (trigger === Char.DOT || prev === Token.Property) {
-
-          const schema = this.enable.objects
-            ? parseObject(tag.text, tag.offset)
-            : null;
-
+          const schema = this.enable.objects ? parseObject(tag.text, tag.offset) : null;
           if (schema === 'settings') return this.schema.completions(content, schema);
-
           return schema;
         }
 
