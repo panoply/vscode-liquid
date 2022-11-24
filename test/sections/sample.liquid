@@ -10,7 +10,8 @@
 
 {% form %}{% endform %}
 
-cas
+
+{{ section.settings }}
 
 
 <div class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}" data-carousel-desktop-value="1" data-carousel-draggable-value="{{ section.settings.draggable }}" data-carousel-duration-value="{{ section.settings.duration }}"
@@ -45,6 +46,7 @@ cas
 
 {% capture pros %}
 
+  {{ section.blocks }}
 
   {{ foo | append: '' | append: article }}
 
@@ -53,6 +55,7 @@ cas
 
 
 <!-- @prettify-ignore-start -->
+
 
 {%- liquid
   if
@@ -85,11 +88,11 @@ cas
   {%- endif -%}
 </div>
 
-{% comment %}
+{% if block.type == "collection_links" %}{% endif %}
 
-  The JSON in this emebedded code region will be formatted.
-  Press: cmd + s
-{% endcomment %}
+{{ section.settings }}
+{{ section.settings }}
+
 {% schema %}
   {
     "name": "Collection list",
@@ -98,37 +101,20 @@ cas
     "max_blocks": 4,
     "settings": [
       {
-        "type": "header",
-        "content": "Style",
-        "info": "Customize a block list of collections"
-      },
-
-
-      {
         "type": "range",
-        "id": "gutter",
-        "label": "Gutter",
-        "min": 0,
-        "max": 5,
-        "step": 1,
-        "default": 2
-      },
-      {
-        "type": "range",
-        "id": "overlay",
+        "id": "test_4",
         "label": "Overlay",
         "min": 0,
         "max": 1,
         "step": 0.1,
         "default": 0,
-        "info": "Use an overlay to better distinguish text"
+        "info": "Some Text"
       },
-
-
       {
         "type": "select",
-        "id": "align",
+        "id": "test_2",
         "label": "Align",
+        "info": "Hello World",
         "default": "jc-center ai-end",
         "options": [
           {
