@@ -375,10 +375,20 @@
           "default": true,
           "markdownDescription": "Whether or not to enable Liquid object completions. This option requires the Liquid `engine` to be set to `shopify`. When enabled object completions will be invoked within tokens and tags."
         },
+        "liquid.completion.section": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Whether or not to enable Liquid object completions for `section.settings.*` and `block.settings.*` supplied from data contained within `{% schema %}` tag regions. This option requires the Liquid `engine` to be set to `shopify`. When enabled object completions of `section` will be invoked and respect scoped based `block.type` control flows."
+        },
         "liquid.completion.filters": {
           "type": "boolean",
           "default": true,
           "markdownDescription": "Whether or not to enable Liquid filter completions. When enabled, typing `|` will provide all filter completions. "
+        },
+        "liquid.completion.operators": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Whether or not to enable Liquid control flow operator components. When enabled, Liquid logicals such as `!=`, `==`, `and`, `contains` etc will be provided."
         },
         "liquid.config.baseUrl": {
           "type": "string",
