@@ -1,0 +1,23 @@
+{
+  "fileTypes": [],
+  "scopeName": "liquid-literal.attributes.injection",
+  "injectionSelector": "L:meta.embedded.literal.liquid",
+  "patterns": [
+    {
+      "include": "source.liquid#comment-inline"
+    },
+    {
+      "include": "source.liquid#comment-block"
+    },
+    {
+      "include": "source.liquid#tags"
+    },
+    {
+      "include": "source.liquid#output"
+    }
+  ],
+  "information_for_contributors": [
+    "This file applies syntax highlighting for Liquid syntax contained within HTML Attributes.",
+    "It is a patch injections for the Liquid literal syntax support."
+  ]
+}
