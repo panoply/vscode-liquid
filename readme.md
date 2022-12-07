@@ -46,6 +46,7 @@ The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (
 - Supports Liquid embedded code block syntax highlighting.
 - Integrated Schema stores to provide IntelliSense capabilities within Shopify JSON files.
 - Preserves VSCode HTML IntelliSense capabilities in `.liquid` files.
+- Liquid Template Literal syntax highlighting support for TypeScript an JavaScript.
 
 ### Showcase
 
@@ -451,20 +452,16 @@ Liquid markdown embedded code block regions are supported in `.md` files.
 
 ````md
 ```liquid
-{% comment %} Liquid code {% endcomment %}
+{% if x %} {{ object.prop }} {% endif %}`
 ```
 ````
 
 ### Template Literal
 
-Liquid template literals are supported for usage within JavaScript and TypeScript languages. When expressing a template literal suffixed with `liquid` all containing code will have Liquid syntax highlighted.
+Liquid template literals are supported for usage within JavaScript, JSX and TypeScript languages. The literal will provide both HTML and Liquid syntax highlighting. When expressing a template literal suffixed with `liquid` all containing code will have Liquid syntax highlighted.
 
 ```ts
-liquid`
-
-{% if condition == true %} {{ object.prop }} {% endif %}
-
-`;
+liquid`{% if condition == true %} {{ object.prop }} {% endif %}`;
 ```
 
 # Completions
@@ -738,17 +735,9 @@ Below is the **default** rules. It is important to note that if the `liquid.form
 
 Liquid snippets are supported in this extension. The filter and tag snippets provided were originally forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) but have since changed a considerable amount.
 
-### Tag and Filter Snippets
+### Tag Snippets
 
 Snippets made available leverage tab invoked "choices" for applying filter pipes `|` and delimiter whitespace dashes `-` within liquid tokens. In addition to the tags and filter snippets, section schema snippets are also supported which help users to quickly generate settings within Shopify theme `{% schema %}` tag blocks.
-
-### Schema Snippets
-
-Shopify `{% schema %}` tag snippets are made supported by the extension and can be used to apply the supported settings within the embedded code region. All setting configurations are supported.
-
-<br>
-
-<img src="https://raw.githubusercontent.com/panoply/vscode-shopify-liquid/master/images/schema-snippets.png"  atl="Shopify Schema Snippets"  width="100%">
 
 # Extension Conflicts
 
