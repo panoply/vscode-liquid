@@ -16,6 +16,7 @@
     "editor.defaultFormatter": "sissel.shopify-liquid",
     "editor.formatOnSave": true
   },
+
   "emmet.includeLanguages": {
     "liquid": "html"
   },

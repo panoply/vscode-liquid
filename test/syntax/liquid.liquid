@@ -1,26 +1,25 @@
 {%- liquid
 
   comment
-  block comment
+  BLOCK COMMENT
   endcomment
 
   if foo == bar
-  object.property['foo'][0]
+    object.property['foo'][0]
   endif
 
-  # inline comment
+  # INLINE COMMENT
 
   assign bar = '' | filter: 'string' | ceil: 10
 
   for i in x (1..10)
 
-  capture name
+    capture name
+    100.20
+    endcapture
 
-  endcapture
-
-  section 'section'
-
-  render 'snipper' with collection.products as product, param: object[product.id]
+    section 'section'
+    render 'snipper' with collection.products as product, param: object[product.id]
 
   endfor
 

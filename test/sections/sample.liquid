@@ -24,7 +24,7 @@
   data-carousel-loop-value="{{ section.settings.loop }}" data-carousel-mobile-value="1" data-carousel-tablet-value="1" data-controller="carousel">
 
   {%- if section.settings.buttons -%}
-    <div class="previous d-flex ai-center">
+    <div class="previous d-flex ai-center" {%- if section.settings.buttons -%} {%- endif -%}>
       <button aria-label="Previous" data-action="click->carousel#prev" type="button">
         <icon name="chevron-left" />
       </button>
