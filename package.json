@@ -355,10 +355,6 @@
       {
         "language": "liquid",
         "path": "./snippets/tags.json"
-      },
-      {
-        "language": "liquid",
-        "path": "./snippets/schema.json"
       }
     ],
     "configurationDefaults": {
