@@ -87,6 +87,7 @@
       "close": "\""
     }
   ],
+  "colorizedBracketPairs": [],
   "surroundingPairs": [
     {
       "open": "'",
