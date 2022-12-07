@@ -1,0 +1,41 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "fileTypes": [],
+  "scopeName": "source.liquid-literal.injection",
+  "injectionSelector": "L:source -comment -string",
+  "patterns": [
+    {
+      "name": "meta.liquid.template.literal.liquid",
+      "contentName": "meta.embedded.literal.liquid",
+      "begin": "(?x)(\\b(?:\\w+\\.)*(?:liquid)\\s*)(`|\\()",
+      "beginCaptures": {
+        "1": {
+          "name": "entity.name.function.tagged-template.js"
+        },
+        "2": {
+          "name": "punctuation.definition.string.template.begin.js"
+        }
+      },
+      "end": "(`|\\))",
+      "endCaptures": {
+        "0": {
+          "name": "string.js"
+        },
+        "1": {
+          "name": "punctuation.definition.string.template.end.js"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.liquid"
+        }
+      ]
+    }
+  ],
+  "information_for_contributors": [
+    "This file applies syntax highlighting for JavaScript, TypeScript and JSX template literals.",
+    "It injects support into each of these languages. Also see the literal-attributes.tmLanguage.json",
+    "file for the patch injection. Note that in order for to override bracket pair highlighting",
+    "the liquid.language-configuration.json file exposes an empty [] value on colorizedBracketPairs."
+  ]
+}
