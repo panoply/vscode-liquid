@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Νίκος Σαβίδης <n.savvidis@gmx.com>",
-  "version": "3.1.2",
+  "version": "3.2.0",
   "keywords": [
     "liquid",
     "shopify",
@@ -208,7 +208,14 @@
       {
         "language": "liquid",
         "scopeName": "source.liquid",
-        "path": "./syntax/liquid.tmLanguage.json"
+        "path": "./syntax/liquid.tmLanguage.json",
+        "unbalancedBracketScopes": [
+          "punctuation.definition.tag.begin.liquid",
+          "punctuation.definition.tag.end.liquid",
+          "punctuation.definition.tag.range.liquid",
+          "keyword.other.array-item.liquid",
+          "punctuation.output.liquid"
+        ]
       },
       {
         "scopeName": "source.liquid.embedded",
@@ -234,6 +241,12 @@
           "source.css.liquid",
           "source.scss.liquid",
           "source.js.liquid"
+        ],
+        "unbalancedBracketScopes": [
+          "punctuation.definition.tag.begin.liquid",
+          "punctuation.definition.tag.end.liquid",
+          "punctuation.definition.tag.range.liquid",
+          "keyword.other.array-item.liquid"
         ],
         "embeddedLanguages": {
           "meta.embedded.block.frontmatter.liquid": "yaml"
@@ -263,17 +276,35 @@
       {
         "language": "liquid-css",
         "scopeName": "source.css.liquid",
-        "path": "./syntax/languages/css.tmLanguage.json"
+        "path": "./syntax/languages/css.tmLanguage.json",
+        "unbalancedBracketScopes": [
+          "punctuation.definition.tag.begin.liquid",
+          "punctuation.definition.tag.end.liquid",
+          "punctuation.definition.tag.range.liquid",
+          "keyword.other.array-item.liquid"
+        ]
       },
       {
         "language": "liquid-scss",
         "scopeName": "source.scss.liquid",
-        "path": "./syntax/languages/scss.tmLanguage.json"
+        "path": "./syntax/languages/scss.tmLanguage.json",
+        "unbalancedBracketScopes": [
+          "punctuation.definition.tag.begin.liquid",
+          "punctuation.definition.tag.end.liquid",
+          "punctuation.definition.tag.range.liquid",
+          "keyword.other.array-item.liquid"
+        ]
       },
       {
         "language": "liquid-javascript",
         "scopeName": "source.js.liquid",
-        "path": "./syntax/languages/javascript.tmLanguage.json"
+        "path": "./syntax/languages/javascript.tmLanguage.json",
+        "unbalancedBracketScopes": [
+          "punctuation.definition.tag.begin.liquid",
+          "punctuation.definition.tag.end.liquid",
+          "punctuation.definition.tag.range.liquid",
+          "keyword.other.array-item.liquid"
+        ]
       },
       {
         "scopeName": "markdown.liquid.codeblock",
@@ -283,19 +314,40 @@
         ],
         "embeddedLanguages": {
           "meta.embedded.block.liquid": "liquid"
-        }
+        },
+        "unbalancedBracketScopes": [
+          "punctuation.definition.tag.begin.liquid",
+          "punctuation.definition.tag.end.liquid",
+          "punctuation.definition.tag.range.liquid",
+          "keyword.other.array-item.liquid"
+        ]
       },
       {
-        "scopeName": "source.liquid-literal",
-        "path": "./syntax/injections/template-literal.tmLanguage.json",
         "injectTo": [
           "source.js",
+          "source.js.jsx",
           "source.jsx",
           "source.ts",
           "source.tsx"
         ],
         "embeddedLanguages": {
-          "meta.embedded.block.js": "js"
+          "meta.liquid.template.literal.liquid": "liquid"
+        },
+        "scopeName": "source.liquid-literal.injection",
+        "path": "./syntax/injections/literal-string.tmLanguage.json"
+      },
+      {
+        "injectTo": [
+          "source.js",
+          "source.js.jsx",
+          "source.jsx",
+          "source.ts",
+          "source.tsx"
+        ],
+        "scopeName": "liquid-literal.attributes.injection",
+        "path": "./syntax/injections/literal-attributes.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.template.expression.ts": "typescript"
         }
       }
     ],
@@ -311,12 +363,10 @@
     ],
     "configurationDefaults": {
       "[liquid]": {
-        "editor.bracketPairColorization.enabled": false,
         "editor.defaultFormatter": "sissel.shopify-liquid",
         "editor.formatOnSave": true
       },
       "[liquid-css]": {
-        "editor.bracketPairColorization.enabled": false,
         "editor.defaultFormatter": "sissel.shopify-liquid",
         "editor.formatOnSave": true
       },
