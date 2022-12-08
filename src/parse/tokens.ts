@@ -6,7 +6,10 @@ import {
   MarkdownString,
   CompletionItem,
   SnippetString,
-  CompletionItemTag
+  CompletionItemTag,
+  Position,
+  TextEdit,
+  Range
 } from 'vscode';
 import { Char, Token } from './enums';
 
@@ -126,6 +129,37 @@ export function getFilterCompletions ([
       reference
     )
   };
+
+}
+
+export function getSchemaCompletions (
+  slice: number,
+  line: number,
+  character: number,
+  items: CompletionItem[]
+): CompletionItem[] {
+
+  return items.map((item: CompletionItem) => {
+
+    return {
+      label: item.label,
+      kind: item.kind,
+      insertText: new SnippetString(item.textEdit.newText.slice(slice)),
+      documentation: item.documentation,
+      range: {
+        inserting: new Range(
+          new Position(line, character),
+          new Position(line, item.textEdit.range.end.character)
+        ),
+        replacing: new Range(
+          new Position(line, character),
+          new Position(line, item.textEdit.range.end.character)
+        )
+      }
+
+    };
+
+  });
 
 }
 
