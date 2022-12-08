@@ -23,6 +23,12 @@
         { "include": "source.liquid#output" }
       ]
     },
+    "L:entity.other.attribute-name.class.html": {
+      "patterns": [
+        { "include": "source.liquid#tags" },
+        { "include": "source.liquid#output" }
+      ]
+    },
     "L:string - (string.quoted.*.html)": {
       "patterns": [
         { "include": "source.liquid#tags" },
