@@ -2,7 +2,7 @@
 /* eslint-disable quote-props */
 
 import { ConfigurationTarget, Disposable, Extension, workspace } from 'vscode';
-import { Config, LanguageIds, PackageJSON, Selectors, Workspace } from 'types';
+import { Config, LanguageIds, PackageJSON, Selectors, Workspace, Completions } from 'types';
 import { relative } from 'node:path';
 import { Tester } from 'anymatch';
 import prettify, { Options } from '@liquify/prettify';
@@ -42,6 +42,23 @@ export class State {
    * @default 'shopify'
    */
   engine: Engines = 'shopify';
+
+  /**
+   * Whether or not formatting is enabled
+   *
+   * @default false
+   */
+  canFormat: boolean = false;
+
+  /**
+   * Which completions are enabled
+   */
+  canHover: Workspace.Hover = {
+    tags: true,
+    filters: true,
+    objects: true,
+    schema: true
+  };
 
   /**
    * Which validations are enabled
@@ -153,13 +170,6 @@ export class State {
   prettifyRules: Options = prettify.options.rules;
 
   /**
-   * Whether or not formatting is enabled
-   *
-   * @default false
-   */
-  canFormat: boolean = false;
-
-  /**
    * The formatting handler
    */
   formatHandler: Disposable = null;
@@ -269,6 +279,21 @@ export class State {
     'tsx': false,
     'javascript': false,
     'typescript': false
+  };
+
+  /**
+   * Completion Store
+   *
+   * Holds a cache reference of completion items generated
+   * in Liquid variations that support them.
+   */
+  complete: Completions = {
+    textEdit: [],
+    tags: null,
+    logical: null,
+    filters: null,
+    objects: null,
+    common: null
   };
 
 }
