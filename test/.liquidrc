@@ -37,8 +37,7 @@
     "sortSelectors": true,
     "noLeadZero": true,
     "quoteConvert": "single",
-    "classPadding": true,
-    "compressCSS": false
+    "classPadding": true
   },
   "script": {
     "correct": false,
@@ -55,12 +54,10 @@
     "braceNewline": false,
     "bracePadding": true,
     "braceStyle": "none",
-    "commentNewline": true,
     "neverFlatten": false,
     "noCaseIndent": true,
     "noSemicolon": false,
     "objectSort": false,
-    "vertical": false,
-    "variableList": "none"
+    "vertical": false
   }
 }
