@@ -93,12 +93,13 @@ export class JSONLanguageService {
    *
    * Parse the JSON generated content and returns the completion results.
    */
-  async doHover (textDocument: ITextDocument, position: Position) {
+  async doHover ({ textDocument, position }: SchemaRegion) {
 
     const JSONDocument = this.service.parseJSONDocument(textDocument);
-    const competionResult = await this.service.doComplete(textDocument, position, JSONDocument);
+    const hover = await this.service.doHover(textDocument, position, JSONDocument);
 
-    return competionResult.items;
+    return hover.contents;
+
   }
 
   /**
