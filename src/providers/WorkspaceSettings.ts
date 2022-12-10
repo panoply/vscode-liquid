@@ -172,6 +172,7 @@ export class WorkspaceSettings extends OutputChannel {
     const liquid = workspace.getConfiguration('liquid');
     const engine = liquid.get<Workspace.Engine>('engine');
     const completions = liquid.get<Workspace.Completion>('completion');
+    const validate = liquid.get<Workspace.Validate>('validate');
     const target = liquid.get<Workspace.Target>('settings.target');
     const format = liquid.get<Workspace.Format>('format');
     const baseUrl = liquid.get<string>('config.baseUrl');
@@ -193,7 +194,8 @@ export class WorkspaceSettings extends OutputChannel {
       isNil(format) &&
       isNil(baseUrl) &&
       isNil(engine) &&
-      isNil(completions)
+      isNil(completions) &&
+      isNil(validate)
     ) return Setting.WorkspaceUndefined;
 
     if (u.isString(engine) && this.engine !== engine) this.engine = engine;
@@ -232,6 +234,29 @@ export class WorkspaceSettings extends OutputChannel {
           }
         }
       }
+
+      if (has('schema', completions)) {
+        this.canComplete.schema = completions.schema;
+        if (completions.schema) {
+          this.info('Completions are enabled for: {% schema %}');
+        } else {
+          this.info('Completions are disabled for: {% schema %}');
+        }
+      }
+
+    }
+
+    if (u.isObject(validate)) {
+
+      if (has('schema', validate)) {
+        this.canValidate.schema = validate.schema;
+        if (validate.schema) {
+          this.info('Validations are enabled for: {% schema %}');
+        } else {
+          this.info('Validations are disabled for: {% schema %}');
+        }
+      }
+
     }
 
     if (u.isString(baseUrl)) {
