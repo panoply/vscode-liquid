@@ -15,7 +15,7 @@ export class State {
 
   constructor ({ packageJSON, isActive }: Extension<PackageJSON>) {
     this.isActive = isActive;
-    this.version = packageJSON.version;
+    this.version = `v${packageJSON.version}`;
     this.id = packageJSON.name;
     this.repository = packageJSON.repository.url;
     this.displayName = packageJSON.displayName;
@@ -44,9 +44,14 @@ export class State {
   engine: Engines = 'shopify';
 
   /**
+   * Which validations are enabled
+   */
+  canValidate: Workspace.Validate = {
+    schema: true
+  };
+
+  /**
    * Which completions are enabled
-   *
-   * @default 'shopify'
    */
   canComplete: Workspace.Completion = {
     tags: true,
