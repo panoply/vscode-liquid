@@ -20,7 +20,7 @@ specifiers:
 
 dependencies:
   '@liquify/liquid-language-specs': 0.1.7
-  '@liquify/prettify': 0.2.1-beta.1
+  '@liquify/prettify': link:../liquify/packages/prettify
   anymatch: 3.1.2
   parse-json: 6.0.2
   rambdax: 8.1.0
@@ -148,11 +148,6 @@ packages:
     dependencies:
       prettier: 2.7.1
     dev: true
-
-  /@liquify/prettify/0.2.1-beta.1:
-    resolution: {integrity: sha512-VD+gDVCTwIKFHnog0wuElW8UTTd+2YBkhPaoKmVSZoul+umJWSMCEMlpitCoHncxUhzAVcGA+O9inXPRV8bkdw==}
-    engines: {node: '>=12', pnpm: '>=4'}
-    dev: false
 
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
