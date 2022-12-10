@@ -18,7 +18,8 @@
     "attributeSort": false,
     "attributeSortList": [],
     "attributeCasing": "preserve",
-    "forceAttribute": false,
+    "lineBreakSeparator": "before",
+    "forceAttribute": true,
     "forceLeadAttribute": false,
     "preserveAttributes": false,
     "preserveText": false
@@ -31,7 +32,6 @@
     "objectSort": false
   },
   "style": {
-    "braceAllman": false,
     "correct": false,
     "sortProperties": true,
     "sortSelectors": true,

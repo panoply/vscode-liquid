@@ -1,25 +1,92 @@
-<div>
-  <ul class="overflow-y-scroll">
-    {%- render 'global-nav-list'
-      , menu_item_class:'global-nav__menu-item relative my-xs overflow-y-hidden'
-      , menu_base_button_class:'text-h3 md:text-l-h3'
-      , menu_base_link_class:'text-h3 md:text-l-h3'
-      , submenu_wrapper_class:'global-nav-mobile__menu-item-with-subitem opacity-0 overflow-y-hidden max-h-0 ml-xs mt-0 mb-0 z-10 space-y-1' -%}
+<div class="container-fluid as-center">
+  <form {{ section.settings.id }}>
 
+    {%- for block in section.blocks -%}
 
-    {%
-       render 'global-nav-cart-button'
-       , class: 'global-nav__cart-button relative mt-xs w-10 h-10 rounded-full border-neutral-300 border flex items-center justify-center'
-    %}
-  </ul>
+      {%- if block.type == "text" -%}
+
+        <div class="col-12 mt-{{ block.mt }} mb-4">
+
+          <h4 class="mb-3">
+            {{ block.settings.some_textarea }}
+          </h4>
+
+        </div>
+
+      {% elsif block.type == 'text_2' %}
+
+        <div class="fs-sm">
+          {{ block.settings.xxx_textarea }}
+        </div>
+
+      {% endif %}
+
+    {% endfor %}
+  </form>
 </div>
 
-<style>
 
+{%  schema  %}
 
-  {%- comment -%}
-    .class {
-      background-color: aliceblue;
-    }
-  {%- endcomment -%}
-</style>
+  {
+    "name": "sections",
+    "settings": [
+      {
+        "type": "text",
+        "id": "id",
+        "info": "Some information",
+        "label": "Some Labels"
+      }, {
+        "type": "select",
+        "id": "select",
+        "label": "Select Labels",
+        "options": [
+          {
+            "label": "Some Label",
+            "value": "value"
+          }
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "name": "Some Block",
+        "settings": [
+          {
+            "type": "textarea",
+            "id": "some_textarea",
+            "label": "Some Textarea Label"
+          }, {
+            "type": "text",
+            "id": "some_text",
+            "label": "Some Text Label"
+          }, {
+            "type": "article",
+            "id": "some_article",
+            "label": "Some Article Label"
+          }
+        ]
+      }, {
+        "type": "text_2",
+        "name": "Another Block",
+        "settings": [
+          {
+            "type": "textarea",
+            "id": "xxx_textarea",
+            "label": "Some Textarea Label"
+          }, {
+            "type": "text",
+            "id": "one_text",
+            "label": "Some Text Label"
+          }, {
+            "type": "article",
+            "id": "two_article",
+            "label": "Some Article Label"
+          }
+        ]
+      }
+    ]
+
+  }
+{% endschema %}
