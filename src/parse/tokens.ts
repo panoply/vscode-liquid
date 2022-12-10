@@ -323,7 +323,7 @@ export function getObjectCompletions ([ label, spec ]: [ string, IObject ]): Com
 
 function isSchemaBlockType (content: string, operator: string, tagName: string) {
 
-  if ((tagName === 'if' || tagName === 'elsif') && operator === '==') {
+  if ((tagName === 'if' || tagName === 'elsif') && /==/.test(operator)) {
 
     const token = content.indexOf(tagName, 2) + tagName.length;
     const condition = content.slice(token).trimLeft();
@@ -430,11 +430,13 @@ export function parseObject (content: string, offset: number) {
   const slice = content.slice(2, offset - 1);
   const match = slice.match(/[^\s{<=>:]*?$/);
 
+  console.log(content);
+
   if (match === null) return null;
 
   const props = match[0].split('.').filter(Boolean);
 
-  if (props[1] === 'settings') {
+  if (props[1] === 'settings' && props.length === 2) {
     if (props[0] === 'section') return 'settings';
     if (props[0] === 'block') return 'block';
   }
@@ -553,7 +555,7 @@ export function parseToken (kind: Token, content: string, offset: number) {
 
   const begin = content.lastIndexOf(kind === Token.Tag ? '{%' : '{{', offset);
   const ender = content.indexOf(kind === Token.Tag ? '%}' : '}}', begin) + 2;
-  const within = offset > (begin + 2) && offset < (ender - 2);
+  const within = offset >= (begin + 2) && offset <= (ender - 2);
   const text = content.slice(begin, ender);
   const startTrim = text.charCodeAt(2) === Char.DSH;
   const endTrim = text.charCodeAt(ender - 3) === Char.DSH;
