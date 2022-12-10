@@ -15,7 +15,7 @@ function getSchemaBlockTypes (schema: SchemaSectionTag, type: string) {
 
     items.push({
       label: block.type,
-      documentation: getSchemaDocumentation(block as any),
+      documentation: block.name,
       kind: CompletionItemKind.TypeParameter,
       insertText: type === 'string' ? `"${block.type}"` : block.type
     });
