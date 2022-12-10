@@ -430,8 +430,6 @@ export function parseObject (content: string, offset: number) {
   const slice = content.slice(2, offset - 1);
   const match = slice.match(/[^\s{<=>:]*?$/);
 
-  console.log(content);
-
   if (match === null) return null;
 
   const props = match[0].split('.').filter(Boolean);
