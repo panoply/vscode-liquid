@@ -14,9 +14,10 @@ import {
 import prettify from '@liquify/prettify';
 import { Config, Setting } from 'types';
 import { CommandPalette } from 'providers/CommandPalette';
-import { CompletionProvider } from 'providers/CompletionProvider';
+// import { HoverProvider } from 'providers/HoverProvider';
 import * as u from 'utils';
 import { getSchema } from 'parse/tokens';
+import parseJson from 'parse-json';
 
 /**
  * VSCode Liquid Service
@@ -26,8 +27,6 @@ import { getSchema } from 'parse/tokens';
  * operate.
  */
 export class VSCodeLiquid extends CommandPalette {
-
-  private completion: CompletionProvider;
 
   /**
    * Restart Extension
@@ -69,12 +68,6 @@ export class VSCodeLiquid extends CommandPalette {
     ];
   }
 
-  get schema () {
-
-    return this.completion.schema;
-
-  }
-
   get textDocument () {
 
     return window.activeTextEditor;
@@ -93,7 +86,9 @@ export class VSCodeLiquid extends CommandPalette {
 
     const config = this.getWorkspace();
 
-    this.completion = new CompletionProvider('shopify', this.canComplete);
+    this.setService();
+    this.setHovers();
+    this.setCompletions();
 
     try {
 
@@ -207,9 +202,13 @@ export class VSCodeLiquid extends CommandPalette {
         'liquid.restartExtension',
         this.restart(subscriptions)
       ),
+      languages.registerHoverProvider(
+        this.selector.liquid,
+        this.provide.hovers
+      ),
       languages.registerCompletionItemProvider(
         this.selector.liquid,
-        this.completion,
+        this.provide.completions,
         '%',
         '|',
         ':',
@@ -297,14 +296,35 @@ export class VSCodeLiquid extends CommandPalette {
 
       if (schema !== false) {
 
-        const diagnostics = await this.schema.doValidation(document.uri, schema);
+        const diagnostics = await this.jsonService.doValidation(document.uri, schema);
 
-        this.canFormat = this.schema.canFormat;
-        this.schema.diagnostics.set(document.uri, diagnostics as any);
+        this.canFormat = this.jsonService.canFormat;
+        this.jsonService.diagnostics.set(document.uri, diagnostics as any);
 
-      } else if (this.schema.diagnostics.has(document.uri)) {
-        this.schema.canFormat = true;
-        this.schema.diagnostics.clear();
+        if (!this.canFormat) {
+          try {
+            parseJson(schema.content);
+
+            if (this.hasError) {
+              this.hasError = false;
+              this.errorCache = null;
+              this.status.enable();
+            }
+
+          } catch (e) {
+
+            if (this.hasError === false || this.errorCache !== e) {
+              this.errorCache = e.message;
+              this.hasError = true;
+              this.error('Parse error occured when formatting document', e.message);
+            }
+          }
+
+        }
+
+      } else if (this.jsonService.diagnostics.has(document.uri)) {
+        this.jsonService.canFormat = true;
+        this.jsonService.diagnostics.clear();
       }
 
     }
@@ -322,7 +342,8 @@ export class VSCodeLiquid extends CommandPalette {
     if (!textDocument) {
       this.dispose();
       this.status.hide();
-      this.schema.diagnostics.clear();
+      this.jsonService.diagnostics.clear();
+      this.jsonService.canFormat = true;
       return;
     };
 
@@ -451,8 +472,6 @@ export class VSCodeLiquid extends CommandPalette {
           this.languageDispose();
         }
       }
-
-      this.completion.update(this.canComplete);
 
       if (config.affectsConfiguration('liquid.format')) {
 
