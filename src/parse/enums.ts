@@ -84,4 +84,8 @@ export const enum Char {
    * `[`
    */
   LSB = 91,
+  /**
+   * ` `
+   */
+  WSP = 32,
 }
