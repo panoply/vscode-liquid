@@ -55,6 +55,15 @@ export const isString = isType('String');
 export const isBoolean = isType('Boolean');
 
 /* -------------------------------------------- */
+/* NATIVES                                      */
+/* -------------------------------------------- */
+
+/**
+ * Cache reference of `Object.entries`
+ */
+export const entries = Object.entries;
+
+/* -------------------------------------------- */
 /* FILE SYSTEM                                  */
 /* -------------------------------------------- */
 
