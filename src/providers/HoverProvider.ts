@@ -17,7 +17,7 @@ export function getTagHover (word: string) {
   if (word.startsWith('end')) word = word.slice(3);
 
   const cursor = (
-    $.liquid.data.variation?.objects?.[word] ||
+    // $.liquid.data.variation?.objects?.[word] ||
     $.liquid.data.variation.tags?.[word] ||
     $.liquid.data.variation.filters?.[word]
   );
@@ -104,6 +104,8 @@ export function HoverProvider (canHover: Workspace.Hover, service: JSONLanguageS
       const range = document.getWordRangeAtPosition(position);
       const word = document.getText(range);
       const hover = getTagHover(word);
+
+      if (hover === null) return null;
 
       return new Hover(hover);
 
