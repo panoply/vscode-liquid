@@ -173,6 +173,7 @@ export class WorkspaceSettings extends OutputChannel {
     const engine = liquid.get<Workspace.Engine>('engine');
     const completions = liquid.get<Workspace.Completion>('completion');
     const validate = liquid.get<Workspace.Validate>('validate');
+    const hovers = liquid.get<Workspace.Hover>('hover');
     const target = liquid.get<Workspace.Target>('settings.target');
     const format = liquid.get<Workspace.Format>('format');
     const baseUrl = liquid.get<string>('config.baseUrl');
@@ -195,10 +196,15 @@ export class WorkspaceSettings extends OutputChannel {
       isNil(baseUrl) &&
       isNil(engine) &&
       isNil(completions) &&
-      isNil(validate)
+      isNil(validate) &&
+      isNil(hovers)
     ) return Setting.WorkspaceUndefined;
 
     if (u.isString(engine) && this.engine !== engine) this.engine = engine;
+
+    /* -------------------------------------------- */
+    /* COMPLETIONS                                  */
+    /* -------------------------------------------- */
 
     if (u.isObject(completions)) {
 
@@ -220,13 +226,22 @@ export class WorkspaceSettings extends OutputChannel {
         }
       }
 
+      if (has('logical', completions)) {
+        this.canComplete.logical = completions.logical;
+        if (completions.logical) {
+          this.info('Completions are enabled for: logicals');
+        } else {
+          this.info('Completions are disabled for: logicals');
+        }
+      }
+
       if (has('objects', completions)) {
         if (this.engine === 'shopify') {
           this.canComplete.objects = completions.objects;
           if (completions.objects) {
             this.info('Completions are enabled for: objects');
           } else {
-            this.info('Completions are disabled for: object');
+            this.info('Completions are disabled for: objects');
           }
         } else {
           if (completions.objects) {
@@ -235,29 +250,103 @@ export class WorkspaceSettings extends OutputChannel {
         }
       }
 
-      if (has('schema', completions)) {
-        this.canComplete.schema = completions.schema;
-        if (completions.schema) {
-          this.info('Completions are enabled for: {% schema %}');
+      if (has('section', completions)) {
+        if (this.engine === 'shopify') {
+          this.canComplete.section = completions.section;
+          if (completions.section) {
+            this.info('Completions are enabled for: sections');
+          } else {
+            this.info('Completions are disabled for: sections');
+          }
         } else {
-          this.info('Completions are disabled for: {% schema %}');
+          if (completions.section) {
+            this.warn('Completion for sections will not work in Liquid Standard');
+          }
+        }
+      }
+
+      if (has('schema', completions)) {
+        if (this.engine === 'shopify') {
+          this.canComplete.schema = completions.schema;
+          if (completions.schema) {
+            this.info('Completions are enabled for: {% schema %}');
+          } else {
+            this.info('Completions are disabled for: {% schema %}');
+          }
+        } else {
+          if (validate.schema) {
+            this.warn('Completion for {% schema %} will not work in Liquid Standard');
+          }
         }
       }
 
     }
+
+    /* -------------------------------------------- */
+    /* VALIDATIONS                                  */
+    /* -------------------------------------------- */
 
     if (u.isObject(validate)) {
-
       if (has('schema', validate)) {
-        this.canValidate.schema = validate.schema;
-        if (validate.schema) {
-          this.info('Validations are enabled for: {% schema %}');
+        if (this.engine === 'shopify') {
+          this.canValidate.schema = validate.schema;
+          if (validate.schema) {
+            this.info('Validations are enabled for: {% schema %}');
+          } else {
+            this.info('Validations are disabled for: {% schema %}');
+          }
         } else {
-          this.info('Validations are disabled for: {% schema %}');
+          if (validate.schema) {
+            this.warn('Validations for {% schema %} will not work in Liquid Standard');
+          }
+        }
+      }
+    }
+
+    /* -------------------------------------------- */
+    /* HOVERS                                       */
+    /* -------------------------------------------- */
+
+    if (u.isObject(hovers)) {
+
+      if (has('tags', hovers)) {
+        this.canHover.tags = hovers.tags;
+        if (completions.tags) {
+          this.info('Hovers are enabled for: tags');
+        } else {
+          this.info('Hovers are disabled for: tags');
+        }
+      }
+
+      if (has('filters', hovers)) {
+        this.canHover.filters = hovers.filters;
+        if (completions.filters) {
+          this.info('Hovers are enabled for: filters');
+        } else {
+          this.info('Hovers are disabled for: filters');
+        }
+      }
+
+      if (has('schema', hovers)) {
+        if (this.engine === 'shopify') {
+          this.canComplete.schema = hovers.schema;
+          if (hovers.schema) {
+            this.info('Hovers are enabled for: {% schema %}');
+          } else {
+            this.info('Hovers are disabled for: {% schema %}');
+          }
+        } else {
+          if (hovers.schema) {
+            this.warn('Hovers for {% schema %} will not work in Liquid Standard');
+          }
         }
       }
 
     }
+
+    /* -------------------------------------------- */
+    /* BASE URL                                     */
+    /* -------------------------------------------- */
 
     if (u.isString(baseUrl)) {
       const newRoot = join(this.rootPath, baseUrl);
@@ -269,6 +358,10 @@ export class WorkspaceSettings extends OutputChannel {
       this.baseUrl = null;
       this.rootPath = this.fsPath;
     }
+
+    /* -------------------------------------------- */
+    /* FORMAT                                       */
+    /* -------------------------------------------- */
 
     if (u.isObject(format)) {
 
