@@ -42,6 +42,7 @@ The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (
 - Syntax support for Liquid in CSS, SCSS, JavaScript, Markdown and more!
 - Formatting and beautification support using [Prettify](https://github.com/panoply/prettify).
 - Auto-Completions for Liquid tags, objects, filters, sections and more!
+- Embedded JSON Schema Tag language completions and diagnostics in Shopify theme sections.
 - Snippet auto-completion for Liquid tags and filters.
 - Supports Liquid embedded code block syntax highlighting.
 - Integrated Schema stores to provide IntelliSense capabilities within Shopify JSON files.
@@ -69,11 +70,16 @@ The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (
   - [Liquid in CSS, SCSS, SASS and JavaScript](#liquid-in-css-scss-sass-and-javascript)
   - [Markdown Codeblock](#markdown-codeblock)
   - [Template Literal](#template-literal)
+- [Schema IntelliSense](#schema-intellisense)
+  - [Liquid Completions](#liquid-completions)
+  - [JSON Completions](#json-completions)
+  - [JSON Diagnostics](#json-diagnostics)
 - [Completions](#completions)
   - [Tags](#tags)
   - [Objects](#objects)
   - [Filters](#filters)
   - [Operators](#operators)
+  - [Schema](#schema-shopify)
   - [Sections](#sections-shopify)
 - [Formatting](#formatting)
   - [Prettify](#prettify)
@@ -158,8 +164,14 @@ By default, it is assumed you are using vscode workspace/user settings.
   // Whether or not to enable control flow operator completions
   "liquid.completion.operators": true,
 
-    // Whether or not to enable section object {% schema %} defined data completions
+  // Whether or not to enable section object completions
   "liquid.completion.sections": true,
+
+  // Whether or not to enable JSON {% schema %} tag completions
+  "liquid.completion.schema": true,
+
+  // Whether or not to enable JSON {% schema %} tag diagnostic validations
+  "liquid.validate.schema": true,
 
   // Controls whether formatting is enabled or disabled
   "liquid.format.enable": true,
@@ -464,6 +476,46 @@ Liquid template literals are supported for usage within JavaScript, JSX and Type
 liquid`{% if condition == true %} {{ object.prop }} {% endif %}`;
 ```
 
+# Schema IntelliSense
+
+The current version (**v3.2^**) of the extension supports schema tag intelliSense capabilities. This is achieved on the client until the Liquify supersede and handling moves to the server using LSP. The feature drastically improves productivity for developers working with the Shopify Liquid variation.
+
+### Liquid Completions
+
+Liquid `section.*` object completions are provided in accordance with the contents contained within `{% schema %}` embedded tags. Section completions are scope aware and respect `block.type` regions implemented with either control flow `{% if %}` or `{% case %}` tags. The tag completions do not _yet_ support re-assignment variable naming, which means you will need to use the default object names (`section.settings`, `section.blocks` and `block.settings`) for completions to work. You can disable/enable Liquid section object completions within your workspace settings configuration.
+
+**Workspace Settings**
+
+```jsonc
+{
+  "liquid.completion.sections": true // Pass a value of false to disable
+}
+```
+
+### JSON Completions
+
+Embedded JSON contained within `{% schema %}` tags support completions in accordance with trigger characters. The JSON completions are made possible through Schema Stores maintained at [@liquify/schema](#). You can disable/enable JSON schema completions within your workspace settings configuration.
+
+**Workspace Settings**
+
+```jsonc
+{
+  "liquid.completion.schema": true // Pass a value of false to disable
+}
+```
+
+### JSON Diagnostics
+
+In addition to JSON and Liquid completion support, schema JSON diagnostic validation is also supported. This capability will warn you when incorrect or otherwise invalid JSON syntax and structures are provided. You can disable/enable JSON schema diagnostics within your workspace settings configuration.
+
+**Workspace Settings**
+
+```jsonc
+{
+  "liquid.validate.schema": true // Pass a value of false to disable
+}
+```
+
 # Completions
 
 The extension supports completion capabilities. This is a **preview** feature and will be improved upon as the extension progresses to Liquify, as such the integration is elementary. Completions are similar to snippets but a little more refined. The completions will be invoked and made available depending on trigger characters and previous/surrounding character sequences.
@@ -513,6 +565,18 @@ Liquid operator completions are made available within control flow tags such as 
 ```jsonc
 {
   "liquid.completion.operators": true // Pass a value of false to disable
+}
+```
+
+### Schema (Shopify)
+
+Liquid `{% schema %}` embedded JSON tags support completions using JSON Schema Store files. Shopify schema tags is currently a **preview** feature.
+
+**Workspace Settings**
+
+```jsonc
+{
+  "liquid.completion.schema": true // Pass a value of false to disable
 }
 ```
 
