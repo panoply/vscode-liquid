@@ -35,7 +35,7 @@
 
 # Liquid <small style="color:#999;">(vscode)</small>
 
-The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (template language). Supports formatting, syntax highlighting, tag, filter and object auto-completions, snippets, validations and respects HTML Intellisense features.
+The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (template language). Supports formatting, tag, filter, object and schema auto-completions, hovers, syntax highlighting, diagnostic capabilities and respects HTML Intellisense features.
 
 ### Key Features
 
@@ -45,9 +45,10 @@ The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (
 - Embedded JSON Schema Tag language completions and diagnostics in Shopify theme sections.
 - Snippet auto-completion for Liquid tags and filters.
 - Supports Liquid embedded code block syntax highlighting.
-- Integrated Schema stores to provide IntelliSense capabilities within Shopify JSON files.
+- Integrated Schema stores that provide IntelliSense capabilities within Shopify JSON files.
 - Preserves VSCode HTML IntelliSense capabilities in `.liquid` files.
 - Liquid Template Literal syntax highlighting support for TypeScript an JavaScript.
+- Hover descriptions and reference links on tags, filters, objects and more!
 
 ### Showcase
 
