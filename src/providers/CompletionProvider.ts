@@ -1,20 +1,24 @@
 import { q, liquid, Engine, Engines } from '@liquify/liquid-language-specs';
+import { Workspace } from 'types';
+import { entries } from 'utils';
+import { CompletionSection } from './CompletionSection';
+import { JSONLanguageService } from 'service/JSONLanguageService';
 import { Char, Token } from 'parse/enums';
+import { EmptyTag, EmptyOutput } from 'parse/regex';
 import {
   getFilterCompletions,
   getObjectCompletions,
   getTagCompletions,
   parseToken,
   prevChar,
-  isEmptyObject,
-  isEmptyTag,
   getObjectKind,
   parseObject,
-  determineToken,
-  getLogicalCompletions
-
+  parseSchema,
+  typeToken,
+  getLogicalCompletions,
+  getSchemaCompletions
 } from 'parse/tokens';
-import { Workspace } from 'types';
+
 import {
   CompletionItem,
   CompletionItemProvider,
@@ -25,14 +29,13 @@ import {
   TextEdit,
   CompletionItemKind
 } from 'vscode';
-import { CompletionSchema } from './CompletionSchema';
 
 /**
  * Completion Provider
  *
  * This provides some basic completions. I have extracted some
  * logic from Liquify to make this possible as I feel as if I owe
- * users something worthwhile having them wait so fucking long.
+ * users something worthwhile having them wait so f*cking long.
  *
  * Most of this will be purged and move to the Language Server
  * when Liquify supersedes. It is a shame because the specs can
@@ -46,23 +49,30 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
     for (const active in enable) this.enable[active] = enable[active];
 
     if (engine === 'shopify') {
+
       q.setEngine(Engine.shopify);
+
       this.engine = engine === 'shopify' ? Engine.shopify : Engine.standard;
-      this.schema = new CompletionSchema();
+      this.section = new CompletionSection();
+
     }
 
     this.logical = getLogicalCompletions();
 
     if (this.enable.tags) {
-      this.tags = Object.entries(liquid.shopify.tags).map(getTagCompletions);
+      this.tags = entries(liquid.shopify.tags).map(getTagCompletions);
     }
 
     if (this.enable.filters) {
-      this.filters = Object.entries(liquid.shopify.filters).map(getFilterCompletions);
+      this.filters = entries(liquid.shopify.filters).map(getFilterCompletions);
+    }
+
+    if (this.enable.schema) {
+      this.schema = new JSONLanguageService();
     }
 
     if (this.engine === Engine.shopify) {
-      this.objects = Object.entries(liquid.shopify.objects).map(getObjectCompletions);
+      this.objects = entries(liquid.shopify.objects).map(getObjectCompletions);
       this.common = getObjectKind(this.objects, [ CompletionItemKind.Module ]);
     } else {
       this.enable.objects = false;
@@ -70,22 +80,31 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
   }
 
   public update (enable: Workspace.Completion) {
-    for (const active in enable) {
-      this.enable[active] = enable[active];
-    }
+
+    for (const active in enable) this.enable[active] = enable[active];
+
   }
 
   /**
-   * Logical Operator Completions
+   * Schema Completions
    */
-  public schema: CompletionSchema;
+  public schema: JSONLanguageService;
 
+  /**
+   * Section Completions
+   */
+  public section: CompletionSection;
+
+  /**
+   * Enabled completion state
+   */
   private enable: Workspace.Completion = {
     tags: true,
     filters: true,
     objects: true,
     operators: true,
-    section: true
+    section: true,
+    schema: true
   };
 
   /**
@@ -124,18 +143,12 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
   private common: CompletionItem[];
 
   /**
-   * Trigger Characters
+   * Resolve Completion Item
+   *
+   * The completion item resolver. In some situations
+   * we need to apply additional text edits before resolving,
+   * it's here we provide this logic.
    */
-  public triggers = [
-    '%',
-    '|',
-    ':',
-    '.',
-    '"',
-    "'",
-    ' '
-  ];
-
   resolveCompletionItem (item: CompletionItem) {
 
     if (this.textEdit) item.additionalTextEdits = this.textEdit;
@@ -144,14 +157,10 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
 
   }
 
-  provideCompletionItems (
-    document: TextDocument,
-    position: Position,
-    _token: CancellationToken, {
-      triggerCharacter,
-      triggerKind
-    }
-  ) {
+  async provideCompletionItems (document: TextDocument, position: Position, _: CancellationToken, {
+    triggerCharacter,
+    triggerKind
+  }) {
 
     const trigger = CompletionTriggerKind.TriggerCharacter === triggerKind
       ? triggerCharacter.charCodeAt(0)
@@ -162,93 +171,187 @@ export class CompletionProvider implements CompletionItemProvider<CompletionItem
 
     this.textEdit = null;
 
-    if (trigger === Char.PER) { // %
-      if (!this.enable.tags) return null;
-      const character = position.character - (trigger === ' ' ? 3 : 1);
-      this.textEdit = [ TextEdit.insert(new Position(position.line, character), '{') ];
-      return this.tags;
+    if (trigger === Char.DQO || trigger === Char.COL) {
+
+      const isSchema = parseSchema(content, offset);
+
+      if (isSchema !== false && isSchema.within) {
+
+        const schema = this.schema.doParse(document, position, isSchema);
+        const items = await this.schema.doCompletions(schema);
+
+        return getSchemaCompletions(
+          trigger === Char.DQO ? 1 : 0,
+          position.line,
+          position.character,
+          items as any
+        );
+
+      }
+
     }
 
-    const tokenType = determineToken(content, offset);
+    if (trigger === Char.PER) {
 
-    if (tokenType === Token.Object) {
+      if (!this.enable.tags) return null;
+
+      const character = position.character - (trigger === Char.WSP ? 3 : 1);
+
+      this.textEdit = [ TextEdit.insert(new Position(position.line, character), '{') ];
+
+      return this.tags;
+
+    }
+
+    const type = typeToken(content, offset);
+
+    if (type === Token.Object) {
 
       const object = parseToken(Token.Object, content, offset);
 
       if (object.within) {
 
-        if (isEmptyObject(object.text) && this.enable.objects) return this.objects;
+        if (EmptyOutput.test(object.text) && this.enable.objects) return this.objects;
 
         const prev = prevChar(object.text, object.offset);
 
         if (trigger === Char.PIP || prev === Token.Filter) {
-          return this.enable.filters ? this.filters : null;
+
+          return this.enable.filters
+            ? this.filters
+            : null;
+
         }
 
         if (trigger === Char.DOT || prev === Token.Property || prev === Token.Block) {
 
-          const schema = this.enable.objects ? parseObject(object.text, object.offset) : null;
+          const schema = this.enable.objects
+            ? parseObject(object.text, object.offset)
+            : null;
 
           if (schema !== null && this.enable.section) {
             if (schema === 'settings') {
-              return this.schema.completions(content, schema);
+
+              return this.section.completions(
+                content,
+                offset,
+                schema
+              );
+
             } else if (schema === 'block') {
-              const type = this.schema.scope(content, offset);
-              if (type !== null) return this.schema.completions(content, schema, type);
+
+              const type = this.section.scope(content, offset);
+
+              if (type !== null) {
+
+                return this.section.completions(
+                  content,
+                  offset,
+                  schema,
+                  type
+                );
+
+              }
             }
           }
 
           return schema;
+
         }
 
         if (trigger === Char.COL || prev === Token.Object) {
-          return this.enable.objects ? this.common : null;
+
+          return this.enable.objects
+            ? this.common
+            : null;
+
         }
 
         return null;
 
       }
 
-    } else if (tokenType === Token.Tag) {
+    } else if (type === Token.Tag) {
 
       const tag = parseToken(Token.Tag, content, offset);
 
       if (tag.within) {
 
-        if (isEmptyTag(tag.text) && this.enable.tags) return this.tags;
+        if (EmptyTag.test(tag.text) && this.enable.tags) return this.tags;
 
         const prev = prevChar(tag.text, tag.offset, tag.tagName);
 
         if (prev === Token.Block) {
           if (trigger === Char.DQO || trigger === Char.SQO) {
-            return this.schema.completions(content, 'type');
+
+            return this.section.completions(
+              content,
+              offset,
+              'type'
+            );
+
           } else {
-            return this.schema.completions(content, 'type', 'string');
+
+            return this.section.completions(
+              content,
+              offset,
+              'type',
+              'string'
+            );
+
           }
         }
 
         if (trigger === Char.PIP || prev === Token.Filter) {
-          return this.enable.filters ? this.filters : null;
+
+          return this.enable.filters
+            ? this.filters
+            : null;
+
         }
 
         if (trigger === Char.DOT || prev === Token.Property) {
 
-          const schema = this.enable.objects ? parseObject(tag.text, tag.offset) : null;
+          const schema = this.enable.objects
+            ? parseObject(tag.text, tag.offset)
+            : null;
 
           if (schema !== null && this.enable.section) {
             if (schema === 'settings') {
-              return this.schema.completions(content, schema);
+
+              return this.section.completions(
+                content,
+                offset,
+                schema
+              );
+
             } else if (schema === 'block') {
-              const type = this.schema.scope(content, offset);
-              if (type !== null) return this.schema.completions(content, schema, type);
+
+              const type = this.section.scope(content, offset);
+
+              if (type !== null) {
+
+                return this.section.completions(
+                  content,
+                  offset,
+                  schema,
+                  type
+                );
+
+              }
             }
           }
 
           return schema;
+
         }
 
         if (trigger === Char.COL || prev === Token.Object) {
-          return this.enable.objects ? this.common : null;
+
+          return this.enable.objects
+            ? this.common
+            : null;
+
         }
 
         if (prev === Token.Logical) return this.logical;
