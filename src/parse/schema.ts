@@ -341,7 +341,7 @@ export const schema = {
               description: 'A label for this setting.'
             },
             default: {
-              type: [ 'number', 'string', 'boolean' ],
+              type: [ 'string', 'number', 'boolean' ],
               title: 'Default',
               description: 'A value to which the setting can default.'
             },
