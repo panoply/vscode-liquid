@@ -39,6 +39,9 @@
       "providers/*": [
         "providers/*.ts"
       ],
+      "service/*": [
+        "service/*.ts"
+      ],
       "utils": [
         "utils.ts"
       ],
