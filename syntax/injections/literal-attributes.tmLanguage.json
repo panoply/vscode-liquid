@@ -1,10 +1,10 @@
 {
   "fileTypes": [],
   "scopeName": "liquid-literal.attributes.injection",
-  "injectionSelector": "L:meta.embedded.literal.liquid",
+  "injectionSelector": "L:meta.embedded.literal.liquid, L:entity.other.attribute-name.html",
   "patterns": [
     {
-      "include": "source.liquid#comment-inline"
+      "include": "source.liquid#comment-line"
     },
     {
       "include": "source.liquid#comment-block"
