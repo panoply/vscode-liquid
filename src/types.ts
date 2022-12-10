@@ -4,7 +4,7 @@ import { Engines } from '@liquify/liquid-language-specs';
 import { Options } from '@liquify/prettify';
 import { Tester } from 'anymatch';
 import { LiteralUnion, Merge } from 'type-fest';
-import { ConfigurationTarget, Disposable, FileSystemWatcher, OutputChannel, StatusBarItem } from 'vscode';
+import { ConfigurationTarget, Disposable, FileSystemWatcher, OutputChannel, Position, StatusBarItem, TextDocument } from 'vscode';
 
 /* -------------------------------------------- */
 /* ENUMS                                        */
@@ -360,6 +360,26 @@ export namespace Workspace {
      * @default true
      */
     section?: boolean;
+    /**
+     * Whether or not schema tag JSON completions are enabled
+     *
+     * @default true
+     */
+    schema?: boolean;
+  }
+
+  /**
+   * `liquid.validate.*`
+   *
+   * The accepted options for validate
+   */
+  export interface Validate {
+    /**
+       * The value of `liquid.validate.schema`
+       *
+       * @default 'true'
+       */
+    schema?: boolean
   }
 
   /**
@@ -543,6 +563,17 @@ export interface Editor {
 /* -------------------------------------------- */
 /* SHOPIFY SCHEMA TAGS                          */
 /* -------------------------------------------- */
+
+export interface SchemaRegion {
+  /**
+   * The parse position
+   */
+  readonly position: Position;
+  /**
+   * The portion text document
+   */
+  readonly textDocument: TextDocument;
+}
 
 export interface SchemaPreset {
 
