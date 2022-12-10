@@ -4,11 +4,33 @@ import { Engines } from '@liquify/liquid-language-specs';
 import { Options } from '@liquify/prettify';
 import { Tester } from 'anymatch';
 import { LiteralUnion, Merge } from 'type-fest';
-import { ConfigurationTarget, Disposable, FileSystemWatcher, OutputChannel, Position, StatusBarItem, TextDocument } from 'vscode';
+import {
+  CompletionItem,
+  ConfigurationTarget,
+  Disposable,
+  FileSystemWatcher,
+  OutputChannel,
+  Position,
+  StatusBarItem,
+  TextDocument,
+  TextEdit
+} from 'vscode';
 
 /* -------------------------------------------- */
 /* ENUMS                                        */
 /* -------------------------------------------- */
+
+/**
+ * Language Services
+ *
+ * Used to set and control Language Services
+ */
+export const enum Services {
+  /**
+   * JSON Language Service
+   */
+  JSON = 1
+}
 
 /**
  * Output State
@@ -343,6 +365,12 @@ export namespace Workspace {
      */
     filters?: boolean;
     /**
+     * Whether or not logical completions are enabled
+     *
+     * @default true
+     */
+    logical?: boolean;
+    /**
      * Whether or not object completions are enabled
      *
      * @default true
@@ -369,17 +397,50 @@ export namespace Workspace {
   }
 
   /**
+   * `liquid.hover.*`
+   *
+   * The accepted options for hovers
+   */
+  export interface Hover {
+    /**
+     * The value of `liquid.hover.tags`
+     *
+     * @default 'true'
+     */
+    tags?: boolean;
+    /**
+     * The value of `liquid.hover.filters`
+     *
+     * @default 'true'
+     */
+    filters?: boolean;
+    /**
+     * The value of `liquid.hover.objects`
+     *
+     * @default 'true'
+     */
+    objects?: boolean;
+    /**
+     * The value of `liquid.hover.schema`
+     *
+     * @default 'true'
+     */
+    schema?: boolean;
+  }
+
+  /**
    * `liquid.validate.*`
    *
    * The accepted options for validate
    */
   export interface Validate {
     /**
-       * The value of `liquid.validate.schema`
-       *
-       * @default 'true'
-       */
-    schema?: boolean
+     * The value of `liquid.validate.schema`
+     *
+     * @default 'true'
+     */
+    schema?: boolean;
+
   }
 
   /**
@@ -453,6 +514,33 @@ export type Liquidrc = Merge<Options, {
 /* -------------------------------------------- */
 /* MODELS                                       */
 /* -------------------------------------------- */
+
+export interface Completions {
+  /**
+  * An additional text edit to be passed to the resolver
+  */
+  textEdit: TextEdit[];
+  /**
+   * Tag Completions
+   */
+  tags: CompletionItem[];
+  /**
+   * Logical Operator Completions
+   */
+  logical: CompletionItem[];
+  /**
+   * Filter Completions
+   */
+  filters: CompletionItem[];
+  /**
+   * Object Completions
+   */
+  objects: CompletionItem[];
+  /**
+   * Common Objects Completions
+   */
+  common: CompletionItem[];
+}
 
 export interface URI {
   /**
