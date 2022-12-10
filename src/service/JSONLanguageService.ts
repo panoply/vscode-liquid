@@ -124,7 +124,9 @@ export class JSONLanguageService {
 
     const textDocument = TextDocument.create(uri, 'json', 1, content);
     const JSONDocument = this.service.parseJSONDocument(textDocument);
-    const diagnostics = await this.service.doValidation(textDocument, JSONDocument);
+    const diagnostics = await this.service.doValidation(textDocument, JSONDocument, {
+      trailingCommas: DiagnosticSeverity.Warning
+    });
 
     if (!diagnostics) return diagnostics;
 
