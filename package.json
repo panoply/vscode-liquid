@@ -456,6 +456,21 @@
           "default": true,
           "markdownDescription": "**Default** `true`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `true`\n\nWhether or not to enable schema JSON diagnostic validations within `{% schema %}` tag regions of Shopify section files. This option requires the Liquid `engine` to be set to `shopify`. When enable this capability will warn of incorrect or otherwise invalid JSON syntax and structures expressed.\n\n_It is highly recommended you keep this enabled to prevent formatting errors_\n\n"
         },
+        "liquid.hover.tags": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "**Default** `true`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `true`\n\nWhether or not to enable schema JSON hover descriptions within `{% schema %}` tag regions of Shopify section files. This option requires the Liquid `engine` to be set to `shopify`. When enabled (ie: `true`) the hover tooltips will shown in the text editor when placing the cursor on different properties and values in the JSON structure.\n\n"
+        },
+        "liquid.hover.filters": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "**Default** `true`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `true`\n\nWhether or not to enable schema JSON hover descriptions within `{% schema %}` tag regions of Shopify section files. This option requires the Liquid `engine` to be set to `shopify`. When enabled (ie: `true`) the hover tooltips will shown in the text editor when placing the cursor on different properties and values in the JSON structure.\n\n"
+        },
+        "liquid.hover.schema": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "**Default** `true`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `true`\n\nWhether or not to enable schema JSON hover descriptions within `{% schema %}` tag regions of Shopify section files. This option requires the Liquid `engine` to be set to `shopify`. When enabled (ie: `true`) the hover tooltips will shown in the text editor when placing the cursor on different properties and values in the JSON structure.\n\n"
+        },
         "liquid.config.baseUrl": {
           "type": "string",
           "markdownDescription": "The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving config files. The option will only work in projects that use `.liquidrc` files or define rules on a package.json `prettify` field."
