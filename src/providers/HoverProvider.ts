@@ -93,21 +93,30 @@ export function HoverProvider (canHover: Workspace.Hover, service: JSONLanguageS
     async  provideHover (document: TextDocument, position: Position, _: CancellationToken): Promise<Hover> {
 
       const offset = document.offsetAt(position);
-      const schema = parseSchema(document.getText(), offset);
 
-      if (schema !== false && schema.within) {
-        const parse = service.doParse(document, position, schema);
-        const hover = await service.doHover(parse);
-        return new Hover(hover as any);
+      if (canHover.schema === true) {
+
+        const schema = parseSchema(document.getText(), offset);
+
+        if (schema !== false && schema.within) {
+          const parse = service.doParse(document, position, schema);
+          const hover = await service.doHover(parse);
+          return new Hover(hover as any);
+        }
       }
 
-      const range = document.getWordRangeAtPosition(position);
-      const word = document.getText(range);
-      const hover = getTagHover(word);
+      if (canHover.tags === true) {
 
-      if (hover === null) return null;
+        const range = document.getWordRangeAtPosition(position);
+        const word = document.getText(range);
+        const hover = getTagHover(word);
 
-      return new Hover(hover);
+        if (hover === null) return null;
+
+        return new Hover(hover);
+      }
+
+      return null;
 
     }
   };
