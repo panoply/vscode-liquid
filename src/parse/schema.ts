@@ -336,7 +336,7 @@ export const schema = {
               description: 'The unique name for this setting. The id is exposed to the liquid templates via the settings object. It must only contain alphanumeric characters, underscores, and dashes.'
             },
             label: {
-              type: 'string',
+              type: [ 'string', 'object' ],
               title: 'Label',
               description: 'A label for this setting.'
             },
@@ -476,7 +476,7 @@ export const schema = {
         required: [ 'name', 'type' ],
         properties: {
           name: {
-            type: 'string',
+            type: [ 'string', 'object' ],
             title: 'Block Type',
             description: 'The block name which is used as the merchants label'
           },
