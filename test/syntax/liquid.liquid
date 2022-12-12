@@ -1,25 +1,45 @@
 {%- liquid
 
   comment
-  block comment
+  BLOCK COMMENT
   endcomment
 
   if foo == bar
-  object.property['foo'][0]
+    object.property['foo'][0]
   endif
 
-  # inline comment
+  # INLINE COMMENT
 
   assign bar = '' | filter: 'string' | ceil: 10
 
   for i in x (1..10)
 
-  capture name
+    capture name
+    100.20
+    endcapture
 
-  endcapture
-
-  render 'snipper' with collection.products as product, param: object[product.id]
+    section 'section'
+    render 'snipper' with collection.products as product, param: object[product.id]
 
   endfor
 
 -%}
+
+
+{% if section.settings %}{% endif %}
+
+<div
+  id="x"
+  class="xxx xxx xxx {% if x %}{{ x }}{%- else -%}foo{%- endif %}"
+  {% if x == 100 %}
+  data-{% if x %}{{ x }}{%- else -%}foo{%- endif %}-id="xxx"
+  {% elsif x != 200 %}
+  {% unless u == 'foo' and x == 'bar' %}
+  data-{{ object.prop | filter }}
+  id={{ object.prop | filter }}
+  {% endunless %}
+  {% endif %}
+  aria-x="foo"
+  style="background-color: {{ bg.color }}; font-size: 20px;">
+  </div>
+  </div>

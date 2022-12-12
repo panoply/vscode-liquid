@@ -2,7 +2,9 @@
 <div class="{{ object.prop | filter: 'string' }}">
 
   <!-- TEST: Liquid Attribute Injections -->
-  <div id="test" {% if condition == false %}
+  <div
+    id="test"
+    {% if condition == false %}
     data-id="{{ x }}"
     {% endif %}></div>
 
@@ -10,27 +12,47 @@
 
 {% form %}{% endform %}
 
-cas
+
+{{ section.settings }}
 
 
-<div class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}" data-carousel-desktop-value="1" data-carousel-draggable-value="{{ section.settings.draggable }}" data-carousel-duration-value="{{ section.settings.duration }}"
+<div
+  class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}"
+  data-carousel-desktop-value="1"
+  data-carousel-draggable-value="{{ section.settings.draggable }}"
+  data-carousel-duration-value="{{ section.settings.duration }}"
   {%- if condition -%}
   data-carousel-hydrate-value="true"
   data-carousel-id-value="{{ section.id | base64_encode }}"
   {%- else -%}
   data-carousel-interval-value="{{ section.settings.interval }}"
   {% endif %}
-  data-carousel-loop-value="{{ section.settings.loop }}" data-carousel-mobile-value="1" data-carousel-tablet-value="1" data-controller="carousel">
+  data-carousel-loop-value="{{ section.settings.loop }}"
+  data-carousel-mobile-value="1"
+  data-carousel-tablet-value="1"
+  data-controller="carousel">
 
   {%- if section.settings.buttons -%}
-    <div class="previous d-flex ai-center">
-      <button aria-label="Previous" data-action="click->carousel#prev" type="button">
-        <icon name="chevron-left" />
+    <div
+      class="previous d-flex ai-center"
+      {%- if section.settings.buttons -%}
+      {%- endif -%}>
+      <button
+        aria-label="Previous"
+        data-action="click->carousel#prev"
+        type="button">
+        <icon
+          name="chevron-left" />
       </button>
     </div>
-    <div class="next d-flex ai-center">
-      <button aria-label="Next" data-action="click->carousel#next" type="button">
-        <icon name="chevron-right" />
+    <div
+      class="next d-flex ai-center">
+      <button
+        aria-label="Next"
+        data-action="click->carousel#next"
+        type="button">
+        <icon
+          name="chevron-right" />
       </button>
     </div>
   {%- endif -%}
@@ -45,6 +67,7 @@ cas
 
 {% capture pros %}
 
+  {{ section.blocks }}
 
   {{ foo | append: '' | append: article }}
 
@@ -53,6 +76,7 @@ cas
 
 
 <!-- @prettify-ignore-start -->
+
 
 {%- liquid
   if
@@ -69,27 +93,48 @@ cas
 
 
 <!-- TEST: Shopify Schema Tag Block -->
-<div class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}" data-carousel-desktop-value="1" data-carousel-draggable-value="{{ section.settings.draggable }}" data-carousel-duration-value="{{ section.settings.duration }}" data-carousel-hydrate-value="true" data-carousel-id-value="{{ section.id | base64_encode }}" data-carousel-interval-value="{{ section.settings.interval }}" data-carousel-loop-value="{{ section.settings.loop }}" data-carousel-mobile-value="1" data-carousel-tablet-value="1" data-controller="carousel">
+<div
+  class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}"
+  data-carousel-desktop-value="1"
+  data-carousel-draggable-value="{{ section.settings.draggable }}"
+  data-carousel-duration-value="{{ section.settings.duration }}"
+  data-carousel-hydrate-value="true"
+  data-carousel-id-value="{{ section.id | base64_encode }}"
+  data-carousel-interval-value="{{ section.settings.interval }}"
+  data-carousel-loop-value="{{ section.settings.loop }}"
+  data-carousel-mobile-value="1"
+  data-carousel-tablet-value="1"
+  data-controller="carousel">
 
   {%- if section.settings.buttons -%}
-    <div class="previous d-flex ai-center">
-      <button aria-label="Previous" data-action="click->carousel#prev" type="button">
-        <icon name="chevron-left" />
+    <div
+      class="previous d-flex ai-center">
+      <button
+        aria-label="Previous"
+        data-action="click->carousel#prev"
+        type="button">
+        <icon
+          name="chevron-left" />
       </button>
     </div>
-    <div class="next d-flex ai-center">
-      <button aria-label="Next" data-action="click->carousel#next" type="button">
-        <icon name="chevron-right" />
+    <div
+      class="next d-flex ai-center">
+      <button
+        aria-label="Next"
+        data-action="click->carousel#next"
+        type="button">
+        <icon
+          name="chevron-right" />
       </button>
     </div>
   {%- endif -%}
 </div>
 
-{% comment %}
+{% if block.type == "collection_links" %}{% endif %}
 
-  The JSON in this emebedded code region will be formatted.
-  Press: cmd + s
-{% endcomment %}
+{{ section.settings }}
+{{ section.settings }}
+
 {% schema %}
   {
     "name": "Collection list",
@@ -98,37 +143,20 @@ cas
     "max_blocks": 4,
     "settings": [
       {
-        "type": "header",
-        "content": "Style",
-        "info": "Customize a block list of collections"
-      },
-
-
-      {
         "type": "range",
-        "id": "gutter",
-        "label": "Gutter",
-        "min": 0,
-        "max": 5,
-        "step": 1,
-        "default": 2
-      },
-      {
-        "type": "range",
-        "id": "overlay",
+        "id": "test_4",
         "label": "Overlay",
         "min": 0,
         "max": 1,
         "step": 0.1,
         "default": 0,
-        "info": "Use an overlay to better distinguish text"
+        "info": "Some Text"
       },
-
-
       {
         "type": "select",
-        "id": "align",
+        "id": "test_2",
         "label": "Align",
+        "info": "Hello World",
         "default": "jc-center ai-end",
         "options": [
           {

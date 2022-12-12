@@ -1,205 +1,246 @@
-import { q, liquid, Engine, Engines } from '@liquify/liquid-language-specs';
-import { Char, Token, Words } from 'parse/enums';
+import { getSectionCompletions, getSectionScope } from '../parse/sections';
+import { JSONLanguageService } from 'service/JsonLanguageService';
+import { Char, Token } from 'parse/enums';
+import { EmptyTag, EmptyOutput } from 'parse/regex';
 import {
-  getFilterCompletions,
-  getObjectCompletions,
-  getTagCompletions,
   parseToken,
   prevChar,
-  isEmptyObject,
-  isEmptyTag,
-  getObjectKind,
-  prevWord,
-  parseObject
+  parseObject,
+  parseSchema,
+  typeToken,
+  getSchemaCompletions
 } from 'parse/tokens';
-import { Workspace } from 'types';
+
 import {
   CompletionItem,
-  CompletionItemProvider,
   CompletionTriggerKind,
   TextDocument,
   Position,
   CancellationToken,
-  TextEdit,
-  CompletionItemKind
+  TextEdit
 } from 'vscode';
+
+import { Completions, Workspace } from 'types';
 
 /**
  * Completion Provider
  *
  * This provides some basic completions. I have extracted some
  * logic from Liquify to make this possible as I feel as if I owe
- * users something worthwhile having them wait so fucking long.
+ * users something worthwhile having them wait so f*cking long.
  *
  * Most of this will be purged and move to the Language Server
  * when Liquify supersedes. It is a shame because the specs can
  * do so much more in the grand scale and folks wont get to see that
  * until Liquify is made available.
  */
-export class CompletionProvider implements CompletionItemProvider<CompletionItem> {
+export function CompletionProvider (
+  canComplete: Workspace.Completion,
+  complete: Completions,
+  service: JSONLanguageService
+) {
 
-  constructor (engine: Engines, enable: Workspace.Completion) {
+  let additionalTextEdits: TextEdit[];
 
-    for (const active in enable) this.enable[active] = enable[active];
+  return {
 
-    if (engine === 'shopify') {
-      q.setEngine(Engine.shopify);
-      this.engine = engine === 'shopify'
-        ? Engine.shopify
-        : Engine.standard;
+    /**
+     * Resolve Completion Item
+     *
+     * The completion item resolver. In some situations
+     * we need to apply additional text edits before resolving,
+     * it's here we provide this logic.
+     */
+    resolveCompletionItem (item: CompletionItem) {
+
+      if (additionalTextEdits) item.additionalTextEdits = additionalTextEdits;
+
+      return item;
+
+    },
+
+    async provideCompletionItems (
+      document: TextDocument,
+      position: Position,
+      _: CancellationToken,
+      { triggerCharacter, triggerKind }
+    ) {
+
+      const trigger = CompletionTriggerKind.TriggerCharacter === triggerKind
+        ? triggerCharacter.charCodeAt(0)
+        : false;
+
+      const content = document.getText();
+      const offset = document.offsetAt(position);
+
+      additionalTextEdits = null;
+
+      if (trigger === Char.DQO || trigger === Char.COL) {
+
+        const isSchema = parseSchema(content, offset);
+
+        if (isSchema !== false && isSchema.within) {
+
+          const schema = service.doParse(document, position, isSchema);
+          const items = await service.doCompletions(schema);
+
+          return getSchemaCompletions(
+            trigger === Char.DQO ? 1 : 0,
+            position.line,
+            position.character,
+            items as any
+          );
+
+        }
+
+      }
+
+      if (trigger === Char.PER) {
+
+        if (!canComplete.tags) return null;
+
+        const character = position.character - (trigger === Char.WSP ? 3 : 1);
+
+        additionalTextEdits = [ TextEdit.insert(new Position(position.line, character), '{') ];
+
+        return complete.tags;
+
+      }
+
+      const type = typeToken(content, offset);
+
+      if (type === Token.Object) {
+
+        const object = parseToken(Token.Object, content, offset);
+
+        if (object.within) {
+
+          if (EmptyOutput.test(object.text) && canComplete.objects) return complete.objects;
+
+          const prev = prevChar(object.text, object.offset);
+
+          if (trigger === Char.PIP || prev === Token.Filter) {
+
+            return canComplete.filters
+              ? complete.filters
+              : null;
+
+          }
+
+          if (trigger === Char.DOT || prev === Token.Property || prev === Token.Block) {
+
+            const schema = canComplete.objects
+              ? parseObject(object.text, object.offset)
+              : null;
+
+            if (schema !== null && canComplete.section) {
+              if (schema === 'settings') {
+
+                return getSectionCompletions(content, offset, schema);
+
+              } else if (schema === 'block') {
+
+                const type = getSectionScope(content, offset);
+
+                if (type !== null) {
+
+                  return getSectionCompletions(content, offset, schema, type);
+
+                }
+              }
+            }
+
+            return schema;
+
+          }
+
+          if (trigger === Char.COL || prev === Token.Object) {
+
+            return canComplete.objects
+              ? complete.objects
+              : null;
+
+          }
+
+          return null;
+
+        }
+
+      } else if (type === Token.Tag) {
+
+        const tag = parseToken(Token.Tag, content, offset);
+
+        if (tag.within) {
+
+          if (EmptyTag.test(tag.text) && canComplete.tags) return complete.tags;
+
+          const prev = prevChar(tag.text, tag.offset, tag.tagName);
+
+          if (prev === Token.Block) {
+
+            if (trigger === Char.DQO || trigger === Char.SQO) {
+
+              return getSectionCompletions(content, offset, 'type');
+
+            } else {
+
+              return getSectionCompletions(content, offset, 'type', 'string');
+
+            }
+          }
+
+          if (trigger === Char.PIP || prev === Token.Filter) {
+
+            return canComplete.filters
+              ? complete.filters
+              : null;
+
+          }
+
+          if (trigger === Char.DOT || prev === Token.Property) {
+
+            const schema = canComplete.objects
+              ? parseObject(tag.text, tag.offset)
+              : null;
+
+            if (schema !== null && canComplete.section) {
+              if (schema === 'settings') {
+
+                return getSectionCompletions(content, offset, schema);
+
+              } else if (schema === 'block') {
+
+                const type = getSectionScope(content, offset);
+
+                if (type !== null) {
+
+                  return getSectionCompletions(content, offset, schema, type);
+
+                }
+              }
+            }
+
+            return schema;
+
+          }
+
+          if (trigger === Char.COL || prev === Token.Object) {
+
+            return canComplete.objects
+              ? complete.common
+              : null;
+
+          }
+
+          if (prev === Token.Logical && canComplete.logical) {
+            return complete.logical;
+          }
+
+          return null;
+        }
+
+      }
     }
-
-    if (this.enable.tags) {
-      this.tags = Object.entries(liquid.shopify.tags).map(getTagCompletions);
-    }
-
-    if (this.enable.filters) {
-      this.filters = Object.entries(liquid.shopify.filters).map(getFilterCompletions);
-    }
-
-    if (this.engine === Engine.shopify) {
-      this.objects = Object.entries(liquid.shopify.objects).map(getObjectCompletions);
-      this.common = getObjectKind(this.objects, [ CompletionItemKind.Module ]);
-    } else {
-      this.enable.objects = false;
-    }
-  }
-
-  public update (enable: Workspace.Completion) {
-    for (const active in enable) {
-      this.enable[active] = enable[active];
-    }
-  }
-
-  private enable: Workspace.Completion = {
-    tags: true,
-    filters: true,
-    objects: true
   };
-
-  /**
-   * The variation engine
-   */
-  private engine: Engine;
-
-  /**
-   * An additional text edit to be passed to the resolver
-   */
-  private textEdit: TextEdit[] = [];
-
-  /**
-   * Tag Completions
-   */
-  private tags: CompletionItem[];
-
-  /**
-   * Filter Completions
-   */
-  private filters: CompletionItem[];
-
-  /**
-   * Object Completions
-   */
-  private objects: CompletionItem[];
-
-  /**
-   * Common Objects Completions
-   */
-  private common: CompletionItem[];
-
-  /**
-   * Trigger Characters
-   */
-  public triggers = [
-    '%',
-    '|',
-    ':',
-    '.',
-    ' '
-  ];
-
-  resolveCompletionItem (item: CompletionItem) {
-
-    if (this.textEdit) item.additionalTextEdits = this.textEdit;
-
-    return item;
-
-  }
-
-  provideCompletionItems (document: TextDocument, position: Position, token: CancellationToken, {
-    triggerCharacter,
-    triggerKind
-  }) {
-
-    const trigger = CompletionTriggerKind.TriggerCharacter === triggerKind
-      ? triggerCharacter.charCodeAt(0)
-      : false;
-
-    const content = document.getText();
-    const offset = document.offsetAt(position);
-
-    this.textEdit = null;
-
-    if (trigger === Char.PER) { // %
-      if (!this.enable.tags) return null;
-      const character = position.character - (trigger === ' ' ? 3 : 1);
-      this.textEdit = [ TextEdit.insert(new Position(position.line, character), '{') ];
-      return this.tags;
-    }
-
-    const object = parseToken(Token.Object, content, offset);
-
-    if (object.within) {
-
-      if (isEmptyObject(object.text) && this.enable.objects) return this.objects;
-
-      if (trigger === Char.PIP || prevChar(object.text, object.offset, [ Char.PIP ])) {
-        return this.enable.filters ? this.filters : null;
-      }
-
-      if (trigger === Char.COL || prevChar(object.text, object.offset, [ Char.COL ])) {
-        return this.enable.objects ? this.common : null;
-      }
-
-      if (trigger === Char.DOT && this.enable.objects) {
-        return parseObject(object.text, object.offset);
-      }
-
-      return null;
-
-    }
-
-    const tag = parseToken(Token.Tag, content, offset);
-
-    if (tag.within) {
-
-      if (isEmptyTag(object.text) && this.enable.tags) return this.tags;
-
-      if (this.enable.objects && prevWord(tag.text, tag.offset, [
-        Words.AND,
-        Words.IN,
-        Words.OR,
-        Words.CONTAINS
-      ])) {
-        return this.common;
-      }
-
-      // Proceed accordingly, else cancel the completion
-      if ((trigger === Char.PIP || prevChar(tag.text, tag.offset, [ Char.PIP ]))) {
-        return this.enable.filters ? this.filters : null;
-      }
-
-      if (prevChar(tag.text, tag.offset, [ Char.COL, Char.EQL, Char.LAN, Char.RAN ])) {
-        return this.enable.objects ? this.common : null;
-      }
-
-      if (trigger === Char.DOT && this.enable.objects) {
-        return parseObject(tag.text, tag.offset);
-      }
-
-      return null;
-    }
-
-  }
 
 }

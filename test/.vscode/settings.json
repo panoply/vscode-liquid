@@ -16,6 +16,7 @@
     "editor.defaultFormatter": "sissel.shopify-liquid",
     "editor.formatOnSave": true
   },
+
   "emmet.includeLanguages": {
     "liquid": "html"
   },
@@ -45,7 +46,14 @@
     "editor.defaultFormatter": "sissel.shopify-liquid"
   },
 
-  "liquid.format.enable": true
+  "liquid.format.enable": true,
+  "liquid.completion.tags": true,
+  "liquid.completion.schema": true,
+  "liquid.completion.filters": true,
+  "liquid.completion.objects": true,
+  "liquid.completion.operators": true,
+  "liquid.completion.properties": true,
+  "liquid.completion.sections": true
   /* -------------------------------------------- */
   /* VSCODE NATIVES                               */
   /* -------------------------------------------- */

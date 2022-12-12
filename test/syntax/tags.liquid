@@ -10,6 +10,17 @@
 
 {% render 'filename', param: 1, param2: foo.prop.foo.bar, param3: 'string', param5: false %}
 
+{% # ASSIGNMENT LOGICS %}
+
+{% assign false = false %}
+{% assign true = true %}
+{% assign foo = true %}
+{% assign bar = true %}
+
+{{ bar }}
+
+{% if true %}{% endif %}
+
 {% # FOR LOOP %}
 
 {% for product in collection.products limit: 2 -%}
@@ -68,3 +79,8 @@
 {%- endfor %}
 
 {%- for item in collection -%}{%- endfor -%}
+
+
+{% # COMMENT WORD BOUNDRY %}
+
+{% if block.comments_enabled? %}{% endif %}

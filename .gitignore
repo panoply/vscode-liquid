@@ -1,8 +1,10 @@
+.env
 node_modules
 .vscode-test/
 yarn.lock
 test/components/*.html
 versions
+releases
 docs
 dist
 example

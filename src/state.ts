@@ -2,7 +2,7 @@
 /* eslint-disable quote-props */
 
 import { ConfigurationTarget, Disposable, Extension, workspace } from 'vscode';
-import { Config, LanguageIds, PackageJSON, Selectors, Workspace } from 'types';
+import { Config, LanguageIds, PackageJSON, Selectors, Workspace, Completions } from 'types';
 import { relative } from 'node:path';
 import { Tester } from 'anymatch';
 import prettify, { Options } from '@liquify/prettify';
@@ -15,7 +15,7 @@ export class State {
 
   constructor ({ packageJSON, isActive }: Extension<PackageJSON>) {
     this.isActive = isActive;
-    this.version = packageJSON.version;
+    this.version = `v${packageJSON.version}`;
     this.id = packageJSON.name;
     this.repository = packageJSON.repository.url;
     this.displayName = packageJSON.displayName;
@@ -44,14 +44,39 @@ export class State {
   engine: Engines = 'shopify';
 
   /**
-   * Which completions are enabled
+   * Whether or not formatting is enabled
    *
-   * @default 'shopify'
+   * @default false
+   */
+  canFormat: boolean = false;
+
+  /**
+   * Which completions are enabled
+   */
+  canHover: Workspace.Hover = {
+    tags: true,
+    filters: true,
+    objects: true,
+    schema: true
+  };
+
+  /**
+   * Which validations are enabled
+   */
+  canValidate: Workspace.Validate = {
+    schema: true
+  };
+
+  /**
+   * Which completions are enabled
    */
   canComplete: Workspace.Completion = {
     tags: true,
     filters: true,
-    objects: true
+    objects: true,
+    operators: true,
+    section: true,
+    logical: true
   };
 
   /**
@@ -144,13 +169,6 @@ export class State {
    * The current formatting rules
    */
   prettifyRules: Options = prettify.options.rules;
-
-  /**
-   * Whether or not formatting is enabled
-   *
-   * @default false
-   */
-  canFormat: boolean = false;
 
   /**
    * The formatting handler
@@ -262,6 +280,21 @@ export class State {
     'tsx': false,
     'javascript': false,
     'typescript': false
+  };
+
+  /**
+   * Completion Store
+   *
+   * Holds a cache reference of completion items generated
+   * in Liquid variations that support them.
+   */
+  complete: Completions = {
+    textEdit: [],
+    tags: null,
+    logical: null,
+    filters: null,
+    objects: null,
+    common: null
   };
 
 }

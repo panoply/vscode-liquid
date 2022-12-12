@@ -5,6 +5,7 @@ import {
   languages,
   Range,
   TextDocument,
+  TextDocumentChangeEvent,
   TextEdit,
   TextEditor,
   window,
@@ -13,12 +14,19 @@ import {
 import prettify from '@liquify/prettify';
 import { Config, Setting } from 'types';
 import { CommandPalette } from 'providers/CommandPalette';
-import { CompletionProvider } from 'providers/CompletionProvider';
+// import { HoverProvider } from 'providers/HoverProvider';
 import * as u from 'utils';
+import { getSchema } from 'parse/tokens';
+import parseJson from 'parse-json';
 
+/**
+ * VSCode Liquid Service
+ *
+ * This class is responsible for controlling the extension.
+ * It's from the generated instance all extension features will
+ * operate.
+ */
 export class VSCodeLiquid extends CommandPalette {
-
-  private completion: CompletionProvider;
 
   /**
    * Restart Extension
@@ -51,6 +59,21 @@ export class VSCodeLiquid extends CommandPalette {
 
   };
 
+  private deprecated (lead: string = '') {
+
+    return [
+      lead,
+      `You are using ${this.version} of the Liquid extension with old configurations`,
+      'that are no longer supported. You need to fix and align with the new configuration.'
+    ];
+  }
+
+  get textDocument () {
+
+    return window.activeTextEditor;
+
+  }
+
   /**
    * onActiveEditor
    *
@@ -63,7 +86,9 @@ export class VSCodeLiquid extends CommandPalette {
 
     const config = this.getWorkspace();
 
-    this.completion = new CompletionProvider('shopify', this.canComplete);
+    this.setService();
+    this.setHovers();
+    this.setCompletions();
 
     try {
 
@@ -81,33 +106,29 @@ export class VSCodeLiquid extends CommandPalette {
           this.canFormat = false;
           this.deprecatedConfig = true;
 
-          this.languageError([
-            'Deprecated configuration provided in workspace',
-            'You are now using v3.0.0 of the Liquid extension. The old settings are no longer',
-            'valid. You need to fix and align with the new configuration.'
-          ], {
+          this.languageError(this.deprecated('Deprecated configuration in workspace settings.'), {
             command: 'liquid.releaseNotes',
             title: 'Release Notes',
             tooltip: 'Opens the release notes for v' + this.version
           });
 
           this.status.error('Using deprecated settings');
-
-          this.error('Deprecated configuration provided in workspace', [
-            'You are now using v3.0.0 of the Liquid extension. The old settings are no longer',
-            'valid. You need to fix and align with the new configuration.'
-          ]);
+          this.error('Deprecated config provided in workspace', this.deprecated());
 
         } else if (config === Setting.WorkspaceDefined) {
+
           prettify.options(this.prettifyRules);
           this.info('Using workspace settings for configuration');
+
         }
 
       } else if (this.configMethod === Config.Package) {
 
         if (pkgjson === Setting.PrettifyFieldDefined) {
+
           prettify.options(this.prettifyRules);
           this.info('Using "prettify" field in package.json file');
+
         }
 
       //  this.language.configFile('package.json');
@@ -117,47 +138,84 @@ export class VSCodeLiquid extends CommandPalette {
 
           this.canFormat = false;
           this.deprecatedConfig = true;
-
           this.status.error('Using deprecated settings');
 
-          this.languageError([
-            'Deprecated configuration provided in the .liquidrc file.',
-            'You are using v3.0.0 of the Liquid extension and the old configuration is no longer',
-            'supported.'
-          ], {
+          this.languageError(this.deprecated('Deprecated configuration in .liquidrc file.'), {
             command: 'liquid.releaseNotes',
             title: 'Release Notes',
             tooltip: 'Opens the release notes for v' + this.version
           });
 
-          this.error('Deprecated configuration provided in .liquidrc file', [
-            'You are now using v3.0.0 of the Liquid extension and the old configuration is no longer',
-            'supported. You need to fix and align with the new configuration.'
-          ]);
+          this.error('Deprecated configuration provided in .liquidrc file', this.deprecated());
 
         } else if (liquidrc === Setting.LiquidrcDefined) {
+
           prettify.options(this.prettifyRules);
           this.info(`Using .liquidrc file: ${this.liquidrcPath}`);
+
         }
       }
 
     } catch (e) {
+
       this.catch('Failed to activate extension.', e);
+
     }
 
     subscriptions.push(
-      commands.registerCommand('liquid.liquidrcDefaults', this.liquidrcDefaults, this),
-      commands.registerCommand('liquid.liquidrcRecommend', this.liquidrcRecommend, this),
-      commands.registerCommand('liquid.openOutput', this.output.show, this),
-      commands.registerCommand('liquid.formatDocument', this.formatDocument, this),
-      commands.registerCommand('liquid.enableFormatting', this.enableFormatting, this),
-      commands.registerCommand('liquid.disableFormatting', this.disableFormatting, this),
-      commands.registerCommand('liquid.releaseNotes', this.releaseNotes, this),
-      commands.registerCommand('liquid.restartExtension', this.restart(subscriptions)),
+      commands.registerCommand(
+        'liquid.liquidrcDefaults',
+        this.liquidrcDefaults,
+        this
+      ),
+      commands.registerCommand(
+        'liquid.liquidrcRecommend',
+        this.liquidrcRecommend,
+        this
+      ),
+      commands.registerCommand(
+        'liquid.openOutput',
+        this.output.show,
+        this
+      ),
+      commands.registerCommand(
+        'liquid.formatDocument',
+        this.formatDocument,
+        this
+      ),
+      commands.registerCommand(
+        'liquid.enableFormatting',
+        this.enableFormatting,
+        this
+      ),
+      commands.registerCommand(
+        'liquid.disableFormatting',
+        this.disableFormatting,
+        this
+      ),
+      commands.registerCommand(
+        'liquid.releaseNotes',
+        this.releaseNotes,
+        this
+      ),
+      commands.registerCommand(
+        'liquid.restartExtension',
+        this.restart(subscriptions)
+      ),
+      languages.registerHoverProvider(
+        this.selector.liquid,
+        this.provide.hovers
+      ),
       languages.registerCompletionItemProvider(
         this.selector.liquid,
-        this.completion,
-        ...this.completion.triggers
+        this.provide.completions,
+        '%',
+        '|',
+        ':',
+        '.',
+        '"',
+        "'",
+        ' '
       )
     );
 
@@ -169,6 +227,12 @@ export class VSCodeLiquid extends CommandPalette {
 
     workspace.onDidCloseTextDocument(
       this.onDidCloseTextDocument,
+      this,
+      subscriptions
+    );
+
+    workspace.onDidChangeTextDocument(
+      this.onDidChangeTextDocument,
       this,
       subscriptions
     );
@@ -218,15 +282,68 @@ export class VSCodeLiquid extends CommandPalette {
   }
 
   /**
-   * onDidChanceTextEditor
+   * onDidChangeTextDocument
    *
-   * Invoked when the text document is opened.
+   * Invoked when a text document has changed. We only care about schema
+   * in the event (for now). In Liquify we use LSP so this is just a hot
+   * patch for us the reason with diagnostics.
+   */
+  public async onDidChangeTextDocument ({ document }: TextDocumentChangeEvent) {
+
+    if (this.engine === 'shopify' && this.canValidate.schema === true) {
+
+      const schema = getSchema(document);
+
+      if (schema !== false) {
+
+        const diagnostics = await this.jsonService.doValidation(document.uri, schema);
+
+        this.canFormat = this.jsonService.canFormat;
+        this.jsonService.diagnostics.set(document.uri, diagnostics as any);
+
+        if (!this.canFormat) {
+          try {
+            parseJson(schema.content);
+
+            if (this.hasError) {
+              this.hasError = false;
+              this.errorCache = null;
+              this.status.enable();
+            }
+
+          } catch (e) {
+
+            if (this.hasError === false || this.errorCache !== e) {
+              this.errorCache = e.message;
+              this.hasError = true;
+              this.error('Parse error occured when formatting document', e.message);
+            }
+          }
+
+        }
+
+      } else if (this.jsonService.diagnostics.has(document.uri)) {
+        this.jsonService.canFormat = true;
+        this.jsonService.diagnostics.clear();
+      }
+
+    }
+
+  }
+
+  /**
+   * onDidChangeActiveTextEditor
+   *
+   * Invoked when a text document is opened or a document
+   * has changed (ie: new tab or file).
    */
   public onDidChangeActiveTextEditor (textDocument: TextEditor | undefined) {
 
     if (!textDocument) {
       this.dispose();
       this.status.hide();
+      this.jsonService.diagnostics.clear();
+      this.jsonService.canFormat = true;
       return;
     };
 
@@ -285,12 +402,12 @@ export class VSCodeLiquid extends CommandPalette {
 
         const findRange = new Range(0, 0, textDocument.lineCount, 0);
         const fullRange = textDocument.validateRange(findRange);
+        const language = u.getLanguage(textDocument.languageId);
+        const source = textDocument.getText();
 
         try {
 
-          const output = prettify.formatSync(textDocument.getText(), {
-            language: u.getLanguage(textDocument.languageId)
-          });
+          const output = prettify.formatSync(source, { language });
 
           if (this.hasError) {
             this.hasError = false;
@@ -318,6 +435,13 @@ export class VSCodeLiquid extends CommandPalette {
 
   }
 
+  /**
+   * onDidChangeConfiguration
+   *
+   * Invoked when the configuration has changed. It will determine
+   * which settings have changed and apply operations which
+   * pertain to the extension functionality.
+   */
   public onDidChangeConfiguration (config: ConfigurationChangeEvent) {
 
     if (config.affectsConfiguration('liquid')) {
@@ -330,14 +454,10 @@ export class VSCodeLiquid extends CommandPalette {
           this.canFormat = false;
           this.deprecatedConfig = true;
 
-          this.languageError([
-            'Deprecated configuration provided in workspace',
-            'You are now using v3.0.0 of the Liquid extension. The old settings are no longer',
-            'valid. You need to fix and align with the new configuration.'
-          ], {
+          this.languageError(this.deprecated('Deprecated configuration in workspace settings.'), {
             command: 'liquid.releaseNotes',
             title: 'Release Notes',
-            tooltip: 'Opens the release notes for v' + this.version
+            tooltip: `Opens the release notes for ${this.version}`
           });
 
           this.status.error('Using deprecated settings');
@@ -352,8 +472,6 @@ export class VSCodeLiquid extends CommandPalette {
           this.languageDispose();
         }
       }
-
-      this.completion.update(this.canComplete);
 
       if (config.affectsConfiguration('liquid.format')) {
 

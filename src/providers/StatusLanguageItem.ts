@@ -1,23 +1,26 @@
 import { Command, languages, LanguageStatusItem, LanguageStatusSeverity } from 'vscode';
-import { State } from 'state';
+import { Providers } from 'providers';
 
-export class StatusLanguageItem extends State {
+export class StatusLanguageItem extends Providers {
 
-  items: Set<LanguageStatusItem> = new Set();
+  private languageItems: Set<LanguageStatusItem> = new Set();
 
   /**
    * Dispose Language Status Items
    */
-  languageDispose () {
+  public languageDispose () {
 
-    if (this.items.size > 0) {
-      for (const item of this.items) {
+    if (this.languageItems.size > 0) {
+      for (const item of this.languageItems) {
         item.dispose();
       }
     }
   }
 
-  languageError (message: string[], command?: Command) {
+  /**
+   * Language Item Error
+   */
+  public languageError (message: string[], command?: Command) {
 
     const error = languages.createLanguageStatusItem('Liquid Errors', this.selector.active);
     error.severity = LanguageStatusSeverity.Error;
@@ -25,7 +28,7 @@ export class StatusLanguageItem extends State {
 
     if (command) error.command = command;
 
-    this.items.add(error);
+    this.languageItems.add(error);
 
   }
 

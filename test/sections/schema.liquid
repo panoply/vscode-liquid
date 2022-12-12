@@ -1,9 +1,72 @@
-<div></div>
+<div
+  class="">
+
+  foo
+
+  {% for block in section.blocks %}
+
+    {% if block.type == 'something' %}
+
+      {{ block.settings.xxxx }}
+
+    {% elsif block.type == "something" %}
+
+      {{ block.settings.drive
+       | append: 'foo'
+       | capitalize }}
+
+      {% render 'foo'
+       , param: 1
+       , param: 2
+       , param: 3 %}
+
+    {% endif %}
+
+
+  {% endfor %}
+
+</div>
+
 
 {% schema %}
   {
-    "foo": {
-      "bar": []
-    }
+    "name": "dsss",
+    "settings": [
+      {
+        "type": "page",
+        "placeholder": "",
+        "id": "",
+        "default": 0
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Foo",
+        "type": "something",
+        "settings": [
+          {
+            "type": "text",
+            "id": "xxxx",
+            "label": "foo"
+          }
+        ]
+      }, {
+        "name": "example",
+        "type": "xxx",
+        "settings": [
+          {
+            "type": "article",
+            "id": "drive",
+            "label": "car",
+            "default": 0
+          }, {
+            "default": 0,
+            "type": "blog",
+            "id": "foo",
+            "label": "bar"
+          }
+        ]
+      }
+    ]
   }
 {% endschema %}

@@ -1,18 +1,38 @@
-import { q, liquid, Tag, Filter, Object as IObject, Type, Types as ITypes, Properties } from '@liquify/liquid-language-specs';
 import { has } from 'rambdax';
+import { SchemaSectionTag, SchemaSettings, SchemaSettingTypes } from 'types';
+import { Char, Token } from './enums';
+import * as r from './regex';
+import {
+  liquid,
+  Tag,
+  Filter,
+  Object as IObject,
+  Type,
+  Types as ITypes,
+  Properties
+} from '@liquify/liquid-language-specs';
 import {
   CompletionItemKind,
   MarkdownString,
   CompletionItem,
   SnippetString,
-  CompletionItemTag
+  CompletionItemTag,
+  Position,
+  Range,
+  TextDocument
 } from 'vscode';
-import { Char, Token, Words } from './enums';
+import { isString } from 'utils';
+import parseJson from 'parse-json';
 
 /* -------------------------------------------- */
 /* UTILITIES                                    */
 /* -------------------------------------------- */
 
+/**
+ * Generate Documentation
+ *
+ * Composes a Markdown string from Liquid Language Specifications.
+ */
 function documentation (description: string, reference: { name?: string; url: string; }) {
 
   if (reference && has('name', reference) && has('url', reference)) {
@@ -20,6 +40,22 @@ function documentation (description: string, reference: { name?: string; url: st
   }
 
   return new MarkdownString(description);
+
+}
+
+/**
+ * Generate Section Liquid Documentation
+ *
+ * Composes documentation for `block.settings.*` and similar Liquid
+ * type completions.
+ */
+export function getSchemaDocumentation (setting: SchemaSettings & { default?: string}) {
+
+  const defaults = has('default', setting)
+    ? `\nDefault: \`${setting.default}\``
+    : '';
+
+  return new MarkdownString(`${setting.info || setting.label}\n${defaults}`);
 
 }
 
@@ -34,8 +70,8 @@ function setObjectType (type: Type | ITypes.Basic): CompletionItemKind {
 
   if (type === Type.array) return CompletionItemKind.Field;
   if (type === Type.object) return CompletionItemKind.Module;
-  //@ts-ignore
-  if (type === Type.data) return CompletionItemKind.Value;
+  // @ts-ignore
+  if (type === Type.data as any) return CompletionItemKind.Value;
 
 };
 
@@ -59,24 +95,25 @@ export function getTagCompletions ([
     singular = false,
     snippet = '$1'
   }
-]: [ string, Tag
+]: [
+  string,
+  Tag
 ]): CompletionItem {
 
-  const insertText = label === 'liquid'
-  ? new SnippetString(` ${label} ${snippet} %}$0`)
-  : singular
-    ? new SnippetString(` ${label} ${snippet} %}$0`)
-    : new SnippetString(` ${label} ${snippet} %} $0 {% end${label} %}`);
+  const insertText = label === 'else'
+    ? new SnippetString(` ${label} %}$0`)
+    : label === 'liquid'
+      ? new SnippetString(` ${label} ${snippet} %}$0`)
+      : singular
+        ? new SnippetString(` ${label} ${snippet} %}$0`)
+        : new SnippetString(` ${label} ${snippet} %} $0 {% end${label} %}`);
 
   return {
     label,
     kind: CompletionItemKind.Keyword,
     tags: deprecated ? [ CompletionItemTag.Deprecated ] : [],
     insertText,
-    documentation: documentation(
-      description,
-      reference
-    )
+    documentation: documentation(description, reference)
   };
 
 }
@@ -96,7 +133,9 @@ export function getFilterCompletions ([
     reference = null,
     snippet
   }
-]: [ string, Filter
+]: [
+  string,
+  Filter
 ]): CompletionItem {
 
   const insertText = new SnippetString(snippet || label);
@@ -112,6 +151,143 @@ export function getFilterCompletions ([
     )
   };
 
+}
+
+export function getCompletionKind (type: SchemaSettingTypes) {
+
+  switch (type) {
+    case 'color':
+    case 'color_background':
+      return CompletionItemKind.Color;
+    case 'text':
+    case 'textarea':
+    case 'richtext':
+    case 'inline_richtext':
+    case 'html':
+    case 'liquid':
+    case 'url':
+      return CompletionItemKind.Value;
+    case 'article':
+    case 'blog':
+    case 'product':
+    case 'product_list':
+    case 'page':
+    case 'image_picker':
+    case 'font_picker':
+      return CompletionItemKind.Module;
+    case 'checkbox':
+    case 'range':
+    case 'select':
+    case 'number':
+    case 'radio':
+      return CompletionItemKind.Constant;
+    default:
+      return CompletionItemKind.Property;
+  }
+
+}
+
+/**
+ * Get Schema Completions
+ *
+ * Generates the completion items for the `{% schema %}` code block
+ * region. The items and cherry picked from the JSON Language Service
+ * parsed JSON content.
+ */
+export function getSchemaCompletions (
+  slice: number,
+  line: number,
+  character: number,
+  items: CompletionItem[]
+): CompletionItem[] {
+
+  return items.map((item: CompletionItem) => {
+
+    return {
+      label: item.label,
+      kind: item.kind,
+      insertText: new SnippetString(item.textEdit.newText.slice(slice)),
+      documentation: item.documentation,
+      range: {
+        inserting: new Range(
+          new Position(line, character),
+          new Position(line, item.textEdit.range.end.character)
+        ),
+        replacing: new Range(
+          new Position(line, character),
+          new Position(line, item.textEdit.range.end.character)
+        )
+      }
+    };
+
+  });
+
+}
+
+/**
+ * Get Logical Completions
+ *
+ * Generates the logical conditional based completion
+ * items used within control type tokens.
+ */
+export function getLogicalCompletions (): CompletionItem[] {
+
+  return [
+    {
+      label: '==',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('=='),
+      documentation: new MarkdownString('Equals')
+    },
+    {
+      label: '!=',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('!='),
+      documentation: new MarkdownString('Does not equal')
+    },
+    {
+      label: '>',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('>'),
+      documentation: new MarkdownString('Greater than')
+    },
+    {
+      label: '<',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('<'),
+      documentation: new MarkdownString('Less than')
+    },
+    {
+      label: '>=',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('>='),
+      documentation: new MarkdownString('Greater than or equal to')
+    },
+    {
+      label: '<=',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('<='),
+      documentation: new MarkdownString('Less than or equal to')
+    },
+    {
+      label: 'and',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('and'),
+      documentation: new MarkdownString('Logical and')
+    },
+    {
+      label: 'or',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('or'),
+      documentation: new MarkdownString('Logical or')
+    },
+    {
+      label: 'contains',
+      kind: CompletionItemKind.Operator,
+      insertText: new SnippetString('contains'),
+      documentation: new MarkdownString('contains checks for the presence of a substring inside a string and can also check for the presence of a string in an array of strings.\n\n**You cannot use it to check for an object in an array of objects.**')
+    }
+  ];
 }
 
 /**
@@ -139,26 +315,84 @@ export function getObjectCompletions ([ label, spec ]: [ string, IObject ]): Com
   return {
     label,
     tags: spec.deprecated ? [ CompletionItemTag.Deprecated ] : [],
-    kind: spec.const
-      ? CompletionItemKind.Constant
-      : setObjectType(spec.type),
-    documentation: documentation(
-      spec.description,
-      spec.reference
-    )
+    kind: spec.const ? CompletionItemKind.Constant : setObjectType(spec.type),
+    documentation: documentation(spec.description, spec.reference)
   };
 
 };
 
-export function prevWord (content: string, offset: number, word: Words[]) {
+function isSchemaBlockType (content: string, operator: string, tagName: string) {
 
-  const prev = content.slice(0, offset);
+  if ((tagName === 'if' || tagName === 'elsif') && /==/.test(operator)) {
 
-  return word.some(w => new RegExp(`[\\s\\|\\%\\{]\\b${w}\\b[\\s\\|\\%\\}]$`).test(prev));
+    const token = content.indexOf(tagName, 2) + tagName.length;
+    const condition = content.slice(token).trimLeft();
+    const logical = condition.slice(0, condition.indexOf(operator)).trim().split('.');
+
+    return logical[0] === 'block' && logical[1] === 'type';
+
+  }
+
+  return false;
+}
+
+/**
+ * Previous Character
+ *
+ * Determines the previous character from the current cursor location.
+ * This is a series of validation checks which is used to infer the
+ * type of completion to be provided.
+ */
+export function prevChar (content: string, offset: number, tagName?: string): Token {
+
+  const prev = content.slice(0, offset).trimEnd();
+  const last = prev.charCodeAt(prev.length - 1);
+
+  if (last === Char.PIP) return Token.Filter;
+  if (last === Char.COL) return Token.Object;
+  if (last === Char.DOT) return Token.Property;
+  if ((last === Char.SQO || last === Char.DQO) && prev.charCodeAt(prev.length - 2) === Char.LSB) {
+    return Token.Property;
+  }
+
+  let wsp: number;
+
+  if (last === Char.SQO || last === Char.DQO) {
+    wsp = content.slice(0, offset - 1).trimEnd().lastIndexOf(' ');
+  } else {
+    wsp = prev.lastIndexOf(' ');
+  }
+
+  if (wsp > -1) {
+
+    const word = prev.slice(wsp);
+
+    if (r.Operators.test(word)) {
+
+      return isSchemaBlockType(content, word, tagName)
+        ? Token.Block
+        : Token.Object;
+    }
+  }
+
+  if (isString(tagName)) {
+    if (tagName === 'if' || tagName === 'elsif' || tagName === 'unless') {
+
+      if (r.Tag(tagName).test(content)) return Token.Object;
+      if (r.EmptyEnder.test(content.slice(offset))) return Token.Logical;
+
+    } else if (tagName === 'case' || tagName === 'when') {
+
+      if (r.Tag(tagName).test(content)) return Token.Object;
+
+    }
+  }
+
+  return null;
 
 }
 
-export function prevChar (content: string, offset: number, code: Char[]) {
+export function prevChars (content: string, offset: number, code: Char[]) {
 
   const char = content
     .slice(0, offset)
@@ -167,18 +401,6 @@ export function prevChar (content: string, offset: number, code: Char[]) {
   if (!content[char]) return null;
 
   return code.includes(content[char].charCodeAt(0));
-
-}
-
-export function isEmptyObject (content: string) {
-
-  return /{{-?-?}}/.test(content.replace(/\s+/, ''));
-
-}
-
-export function isEmptyTag (content: string) {
-
-  return /{%-?-?%}/.test(content.replace(/\s+/, ''));
 
 }
 
@@ -201,6 +423,7 @@ export function ProvideProps ([ label, { description, snippet = label } ]) {
 /**
  * Parse Object
  *
+ *
  */
 export function parseObject (content: string, offset: number) {
 
@@ -211,7 +434,10 @@ export function parseObject (content: string, offset: number) {
 
   const props = match[0].split('.').filter(Boolean);
 
-  //console.log(slice, props);
+  if (props[1] === 'settings' && props.length === 2) {
+    if (props[0] === 'section') return 'settings';
+    if (props[0] === 'block') return 'block';
+  }
 
   if (!has(props[0], liquid.shopify.objects)) return null;
 
@@ -221,22 +447,96 @@ export function parseObject (content: string, offset: number) {
     return Object.entries(properties).map(ProvideProps as any);
   }
 
-  return (function walk (props: string[], value: Properties) {
+  return (function walk (next: string[], value: Properties) {
 
     if (!value) return null;
-    if (!has(props[0], value)) return null;
-    if (!has('properties', value[props[0]])) return null;
+    if (!has(next[0], value)) return null;
+    if (!has('properties', value[next[0]])) return null;
 
-    const object = value[props[0]].properties;
+    const object = value[next[0]].properties;
 
     // We check if we have walked to the last property
     // to which we can then provide properties, if we haven't
     // we continuall walk the values
-    return props.length > 1
-      ? object && walk(props.slice(1), object)
+    return next.length > 1
+      ? object && walk(next.slice(1), object)
       : object ? Object.entries(object).map(ProvideProps as any) : null;
 
   }(props.slice(1), liquid.shopify.objects[props[0]].properties));
+}
+
+/**
+ * Determine Token
+ *
+ * Determines the type of token we a dealing with, meaning
+ * whether we are within an tag type or output type. If `null`
+ * is returned, then cursor is not within a a Liquid token.
+ */
+export function typeToken (content: string, offset: number) {
+
+  const begin = content.slice(0, offset).lastIndexOf('{');
+  const token = content.slice(begin, offset);
+
+  if (token.charCodeAt(1) === Char.PER) return Token.Tag;
+  if (content.charCodeAt(begin - 1) === Char.LCB) return Token.Object;
+
+  return null;
+
+}
+
+export function getSchema (textDocument: TextDocument) {
+
+  const content = textDocument.getText();
+  const detect = content.indexOf('endschema');
+
+  if (detect === -1) return false;
+
+  const start = content.lastIndexOf('%}', detect) + 2;
+  const ender = content.lastIndexOf('{%', detect);
+  const offset = textDocument.positionAt(start);
+
+  return {
+    offset: offset.line,
+    content: content.slice(start, ender)
+  };
+
+}
+
+/**
+ * Parse Schema
+ *
+ * Determines whether or not the cursor is currently within
+ * a `{% schema %}` code block region. The function returns
+ * an object informing on the location offsets of the code
+ * region. Use the `within` property for checksum.
+ */
+export function parseSchema (content: string, offset: number): false | {
+  within: boolean;
+  start: number;
+  ender: number;
+  get content(): string
+  parsed(): SchemaSectionTag
+} {
+
+  const detect = content.indexOf('endschema', offset);
+
+  if (detect === -1) return false;
+
+  const start = content.lastIndexOf('%}', detect) + 2;
+  const ender = content.lastIndexOf('{%', detect);
+
+  // We can proceed.
+  return {
+    within: offset > start && offset < ender,
+    start,
+    ender,
+    get content () {
+      return content.slice(start, ender);
+    },
+    parsed () {
+      return parseJson(content.slice(start, ender));
+    }
+  };
 }
 
 /**
@@ -251,13 +551,12 @@ export function parseObject (content: string, offset: number) {
  */
 export function parseToken (kind: Token, content: string, offset: number) {
 
-  const begin = content.slice(0, offset).lastIndexOf(kind === Token.Tag ? '{%' : '{{');
+  const begin = content.lastIndexOf(kind === Token.Tag ? '{%' : '{{', offset);
   const ender = content.indexOf(kind === Token.Tag ? '%}' : '}}', begin) + 2;
-  const within = offset > (begin + 2) && offset < (ender - 2);
-
+  const within = offset >= (begin + 2) && offset <= (ender - 2);
   const text = content.slice(begin, ender);
-  const startTrim = text.charCodeAt(2) === 45;
-  const endTrim = text.charCodeAt(ender - 3) === 45;
+  const startTrim = text.charCodeAt(2) === Char.DSH;
+  const endTrim = text.charCodeAt(ender - 3) === Char.DSH;
 
   return {
     within,
@@ -266,7 +565,9 @@ export function parseToken (kind: Token, content: string, offset: number) {
     startTrim,
     endTrim,
     text,
-    get tagName () { return text.slice(startTrim ? 3 : 3).match(/\w+/i)[0]; },
-    offset: offset - ender
+    offset: offset - ender,
+    get tagName () {
+      return text.slice(startTrim ? 3 : 2).match(/\w+/i)[0];
+    }
   };
 }
