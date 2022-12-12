@@ -2,7 +2,9 @@
 <div class="{{ object.prop | filter: 'string' }}">
 
   <!-- TEST: Liquid Attribute Injections -->
-  <div id="test" {% if condition == false %}
+  <div
+    id="test"
+    {% if condition == false %}
     data-id="{{ x }}"
     {% endif %}></div>
 
@@ -14,24 +16,43 @@
 {{ section.settings }}
 
 
-<div class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}" data-carousel-desktop-value="1" data-carousel-draggable-value="{{ section.settings.draggable }}" data-carousel-duration-value="{{ section.settings.duration }}"
+<div
+  class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}"
+  data-carousel-desktop-value="1"
+  data-carousel-draggable-value="{{ section.settings.draggable }}"
+  data-carousel-duration-value="{{ section.settings.duration }}"
   {%- if condition -%}
   data-carousel-hydrate-value="true"
   data-carousel-id-value="{{ section.id | base64_encode }}"
   {%- else -%}
   data-carousel-interval-value="{{ section.settings.interval }}"
   {% endif %}
-  data-carousel-loop-value="{{ section.settings.loop }}" data-carousel-mobile-value="1" data-carousel-tablet-value="1" data-controller="carousel">
+  data-carousel-loop-value="{{ section.settings.loop }}"
+  data-carousel-mobile-value="1"
+  data-carousel-tablet-value="1"
+  data-controller="carousel">
 
   {%- if section.settings.buttons -%}
-    <div class="previous d-flex ai-center" {%- if section.settings.buttons -%} {%- endif -%}>
-      <button aria-label="Previous" data-action="click->carousel#prev" type="button">
-        <icon name="chevron-left" />
+    <div
+      class="previous d-flex ai-center"
+      {%- if section.settings.buttons -%}
+      {%- endif -%}>
+      <button
+        aria-label="Previous"
+        data-action="click->carousel#prev"
+        type="button">
+        <icon
+          name="chevron-left" />
       </button>
     </div>
-    <div class="next d-flex ai-center">
-      <button aria-label="Next" data-action="click->carousel#next" type="button">
-        <icon name="chevron-right" />
+    <div
+      class="next d-flex ai-center">
+      <button
+        aria-label="Next"
+        data-action="click->carousel#next"
+        type="button">
+        <icon
+          name="chevron-right" />
       </button>
     </div>
   {%- endif -%}
@@ -72,17 +93,38 @@
 
 
 <!-- TEST: Shopify Schema Tag Block -->
-<div class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}" data-carousel-desktop-value="1" data-carousel-draggable-value="{{ section.settings.draggable }}" data-carousel-duration-value="{{ section.settings.duration }}" data-carousel-hydrate-value="true" data-carousel-id-value="{{ section.id | base64_encode }}" data-carousel-interval-value="{{ section.settings.interval }}" data-carousel-loop-value="{{ section.settings.loop }}" data-carousel-mobile-value="1" data-carousel-tablet-value="1" data-controller="carousel">
+<div
+  class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}"
+  data-carousel-desktop-value="1"
+  data-carousel-draggable-value="{{ section.settings.draggable }}"
+  data-carousel-duration-value="{{ section.settings.duration }}"
+  data-carousel-hydrate-value="true"
+  data-carousel-id-value="{{ section.id | base64_encode }}"
+  data-carousel-interval-value="{{ section.settings.interval }}"
+  data-carousel-loop-value="{{ section.settings.loop }}"
+  data-carousel-mobile-value="1"
+  data-carousel-tablet-value="1"
+  data-controller="carousel">
 
   {%- if section.settings.buttons -%}
-    <div class="previous d-flex ai-center">
-      <button aria-label="Previous" data-action="click->carousel#prev" type="button">
-        <icon name="chevron-left" />
+    <div
+      class="previous d-flex ai-center">
+      <button
+        aria-label="Previous"
+        data-action="click->carousel#prev"
+        type="button">
+        <icon
+          name="chevron-left" />
       </button>
     </div>
-    <div class="next d-flex ai-center">
-      <button aria-label="Next" data-action="click->carousel#next" type="button">
-        <icon name="chevron-right" />
+    <div
+      class="next d-flex ai-center">
+      <button
+        aria-label="Next"
+        data-action="click->carousel#next"
+        type="button">
+        <icon
+          name="chevron-right" />
       </button>
     </div>
   {%- endif -%}

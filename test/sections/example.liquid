@@ -6,21 +6,27 @@
   px-{{ section.settings.px }}
 {%- endcapture -%}
 
-<div class="{{ grid }}" data-controller='form' data-form-type-value='shopify:contact' data-form-response-value='toggle'>
+<div
+  class="{{ grid }}"
+  data-controller='form'
+  data-form-type-value='shopify:contact'
+  data-form-response-value='toggle'>
 
   {%- form 'contact'
     , action: '/pages/customer-support#contact_form'
     , data-form-target: 'form' -%}
 
     {% if form.posted_successfully? %}
-      <p class='note form-success'>
+      <p
+        class='note form-success'>
         {{ 'contact.form.post_success' | t }}
       </p>
     {% endif %}
 
     <!-- FAILED LOGIN -->
     {%- if form.errors -%}
-      <output class='form-errors'>
+      <output
+        class='form-errors'>
         {{- form.errors | default_errors -}}
       </output>
     {%- endif -%}
@@ -29,16 +35,36 @@
 
       {% if block.type == "hidden" %}
 
-        <input class='d-none' type='hidden' name="{{ block.settings.name }}" value="{{ block.settings.value }}" data-form-target='field'>
+        <input
+          class='d-none'
+          type='hidden'
+          name="{{ block.settings.name }}"
+          value="{{ block.settings.value }}"
+          data-form-target='field'>
 
       {% elsif block.type == 'text' %}
 
-        <div class="col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
-          <div class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+        <div
+          class="col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
+          <div
+            class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
 
-            <input class='fm-input' data-form-target='field' data-action='form#onInput' type="{{ block.type }}" name="{{ block.settings.name }}" id="{{ block.settings.name }}" placeholder="{{ block.settings.placeholder }}" autocomplete="{{ block.settings.autocomplete }}" minlength="{{ block.settings.minlength }}" maxlength="{{ block.settings.maxlength }}" required="{{ block.settings.required }}">
+            <input
+              class='fm-input'
+              data-form-target='field'
+              data-action='form#onInput'
+              type="{{ block.type }}"
+              name="{{ block.settings.name }}"
+              id="{{ block.settings.name }}"
+              placeholder="{{ block.settings.placeholder }}"
+              autocomplete="{{ block.settings.autocomplete }}"
+              minlength="{{ block.settings.minlength }}"
+              maxlength="{{ block.settings.maxlength }}"
+              required="{{ block.settings.required }}">
 
-            <label class='fm-label' for="{{ block.settings.name }}">
+            <label
+              class='fm-label'
+              for="{{ block.settings.name }}">
               {{ block.settings.placeholder }}
             </label>
 
@@ -47,11 +73,22 @@
 
       {% elsif type == 'file' %}
 
-        <div class="col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
+        <div
+          class="col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
 
-          <input class='fm-input' data-form-target='field' data-action='input->form#onInput' type="{{ block.type }}" id="{{ block.settings.name }}" name="{{ block.settings.name }}" multiple="{{ block.settings.multiple }}" required="{{ block.settings.required }}">
+          <input
+            class='fm-input'
+            data-form-target='field'
+            data-action='input->form#onInput'
+            type="{{ block.type }}"
+            id="{{ block.settings.name }}"
+            name="{{ block.settings.name }}"
+            multiple="{{ block.settings.multiple }}"
+            required="{{ block.settings.required }}">
 
-          <label for="{{ block.settings.name }}" class='fm-label'>
+          <label
+            for="{{ block.settings.name }}"
+            class='fm-label'>
             {{ block.settings. }}
           </label>
 
@@ -59,12 +96,24 @@
 
       {% elsif block.type == 'email' %}
 
-        <div class="col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
-          <div class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+        <div
+          class="col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
+          <div
+            class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
 
-            <input class='fm-input' data-form-target='field' data-action='form#onInput' type="{{ block.type }}" name="{{ block.settings.name }}" placeholder="{{ block.settings.placeholder }}" required="{{ block.settings.required }}" autocomplete="{{ block.settings.autocomplete }}">
+            <input
+              class='fm-input'
+              data-form-target='field'
+              data-action='form#onInput'
+              type="{{ block.type }}"
+              name="{{ block.settings.name }}"
+              placeholder="{{ block.settings.placeholder }}"
+              required="{{ block.settings.required }}"
+              autocomplete="{{ block.settings.autocomplete }}">
 
-            <label class='fm-label' for="{{ block.settings.name }}">
+            <label
+              class='fm-label'
+              for="{{ block.settings.name }}">
               {{ block.settings }}
             </label>
 
@@ -74,12 +123,23 @@
 
       {% elsif block.type == 'tel' %}
 
-        <div class="col-{{ block.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
-          <div class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+        <div
+          class="col-{{ block.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
+          <div
+            class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
 
-            <input class='fm-input upper' data-form-target='field' data-action='form#onInput' type="{{ type }}" name="{{ block.settings.name }}" required="{{ block.settings.required }}" autocomplete="{{ block.settings.autocomplete }}">
+            <input
+              class='fm-input upper'
+              data-form-target='field'
+              data-action='form#onInput'
+              type="{{ type }}"
+              name="{{ block.settings.name }}"
+              required="{{ block.settings.required }}"
+              autocomplete="{{ block.settings.autocomplete }}">
 
-            <label class='fm-label' for="{{ block.settings.name }}">
+            <label
+              class='fm-label'
+              for="{{ block.settings.name }}">
               {{ block.settings }}
             </label>
 
@@ -88,12 +148,22 @@
 
       {% elsif block.type == 'textarea' %}
 
-        <div class='col-12'>
-          <div class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+        <div
+          class='col-12'>
+          <div
+            class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
 
-            <textarea class='fm-input' style="height: {{ block.settings.height }}px;" name="{{ block.settings.name }}" id="{{ block.settings.name }}" placeholder="{{ block.settings.placeholder }}" required="{{ block.settings.required }}"></textarea>
+            <textarea
+              class='fm-input'
+              style="height: {{ block.settings.height }}px;"
+              name="{{ block.settings.name }}"
+              id="{{ block.settings.name }}"
+              placeholder="{{ block.settings.placeholder }}"
+              required="{{ block.settings.required }}"></textarea>
 
-            <label class='fm-label' for="{{ block.settings.name }}">
+            <label
+              class='fm-label'
+              for="{{ block.settings.name }}">
               {{ block.settings.placeholder }}
             </label>
 
@@ -102,13 +172,22 @@
 
       {% elsif block.type == 'dropdown' %}
 
-        <div class='col-12'>
+        <div
+          class='col-12'>
 
-          <div class="col-12 mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+          <div
+            class="col-12 mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
 
-            <div class='fm-dropdown fm-float' data-controller='dropdown' data-form-target='dropdown'>
+            <div
+              class='fm-dropdown fm-float'
+              data-controller='dropdown'
+              data-form-target='dropdown'>
 
-              <button type='button' class='btn btn-dropdown fw-light' data-action='dropdown#toggle' data-dropdown-target='button'>
+              <button
+                type='button'
+                class='btn btn-dropdown fw-light'
+                data-action='dropdown#toggle'
+                data-dropdown-target='button'>
                 {{ block.settings.placeholder }}
               </button>
 
@@ -125,10 +204,21 @@
                     assign id = value | handle
                   %}
 
-                  <label class='upper fs-sm' for="{{ id }}">
+                  <label
+                    class='upper fs-sm'
+                    for="{{ id }}">
                     {{ value }}
                   </label>
-                  <input class='d-none' type='radio' name="{{ block.settings.name }}" id="{{ id }}" value="{{ value }}" aria-label="{{ value }}" data-form-target='field' data-action='dropdown#select form#onInput' {% if forloop.first and block.settings.required %}required{% endif %}>
+                  <input
+                    class='d-none'
+                    type='radio'
+                    name="{{ block.settings.name }}"
+                    id="{{ id }}"
+                    value="{{ value }}"
+                    aria-label="{{ value }}"
+                    data-form-target='field'
+                    data-action='dropdown#select form#onInput'
+                    {% if forloop.first and block.settings.required %}required{% endif %}>
 
                 {% endfor %}
 
@@ -140,12 +230,24 @@
 
       {% elsif block.type == 'switch' %}
 
-        <div class="col-12 mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
-          <div class="fm-switch d-flex ai-center {{ block.settings.row }}">
+        <div
+          class="col-12 mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+          <div
+            class="fm-switch d-flex ai-center {{ block.settings.row }}">
 
-            <input type='checkbox' class='fm-check-input' data-form-target='field' data-action='form#onInput' id="{{ block.settings.name }}" name="{{ block.settings.name }}" required="{{ block.settings.required }}" {% if block.settings.checked %}checked{% endif %}>
+            <input
+              type='checkbox'
+              class='fm-check-input'
+              data-form-target='field'
+              data-action='form#onInput'
+              id="{{ block.settings.name }}"
+              name="{{ block.settings.name }}"
+              required="{{ block.settings.required }}"
+              {% if block.settings.checked %}checked{% endif %}>
 
-            <label for="{{ block.settings.name }}" class='fm-label ml-3'>
+            <label
+              for="{{ block.settings.name }}"
+              class='fm-label ml-3'>
               {{ block.settings }}
             </label>
 
@@ -157,8 +259,12 @@
     {% endfor %}
 
     {% if section.blocks and section.settings.btn_label %}
-      <div class="col-12 {{ section.settings.btn_position }}">
-        <button class='btn btn-black fw-light d-flex mt-4 py-3' type='submit' data-form-target='submit'>
+      <div
+        class="col-12 {{ section.settings.btn_position }}">
+        <button
+          class='btn btn-black fw-light d-flex mt-4 py-3'
+          type='submit'
+          data-form-target='submit'>
           {{ section.settings.btn_label }}
         </button>
       </div>
@@ -166,9 +272,11 @@
 
   {% endform %}
 
-  <div class='tc fs-lg ac-center d-none'>
+  <div
+    class='tc fs-lg ac-center d-none'>
 
-    <div data-form-target='response'></div>
+    <div
+      data-form-target='response'></div>
 
   </div>
 
@@ -850,7 +958,7 @@
           },
           {
             "type": "checkbox",
-            "id": "consent",
+            "id": "xxx",
             "info": "Whether or not the switch is a consent",
             "label": "Consent (GDRP)",
             "default": false

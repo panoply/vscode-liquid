@@ -1,25 +1,35 @@
-{%- comment -%}
+{% comment %}
+  Hello World
+{% endcomment %}
 
-  HERO SLIDESHOW
-
-  Renders a carousel slideshow components
-  that can contain image or video content.
-  Each slide can apply text overlay content
-  identical to that of which can be set in
-  the hero_image section. Single slides are
-  enforced on the carousel.
-{%- endcomment -%}
-<div class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}" data-carousel-desktop-value="1" data-carousel-draggable-value="{{ section.settings.draggable }}" data-carousel-duration-value="{{ section.settings.duration }}" data-carousel-hydrate-value="true" data-carousel-id-value="{{ section.id | base64_encode }}" data-carousel-interval-value="{{ section.settings.interval }}" data-carousel-loop-value="{{ section.settings.loop }}" data-carousel-mobile-value="1" data-carousel-tablet-value="1" data-controller="carousel">
+<div
+  class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}"
+  data-carousel-desktop-value="1"
+  data-carousel-draggable-value="{{ section.settings.draggable }}"
+  data-carousel-duration-value="{{ section.settings.duration }}"
+  data-carousel-hydrate-value="true"
+  data-carousel-id-value="{{ section.id | base64_encode }}"
+  data-carousel-interval-value="{{ section.settings.interval }}"
+  data-carousel-loop-value="{{ section.settings.loop }}"
+  data-carousel-mobile-value="1"
+  data-carousel-tablet-value="1"
+  data-controller="carousel">
 
 
   {%- if section.settings.buttons -%}
     <div class="previous d-flex ai-center">
-      <button aria-label="Previous" data-action="click->carousel#prev" type="button">
+      <button
+        aria-label="Previous"
+        data-action="click->carousel#prev"
+        type="button">
         <icon name="chevron-left" />
       </button>
     </div>
     <div class="next d-flex ai-center">
-      <button aria-label="Next" data-action="click->carousel#next" type="button">
+      <button
+        aria-label="Next"
+        data-action="click->carousel#next"
+        type="button">
         <icon name="chevron-right" />
       </button>
     </div>
@@ -33,7 +43,7 @@
 
       {%- assign item = block.settings -%}
 
-      <div class=" {%- unless forloop.first %}col px-0 d-none{% else %}col px-0{% endunless %}" data-carousel-target="slide">
+      <div class="{%- unless forloop.first %}col px-0 d-none{% else %}col px-0{% endunless %}" data-carousel-target="slide">
 
         {%- if block.type == 'image_with_content' -%}
 
@@ -169,7 +179,10 @@
                   {%- endif -%}
                 {%- endcapture -%}
 
-                <a class="btn btn-line {{ class }}" href="{{ item.url }}" style="{{ style }}">
+                <a
+                  class="btn btn-line {{ class }}"
+                  href="{{ item.url }}"
+                  style="{{ style }}">
                   {{- item.btn -}}
                 </a>
 
