@@ -12,5 +12,8 @@
     "*.js.liquid": "liquid-javascript",
     "*.css.liquid": "liquid-css",
     "*.scss.liquid": "liquid-scss"
+  },
+  "liquid.format.json": {
+    "braceAllman": true
   }
 }

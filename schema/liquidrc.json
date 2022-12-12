@@ -2,6 +2,15 @@
   "title": "VSCode Liquid Extension",
   "$schema": "http://json-schema.org/draft-07/schema",
   "properties": {
+    "ignore": {
+      "type": "array",
+      "title": "A list of files or directories to exclude from formatting",
+      "default": [],
+      "markdownDescription": "A list of files or directories to exclude from formatting.",
+      "items": {
+        "type": "string"
+      }
+    },
     "wrap": {
       "type": "number",
       "title": "Wrap Limit",
@@ -16,7 +25,7 @@
     "commentIndent": {
       "type": "boolean",
       "default": false,
-      "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `false`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `false`\n\n#### Comment Indent\n\nWhether or not to indent comment blocks\n"
+      "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `false`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `true`\n\n#### Comment Indent\n\nWhether or not to indent the containing content of comment blocks.\n\n#### Note\n\nThis rule may not work as expected in `script` and `style` languages, but `markup` language are fully supported.\n\n#\n\n---\n\n#### Before Formatting\n\n_Below is an example of how this rule works if it's enabled, ie: `true`. Notice the comment content starts on the same line as the opening and closing delimiters. When applying beautification the content will be indented in accordance with `indentChar` and `indentSize` values._\n\n```liquid\n\n<ul>\n <li>Hello</li>\n <!--\n I am currently not indented\n -->\n <li>World</li>\n</ul>\n\n\n```\n\n#### After Formatting\n\n_Using the above sample with the rule enabled (ie: `true`), notice how the comment contents are indented._\n\n```html\n\n\n<ul>\n  <li>Hello</li>\n  <!--\n    I am now indented\n  -->\n <li>World</li>\n</ul>\n\n```\n"
     },
     "preserveLine": {
       "type": "number",
@@ -26,7 +35,7 @@
     "preserveComment": {
       "type": "boolean",
       "default": false,
-      "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `false`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `false`\n\n#### Preserve Comment\n\nEliminate Word Wrap Upon Comments, ie: Prevent comment reformatting due to option wrap.\n"
+      "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `false`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `false`\n\n#### Preserve Comment\n\nPreserve the inner contents of comments and do not apply indentation.\n"
     },
     "endNewLine": {
       "type": "boolean",
@@ -68,11 +77,6 @@
           "type": "array",
           "items": { "type": "string" },
           "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `[]`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `[]`\n\n#### Attribute Sort List\n\nA comma separated list of attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires `attributeSort` to be enabled, ie: have a value of `true`. If you have not set `attributeSort` to `true` then this rule will have no effect.\n\n#### Required Rule\n\nThe `attributeSort` rule must be enabled, ie: `true`\n\n#\n\n---\n\n\n#### Example Options\n\n_Below is an example of how this rule works and you've defined the following attribute sorting structure_\n\n```js\n\n{\n  attributeSort: true, // must be true when using this rule\n  attributeSortList: [\n    'id',\n    'class',\n    'data-b',\n    'data-z'\n  ]\n}\n\n\n```\n\n#### Before Formatting\n\n_Using the above example options, let's consider the following attributes contained on a tag. Notice how each attribute is expressed in a no specific order. This will change **after** formatting as per the **after** example._\n\n```html\n\n<!-- Before formatting -->\n<div\n  data-z\n  data-a\n  id=\"x\"\n  data-d\n  data-c\n  data-b\n  data-e\n  class=\"xx\"></div>\n\n\n```\n\n#### After Formatting\n\n_Using the above **before** formatting example, notice how **after** formatting the attribute sort order has been changed. The `id`, `class`, `data-b` and `data-z` attributes are now sorted in accordance with above example options. The `data-a`, `data-c` `data-d` and `data-e` attributes have also been sorted but in alphabetical order following the sort list we passed._\n\n_When using the `attributeSortList` rule, all attributes that are not defined will be sorted alphabetically proceeding those you've provided._\n\n\n```html\n\n<!-- After formatting -->\n<div\n  id=\"x\"\n  class=\"xx\"\n  data-b\n  data-z\n  data-a\n  data-c\n  data-d></div>\n\n\n```\n"
-        },
-        "delimiterSpacing": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `false`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `true`\n\n\n#### Delimiter Spacing 💧\n\n\nWhether or not Liquid delimiters should apply a single space at the starting and ending points of their structure or be left intact.\n\n#\n\n---\n\n\n#### Example\n\n_Below is an example of how this rule works if it's enabled, ie: `true`. Notice how the extraneous whitespace and newlines are removed **after** formatting was applied._\n\n```html\n\n<!-- Before formatting -->\n{%    for i in arr   %}\n\n  {{\n    i.object\n       }}\n\n  {%if x%}\n    {{foo}} {{bar   }} {{   baz   }}\n  {%   endif%}\n\n{%endfor              %}\n\n<!-- After formatting -->\n{% for i in arr %}\n  {{ i.object }}\n  {% if x %}\n    {{ foo }} {{ bar }} {{ baz }}\n  {% endif %}\n{% endfor %}\n\n```\n\n"
         },
         "delimiterTrims": {
           "type": "string",
@@ -147,6 +151,18 @@
           "type": "string",
           "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `none`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `double`\n\n#### Quote Convert\n\nHow quotation characters of markup attributes and Liquid tokens should be handled. Allows for conversion to single quotes or double quotes. Markup tag attributes should always use double quotations, it's the standard in languages like HTML.\n\n#### Tip\n\nWhen working with Liquid, use `single` quotes for strings and always infer `double` in the markup.\n\n#\n\n---\n\n#### 👍 &nbsp;&nbsp; `none`\n\n_Below is an example of how this rule works if set to `none` which is the **default** setting. No conversion of quotations is applied when using `none` as per the **before** and **after** examples_\n\n```html\n\n<!-- Before Formatting -->\n<div class='single' id=\"double\"></div>\n\n<!-- After Formatting -->\n<div class='single' id=\"double\"></div>\n\n```\n\n---\n\n#### 👍 👍 &nbsp;&nbsp; `double`\n\n_Below is an example of how this rule works if set to `double` which will go about converting and ensuring all markup quotations and using doubles._\n\n\n```html\n\n<!-- Before Formatting -->\n<div class='foo' id='bar'></div>\n\n<!-- After Formatting -->\n<div class=\"foo\" id=\"bar\"></div>\n\n```\n\n---\n\n#### 👎 &nbsp;&nbsp; `single`\n\n\n_Below is an example of how this rule works if set to `single` which will go about converting and ensuring all markup quotations and using singles._\n\n```html\n\n<!-- Before Formatting -->\n<div class=\"foo\" id=\"bar\"></div>\n\n<!-- After Formatting -->\n<div class='foo' id='bar'></div>\n\n\n```\n\n",
           "enum": ["none", "double", "single"]
+        },
+        "valueForce": {
+          "default": "intent",
+          "type": "string",
+          "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `intent`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `intent`\n\n#### Value Force\n\nThe `valueForce` beautification rule is a multi-select rule that will force indent all attribute values to new lines in accordance with the attribute value expression provided.\n\n#### Note\n\nThis rule will respect `forceIndent` settings, wherein if `forceIndent` is set to `false` newline breaks will not work if structures are chained together with no leading or ending whitespace characters. Please note that this rule overrides `forceAttribute` and executes as `true` so if you've defined a force attribute limit it will be overridden.\n\n#\n\n---\n\n#### 👍 👍 &nbsp;&nbsp; `intent`\n\n_Setting this rule to intent will force attributes when an attribute value is determined to contain a newline character or if the defined wrap limit has exceeded. The intent value combines both `wrap` and `newline` together, forcing when either condition is met._\n\n```liquid\n\n<!-- Before Formatting -->\n\n<div id=\"foo\" data-x=\"bar\" class=\"{% if cond %}\nxxx {% endif %}\">\n  Attributes will be forced due to newline at \"xxx\"\n\n  <div id=\"xxx\" class=\"{% if foo %} xxx {% else %} uuu {% endif %}\">\n    Assuming this exceeds a defined wrap limit, it will be forced\n  </div>\n</div>\n\n<!-- After Formatting -->\n\n<div\n  id=\"foo\"\n  data-x=\"bar\"\n  class=\"\n  {% if cond %}\n    xxx\n  {% endif %}\">\n  Attributes will be forced due to newline at \"xxx\"\n\n  <div\n    id=\"xxx\"\n    class=\"\n    {% if foo %}\n      xxx\n    {% else %}\n      uuu\n    {% endif %}\">\n    Assuming this exceeds a defined wrap limit, it will be forced\n  </div>\n</div>\n\n\n```\n\n---\n\n#### 👍 &nbsp;&nbsp; `wrap`\n\n_Setting this rule to wrap will force attributes when an attribute value containing Liquid expressions exceeds word wrap limit. This option expects a wrap limit to be defined._\n\n_Example Rules_\n\n```js\nimport prettify from '@liquify/prettify';\n\nprettify.options({\n  wrap: 80,\n  markup: {\n    valueForce: 'wrap'\n  }\n})\n\n```\n\n```liquid\n\n<!-- Before Formatting -->\n\n<div id=\"xxx\" class=\"{% if x %} xxx {% else %} uuu {% endif %}\">\n  Assuming this exceeds a defined wrap limit, it will be forced\n</div>\n\n\n<!-- After Formatting -->\n\n<div\n  id=\"xxx\"\n  class=\"\n  {% if x %}\n    xxx\n  {% else %}\n    uuu\n  {% endif %}\">\n  Assuming this exceeds a defined wrap limit, it will be forced\n</div>\n\n\n```\n\n---\n\n#### 👍 &nbsp;&nbsp; `newline`\n\n_Setting this rule to newline will force attributes when an attribute value with a Liquid expressions contains a newline character. The newline character is a signal to Prettify that the all attributes and the value should be forced. The rule will only ever be invoked when a newline is provided, it does not matter where in the value string._\n\n```liquid\n\n<!-- Before Formatting -->\n\n<div id=\"foo\" data-x=\"bar\" class=\"{% if cond %}\nxxx {% else %} uuu {% endif %}\">\n\n  All attributes will be forced due to newline at \"xxx\"\n\n</div>\n\n\n<!-- After Formatting -->\n\n<div\n  id=\"foo\"\n  data-x=\"bar\"\n  class=\"\n  {% if cond %}\n    xxx\n  {% else %}\n    uuu\n  {% endif %}\">\n\n  All attributes will be forced due to newline at \"xxx\"\n\n</div>\n\n\n```\n\n---\n\n#### 👎 👎 &nbsp;&nbsp; `always`\n\n_Setting this rule to `always` will force attributes whenever a value contains a Liquid tag block. Liquid output tag tokens will not apply forcing._\n\n```liquid\n\n<!-- Before Formatting -->\n\n<div id=\"foo\" data-x=\"bar\" class=\"{% if c %} xxx {% else %} uuu {% endif %}\">\n\n  All attributes will be forced\n\n</div>\n\n\n<!-- After Formatting -->\n\n<div\n  id=\"foo\"\n  data-x=\"bar\"\n  class=\"\n  {% if c %}\n    xxx\n  {% else %}\n    uuu\n  {% endif %}\">\n\n  All attributes will be forced\n\n</div>\n\n\n```\n\n\n---\n\n#### 👎 &nbsp;&nbsp; `never`\n\n_Setting the rule to never will disable force value behavior and no value forcing will be applied. In situations where you have set `forceAttribute` to `true` or defined a `wrap` based force, values will still not be forced. You can manually apply indentations and new lines when the rule is set to `never`,_\n\n```liquid\n\n<!-- Before Formatting -->\n\n<div id=\"foo\" data-x=\"bar\" class=\"{% if c %} xxx {% else %} uuu {% endif %}\">\n\n  All attributes will remain intact\n\n</div>\n\n\n<!-- After Formatting -->\n\n<div id=\"foo\" data-x=\"bar\" class=\"{% if c %} xxx {% else %} uuu {% endif %}\">\n\n  All attributes will remain intact\n\n</div>\n\n\n```\n",
+          "enum": [
+            "intent",
+            "wrap",
+            "newline",
+            "always",
+            "never"
+          ]
         }
       }
     },
