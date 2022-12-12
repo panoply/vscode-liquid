@@ -439,6 +439,8 @@ export function rulesDefault (): Workspace.Format {
   const rules = rulesOmitted(prettify.options.rules);
   const editor = workspace.getConfiguration('editor');
 
+  rules.json.braceAllman = true;
+
   return {
     ignore: [],
     wrap: editor.get<number>('wordWrapColumn') || rules.wrap,
@@ -451,19 +453,22 @@ export function rulesDefault (): Workspace.Format {
     markup: {
       correct: rules.markup.correct,
       quoteConvert: rules.markup.quoteConvert,
-      delimiterSpacing: rules.markup.delimiterSpacing,
       selfCloseSpace: rules.markup.selfCloseSpace,
       commentNewline: rules.markup.commentNewline,
       forceIndent: rules.markup.forceIndent,
-      lineBreakOperator: rules.markup.lineBreakOperator,
+      lineBreakSeparator: rules.markup.lineBreakSeparator,
       delimiterTrims: rules.markup.delimiterTrims,
+      valueForce: rules.markup.valueForce,
       attributeSort: rules.markup.attributeSort,
       attributeSortList: rules.markup.attributeSortList,
       attributeCasing: rules.markup.attributeCasing,
       forceAttribute: rules.markup.forceAttribute,
       forceLeadAttribute: rules.markup.forceLeadAttribute,
       preserveAttributes: rules.markup.preserveAttributes,
-      preserveText: rules.markup.preserveText
+      preserveText: rules.markup.preserveText,
+      ignoreScripts: rules.markup.ignoreScripts,
+      ignoreStyles: rules.markup.ignoreStyles,
+      normalizeSpacing: rules.markup.normalizeSpacing
     },
     json: {
       bracePadding: rules.json.bracePadding,
@@ -528,7 +533,6 @@ export function rulesRecommend (): Workspace.Format {
     markup: {
       correct: false,
       quoteConvert: 'double',
-      delimiterSpacing: true,
       selfCloseSpace: true,
       commentNewline: true,
       forceIndent: false,
@@ -536,7 +540,9 @@ export function rulesRecommend (): Workspace.Format {
       attributeSortList: [],
       delimiterTrims: 'preserve',
       attributeCasing: 'preserve',
-      lineBreakOperator: 'default',
+      lineBreakSeparator: 'before',
+      normalizeSpacing: true,
+      valueForce: 'intent',
       forceAttribute: 3,
       forceLeadAttribute: false,
       preserveAttributes: false,
