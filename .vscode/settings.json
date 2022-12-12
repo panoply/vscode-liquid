@@ -4,5 +4,13 @@
     "Mansedan",
     "packagejson",
     "VSIX"
-  ]
+  ],
+  "files.associations": {
+    "*.json.liquid": "json",
+    "*.yaml.liquid": "yaml",
+    "*.md.liquid": "markdown",
+    "*.js.liquid": "liquid-javascript",
+    "*.css.liquid": "liquid-css",
+    "*.scss.liquid": "liquid-scss"
+  }
 }
