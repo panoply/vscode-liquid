@@ -75,7 +75,8 @@ export class State {
     filters: true,
     objects: true,
     operators: true,
-    section: true
+    section: true,
+    logical: true
   };
 
   /**
