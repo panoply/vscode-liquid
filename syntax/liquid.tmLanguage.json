@@ -120,6 +120,9 @@
         },
         {
           "include": "#filters"
+        },
+        {
+          "include": "#inferred"
         }
       ]
     },
@@ -164,6 +167,9 @@
         },
         {
           "include": "#filters"
+        },
+        {
+          "include": "#inferred"
         }
       ],
       "end": "(-)?(%})",
@@ -343,7 +349,7 @@
         },
         {
           "name": "entity.name.tag.method.liquid",
-          "match": "\\s+\\b(in|as|with)\\b"
+          "match": "\\s+\\b(in|as|with|for)\\b"
         },
         {
           "name": "variable.parameter.liquid",
@@ -390,6 +396,14 @@
               "name": "support.function.filter.liquid"
             }
           }
+        }
+      ]
+    },
+    "inferred": {
+      "patterns": [
+        {
+          "name": "support.class.object-value.liquid",
+          "match": "(?<=\\s+\\b(in)\\b\\s+)\\b(\\w+(?!\\.))\\b"
         }
       ]
     },

@@ -29,9 +29,15 @@
 
 {%- endfor %}
 
+
+{% # FOR LOOP INFERRED ARRAY ITERATION %}
+
+{% for variable in inferred %}
+
+{% endfor %}
+
 {% for variable in (1..200) %}
 
-  expression
 
 {% endfor %}
 
@@ -81,6 +87,3 @@
 {%- for item in collection -%}{%- endfor -%}
 
 
-{% # COMMENT WORD BOUNDRY %}
-
-{% if block.comments_enabled? %}{% endif %}

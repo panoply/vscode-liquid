@@ -12,10 +12,14 @@
 
   assign bar = '' | filter: 'string' | ceil: 10
 
-  for i in x (1..10)
+  for x in inferred
+
+  endfor
+
+  for i in (1..10)
 
     capture name
-    100.20
+      100.20
     endcapture
 
     section 'section'
