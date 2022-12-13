@@ -3,6 +3,128 @@ export const schema = {
   $id: 'shopify-section-schema',
   version: 1.1,
   definitions: {
+    languages: {
+      type: 'object',
+      description: 'Locales',
+      properties: {
+        af: {
+          type: 'string',
+          description: 'Afrikaans'
+        },
+        bs: {
+          type: 'string',
+          description: 'Bosnian (bosanski/босански)'
+        },
+        cs: {
+          type: 'string',
+          description: 'Czech (čeština)'
+        },
+        da: {
+          type: 'string',
+          description: 'Danish (dansk)'
+        },
+        de: {
+          type: 'string',
+          description: 'German (Deutsch)'
+        },
+        el: {
+          type: 'string',
+          description: 'Greek (ελληνικά)'
+        },
+        en: {
+          type: 'string',
+          description: 'English'
+        },
+        es: {
+          type: 'string',
+          description: 'Spanish (español)'
+        },
+        fi: {
+          type: 'string',
+          description: ' Finnish (suomi)'
+        },
+        fr: {
+          type: 'string',
+          description: 'French (français)'
+        },
+        fy: {
+          type: 'string',
+          description: 'Frisian (Frysk)'
+        },
+        he: {
+          type: 'string',
+          description: 'Hebrew (עברית)'
+        },
+        hi: {
+          type: 'string',
+          description: 'Hindi (हिंदी)'
+        },
+        hu: {
+          type: 'string',
+          description: 'Hungarian (magyar)'
+        },
+        hy: {
+          type: 'string',
+          description: 'Armenian (Հայերեն)'
+        },
+        id: {
+          type: 'string',
+          description: 'Indonesian (Bahasa Indonesia)'
+        },
+        is: {
+          type: 'string',
+          description: 'Icelandic (íslenska)'
+        },
+        lv: {
+          type: 'string',
+          description: 'Latvian (latviešu)'
+        },
+        nl: {
+          type: 'string',
+          description: 'Dutch (Nederlands)'
+        },
+        no: {
+          type: 'string',
+          description: 'Norwegian (norsk)'
+        },
+        pl: {
+          type: 'string',
+          description: 'Polish (polski)'
+        },
+        it: {
+          type: 'string',
+          description: 'Italian (italiano)'
+        },
+        ja: {
+          type: 'string',
+          description: 'Japanese (日本語)'
+        },
+        ko: {
+          type: 'string',
+          description: 'Korean (한국어/韓國語)'
+        },
+        lb: {
+          type: 'string',
+          description: 'Luxembourgish (Lëtzebuergesch)'
+        },
+        ru: {
+          type: 'string',
+          description: 'Russian (русский)'
+        },
+        sv: {
+          type: 'string',
+          description: 'Swedish'
+        },
+        zh: {
+          type: 'string',
+          description: 'Chinese (中文)'
+        },
+        uk: {
+          type: 'string',
+          description: 'Ukrainian (українська)'
+        }
+      }
+    },
     content: {
       required: [ 'content' ],
       type: 'object',
@@ -18,9 +140,17 @@ export const schema = {
       type: 'object',
       properties: {
         placeholder: {
-          type: [ 'string', 'object' ],
           title: 'Placeholder',
-          description: 'A placeholder value'
+          description: 'A placeholder value',
+          default: '',
+          oneOf: [
+            {
+              type: 'string'
+            },
+            {
+              $ref: '#/definitions/languages'
+            }
+          ]
         }
       }
     },
@@ -48,16 +178,34 @@ export const schema = {
             additionalProperties: false,
             properties: {
               value: {
-                type: [ 'string', 'object' ],
+                type: 'string',
                 description: 'The value of the select options. This will be used as the output'
               },
               label: {
-                type: [ 'string', 'object' ],
-                description: 'A label to render to the theme editor'
+                title: 'Label',
+                description: 'A label to render to the theme editor',
+                default: '',
+                oneOf: [
+                  {
+                    type: 'string'
+                  },
+                  {
+                    $ref: '#/definitions/languages'
+                  }
+                ]
               },
               group: {
-                type: [ 'string', 'object' ],
-                description: 'An optional attribute you can add to each option to create option groups in the drop-down.'
+                title: 'Group',
+                description: 'An optional attribute you can add to each option to create option groups in the drop-down.',
+                default: '',
+                oneOf: [
+                  {
+                    type: 'string'
+                  },
+                  {
+                    $ref: '#/definitions/languages'
+                  }
+                ]
               }
             }
           }
@@ -89,10 +237,17 @@ export const schema = {
           description: 'The maximum number of steps'
         },
         unit: {
-          type: [ 'string', 'object' ],
-          title: 'Max',
-          maxLength: 3,
-          description: 'The unit of measure label. For example, you could use sec for seconds, or px for pixels.'
+          title: 'Unit',
+          description: 'The unit of measure label. For example, you could use sec for seconds, or px for pixels.',
+          default: '',
+          oneOf: [
+            {
+              type: 'string'
+            },
+            {
+              $ref: '#/definitions/languages'
+            }
+          ]
         }
       }
     },
@@ -110,10 +265,20 @@ export const schema = {
             additionalProperties: false,
             properties: {
               value: {
-                type: [ 'string', 'object' ]
+                type: 'string'
               },
               label: {
-                type: [ 'string', 'object' ]
+                title: 'Label',
+                description: 'Radio Label',
+                default: '',
+                oneOf: [
+                  {
+                    type: 'string'
+                  },
+                  {
+                    $ref: '#/definitions/languages'
+                  }
+                ]
               }
             }
           }
@@ -136,9 +301,7 @@ export const schema = {
           }
         },
         placeholder: {
-          type: [ 'string', 'object' ],
-          title: 'Placeholder',
-          description: 'A placeholder value'
+          $ref: '#/definitions/languages'
         }
       }
     },
@@ -336,19 +499,36 @@ export const schema = {
               description: 'The unique name for this setting. The id is exposed to the liquid templates via the settings object. It must only contain alphanumeric characters, underscores, and dashes.'
             },
             label: {
-              type: [ 'string', 'object' ],
               title: 'Label',
-              description: 'A label for this setting.'
+              description: 'A label for this setting.',
+              default: '',
+              oneOf: [
+                {
+                  type: 'string'
+                },
+                {
+                  $ref: '#/definitions/languages'
+                }
+              ]
             },
             default: {
               type: [ 'string', 'number', 'boolean' ],
               title: 'Default',
+              default: '',
               description: 'A value to which the setting can default.'
             },
             info: {
               title: 'Info',
-              type: [ 'string', 'object' ],
-              description: "Additional information about the setting. Use sparingly, as it's better to use only informative labels whenever you can."
+              description: "Additional information about the setting. Use sparingly, as it's better to use only informative labels whenever you can.",
+              default: '',
+              oneOf: [
+                {
+                  type: 'string'
+                },
+                {
+                  $ref: '#/definitions/languages'
+                }
+              ]
             }
           },
           allOf: [
@@ -411,7 +591,6 @@ export const schema = {
                 $ref: '#/definitions/limit'
               }
             },
-
             {
               if: {
                 required: [ 'type' ],
@@ -476,9 +655,17 @@ export const schema = {
         required: [ 'name', 'type' ],
         properties: {
           name: {
-            type: [ 'string', 'object' ],
-            title: 'Block Type',
-            description: 'The block name which is used as the merchants label'
+            title: 'Block Name',
+            description: 'The block name which is used as the merchants label',
+            default: '',
+            oneOf: [
+              {
+                type: 'string'
+              },
+              {
+                $ref: '#/definitions/languages'
+              }
+            ]
           },
           type: {
             type: 'string',
@@ -507,7 +694,15 @@ export const schema = {
     name: {
       title: 'Name',
       description: 'The name attribute determines the section title that is shown in the theme editor.',
-      type: [ 'string', 'object' ]
+      default: '',
+      oneOf: [
+        {
+          type: 'string'
+        },
+        {
+          $ref: '#/definitions/languages'
+        }
+      ]
     },
     class: {
       title: 'Class',
@@ -587,7 +782,15 @@ export const schema = {
           name: {
             title: 'Name',
             description: 'The preset name, which will show in the Add section portion of the theme editor.',
-            type: [ 'string', 'object' ]
+            default: '',
+            oneOf: [
+              {
+                type: 'string'
+              },
+              {
+                $ref: '#/definitions/languages'
+              }
+            ]
           },
           settings: {
             type: 'object',
