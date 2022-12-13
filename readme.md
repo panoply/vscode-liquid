@@ -234,6 +234,9 @@ By default, it is assumed you are using vscode workspace/user settings.
     // Whether attributes should be indented each onto their own line
     "forceAttribute": false,
 
+    // Attribute force control and handling for value expressions
+    "valueForce": "intent",
+
     // If text in the provided document code should be preserved
     "preserveText": true,
 
@@ -479,7 +482,10 @@ liquid`{% if condition == true %} {{ object.prop }} {% endif %}`;
 
 # Schema IntelliSense
 
-The current version (**v3.2^**) of the extension supports schema tag intelliSense capabilities. This is achieved on the client until the Liquify supersede and handling moves to the server using LSP. The feature drastically improves productivity for developers working with the Shopify Liquid variation.
+As of version **v3.2^** this extension supports schema tag intelliSense capabilities. The feature drastically improves productivity for developers working with the Shopify Liquid variation. The contained JSON of `{% schema %}` tags support all the common capabilities and features for JSON. The contents of the schema tags (ie: the section data) is also made available to Liquid `section.settings` and `block.settings` object tags with respect to scope regions defined within control flow tags.
+
+> **Note**&nbsp;
+> This is achieved on the client until the Liquify supersede and handling moves to the server using LSP.
 
 ### Liquid Completions
 
@@ -495,7 +501,7 @@ Liquid `section.*` object completions are provided in accordance with the conten
 
 ### JSON Completions
 
-Embedded JSON contained within `{% schema %}` tags support completions in accordance with trigger characters. The JSON completions are made possible through Schema Stores maintained at [@liquify/schema](#). You can disable/enable JSON schema completions within your workspace settings configuration.
+Embedded JSON contained within `{% schema %}` tags support completions in accordance with trigger characters. The JSON completions are made possible through Schema Stores maintained at [@liquify/schema](https://github.com/panoply/liquify-schema). You can disable/enable JSON schema completions within your workspace settings configuration.
 
 **Workspace Settings**
 
@@ -519,7 +525,7 @@ In addition to JSON and Liquid completion support, schema JSON diagnostic valida
 
 # Completions
 
-The extension supports completion capabilities. This is a **preview** feature and will be improved upon as the extension progresses to Liquify, as such the integration is elementary. Completions are similar to snippets but a little more refined. The completions will be invoked and made available depending on trigger characters and previous/surrounding character sequences.
+The extension supports completion capabilities. This feature and will be improved upon as the extension progresses to Liquify, as such the integration is elementary. Completions are similar to snippets but a little more refined. The completions will be invoked and made available depending on trigger characters and previous/surrounding character sequences.
 
 ### Tags
 
@@ -571,7 +577,7 @@ Liquid operator completions are made available within control flow tags such as 
 
 ### Schema (Shopify)
 
-Liquid `{% schema %}` embedded JSON tags support completions using JSON Schema Store files. Shopify schema tags is currently a **preview** feature.
+Liquid `{% schema %}` embedded JSON tags support completions using JSON Schema Store files.
 
 **Workspace Settings**
 
@@ -752,6 +758,7 @@ Below is the **default** rules. It is important to note that if the `liquid.form
     "preserveAttributes": false,
     "preserveText": false,
     "delimiterTrims": "preserve",
+    "valueForce": "intent",
     "ignoreScripts": false,
     "ignoreStyles": false
   },
@@ -798,11 +805,10 @@ Below is the **default** rules. It is important to note that if the `liquid.form
 
 # Snippets
 
-Liquid snippets are supported in this extension. The filter and tag snippets provided were originally forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets) but have since changed a considerable amount.
+Liquid snippets are supported in this extension. The filter and tag snippets were originally forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). The snippets provided by this extension do not trim (`{%-`) based tag delimiters, you can instead leverage the markup formatting rule of `delimiterTrims` for controlling this.
 
-### Tag Snippets
-
-Snippets made available leverage tab invoked "choices" for applying filter pipes `|` and delimiter whitespace dashes `-` within liquid tokens. In addition to the tags and filter snippets, section schema snippets are also supported which help users to quickly generate settings within Shopify theme `{% schema %}` tag blocks.
+> **Note**&nbsp;
+> You can also invoke tag completions by typing `%` which will automatically trigger a completion list.
 
 # Extension Conflicts
 
