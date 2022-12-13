@@ -1,238 +1,226 @@
 {
-  "Jekyll frontmatter": {
-    "prefix": "---",
+  "frontmatter": {
+    "prefix": "frontmatter",
     "description": "Frontmatter",
     "body": ["---", "$2", "---"]
   },
   "if": {
     "prefix": "if",
     "body": [
-      "{%${1:-} if ${2:condition} ${1:-}%}",
+      "{% if ${1:condition} %}",
       "\t$3",
-      "{%${1:-} endif ${1:-}%}"
+      "{% endif %}"
     ]
   },
   "else": {
     "prefix": "else",
-    "body": ["{%${1:-} else ${1:-}%}", "\t"]
+    "body": ["{% else %}", "\t"]
   },
   "elsif": {
     "prefix": "elsif",
-    "body": ["{%${1:-} elsif ${2:condition} ${1:-}%}", "\t"]
+    "body": ["{% elsif ${1:condition} %}", "\t"]
   },
   "if, elsif": {
     "prefix": "if elsif",
     "body": [
-      "{%${1:-} if ${2:condition} ${1:-}%}",
-      "\t$3",
-      "{%${1:-} elsif ${4:condition} ${1:-}%}",
-      "\t$5",
-      "{%${1:-} endif ${1:-}%}"
+      "{% if ${1:condition} %}",
+      "\t$2",
+      "{% elsif ${3:condition} %}",
+      "\t$4",
+      "{% endif %}"
     ]
   },
   "if, else": {
     "prefix": "if else",
     "body": [
-      "{%${1:-} if ${2:condition} ${1:-}%}",
+      "{% if ${1:condition} %}",
+      "\t$2",
+      "{% else %}",
       "\t$3",
-      "{%${1:-} else ${1:-}%}",
-      "\t$4",
-      "{%${1:-} endif ${1:-}%}"
+      "{% endif %}"
     ]
   },
   "unless": {
     "prefix": "unless",
     "body": [
-      "{%${1:-} unless ${2:condition} ${1:-}%}",
+      "{% unless ${1:condition} %}",
+      "\t$2",
+      "{% endunless %}"
+    ]
+  },
+  "unless, else": {
+    "prefix": "unless else",
+    "body": [
+      "{% unless ${1:condition} %}",
+      "\t$2",
+      "{% else %}",
       "\t$3",
-      "{%${1:-} endunless ${1:-}%}"
+      "{% endunless %}"
     ]
   },
   "case, else": {
     "prefix": "case",
     "body": [
-      "{%${1:-} case ${2:variable} ${1:-}%}",
-      "\t{%${1:-} when ${3:condition} ${1:-}%}",
+      "{% case ${1:variable} %}",
+      "\t{% when ${2:condition} %}",
+      "\t\t$3",
+      "\t{% else %}",
       "\t\t$4",
-      "\t{%${1:-} else ${1:-}%}",
-      "\t\t$5",
-      "{%${1:-} endcase ${1:-}%}"
+      "{% endcase %}"
     ]
   },
   "when": {
     "prefix": "when",
     "description": "Control flow tag: when",
-    "body": ["{%${1:-} when ${2:condition} ${1:-}%}", "$0"]
+    "body": ["{% when ${1:condition} %}", "$0"]
   },
   "cycle": {
     "prefix": "cycle",
     "description": "Iteration tag: cycle",
-    "body": [
-      "{%${1:-} cycle '${2:odd}', '${3:even}' ${1:-}%}"
-    ]
+    "body": ["{% cycle '${1:odd}', '${2:even}' %}"]
   },
-  "cycle group": {
-    "prefix": "cyclegroup",
+  "cycle, group": {
+    "prefix": "cycle group",
     "description": "Iteration tag: cycle group",
     "body": [
-      "{%${1:-} cycle '${2:group name}': '${3:odd}', '${4:even}' ${1:-}%}"
+      "{% cycle '${1:group name}': '${2:odd}', '${3:even}' %}"
     ]
   },
   "for": {
     "prefix": "for",
     "body": [
-      "{%${1:-} for ${2:item} in ${3:collection} ${1:-}%}",
-      "\t$4",
-      "{%${1:-} endfor ${1:-}%}"
+      "{% for ${1:item} in ${2:collection} %}",
+      "\t$3",
+      "{% endfor %}"
     ]
-  },
-  "limit": {
-    "prefix": "limit",
-    "body": ["limit: ${1:5}"]
-  },
-  "offset": {
-    "prefix": "offset",
-    "body": ["offset: ${1:0}"]
-  },
-  "reversed": {
-    "prefix": "reversed",
-    "body": ["reversed"]
   },
   "break": {
     "prefix": "break",
-    "body": ["{%${1:-} break ${1:-}%}"]
+    "body": ["{% break %}"]
   },
   "continue": {
     "prefix": "continue",
-    "body": ["{%${1:-} continue ${1:-}%}"]
+    "body": ["{% continue %}"]
   },
   "tablerow": {
     "prefix": "tablerow",
     "body": [
-      "{%${1:-} tablerow ${2:item} in ${3:collection} cols: ${4:2} ${1:-}%}",
+      "{% tablerow ${1:item} in ${2:collection} cols: ${3:2} %}",
       "\t$5",
-      "{%${1:-} endtablerow ${1:-}%}"
+      "{% endtablerow %}"
     ]
   },
   "assign": {
     "prefix": "assign",
-    "body": [
-      "{%${1:-} assign ${2:variable} = ${3:value} ${1:-}%}"
-    ]
+    "body": ["{% assign ${1:variable} = ${2:value} %}"]
   },
   "increment": {
     "prefix": "increment",
-    "body": ["{%${1:-} increment ${2:variable} ${1:-}%}"]
+    "body": ["{% increment ${1:variable} %}"]
   },
   "decrement": {
     "prefix": "decrement",
-    "body": ["{%${1:-} decrement ${2:variable} ${1:-}%}"]
+    "body": ["{% decrement ${1:variable} %}"]
   },
   "capture": {
     "prefix": "capture",
     "body": [
-      "{%${1:-} capture ${2:variable} ${1:-}%}",
-      "\t$3",
-      "{%${1:-} endcapture ${1:-}%}"
+      "{% capture ${1:variable} %}",
+      "\t$2",
+      "{% endcapture %}"
     ]
   },
   "liquid": {
     "prefix": "liquid",
-    "body": ["{%${1:-} liquid", "\t$2", "${1:-}%}"]
+    "body": ["{% liquid", "\t$1", "%}"]
   },
   "render": {
     "prefix": "render",
-    "body": ["{%${1:-} render '${2:snippet}' ${1:-}%}"]
+    "body": ["{% render '${1:snippet}' %}"]
+  },
+  "render, parameters": {
+    "prefix": "render",
+    "body": [
+      "{% render '${1:snippet}', ${2:param}: ${3:value}"
+    ]
   },
   "include": {
     "prefix": "include",
-    "body": ["{%${1:-} include '${2:snippet}' ${1:-}%}"]
+    "body": ["{% include '${1:snippet}' %}"]
   },
-  "include with parameters": {
+  "include, parameters": {
     "prefix": "includewith",
     "body": [
-      "{%${1:-} include '${2:snippet}', ${3:variable}: ${4:value} ${1:-}%}"
+      "{% include '${1:snippet}', ${2:param}: ${3:value} %}"
     ]
   },
   "section": {
     "prefix": "section",
-    "body": ["{%${1:-} section '${2:section}' ${1:-}%}"]
+    "body": ["{% section '${1:section}' %}"]
   },
   "raw": {
     "prefix": "raw",
     "description": "Theme tag: raw",
-    "body": [
-      "{%${1:-} raw ${1:-}%}",
-      "\t$2",
-      "{%${1:-} endraw ${1:-}%}"
-    ]
+    "body": ["{% raw %}", "\t$1", "{% endraw %}"]
   },
   "layout": {
     "prefix": "layout",
-    "body": ["{%${1:-} layout '${2:layout}' ${1:-}%}"]
+    "body": ["{% layout '${1:layout}' %}"]
   },
   "form": {
     "prefix": "form",
     "body": [
-      "{%${1:-} form '${2:product}', ${3:product} ${1:-}%}",
+      "{% form '${1:product}', ${2:product} %}",
       "\t$4",
-      "{%${1:-} endform ${1:-}%}"
+      "{% endform %}"
     ]
   },
   "paginate": {
     "prefix": "paginate",
     "body": [
-      "{%${1:-} paginate ${1:collection.products} by ${2:12} ${1:-}%}",
-      "\t{%${1:-} for ${3:product} in ${1:collection.products} ${1:-}%}",
+      "{% paginate ${1:collection.products} by ${2:12} %}",
+      "\t{% for ${3:product} in ${1:collection.products} %}",
       "\t\t$4",
-      "\t{%${1:-} endfor ${1:-}%}",
-      "{%${1:-} endpaginate ${1:-}%}"
+      "\t{% endfor %}",
+      "{% endpaginate %}"
     ]
   },
   "schema": {
     "prefix": "schema",
     "body": [
-      "{%${1:-} schema ${1:-}%}",
-      "{",
-      "\t$0",
-      "}",
-      "{%${1:-} endschema ${1:-}%}"
+      "{% schema %}",
+      "\t{",
+      "\t\t$1",
+      "\t}",
+      "{% endschema %}"
     ]
   },
   "style": {
     "prefix": "style",
-    "body": [
-      "{%${1:-} style ${1:-}%}",
-      "\t$0",
-      "{%${1:-} endstyle ${1:-}%}"
-    ]
+    "body": ["{% style %}", "\t$1", "{% endstyle %}"]
   },
   "stylesheet": {
     "prefix": "stylesheet",
     "body": [
-      "{%${1:-} stylesheet ${1:-}%}",
-      "\t$0",
-      "{%${1:-} endstylesheet ${1:-}%}"
+      "{% stylesheet %}",
+      "\t$1",
+      "{% endstylesheet %}"
     ]
   },
   "javascript": {
     "prefix": "javascript",
     "body": [
-      "{%${1:-} javascript ${1:-}%}",
+      "{% javascript %}",
       "\t$1",
-      "{%${1:-} endjavascript ${1:-}%}"
+      "{% endjavascript %}"
     ]
   },
   "comment, inline": {
     "prefix": "#",
-    "body": ["{%${1:-} # $2 ${1:-}%}"]
+    "body": ["{% # $2 %}"]
   },
   "comment, block": {
     "prefix": "comment",
-    "body": [
-      "{%${1:-} comment ${1:-}%}",
-      "\t$0",
-      "{%${1:-} endcomment ${1:-}%}"
-    ]
+    "body": ["{% comment %}", "\t$0", "{% endcomment %}"]
   }
 }
