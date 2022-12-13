@@ -8,7 +8,7 @@
     "prefix": "if",
     "body": [
       "{% if ${1:condition} %}",
-      "\t$3",
+      "\t$2",
       "{% endif %}"
     ]
   },
@@ -106,7 +106,7 @@
     "prefix": "tablerow",
     "body": [
       "{% tablerow ${1:item} in ${2:collection} cols: ${3:2} %}",
-      "\t$5",
+      "\t$4",
       "{% endtablerow %}"
     ]
   },
@@ -171,7 +171,7 @@
     "prefix": "form",
     "body": [
       "{% form '${1:product}', ${2:product} %}",
-      "\t$4",
+      "\t$3",
       "{% endform %}"
     ]
   },
