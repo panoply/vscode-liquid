@@ -1,5 +1,4 @@
-<div
-  class="">
+<div class="">
 
   foo
 
@@ -7,13 +6,11 @@
 
     {% if block.type == 'something' %}
 
-      {{ block.settings.xxxx }}
+      {{ block.settings }}
 
-    {% elsif block.type == "something" %}
+    {% elsif block.type == "xxx" %}
 
-      {{ block.settings.drive
-       | append: 'foo'
-       | capitalize }}
+      {{ block.settings.foooo }}
 
       {% render 'foo'
        , param: 1
@@ -34,7 +31,6 @@
     "settings": [
       {
         "type": "page",
-        "placeholder": "",
         "id": "",
         "default": 0
       }
@@ -50,7 +46,8 @@
             "label": "foo"
           }
         ]
-      }, {
+      },
+      {
         "name": "example",
         "type": "xxx",
         "settings": [
@@ -59,7 +56,14 @@
             "id": "drive",
             "label": "car",
             "default": 0
-          }, {
+          },
+          {
+            "type": "text",
+            "id": "foooo",
+            "label": "Some Foooo",
+            "default": 0
+          },
+          {
             "default": 0,
             "type": "blog",
             "id": "foo",
