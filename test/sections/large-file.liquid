@@ -2,6 +2,7 @@
   Hello World
 {% endcomment %}
 
+
 <div
   class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}"
   data-carousel-desktop-value="1"
@@ -228,6 +229,8 @@
   </div>
 </div>
 
+{% if condition %}{% endif %}
+
 {% schema %}
   {
     "name": "Hero Slideshow",
@@ -236,12 +239,15 @@
     "blocks": [
       {
         "type": "image",
-        "name": "Image",
+        "name": {},
         "settings": [
           {
             "type": "header",
-            "content": "Link",
-            "info": "Renders a href link on the hero image"
+            "content": "Link"
+          },
+          {
+            "type": "header",
+            "content": ""
           },
           {
             "type": "url",

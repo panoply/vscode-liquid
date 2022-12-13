@@ -39,14 +39,10 @@
   "[jsonc]": {
     "editor.defaultFormatter": "sissel.shopify-liquid",
     "editor.formatOnSave": true
-
-
-  },
-  "[json]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid"
   },
 
-  "liquid.format.enable": true,
+
+  "liquid.format.enable": false,
   "liquid.completion.tags": true,
   "liquid.completion.schema": true,
   "liquid.completion.filters": true,
