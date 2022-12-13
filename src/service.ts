@@ -290,7 +290,7 @@ export class VSCodeLiquid extends CommandPalette {
    */
   public async onDidChangeTextDocument ({ document }: TextDocumentChangeEvent) {
 
-    if (this.engine === 'shopify' && this.canValidate.schema === true) {
+    if (this.engine === 'shopify' && this.canValidate.schema === true && document.languageId === 'liquid') {
 
       const schema = getSchema(document);
 
