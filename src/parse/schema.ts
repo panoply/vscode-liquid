@@ -8,7 +8,7 @@ export const schema = {
       type: 'object',
       properties: {
         content: {
-          type: 'string',
+          type: [ 'string', 'object' ],
           title: 'Content',
           description: 'Textual content for the header title.'
         }
@@ -18,7 +18,7 @@ export const schema = {
       type: 'object',
       properties: {
         placeholder: {
-          type: 'string',
+          type: [ 'string', 'object' ],
           title: 'Placeholder',
           description: 'A placeholder value'
         }
@@ -48,15 +48,15 @@ export const schema = {
             additionalProperties: false,
             properties: {
               value: {
-                type: 'string',
+                type: [ 'string', 'object' ],
                 description: 'The value of the select options. This will be used as the output'
               },
               label: {
-                type: 'string',
+                type: [ 'string', 'object' ],
                 description: 'A label to render to the theme editor'
               },
               group: {
-                type: 'string',
+                type: [ 'string', 'object' ],
                 description: 'An optional attribute you can add to each option to create option groups in the drop-down.'
               }
             }
@@ -110,10 +110,10 @@ export const schema = {
             additionalProperties: false,
             properties: {
               value: {
-                type: 'string'
+                type: [ 'string', 'object' ]
               },
               label: {
-                type: 'string'
+                type: [ 'string', 'object' ]
               }
             }
           }
@@ -136,7 +136,7 @@ export const schema = {
           }
         },
         placeholder: {
-          type: 'string',
+          type: [ 'string', 'object' ],
           title: 'Placeholder',
           description: 'A placeholder value'
         }
@@ -347,7 +347,7 @@ export const schema = {
             },
             info: {
               title: 'Info',
-              type: 'string',
+              type: [ 'string', 'object' ],
               description: "Additional information about the setting. Use sparingly, as it's better to use only informative labels whenever you can."
             }
           },
@@ -507,7 +507,7 @@ export const schema = {
     name: {
       title: 'Name',
       description: 'The name attribute determines the section title that is shown in the theme editor.',
-      type: 'string'
+      type: [ 'string', 'object' ]
     },
     class: {
       title: 'Class',
@@ -587,7 +587,7 @@ export const schema = {
           name: {
             title: 'Name',
             description: 'The preset name, which will show in the Add section portion of the theme editor.',
-            type: 'string'
+            type: [ 'string', 'object' ]
           },
           settings: {
             type: 'object',
@@ -615,7 +615,7 @@ export const schema = {
           name: {
             title: 'Name',
             description: 'The default name, which will show in the Add section portion of the theme editor.',
-            type: 'string'
+            type: [ 'string', 'object' ]
           },
           settings: {
             type: 'object',
