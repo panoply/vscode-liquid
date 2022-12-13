@@ -89,7 +89,7 @@ export const schema = {
           description: 'The maximum number of steps'
         },
         unit: {
-          type: 'string',
+          type: [ 'string', 'object' ],
           title: 'Max',
           maxLength: 3,
           description: 'The unit of measure label. For example, you could use sec for seconds, or px for pixels.'
