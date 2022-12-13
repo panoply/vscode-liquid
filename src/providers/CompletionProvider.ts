@@ -77,22 +77,24 @@ export function CompletionProvider (
 
       if (trigger === Char.DQO || trigger === Char.COL) {
 
-        const isSchema = parseSchema(content, offset);
+        if (document.languageId === 'liquid') {
 
-        if (isSchema !== false && isSchema.within) {
+          const isSchema = parseSchema(content, offset);
 
-          const schema = service.doParse(document, position, isSchema);
-          const items = await service.doCompletions(schema);
+          if (isSchema !== false && isSchema.within) {
 
-          return getSchemaCompletions(
-            trigger === Char.DQO ? 1 : 0,
-            position.line,
-            position.character,
-            items as any
-          );
+            const schema = service.doParse(document, position, isSchema);
+            const items = await service.doCompletions(schema);
 
+            return getSchemaCompletions(
+              trigger === Char.DQO ? 1 : 0,
+              position.line,
+              position.character,
+              items as any
+            );
+
+          }
         }
-
       }
 
       if (trigger === Char.PER) {
