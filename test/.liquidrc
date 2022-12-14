@@ -1,6 +1,6 @@
 {
 
-  "ignore": [],
+  "ignore": ["./ignores/ignore.liquid"],
   "wrap": 0,
   "commentIndent": true,
   "crlf": false,
