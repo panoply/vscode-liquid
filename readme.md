@@ -174,8 +174,23 @@ By default, it is assumed you are using vscode workspace/user settings.
   // Whether or not to enable JSON {% schema %} tag diagnostic validations
   "liquid.validate.schema": true,
 
-  // Controls whether formatting is enabled or disabled
-  "liquid.format.enable": true,
+  // Whether or not to enable hover descriptions of Liquid tags
+  "liquid.hover.tags": true,
+
+  // Whether or not to enable hover descriptions in Liquid {% schema %} tags
+  "liquid.hover.schema": true,
+
+  // Whether or not to enable hover descriptions of Liquid filters
+  "liquid.hover.filters": true,
+
+  // Whether or not to enable hover descriptions of Liquid objects
+  "liquid.hover.objects": true,
+
+  // Whether or not to enable hover descriptions of Liquid object properties
+  "liquid.hover.properties": true,
+
+  // Whether or not to enable JSON {% schema %} tag completions
+  "liquid.completion.schema": true,
 
   // Glob paths to exclude from formatting
   "liquid.format.ignore": [],
@@ -189,7 +204,7 @@ By default, it is assumed you are using vscode workspace/user settings.
   // Whether or not documents end with newline, defaults to the vscode renderFinalNewline
   "liquid.format.endNewLine": false,
 
-  // If a blank new line should be forced above comments
+  // If comments should be indented or aligned at the start of newlines
   "liquid.format.commentIndent": false,
 
   // The maximum number of consecutive empty lines to retain
@@ -204,9 +219,6 @@ By default, it is assumed you are using vscode workspace/user settings.
   // HTML, Liquid + HTML code style
   "liquid.format.markup": {
 
-    // Automatically attempts to correct some sloppiness in code
-    "correct": false,
-
     // Control the casing of attributes.
     "attributeCasing": "preserve",
 
@@ -216,14 +228,14 @@ By default, it is assumed you are using vscode workspace/user settings.
     // Sort attributes according to this list, requires attributeSort to be true
     "attributeSortList": [],
 
-    // Control Liquid delimiter trims, eg: '{%-' and '{{-'
-    "delimiterTrims": "preserve",
-
-    // Strip extraneous spacing from Liquid delimiters
-    "delimiterSpacing": false,
-
     // Whether comments should always start at position 0 or indented to code
     "commentNewline": false,
+
+    // Automatically attempts to correct some sloppiness in code
+    "correct": false,
+
+    // Control Liquid delimiter trims, eg: '{%-' and '{{-'
+    "delimiterTrims": "preserve",
 
     // Force leading attributes onto a newline when using wrap
     "forceLeadAttribute": false,
@@ -234,20 +246,35 @@ By default, it is assumed you are using vscode workspace/user settings.
     // Whether attributes should be indented each onto their own line
     "forceAttribute": false,
 
-    // Attribute force control and handling for value expressions
-    "valueForce": "intent",
+    // Whether or not to exclude formatting on embedded tags containing JavaScript
+    "ignoreScripts": false,
+
+    // Whether or not to exclude formatting on embedded tags containing CSS
+    "ignoreStyles": false,
+
+    // Whether or not to exclude formatting on embedded tags containing JSON
+    "ignoreJson": false,
+
+    // Whether or not to normalize spacing within Liquid tags and output tokens.
+    "normalizeSpacing": true,
+
+    // Whether or not the inside of {% capture %} tags should be preserved
+    "preserveCaptures": false,
 
     // If text in the provided document code should be preserved
     "preserveText": true,
-
-    // self-closing tags end will end with ' />' instead of '/>'
-    "selfCloseSpace": false,
 
     // Whether attributes should be preserved
     "preserveAttributes": false,
 
     // Quotation character conversion
-    "quoteConvert": "none"
+    "quoteConvert": "none",
+
+    // self-closing tags end will end with ' />' instead of '/>'
+    "selfCloseSpace": false,
+
+    // Attribute force control and handling for value expressions
+    "valueForce": "intent",
   },
 
   // CSS/SCSS code style
@@ -271,8 +298,6 @@ By default, it is assumed you are using vscode workspace/user settings.
     // Whether leading `0s` in CSS values immediately preceding a decimal or removed
     "noLeadZero": false,
 
-    // If comma separated CSS selectors should present on a single line of code
-    "selectorList": false
   },
 
   // JSON code style
@@ -755,12 +780,14 @@ Below is the **default** rules. It is important to note that if the `liquid.form
     "lineBreakSeparator": "before",
     "forceAttribute": true,
     "forceLeadAttribute": false,
+    "preserveCaptures": false,
     "preserveAttributes": false,
     "preserveText": false,
     "delimiterTrims": "preserve",
     "valueForce": "intent",
     "ignoreScripts": false,
-    "ignoreStyles": false
+    "ignoreStyles": false,
+    "ignoreJson": false
   },
   "json": {
     "bracePadding": false,
