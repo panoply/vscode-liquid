@@ -75,7 +75,7 @@ export function CompletionProvider (
 
       additionalTextEdits = null;
 
-      if (trigger === Char.DQO || trigger === Char.COL) {
+      if ((trigger === Char.DQO || trigger === Char.COL || triggerKind === CompletionTriggerKind.Invoke)) {
 
         if (document.languageId === 'liquid') {
 
