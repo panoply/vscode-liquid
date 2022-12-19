@@ -1,3 +1,4 @@
+import { SchemaRegion } from 'types';
 import { languages, Position, Range, TextDocument as ITextDocument, Uri } from 'vscode';
 import { schema } from 'parse/schema';
 import {
@@ -7,9 +8,7 @@ import {
   Diagnostic,
   TextDocument,
   MarkupKind
-
 } from 'vscode-json-languageservice';
-import { SchemaRegion } from 'types';
 
 export class JSONLanguageService {
 
