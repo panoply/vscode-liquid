@@ -144,249 +144,111 @@ By default, it is assumed you are using vscode workspace/user settings.
 ```jsonc
 {
 
-  // Defined the Liquid variation you are working with
   "liquid.engine": "shopify",
-
-  // Path location to a rule configuration file (relative to project root)
   "liquid.config.baseUrl": ".",
-
-  // Controls how extension settings are applied (leave this to workspace)
   "liquid.settings.target": "workspace",
 
-  // Whether or not to enable tag completions
+  // COMPLETION SETTINGS
+
   "liquid.completion.tags": true,
-
-  // Whether or not to enable object completions
   "liquid.completion.objects": true,
-
-  // Whether or not to enable filter completions
   "liquid.completion.filters": true,
-
-  // Whether or not to enable control flow operator completions
   "liquid.completion.operators": true,
-
-  // Whether or not to enable section object completions
   "liquid.completion.sections": true,
-
-  // Whether or not to enable JSON {% schema %} tag completions
   "liquid.completion.schema": true,
-
-  // Whether or not to enable JSON {% schema %} tag diagnostic validations
   "liquid.validate.schema": true,
 
-  // Whether or not to enable hover descriptions of Liquid tags
+   // HOVER SETTINGS
+
   "liquid.hover.tags": true,
-
-  // Whether or not to enable hover descriptions in Liquid {% schema %} tags
   "liquid.hover.schema": true,
-
-  // Whether or not to enable hover descriptions of Liquid filters
   "liquid.hover.filters": true,
-
-  // Whether or not to enable hover descriptions of Liquid objects
   "liquid.hover.objects": true,
-
-  // Whether or not to enable hover descriptions of Liquid object properties
   "liquid.hover.properties": true,
 
-  // Whether or not to enable JSON {% schema %} tag completions
-  "liquid.completion.schema": true,
+  // FILE MAPPINGS
 
-  // Glob paths to exclude from formatting
+  "liquid.files.settings": [],
+  "liquid.files.locales": [],
+  "liquid.files.snippets": [],
+
+   // FORMAT SETTINGS
+
   "liquid.format.ignore": [],
-
-  // Word wrap limit, defaults to the vscode wordWrapColumn
-  "liquid.format.wrap": 0,
-
-  // indentation level, defaults to the vscode tabSize
-  "liquid.format.indentSize": 2,
-
-  // Whether or not documents end with newline, defaults to the vscode renderFinalNewline
-  "liquid.format.endNewLine": false,
-
-  // If comments should be indented or aligned at the start of newlines
-  "liquid.format.commentIndent": false,
-
-  // The maximum number of consecutive empty lines to retain
-  "liquid.format.preserveLine": 3,
-
-  // Prevent comment reformatting due to option wrap
-  "liquid.format.preserveComment": false,
-
-  // Use Windows (CRLF) format, Unix (LF) format is the default.
-  "liquid.format.crlf": false,
-
-  // HTML, Liquid + HTML code style
-  "liquid.format.markup": {
-
-    // Control the casing of attributes.
-    "attributeCasing": "preserve",
-
-    // Alphanumerically sort HTML attributes from A to Z.
-    "attributeSort": false,
-
-    // Sort attributes according to this list, requires attributeSort to be true
-    "attributeSortList": [],
-
-    // Whether comments should always start at position 0 or indented to code
-    "commentNewline": false,
-
-    // Automatically attempts to correct some sloppiness in code
-    "correct": false,
-
-    // Control Liquid delimiter trims, eg: '{%-' and '{{-'
-    "delimiterTrims": "preserve",
-
-    // Force leading attributes onto a newline when using wrap
-    "forceLeadAttribute": false,
-
-    // Will force indentation upon content
-    "forceIndent": false,
-
-    // Whether attributes should be indented each onto their own line
-    "forceAttribute": false,
-
-    // Whether or not to exclude formatting on embedded tags containing JavaScript
-    "ignoreScripts": false,
-
-    // Whether or not to exclude formatting on embedded tags containing CSS
-    "ignoreStyles": false,
-
-    // Whether or not to exclude formatting on embedded tags containing JSON
-    "ignoreJson": false,
-
-    // Whether or not to normalize spacing within Liquid tags and output tokens.
-    "normalizeSpacing": true,
-
-    // Whether or not the inside of {% capture %} tags should be preserved
-    "preserveCaptures": false,
-
-    // If text in the provided document code should be preserved
-    "preserveText": true,
-
-    // Whether attributes should be preserved
-    "preserveAttributes": false,
-
-    // Quotation character conversion
-    "quoteConvert": "none",
-
-    // self-closing tags end will end with ' />' instead of '/>'
-    "selfCloseSpace": false,
-
-    // Attribute force control and handling for value expressions
-    "valueForce": "intent",
-  },
-
-  // CSS/SCSS code style
-  "liquid.format.style": {
-
-    // Automatically attempts to correct some sloppiness in code.
-    "correct": false,
-
-    // Whether to apply allman style indentation to braces
-    "braceAllman": false,
-
-    // Sorts CSS Selectors in an alphanumerical order
-    "sortSelectors": false,
-
-    // Sort Selectors in an alphanumerical order
-    "sortProperties": false,
-
-    // Inserts new line characters between every CSS code block
-    "classPadding": false,
-
-    // Whether leading `0s` in CSS values immediately preceding a decimal or removed
-    "noLeadZero": false,
-
-  },
-
-  // JSON code style
-  "liquid.format.json": {
-
-    // Determines how array indexes should be indented
-    "arrayFormat": "default",
-
-    // Whether to apply allman style indentation to braces
-    "braceAllman": false,
-
-    // Inserts a space after the start and before the end of a container
-    "bracePadding": false,
-
-    // Emulates JSBeautify's brace_style option
-    "braceStyle": "none",
-
-    // Determines if all array indexes should be indented, never indented, or left to the default.
-    "formatArray": "default",
-
-    // Determines if all object keys should be indented, never indented, or left to the default
-    "objectIndent": "default"
-  },
-
-  // JavaScript, TypeScript code style
-  "liquid.format.script": {
-
-    // Determines how array indexes should be indented
-    "arrayFormat": "default",
-
-    // Automatically attempts to correct some sloppiness in code.
-    "correct": false,
-
-    // Whether to apply allman style indentation to braces
-    "braceAllman": false,
-
-    // Insert line after opening curly braces and before closing curly braces
-    "braceNewline": false,
-
-    // Inserts a space after the start and before the end of a container
-    "bracePadding": false,
-
-    // Emulates JSBeautify's brace_style option
-    "braceStyle": "none",
-
-    // If the colon separating a case's expression (of a switch/case block)
-    "caseSpace": false,
-
-    // Whether the 'else' keyword is forced onto a new line.
-    "elseNewline": false,
-
-    // If there should be a trailing comma in arrays and object
-    "endComma": "none",
-
-    // Determines how array indexes should be indented
-    "arrayFormat": "default",
-
-    // Determines how object keys should be indented
-    "objectIndent": "default",
-
-    // If a space should follow a JavaScript function name
-    "functionNameSpace": false,
-
-    // When to break chained methods and properties onto separate lines
-    "methodChain": 3,
-
-    // If destructured lists in script should never be flattened
-    "neverFlatten": false,
-
-    // If a case statement should receive indentation
-    "noCaseIndent": false,
-
-    // Removes semicolons that would be inserted by ASI
-    "noSemicolon": false,
-
-    // Prevent comment reformatting due to option wrap
-    "preserveComment": false,
-
-    // Quotation character conversion
-    "quoteConvert": "none",
-
-    // Inserts a space following the function keyword for anonymous functions
-    "functionSpace": false,
-
-    // Keep ternary statements on one Line
-    "ternaryLine": false,
-
-    // Merges into consecutive variables into a comma separated list
-    "variableList": false
+  "liquid.format.rules": {
+    "wrap": 0,
+    "crlf": false,
+    "useTabs": false,
+    "endNewLine": false,
+    "indentSize": 2,
+    "preserveLine": 3,
+    "liquid": {
+      "commentIndent": false,
+      "commentNewline": false,
+      "delimiterTrims": "preserve",
+      "ignoreTagList": ["tag"],
+      "lineBreakSeparator": "default",
+      "normalizeSpacing": true,
+      "preserveComment": false,
+      "quoteConvert": "single",
+      "valueForce": "intent"
+    },
+    "markup": {
+      "attributeCasing": "preserve",
+      "attributeSort": false,
+      "attributeSortList": [],
+      "commentIndent": false,
+      "commentNewline": false,
+      "correct": false,
+      "forceAttribute": false,
+      "forceIndent": false,
+      "forceLeadAttribute": false,
+      "ignoreScripts": false,
+      "ignoreStyles": false,
+      "preserveComment": false,
+      "preserveAttributes": false,
+      "preserveText": true,
+      "quoteConvert": "double",
+      "selfCloseSpace": false,
+    },
+    "json": {
+      "arrayFormat": "indent",
+      "braceAllman": true,
+      "bracePadding": true,
+      "objectIndent": "indent",
+      "objectSort": false
+    },
+    "style": {
+      "classPadding": false,
+      "commentNewline": false,
+      "correct": false,
+      "noLeadZero": false,
+      "quoteConvert": "double",
+      "sortProperties": false,
+      "sortSelectors": false
+    },
+    "script": {
+      "arrayFormat": "indent",
+      "braceAllman": false,
+      "braceNewline": false,
+      "bracePadding": false,
+      "caseSpace": false,
+      "correct": false,
+      "elseNewline": false,
+      "endComma": "never",
+      "functionNameSpace": false,
+      "functionSpace": false,
+      "methodChain": 3,
+      "neverFlatten": false,
+      "noCaseIndent": false,
+      "noSemicolon": false,
+      "objectIndent": "default",
+      "objectSort": false,
+      "quoteConvert": "single",
+      "ternaryLine": false,
+      "variableList": false,
+      "vertical": false
+    }
   }
 }
 ```
