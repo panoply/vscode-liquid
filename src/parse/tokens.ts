@@ -33,7 +33,7 @@ import parseJson from 'parse-json';
  *
  * Composes a Markdown string from Liquid Language Specifications.
  */
-function documentation (description: string, reference: { name?: string; url: string; }) {
+function documentation (description: string, reference?: { name?: string; url: string; }) {
 
   if (reference && has('name', reference) && has('url', reference)) {
     return new MarkdownString(`${description}\n\n[${reference.name}](${reference.url})`);
@@ -207,7 +207,7 @@ export function getSchemaCompletions (
       label: item.label,
       kind: item.kind,
       insertText: new SnippetString(item.textEdit.newText.slice(slice)),
-      documentation: item.documentation,
+      documentation: new MarkdownString(item.documentation.value),
       range: {
         inserting: new Range(
           new Position(line, character),
