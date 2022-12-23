@@ -23,16 +23,18 @@
         { "include": "source.liquid#output" }
       ]
     },
-    "L:entity.other.attribute-name.class.html": {
+    "L:string - (string.quoted.*.html)": {
       "patterns": [
         { "include": "source.liquid#tags" },
         { "include": "source.liquid#output" }
       ]
     },
-    "L:string - (string.quoted.*.html)": {
+    "L:source.js": {
       "patterns": [
-        { "include": "source.liquid#tags" },
-        { "include": "source.liquid#output" }
+        {
+          "match": "(?<=import)\\s+(?={[{%]-?)",
+          "name": "punctuation.output.liquid"
+        }
       ]
     }
   },
@@ -69,7 +71,7 @@
     },
     "liquid-tag": {
       "name": "punctuation.output.liquid",
-      "begin": "({%)(-)\\s*\\b(liquid)\\s+",
+      "begin": "({%)(-)?\\s*\\b(liquid)\\s+",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.liquid"
@@ -416,7 +418,7 @@
         },
         {
           "name": "comment.line.liquid",
-          "begin": "\\#\\s+",
+          "begin": "^\\s*\\#\\s+",
           "end": "\\Z"
         }
       ]
