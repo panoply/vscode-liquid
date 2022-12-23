@@ -113,8 +113,8 @@
     }
   },
 	"indentationRules": {
-		"increaseIndentPattern": "{%-?\\s*(?:for|tablerow|paginate|elsif|when|form|style|stylesheet|schema|javascript|raw|capture)",
-		"decreaseIndentPattern": "{%-?\\s*(?:end\\w+)\\s*-?%}",
+		"increaseIndentPattern": "{%-?\\s*(?:for|tablerow|paginate|if|elsif|unless|when|form|style|stylesheet|schema|javascript|raw|capture)",
+		"decreaseIndentPattern": "{%-?\\s*(?:end[a-z]+)\\s*-?%}",
 	},
   "onEnterRules": [
     {
