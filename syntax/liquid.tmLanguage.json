@@ -3,8 +3,9 @@
     "The provided text mate grammars provide Liquid syntax highlighting support. This is not a forked",
     "grammar file and if you wish to use or borrow logic please ask for permission before doing so.",
     "The grammars are written for usage within vscode and support all Liquid variations. The contents of",
-    "this file consists of standard variation Liquid support, from which all Liquid variations are extended.",
-    "Embedded code regions and other variation support is made available with grammar injections."
+    "this file is supporting the Liquid standard variation and it's from this grammar which all Liquid",
+    "variations are extended. Embedded code regions of external scoped languages is made possible through",
+    "grammar injections"
   ],
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Liquid",
