@@ -1,17 +1,18 @@
 {
   "name": "shopify-liquid",
   "displayName": "Liquid",
-  "description": "Liquid Template Language. Supports Formatting, Syntax Highlighting, Snippets, HTML IntelliSense and other essential features for working with Liquid.",
+  "description": "The essential vscode extension for Liquid. Supports completions, validations, formatting and  intelliSense capabilities for Shopify, Jekyll and 11ty Liquid variations.",
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Νίκος Σαβίδης <n.savvidis@gmx.com>",
-  "version": "3.2.2",
+  "version": "3.4.0",
   "keywords": [
     "liquid",
     "shopify",
     "formatter",
     "html",
     "jekyll",
+    "11ty",
     "syntax",
     "snippets",
     "language",
@@ -26,7 +27,7 @@
     "url": "https://github.com/panoply/vscode-liquid/issues"
   },
   "engines": {
-    "vscode": "^1.72.0",
+    "vscode": "^1.74.0",
     "node": "v16.15.0"
   },
   "categories": [
@@ -53,10 +54,6 @@
       }
     ],
     "jsonValidation": [
-      {
-        "url": "./schema/prettify.json",
-        "fileMatch": "package.json"
-      },
       {
         "url": "./schema/liquidrc.json",
         "fileMatch": [
@@ -218,13 +215,6 @@
         ]
       },
       {
-        "injectTo": [
-          "source.liquid"
-        ],
-        "scopeName": "source.liquid-attribute.injection",
-        "path": "./syntax/injections/attribute.tmLanguage.json"
-      },
-      {
         "scopeName": "source.liquid.embedded",
         "path": "./syntax/injections/embedded.tmLanguage.json",
         "injectTo": [
@@ -366,15 +356,17 @@
     ],
     "configurationDefaults": {
       "[liquid]": {
-        "editor.defaultFormatter": "sissel.shopify-liquid",
-        "editor.formatOnSave": true
+        "editor.defaultFormatter": "sissel.shopify-liquid"
       },
       "[liquid-css]": {
-        "editor.defaultFormatter": "sissel.shopify-liquid",
-        "editor.formatOnSave": true
+        "editor.defaultFormatter": "sissel.shopify-liquid"
       },
-      "[liquid-scss]": {},
-      "[liquid-javascript]": {},
+      "[liquid-scss]": {
+        "editor.defaultFormatter": "sissel.shopify-liquid"
+      },
+      "[liquid-javascript]": {
+        "editor.defaultFormatter": "sissel.shopify-liquid"
+      },
       "files.associations": {
         "*.json.liquid": "json",
         "*.yaml.liquid": "yaml",
@@ -417,33 +409,31 @@
           ],
           "markdownDescription": "**Default** `shopify`\n\nThe `liquid.engine` option is used to determine the Liquid template variation you are working with. This extension supports the following Liquid variations:\n\n- Standard\n- Shopify\n- 11ty\n- Jekyll\n\nFeatures and capabilities differ depending on the engine you define. For example, if you are working with the Shopify Liquid variation and you have set the engine to `Standard` then features like object and property completions will not work.\n\n**Tip**\n\nYou can optionally infer the engine with your `.liquidrc` file.\n"
         },
-        "liquid.files": {
-          "type": "object",
-          "properties": {
-            "locales": {
-              "type": "array",
-              "markdownDescription": "**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain locale files. When you set a locale file path location reference, the file appended with `.default.json` will be used to to provide locale completions within Liquid object tag tokens.\n\n",
-              "items": {
-                "uniqueItems": true,
-                "type": "string"
-              }
-            },
-            "snippets": {
-              "type": "array",
-              "markdownDescription": "**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain snippet files. When you providing snippet file paths location references the snippets will be provided in `{% render '' %}` completions.\n\n",
-              "items": {
-                "uniqueItems": true,
-                "type": "string"
-              }
-            },
-            "settings": {
-              "type": "array",
-              "markdownDescription": "**Default** `[]`\n\nDefine the location of your `settings_schema.json` file relative to your projects root directory. When you set a reference then completions will be provided to liquid objects starting with `settings.*`\n\n",
-              "items": {
-                "uniqueItems": true,
-                "type": "string"
-              }
-            }
+        "liquid.files.locales": {
+          "type": "string",
+          "markdownDescription": "**Default** `\"\"`\n\nProvide the path location to the default locale (ie: `en.default.json`) file. Use a path that is relative to the current project root directory. When you provide a path reference then completions will show for locales in output type object tags.\n"
+        },
+        "liquid.files.settings": {
+          "type": "string",
+          "markdownDescription": "**Default** `\"\"`\n\nProvide the path location to your `settings_schema.json` file. Use a path that is relative to the current project root directory. When you provide a path reference then completions will show for liquid objects starting with `settings.*`\n\n"
+        },
+        "liquid.files.snippets": {
+          "type": "array",
+          "markdownDescription": "**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain snippet files. When you providing snippet file paths location references the snippets will be provided in `{% render '' %}` completions.\n\n",
+          "items": {
+            "uniqueItems": true,
+            "type": "string"
+          }
+        },
+        "liquid.files.sections": {
+          "type": [
+            "array",
+            "string"
+          ],
+          "markdownDescription": "**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain section files. When you provide section file location references the sections will be made available in `{% section '' %}` tag completions and `cmd + click` will allow quick opening.\n\n",
+          "items": {
+            "uniqueItems": true,
+            "type": "string"
           }
         },
         "liquid.completion.tags": {
@@ -503,19 +493,22 @@
         },
         "liquid.config.baseUrl": {
           "type": "string",
-          "markdownDescription": "The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving config files. The option will only work in projects that use `.liquidrc` files or define rules on a package.json `prettify` field."
+          "markdownDescription": "**Default** `.`\n\nThe `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving `.liquidrc` or `.liquidrc.json` files. The option will only work in projects that use `.liquidrc` files and has no effect if `liquid.config.method` is set `workspace` Consider the following directory layout:\n\n```\n\n root\n ├─ .vscode\n │  └─ settings.json\n ├─ docs\n │  ├─ .liquidrc.json\n │  └─ index.liquid\n └─ src\n    ├─ includes\n    └─ views\n\n```\n\nBy default, when no `.liquidrc` exist in a projects root, then it is assumed beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace file then the default rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseUrl` to the directory containing one of the supported file types.\n\nTargeting the `.liquidrc.json` file located in `docs` directory:\n\n<!--prettier-ignore-->\n```jsonc\n{\n  \"liquid.config.baseUrl\": \"./docs\"\n}\n```\n\n_The `baseUrl` must point to a relative directory not a file. If the directory provided cannot be resolved, root is used._\n"
         },
-        "liquid.settings.target": {
+        "liquid.config.method": {
           "type": "string",
-          "default": "workspace",
-          "markdownDescription": "The configuration preferences to use. This option defaults to `workspace`. It is **highly discouraged** to target `user` settings and could lead to unexpected issues outside of Liquid projects. The `workspace` default will write to the `.vscode/settings.json` relative to project root.",
+          "default": "liquidrc",
+          "markdownDescription": "**Default** `liquidrc`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `liquidrc`\n\nThe configuration method to use. This option defaults to `liquidrc` which means it will look for a `.liquidrc` or `.liquidrc.json` file contained in your projects root directory (or relative to the `liquid.config.baseUrl` if provided).\n\nIf you set this to `workspace` then the extension will expect settings to be defined within your `.vscode/settings.json` workspace file or if you are not using a project based workspace setting (`.vscode/settings.json`) file then it will look at global workspace (User Preference) settings.\n\n",
           "enum": [
-            "workspace",
-            "user"
+            "liquidrc",
+            "workspace"
           ]
         },
+        "liquid.settings.target": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.settings.target\" workspace setting is deprecated. Workspace setting target will be automatically detected and this option no longer has any effect.\n\n\n"
+        },
         "liquid.format.enable": {
-          "deprecationMessage": "**DEPRECATED**\n\nThe `liquid.format.enable` workspace setting is deprecated. Use language specific settings for formatting capabilities, provide the following vscode workspace settings:\n\n```jsonc\n{\n  \"[liquid]\": {\n    \"editor.formatOnSave\": true,\n    \"editor.defaultFormatter\": \"sissel.shopify-liquid\"\n  }\n}\n```\n"
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.enable\" workspace setting is deprecated. Use language specific settings for formatting capabilities, provide the following vscode workspace configuration to enable formatting of Liquid files:\n\nSETTINGS AS OF v3.4^\n\n{\n  \"[liquid]\": {\n    \"editor.formatOnSave\": true,\n    \"editor.defaultFormatter\": \"sissel.shopify-liquid\"\n  }\n}\n"
         },
         "liquid.format.markup": {
           "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.markup\" workspace setting is deprecated. Define \"markup\" formatting rules within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\nNEW SETTINGS AS OF v3.4^\n\n{\n  \"liquid.format.rules\": {\n    \"markup\": {}\n  }\n}\n\n"
@@ -536,7 +529,7 @@
           "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.indentSize\" workspace setting is deprecated. Define \"indentSize\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v3.4^\n\n{\n  \"liquid.format.rules\": {\n    \"indentSize\": 2\n  }\n}\n\n"
         },
         "liquid.format.endNewLine": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.endNewLine\" workspace setting is deprecated. Define \"endNewLine\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v3.4^\n\n{\n  \"liquid.format.rules\": {\n    \"endNewLine\": false\n  }\n}\n\n"
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.endNewLine\" workspace setting is deprecated. Define \"endNewline\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v3.4^\n\n{\n  \"liquid.format.rules\": {\n    \"endNewline\": false\n  }\n}\n\n"
         },
         "liquid.format.crlf": {
           "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.crlf\" workspace setting is deprecated. Define \"crlf\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v3.4^\n\n{\n  \"liquid.format.rules\": {\n    \"crlf\": 0,\n    \"wrap\": 0,\n    \"indentSize\": 3\n  }\n}\n\n"
@@ -561,7 +554,7 @@
         "liquid.format.rules": {
           "type": "object",
           "properties": {
-            "endNewLine": {
+            "endNewline": {
               "type": "boolean",
               "default": false,
               "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `false`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `true`\n\n#### End Newline\n\nWhether or not files should end with an empty newline.\n\n#### Note\n\nWhen this rule is undefined or omitted then the Text Editor settings will be used, in vscode that is `*.endWithNewline` where `*` is a language name.  If an `.editorconfig` file is found present in root, those rules will be applied in **precedence** over your Text Editor settings.\n"
@@ -580,11 +573,6 @@
               "type": "number",
               "default": 3,
               "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `3`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `1`\n\n#### Preserve Line\n\nThe maximum number of consecutive empty lines to retain (ie: preserve). By default, `3` newlines are preserved.\n\n#### Note\n\nThis is a global option and it will be used for markup, json, styles and scripts languages.\n\n#### Example\n\n_Below is we instructed to Prettify to preserve only `1` empty line. Notice how before formatting the code has several empty newlines but after formatting only a single line is retained_.\n\n```html\n\n<!-- Before Formatting -->\n<ul>\n\n\n <li>Hello</li>\n\n\n\n <li>World</li>\n\n\n</ul>\n\n<!-- After Formatting -->\n<ul>\n\n  <li>Hello</li>\n\n  <li>World</li>\n\n</ul>\n\n\n```\n"
-            },
-            "useTabs": {
-              "type": "boolean",
-              "default": false,
-              "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `false`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `false`\n\n#### Use Tabs\n\nWhether or not to use tab indentation. When enabled (ie: `true`) the indentation character will be `\\t`. When disabled (ie: `false`) then a single whitespace character will be used.\n\n#### Related Rule\n\nThe `indentSize` rule will use this character.\n\n\n\n"
             },
             "crlf": {
               "type": "boolean",
@@ -955,6 +943,11 @@
               "additionalProperties": false,
               "markdownDescription": "Beautification rules for the following _style_ languages:\n\n- **CSS**\n- **SCSS**\n- **\n- **SASS**\n- **LESS**\n\n. Options provided here will also be applied to the following markup embedded language blocks.",
               "properties": {
+                "atRuleSpace": {
+                  "type": "boolean",
+                  "default": false,
+                  "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `false`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `true`\n\n#### At Rule Space\n\nInsert a single whitespace character between `@`prefixed rule types.\n\n"
+                },
                 "commentNewline": {
                   "type": "boolean",
                   "default": false,
@@ -1081,21 +1074,20 @@
   "devDependencies": {
     "@liquify/eslint-config": "^1.1.0",
     "@liquify/prettier-config": "^1.0.1",
-    "@types/vscode": "^1.72.0",
-    "eslint": "^8.26.0",
-    "prettier": "^2.7.1",
-    "tsup": "^6.3.0",
-    "type-fest": "^3.1.0",
-    "vsce": "^2.13.0"
+    "@types/vscode": "^1.74.0",
+    "@vscode/vsce": "^2.16.0",
+    "eslint": "^8.30.0",
+    "prettier": "^2.8.1",
+    "tsup": "^6.5.0",
+    "type-fest": "^3.4.0"
   },
   "dependencies": {
     "@liquify/liquid-language-specs": "^0.1.7",
-    "@liquify/prettify": "0.4.5-beta.1",
-    "anymatch": "^3.1.2",
+    "@liquify/prettify": "0.5.2-beta.1",
+    "anymatch": "^3.1.3",
     "parse-json": "^6.0.2",
-    "rambdax": "8.1.0",
+    "rambdax": "9.0.0",
     "strip-json-comments": "^5.0.0",
-    "vscode-json-languageservice": "^5.1.3",
-    "vscode-languageserver-types": "^3.17.2"
+    "vscode-json-languageservice": "^5.1.3"
   }
 }
