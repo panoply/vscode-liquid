@@ -1,14 +1,27 @@
 import { Engines } from '@liquify/liquid-language-specs';
-import { Options } from '@liquify/prettify/types/prettify';
+import { Options } from '@liquify/prettify';
 
 export namespace Workspace {
 
   /**
-   * `liquid.settings.target`
+   * `liquid.config.*`
    *
-   * The accepted values of the settings target
+   * The accepted values relating to configuration.
    */
-  export type Target = 'workspace' | 'user';
+  export type Config = {
+    /**
+     * The configuration method to use
+     *
+     * @default 'liquidrc'
+     */
+    method: 'workspace' | 'liquidrc';
+    /**
+     * The base URL location of the `.liquidrc` file
+     *
+     * @default '.'
+     */
+    baseUrl: 'workspace' | 'liquidrc';
+  }
 
   /**
    * `liquid.engine`
@@ -18,7 +31,7 @@ export namespace Workspace {
   export type Engine = Engines;
 
   /**
-   * `liquid.completions.*`
+   * `liquid.completion.*`
    *
    * The accepted options for completions
    */
@@ -147,20 +160,6 @@ export namespace Workspace {
   }
 
   /**
-   * `liquid.settings.*`
-   *
-   * The accepted options for the settings option
-   */
-  export interface Settings {
-    /**
-     * The Liquid settings target
-     *
-     * @default 'workspace'
-     */
-    target?: Target
-  }
-
-  /**
    * `liquid.format.*`
    *
    * The accepted format options
@@ -178,21 +177,4 @@ export namespace Workspace {
     rules?: Options
   }
 
-  /**
-   * `liquid.format.*`
-   *
-   * Props as array list
-   */
-  export type FormatPropsList = Array<keyof Format>
-
-  /**
-   * `liquid.*`
-   *
-   * The Liquid workspace configuration
-   */
-  export interface Liquid {
-    enable?: boolean;
-    settings?: Settings;
-    format?: Options
-  }
 }

@@ -57,22 +57,24 @@ export const enum WatchEvents {
  *
  * Informs upon the configuration type being used
  */
-export const enum Config {
+export const enum ConfigMethod {
+  /**
+   * The initial value, when no method one will be determined.
+   * based on the project structure, ie: if `.liquidrc` exists
+   * then the method will be Liquidrc else it will be Workspace.
+   */
+  Undefined = 1,
   /**
    * Using a `.liquidrc` file
    */
-  Liquidrc = 1,
-  /**
-   * Using a `prettify` field in package.json
-   */
-  Package,
+  Liquidrc,
   /**
    * Using workspace settings ie: `.vscode/settings.json`
    */
   Workspace
 }
 
-export const enum Status {
+export const enum StatusItem {
   /**
    * Formatting and extension is enabled
    */
@@ -149,29 +151,21 @@ export const enum Setting {
   /**
    * Liquidrc file is present
    */
+  LiquidrcExists,
+  /**
+   * Liquidrc file is present
+   */
   LiquidrcDefined,
-  /**
-   * The package.json file does not exist
-   */
-  PackageJsonUndefined,
-  /**
-   * The package.json file had a parse error
-   */
-  PackageJsonError,
-  /**
-   * Prettify Field in package.json is not present
-   */
-  PrettifyFieldUndefined,
-  /**
-   * Prettify Field in package.json is defined
-   */
-  PrettifyFieldDefined,
-  /**
-   * Prettify Field in package.json is but with invalid rules
-   */
-  PrettifyFieldInvalid,
   /**
    * No configuration is defined
    */
   ConfigurationUndefined,
+  /**
+   * Liquidrc File exists but config method is Workspace on `liquid.config.method`
+   */
+  MethodWorkspace,
+  /**
+   * Using the default method of liquidrc on `liquid.config.method`
+   */
+  MethodLiquidrcDefault
 }

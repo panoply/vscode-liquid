@@ -36,6 +36,7 @@ export interface Liquidrc {
      */
     sections?: string[];
   };
+
   /**
    * Prettify formatting options
    */
@@ -44,6 +45,7 @@ export interface Liquidrc {
      * The string list of paths to ignore
      */
     ignore?: string[];
+
   }>
 }
 

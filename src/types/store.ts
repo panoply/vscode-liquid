@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Options } from '@liquify/prettify';
 import { Tester } from 'anymatch';
-import { LanguageIds } from './document';
-import { Config, Status } from './enums';
+import { ConfigMethod } from './enums';
 import {
   CompletionItem,
   ConfigurationTarget,
@@ -14,24 +13,30 @@ import {
   Uri
 } from 'vscode';
 
-/**
- * Deprecation Actions
- */
-export interface Deprecations {
-  /**
-   * Whether or not a deprecation was detected.
-   */
-  detected: boolean;
-  /**
-   * The version which the breaking change was detected.
-   */
-  version: string;
-
-}
-
 export interface DeprecationIssues {
 
   [version: string]: {
+    /**
+     * Workspace
+     */
+    all: {
+      /**
+       * Whether or not the issue can be autofixed
+       */
+      autofix: boolean;
+      /**
+       * A short message describing the issue
+       */
+      message: string;
+      /**
+       * A longer form description of the deprecation
+       */
+      details: string;
+      /**
+       * Link to the release notes (changelog)
+       */
+      changelog: string;
+    };
     /**
      * Workspace
      */
@@ -77,28 +82,82 @@ export interface DeprecationIssues {
   }
 }
 
-/**
- * External Files
- *
- * The generated data values from the files array.
- */
-export interface Files {
+export interface Meta {
   /**
-   * Locales URI Path
+   * Release Notes URI
    */
-  locales: Uri;
+  releaseNotes: Uri;
   /**
-   * Settings (`settings_data.json`) file path
+   * The Prettify version used in the extension.
    */
-  settings: Uri;
+  prettifyVersion: string;
   /**
-   * Sections directories
+   * The current extension version
    */
-  sections: Uri[];
+  version: string;
   /**
-   * Snippets directories
+   * The extension unique id, ie: `sissel.shopify-liquid`
    */
-  snippets: Uri[];
+  id: string;
+  /**
+   * The marketplace display name, ie: `Liquid`
+   */
+  displayName: string;
+  /**
+   * The project name, ie: `vscode-liquid`
+   */
+  projectName: string;
+  /**
+   * The repository URL, ieG: `https://github.com/panoply/vscode-liquid`
+   */
+  repository: string;
+}
+
+export interface Config {
+  /**
+   * The vscode workspace configuration target
+   *
+   * @default 2
+   */
+  target: ConfigurationTarget
+  /**
+   * The configuration method being used
+   *
+   * @default '.liquidrc'
+   */
+  method: ConfigMethod
+}
+
+/* -------------------------------------------- */
+/* FORMAT MODEL                                 */
+/* -------------------------------------------- */
+
+export interface Format {
+  /**
+   * Hard reference to ignored paths
+   */
+  ignoreList: string[];
+  /**
+   * Anymatch pattern for ignored paths
+   */
+  ignoreMatch: Tester;
+  /**
+   * Set list of `fsPath` URI ignored paths
+   */
+  ignored: Set<string>;
+  /**
+   * Set list of `fsPath` URI paths
+   */
+  register: Set<string>;
+  /**
+    * The formatting handler
+    */
+  handler: Disposable;
+  /**
+   * The current formatting rules
+   */
+  rules: Options;
+
 }
 
 /* -------------------------------------------- */
@@ -153,7 +212,7 @@ export interface Completions {
     /**
      * The path of the locale file.
      */
-    file: string;
+    file: Uri;
     /**
      * Completion Items for locales
      */
@@ -166,7 +225,7 @@ export interface Completions {
     /**
      * The path of the locale file.
      */
-    file: string;
+    file: Uri;
     /**
      * Completion Items for locales
      */
@@ -176,86 +235,44 @@ export interface Completions {
 
 export interface URI {
   /**
-   * Returns the rootPath of the workspace
+   * Returns the root uri of the workspace
    */
-  root?: string;
+  root?: Uri;
+  /**
+   * Returns the `.env` file path,
+   */
+  env?: Uri;
   /**
    * URI path to the `.liquidrc` file
    */
-  liquidrc?: string;
+  liquidrc?: Uri;
   /**
-   * URI path to the `package.json` file
+   * Returns the projects `.vscode/settings.json` workspace uri.
    */
-  package?: string;
-}
-
-export interface Store {
+  workspace?: Uri;
   /**
-   * The extension configuration method being used
-   */
-  config: Config;
-  /**
-   * The current status
-   */
-  status: Status;
-  /**
-   * The workspace target
-   */
-  target: ConfigurationTarget;
-  /**
-   * Anymatch pattern for ignored paths
-   */
-  ignore: Tester;
-  /**
-   * The current formatting rules
-   */
-  prettify: Options;
-  /**
-   * Set list of the default languages we apply formatting to
-   */
-  languages: { [K in LanguageIds]: boolean };
-  /**
-   * Whether or not formatting is enabled
+   * Files
    *
-   * @default false
+   * The generated data values from the files array.
    */
-  isEnabled: boolean;
-  /**
-   * Whether or not the extension has initialized
-   *
-   * @default false
-   */
-  isReady: boolean;
-  /**
-   * Whether or not the file system watcher is running
-   *
-   * @default false
-   */
-  isWatching: boolean;
-  /**
-   * Whether the extension is in a state of loading
-   *
-   * @default false
-   */
-  isLoading: boolean;
-  /**
-   * Whether or not the invoked action was a command
-   *
-   * @default false
-   */
-  isCommand: boolean;
-  /**
-   * Whether or not a watched file has changed
-   */
-  hasChanged: boolean;
-  /**
-   * Whether or not an error has occured
-   */
-  hasError: boolean;
-  /**
-   * Whether or not a warning has occured
-   */
-  hasWarning: boolean;
+  files: {
+    /**
+     * Locales URI Path
+     */
+    locales: Uri;
+    /**
+     * Settings (`settings_data.json`) file path
+     */
+    settings: Uri;
+    /**
+     * Sections directories
+     */
+    sections: Uri[];
+    /**
+     * Snippets directories
+     */
+    snippets: Uri[];
+  }
 }
 
 export interface UI {
@@ -267,6 +284,7 @@ export interface UI {
    * The output channel instance
    */
   channel: OutputChannel;
+
 }
 
 export interface Editor {
