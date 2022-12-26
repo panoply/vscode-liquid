@@ -1,5 +1,5 @@
 import { q, liquid, Engine } from '@liquify/liquid-language-specs';
-import { JSONLanguageService } from 'service/JsonLanguageService';
+import { JSONLanguageService } from 'service/JSONLanguageService';
 import { HoverProvider } from 'providers/HoverProvider';
 import { CompletionProvider } from 'providers/CompletionProvider';
 import { State } from 'state';
@@ -21,19 +21,14 @@ export class Providers extends State {
   public jsonService: JSONLanguageService;
 
   /**
-   * Completion Provider Instance
+   * Hover Provider closure
    */
-  public provide: {
-    /**
-     * Hover Provider closure
-     */
-    hovers?: ReturnType< typeof HoverProvider>;
-    /**
-     * Completion Provider closure
-     */
-    completions?: ReturnType< typeof CompletionProvider>;
+  public hovers?: ReturnType< typeof HoverProvider>;
 
-  } = {};
+  /**
+   * Completion Provider closure
+   */
+  public completions?: ReturnType< typeof CompletionProvider>;
 
   setService () {
 
@@ -48,7 +43,20 @@ export class Providers extends State {
 
     if (this.engine === 'shopify') q.setEngine(Engine.shopify);
 
-    this.complete.logical = getLogicalCompletions();
+    // if (this.files.locales !== null) {
+    //   this.complete.locales.file = this.files.locales;
+    //   this.complete.locales.items = JSON.parse(readFileSync(this.files.locales).toString());
+    // }
+
+    // if (this.files.snippets !== null) {
+
+    //   this.complete.locales.file = this.files.locales;
+    //   this.complete.locales.items = JSON.parse(readFileSync(this.files.locales).toString());
+    // }
+
+    if (this.canComplete.logical) {
+      this.complete.logical = getLogicalCompletions();
+    }
 
     if (this.canComplete.tags) {
       this.complete.tags = entries(liquid.shopify.tags).map(getTagCompletions);
@@ -60,12 +68,10 @@ export class Providers extends State {
 
     if (this.canComplete.objects) {
       this.complete.objects = entries(liquid.shopify.objects).map(getObjectCompletions);
-      this.complete.common = getObjectKind(this.complete.objects, [
-        CompletionItemKind.Module
-      ]);
+      this.complete.common = getObjectKind(this.complete.objects, [ CompletionItemKind.Module ]);
     }
 
-    this.provide.completions = CompletionProvider(
+    this.completions = CompletionProvider(
       this.canComplete,
       this.complete,
       this.jsonService
@@ -74,7 +80,7 @@ export class Providers extends State {
 
   setHovers () {
 
-    this.provide.hovers = HoverProvider(
+    this.hovers = HoverProvider(
       this.canHover,
       this.jsonService
     );
