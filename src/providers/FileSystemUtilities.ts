@@ -21,7 +21,7 @@ export class FSUtils extends WorkspaceSettings {
 
     try {
       const action = await window.showInformationMessage(message, ...choices);
-      return action.toUpperCase();
+      return action ? action.toUpperCase().replace(/ /g, '_') : null;
     } catch (e) {
       this.catch('Failed to show information message', e);
     }
@@ -33,7 +33,7 @@ export class FSUtils extends WorkspaceSettings {
 
     try {
       const action = await window.showErrorMessage(message, ...choices);
-      return action.toUpperCase();
+      return action ? action.toUpperCase().replace(/ /g, '_') : null;
     } catch (e) {
       this.catch('Failed to show error message', e);
     }
