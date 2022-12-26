@@ -15,18 +15,21 @@
       "type": "object",
       "properties": {
         "locales": {
-          "type": "array",
-          "markdownDescription": "**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain locale files. When you set a locale file path location reference, the file appended with `.default.json` will be used to to provide locale completions within Liquid object tag tokens.\n\n",
-          "items": { "uniqueItems": true, "type": "string" }
+          "type": "string",
+          "markdownDescription": "**Default** `\"\"`\n\nProvide the path location to the default locale (ie: `en.default.json`) file. Use a path that is relative to the current project root directory. When you provide a path reference then completions will show for locales in output type object tags.\n"
+        },
+        "settings": {
+          "type": "string",
+          "markdownDescription": "**Default** `\"\"`\n\nProvide the path location to your `settings_schema.json` file. Use a path that is relative to the current project root directory. When you provide a path reference then completions will show for liquid objects starting with `settings.*`\n\n"
         },
         "snippets": {
           "type": "array",
           "markdownDescription": "**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain snippet files. When you providing snippet file paths location references the snippets will be provided in `{% render '' %}` completions.\n\n",
           "items": { "uniqueItems": true, "type": "string" }
         },
-        "settings": {
-          "type": "array",
-          "markdownDescription": "**Default** `[]`\n\nDefine the location of your `settings_schema.json` file relative to your projects root directory. When you set a reference then completions will be provided to liquid objects starting with `settings.*`\n\n",
+        "sections": {
+          "type": ["array", "string"],
+          "markdownDescription": "**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain section files. When you provide section file location references the sections will be made available in `{% section '' %}` tag completions and `cmd + click` will allow quick opening.\n\n",
           "items": { "uniqueItems": true, "type": "string" }
         }
       }
@@ -44,11 +47,6 @@
           "default": 0,
           "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `0`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `0`\n\n#### Wrap\n\nCharacter width limit before applying word wrap. A `0` value disables this option.\n\n#### Note\n\nWhen this rule is undefined in a `.liquidrc` file the Text Editors settings will be used, in vscode that is `*.endWithNewline` where `*` is a language name.\n"
         },
-        "useTabs": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `false`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `false`\n\n#### Use Tabs\n\nWhether or not to use tab indentation. When enabled (ie: `true`) the indentation character will be `\\t`. When disabled (ie: `false`) then a single whitespace character will be used.\n\n#### Related Rule\n\nThe `indentSize` rule will use this character.\n\n\n\n"
-        },
         "indentSize": {
           "type": "number",
           "default": 2,
@@ -59,7 +57,7 @@
           "default": 3,
           "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `3`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `1`\n\n#### Preserve Line\n\nThe maximum number of consecutive empty lines to retain (ie: preserve). By default, `3` newlines are preserved.\n\n#### Note\n\nThis is a global option and it will be used for markup, json, styles and scripts languages.\n\n#### Example\n\n_Below is we instructed to Prettify to preserve only `1` empty line. Notice how before formatting the code has several empty newlines but after formatting only a single line is retained_.\n\n```html\n\n<!-- Before Formatting -->\n<ul>\n\n\n <li>Hello</li>\n\n\n\n <li>World</li>\n\n\n</ul>\n\n<!-- After Formatting -->\n<ul>\n\n  <li>Hello</li>\n\n  <li>World</li>\n\n</ul>\n\n\n```\n"
         },
-        "endNewLine": {
+        "endNewline": {
           "type": "boolean",
           "default": false,
           "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `false`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `true`\n\n#### End Newline\n\nWhether or not files should end with an empty newline.\n\n#### Note\n\nWhen this rule is undefined or omitted then the Text Editor settings will be used, in vscode that is `*.endWithNewline` where `*` is a language name.  If an `.editorconfig` file is found present in root, those rules will be applied in **precedence** over your Text Editor settings.\n"
@@ -396,6 +394,11 @@
           "additionalProperties": false,
           "markdownDescription": "Beautification rules for the following _style_ languages:\n\n- **CSS**\n- **SCSS**\n- **\n- **SASS**\n- **LESS**\n\n. Options provided here will also be applied to the following markup embedded language blocks.",
           "properties": {
+            "atRuleSpace": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `false`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `true`\n\n#### At Rule Space\n\nInsert a single whitespace character between `@`prefixed rule types.\n\n"
+            },
             "commentNewline": {
               "type": "boolean",
               "default": false,
@@ -474,9 +477,6 @@
       "deprecationMessage": "DEPRECATED STRUCTURE\n\nAs of version 3.4.0 beautification rules within .liquidrc or .liquidrc.json files need to placed within a \"format\" object. You can generate a new a liquidrc file via the vscode command palette (cmd + shift + p) and choosing \"Liquid: Generate .liquidrc (recommended)\" which will produce a new file with the best formatting rules preset. Alternatively, you can manually align existing configuration.\n\nNEW SETTINGS AS OF v3.4^\n\n{\n  \"format\": {\n    \"wrap\": 0,\n    \"liquid\": {},\n    \"markup: {},\n    \"json\": {},\n  }\n}\n"
     },
     "wrap": {
-      "deprecationMessage": "DEPRECATED STRUCTURE\n\nAs of version 3.4.0 beautification rules within .liquidrc or .liquidrc.json files need to placed within a \"format\" object. You can generate a new a liquidrc file via the vscode command palette (cmd + shift + p) and choosing \"Liquid: Generate .liquidrc (recommended)\" which will produce a new file with the best formatting rules preset. Alternatively, you can manually align existing configuration.\n\nNEW SETTINGS AS OF v3.4^\n\n{\n  \"format\": {\n    \"wrap\": 0,\n    \"liquid\": {},\n    \"markup: {},\n    \"json\": {},\n  }\n}\n"
-    },
-    "useTabs": {
       "deprecationMessage": "DEPRECATED STRUCTURE\n\nAs of version 3.4.0 beautification rules within .liquidrc or .liquidrc.json files need to placed within a \"format\" object. You can generate a new a liquidrc file via the vscode command palette (cmd + shift + p) and choosing \"Liquid: Generate .liquidrc (recommended)\" which will produce a new file with the best formatting rules preset. Alternatively, you can manually align existing configuration.\n\nNEW SETTINGS AS OF v3.4^\n\n{\n  \"format\": {\n    \"wrap\": 0,\n    \"liquid\": {},\n    \"markup: {},\n    \"json\": {},\n  }\n}\n"
     },
     "indentSize": {
