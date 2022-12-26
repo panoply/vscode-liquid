@@ -69,7 +69,7 @@
       }
     },
     {
-      "match": "(Completions)\\sare\\s(enabled)\\sfor(\\:)\\s(.*)",
+      "match": "(Completions|Validations|Hovers)\\sare\\s(enabled)\\sfor(\\:)\\s(.*)",
       "captures": {
         "1": {
           "name": "string log.string"
@@ -86,7 +86,7 @@
       }
     },
     {
-      "match": "(Completions)\\sare\\s(disabled)\\sfor(\\:)\\s(.*)",
+      "match": "(Completions|Validations|Hovers)\\sare\\s(disabled)\\sfor(\\:)\\s(.*)",
       "captures": {
         "1": {
           "name": "string log.string"
@@ -103,14 +103,17 @@
       }
     },
     {
-      "match": "Completions\\sare\\senabled\\sfor(\\:)\\s(.*)"
-    },
-    {
       "match": "Using\\s(workspace\\ssettings)\\sfor\\sconfiguration",
       "captures": {
         "1": {
           "name": "constant.language log.constant"
         }
+      }
+    },
+    {
+      "match": "\\b(formatOnSave|defaultFormatter)\\b",
+      "captures": {
+        "name": "support.class log.support"
       }
     },
     {
