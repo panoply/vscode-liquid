@@ -1,8 +1,7 @@
 import { basename } from 'node:path';
 import { commands, FileSystemWatcher, Uri, workspace } from 'vscode';
 import prettify from '@liquify/prettify';
-import { Config, Setting } from 'types';
-import { isFile } from 'utils';
+import { ConfigMethod, Setting } from 'types';
 import { FSUtils } from 'providers/FileSystemUtilities';
 import { has } from 'rambdax';
 
@@ -26,8 +25,7 @@ export class FSWatch extends FSUtils {
    * File System Watchers
    */
   private watchers: FileSystemWatcher[] = [
-    workspace.createFileSystemWatcher('**/.liquidr{c,c.json}'),
-    workspace.createFileSystemWatcher('**/package.json')
+    workspace.createFileSystemWatcher('**/.liquidr{c,c.json}')
   ];
 
   /**
@@ -35,10 +33,11 @@ export class FSWatch extends FSUtils {
    */
   private isMatch (fsPath: string) {
 
-    return (
-      fsPath !== this.liquidrcPath &&
-      fsPath !== this.packagePath
-    );
+    return fsPath !== this.uri.liquidrc.fsPath;
+
+  }
+
+  public addWatchers () {
 
   }
 
@@ -71,111 +70,43 @@ export class FSWatch extends FSUtils {
     if (this.isMatch(fsPath)) return null;
     if (this.changed) return (this.changed = false);
 
-    const isPackage = isFile(fsPath, 'package.json');
+    const liquidrc = await this.getLiquidrc({ fixDeprecated: false });
 
-    if (isPackage) {
-
-      if (this.configMethod === Config.Liquidrc) return null;
-
-      const before = this.configMethod;
-      const pkg = await this.getPackage();
-
-      if (this.configMethod === Config.Package) {
-        if (pkg === Setting.PrettifyFieldDefined) {
-
-          prettify.options(this.prettifyRules);
-
-          if (before === Config.Workspace) {
-            this.formatIgnore.clear();
-            this.formatRegister.clear();
-            this.info('Using "prettify" field in package.json file');
-          }
-
-          this.info('Updated Prettify beautification rules');
-
-        } else if (pkg === Setting.PrettifyFieldUndefined) {
-
-          this.getSettings(Config.Workspace);
-          this.formatIgnore.clear();
-          this.formatRegister.clear();
-          this.info('Using workspace settings for configuration');
-
-        }
-      } else if (pkg === Setting.PrettifyFieldDefined) {
-        prettify.options(this.prettifyRules);
-        this.dispose();
-        this.info('Using "prettify" field in package.json file');
-      }
-
-    } else {
-
-      const liquidrc = await this.getLiquidrc();
-
-      if (liquidrc === Setting.LiquidrcDefined) {
-        prettify.options(this.prettifyRules);
-        this.info('Updated Prettify beautification rules');
-        this.changed = true;
-        if (this.deprecatedConfig === true) {
-          this.deprecatedConfig = false;
-          this.languageDispose();
-        }
-      }
+    if (liquidrc === Setting.LiquidrcDefined) {
+      prettify.options(this.format.rules);
+      this.info('Updated formatting rules');
+      this.changed = true;
     }
 
   }
 
-  private async onDidCreate ({ fsPath }: Uri) {
+  private async onDidCreate (uri: Uri) {
 
-    const isPackage = isFile(fsPath, 'package.json');
+    const { fsPath } = uri;
 
-    if (this.liquidrcPath === null && isPackage === false) {
-      this.liquidrcPath = fsPath;
-      this.info('Created .liquidrc file, this will be used for formatting setting');
+    if (this.uri.liquidrc === null) {
+      this.uri.liquidrc = uri;
+      this.info('Created .liquidrc file, this will be used for extension capabilities');
     }
 
     if (this.isMatch(fsPath)) return null;
 
     this.dispose();
 
-    if (isPackage) {
+    const fileName = basename(fsPath);
 
-      if (this.configMethod === Config.Workspace) return;
+    if (this.config.method === ConfigMethod.Workspace) {
+      this.info(`The ${fileName} settings override "liquid.format.rules" configurations in the workspace`);
+    }
 
-      const pkg = await this.getPackage();
+    this.info(`Using .liquidrc file: ${fsPath}`);
 
-      if (pkg === Setting.PrettifyFieldDefined) {
-        prettify.options(this.prettifyRules);
-        commands.executeCommand('liquid.restartExtension');
-      }
+    const liquidrc = await this.getLiquidrc({ fixDeprecated: false });
 
-    } else {
-
-      const fileName = basename(fsPath);
-
-      if (this.configMethod === Config.Package) {
-        this.info(`The ${fileName} overrides the "prettify" field in package.json files`);
-      }
-
-      if (this.configMethod === Config.Workspace) {
-        this.info(`The ${fileName} settings override "liquid.format.*" configurations in the workspace`);
-      }
-
-      this.info(`Using .liquidrc file: ${fsPath}`);
-
-      const liquidrc = await this.getLiquidrc();
-
-      if (liquidrc === Setting.LiquidrcDefined) {
-
-        if (this.deprecatedConfig === true) {
-          this.deprecatedConfig = false;
-          this.languageDispose();
-        }
-
-        this.status.enable();
-        this.changed = true;
-
-        commands.executeCommand('liquid.restartExtension');
-      }
+    if (liquidrc === Setting.LiquidrcDefined) {
+      this.status.enable();
+      this.changed = true;
+      commands.executeCommand('liquid.restartExtension');
     }
 
   }
@@ -184,31 +115,9 @@ export class FSWatch extends FSUtils {
 
     if (this.isMatch(fsPath)) return null;
 
-    const isPackage = isFile(fsPath, 'package.json');
-
     this.dispose();
-
-    if (isPackage) {
-
-      this.getSettings(Config.Workspace);
-      this.info('Using workspace settings for configuration');
-
-    } else {
-
-      const pkg = await this.getPackage();
-
-      if (pkg === Setting.PrettifyFieldDefined) {
-
-        prettify.options(this.prettifyRules);
-        this.info('Using "prettify" field in package.json file');
-
-      } else {
-
-        this.getSettings(Config.Workspace);
-        this.info('Using workspace settings for configuration');
-
-      }
-    }
+    this.config.method = ConfigMethod.Workspace;
+    this.info('Using workspace settings for configuration');
 
   }
 
