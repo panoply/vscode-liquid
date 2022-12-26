@@ -1,5 +1,8 @@
 import { has } from 'rambdax';
-import { SchemaSectionTag, SchemaSettings, SchemaSettingTypes } from 'types';
+import { Completions, SchemaSectionTag, SchemaSettings, SchemaSettingTypes } from 'types';
+import { entries, isString } from 'utils';
+import { basename } from 'node:path';
+import parseJson from 'parse-json';
 import { Char, Token } from './enums';
 import * as r from './regex';
 import {
@@ -19,10 +22,9 @@ import {
   CompletionItemTag,
   Position,
   Range,
+  TextEdit,
   TextDocument
 } from 'vscode';
-import { isString } from 'utils';
-import parseJson from 'parse-json';
 
 /* -------------------------------------------- */
 /* UTILITIES                                    */
@@ -207,7 +209,7 @@ export function getSchemaCompletions (
       label: item.label,
       kind: item.kind,
       insertText: new SnippetString(item.textEdit.newText.slice(slice)),
-      documentation: new MarkdownString(item.documentation.value),
+      documentation: new MarkdownString((item.documentation as any).value),
       range: {
         inserting: new Range(
           new Position(line, character),
@@ -221,6 +223,19 @@ export function getSchemaCompletions (
     };
 
   });
+
+}
+
+export function getSnippetCompletions (file: string): CompletionItem {
+
+  const label = basename(file, '.liquid');
+
+  return {
+    label,
+    kind: CompletionItemKind.File,
+    insertText: new SnippetString(label),
+    documentation: new MarkdownString(`**Snippet [${label}.liquid](${file})**`)
+  };
 
 }
 
@@ -352,7 +367,9 @@ export function prevChar (content: string, offset: number, tagName?: string): To
   if (last === Char.COL) return Token.Object;
   if (last === Char.DOT) return Token.Property;
   if ((last === Char.SQO || last === Char.DQO) && prev.charCodeAt(prev.length - 2) === Char.LSB) {
+
     return Token.Property;
+
   }
 
   let wsp: number;
@@ -404,6 +421,12 @@ export function prevChars (content: string, offset: number, code: Char[]) {
 
 }
 
+export function applyTranslateFilter (text: string) {
+
+  return (/['"]\s*(?=-?}})/).test(text);
+
+}
+
 /**
  * Set Completion Items
  *
@@ -418,51 +441,6 @@ export function ProvideProps ([ label, { description, snippet = label } ]) {
     insertText: snippet,
     documentation: new MarkdownString(description)
   };
-}
-
-/**
- * Parse Object
- *
- *
- */
-export function parseObject (content: string, offset: number) {
-
-  const slice = content.slice(2, offset - 1);
-  const match = slice.match(/[^\s{<=>:]*?$/);
-
-  if (match === null) return null;
-
-  const props = match[0].split('.').filter(Boolean);
-
-  if (props[1] === 'settings' && props.length === 2) {
-    if (props[0] === 'section') return 'settings';
-    if (props[0] === 'block') return 'block';
-  }
-
-  if (!has(props[0], liquid.shopify.objects)) return null;
-
-  if (props.length === 1) {
-    const { properties = null } = liquid.shopify.objects[props[0]];
-    if (properties === null) return null;
-    return Object.entries(properties).map(ProvideProps as any);
-  }
-
-  return (function walk (next: string[], value: Properties) {
-
-    if (!value) return null;
-    if (!has(next[0], value)) return null;
-    if (!has('properties', value[next[0]])) return null;
-
-    const object = value[next[0]].properties;
-
-    // We check if we have walked to the last property
-    // to which we can then provide properties, if we haven't
-    // we continuall walk the values
-    return next.length > 1
-      ? object && walk(next.slice(1), object)
-      : object ? Object.entries(object).map(ProvideProps as any) : null;
-
-  }(props.slice(1), liquid.shopify.objects[props[0]].properties));
 }
 
 /**
@@ -500,6 +478,158 @@ export function getSchema (textDocument: TextDocument) {
     content: content.slice(start, ender)
   };
 
+}
+
+/**
+ * Generates Local description, the provided `type`
+ * enum will determine the the text to return.
+ *
+ * - `1` Returns the _available fields_ type description.
+ * - `2` Returns the _value_ of the locale property.
+ */
+function getLocaleDescription (
+  type: 1 | 2,
+  label: string,
+  value: string,
+  uri: string
+) {
+
+  const filename = basename(uri);
+
+  if (type === 1) {
+    return new MarkdownString(`\`${label}\`\n\n${value} available fields\n\n---\n\n[${filename}](${uri})\n\n`);
+  } else {
+    return new MarkdownString(`\`${label}\`\n\n${value}\n\n---\n\n[${filename}](${uri})\n\n`);
+  }
+
+}
+
+/**
+ * Parse Locale Objects
+ *
+ * Similar to `parseObject` but instead provides locale file based completions.
+ */
+export function parseLocale (
+  locales: Completions['locales'],
+  content: string,
+  offset: number,
+  options: {
+    addFilter: boolean,
+    position: Position
+  }
+) {
+
+  /**
+   * Set Locale Items
+   *
+   * Sets the completion items that are passed to the completion resolver.
+   * Extracts necessary values from the passed in specification record.
+   */
+  function ProvideLocales ([ label, props ]): CompletionItem {
+
+    const value = typeof props === 'object'
+      ? Object.keys(props).length
+      : typeof props[label] === 'object'
+        ? Object.keys(props[label]).length
+        : props;
+
+    return {
+      label,
+      kind: CompletionItemKind.Module,
+      insertText: new SnippetString(label),
+      additionalTextEdits: options.addFilter ? [
+        TextEdit.insert(new Position(options.position.line, options.position.character + 2), '| t ')
+      ] : [],
+      documentation: typeof props === 'object'
+        ? getLocaleDescription(1, label, value, locales.file)
+        : getLocaleDescription(2, label, value, locales.file)
+    };
+  }
+
+  const slice = content.slice(2, offset - 1);
+  const match = slice.match(/[^\s"']*?$/);
+
+  if (match === null) return null;
+
+  const props = match[0].split('.').filter(Boolean);
+
+  if (!has(props[0], locales.items)) return entries(locales.items).map(ProvideLocales as any);
+
+  if (props.length === 1) {
+
+    const next = locales.items[props[0]] || null;
+
+    if (next === null) return null;
+    return Object.entries(next).map(ProvideLocales as any);
+  }
+
+  return (function walk (next: string[], value: object) {
+
+    if (!value) return null;
+    if (!has(next[0], value)) return null;
+
+    const object = value[next[0]];
+
+    // We check if we have walked to the last property
+    // to which we can then provide properties, if we haven't
+    // we continuall walk the values
+    return next.length > 1
+      ? object && walk(next.slice(1), object)
+      : typeof object === 'object' ? entries(object).map(ProvideLocales) : null;
+
+  }(props.slice(1), locales.items[props[0]]));
+
+}
+
+/**
+ * Parse Object
+ *
+ * Parses an object from current content offset location.
+ * The resulting logical walks the Liquid Language Specifications.
+ */
+export function parseObject (content: string, offset: number) {
+
+  const slice = content.slice(2, offset - 1);
+  const match = slice.match(/[^\s{<=>:]*?$/);
+
+  if (match === null) return null;
+
+  const props = match[0].split('.').filter(Boolean);
+
+  if (props[1] === 'settings' && props.length === 2) {
+
+    if (props[0] === 'section') return 'settings';
+    if (props[0] === 'block') return 'block';
+
+  }
+
+  if (!has(props[0], liquid.shopify.objects)) return null;
+
+  if (props.length === 1) {
+
+    const { properties = null } = liquid.shopify.objects[props[0]];
+
+    if (properties === null) return null;
+
+    return Object.entries(properties).map(ProvideProps as any);
+  }
+
+  return (function walk (next: string[], value: Properties) {
+
+    if (!value) return null;
+    if (!has(next[0], value)) return null;
+    if (!has('properties', value[next[0]])) return null;
+
+    const object = value[next[0]].properties;
+
+    // We check if we have walked to the last property
+    // to which we can then provide properties, if we haven't
+    // we continuall walk the values
+    return next.length > 1
+      ? object && walk(next.slice(1), object)
+      : object ? Object.entries(object).map(ProvideProps as any) : null;
+
+  }(props.slice(1), liquid.shopify.objects[props[0]].properties));
 }
 
 /**
