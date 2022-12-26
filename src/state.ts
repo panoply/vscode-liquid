@@ -1,47 +1,125 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable quote-props */
 
-import { ConfigurationTarget, Disposable, Extension, workspace } from 'vscode';
-import { Config, LanguageIds, PackageJSON, Selectors, Workspace, Completions } from 'types';
-import { relative } from 'node:path';
-import { Tester } from 'anymatch';
-import prettify, { Options } from '@liquify/prettify';
+import { ConfigurationTarget, Extension, Uri, workspace } from 'vscode';
+import prettify from '@liquify/prettify';
 import { Engines } from '@liquify/liquid-language-specs';
+import { clone } from 'rambdax';
+import * as T from 'types';
 
 /**
  * Extension State - Localized store for the extension
  */
 export class State {
 
-  constructor ({ packageJSON, isActive }: Extension<PackageJSON>) {
+  constructor ({ packageJSON, isActive }: Extension<T.PackageJSON>) {
+
     this.isActive = isActive;
-    this.version = `v${packageJSON.version}`;
-    this.id = packageJSON.name;
-    this.repository = packageJSON.repository.url;
-    this.displayName = packageJSON.displayName;
-    this.prettifyVersion = packageJSON.dependencies['@liquify/prettify'];
-    this.fsPath = workspace.workspaceFolders[0].uri.fsPath;
-    this.rootPath = this.fsPath;
+    this.uri.root = workspace.workspaceFolders[0].uri;
+    this.uri.workspace = Uri.joinPath(this.uri.root, '.vscode', 'settings.json');
+    this.meta.version = packageJSON.version;
+    this.meta.displayName = packageJSON.displayName;
+    this.meta.prettifyVersion = packageJSON.dependencies['@liquify/prettify'];
+    this.meta.releaseNotes = Uri.parse(`${this.meta.repository}/releases/tag/v${this.meta.version}`);
+
   }
 
   /**
-   * Get Relative file path
+   * Meta Information
    *
-   * Returns the relative path of a the provided `uri`
-   * using the `fsPath` base location.
+   * Some common data which describes the extension.
    */
-  relative = (path: string) => relative(this.rootPath, path);
+  meta: T.Meta = {
+    releaseNotes: null,
+    version: null,
+    prettifyVersion: null,
+    displayName: null,
+    id: 'sissel.shopify-liquid',
+    projectName: 'vscode-liquid',
+    repository: 'https://github.com/panoply/vscode-liquid'
+  };
 
   /**
-   * Deprecated Configurations
+   * Trigger Characters
+   *
+   * Used for completions, the following triggers character.
    */
-  deprecatedConfig: boolean = false;
+  triggers: string[] = [
+    '%',
+    '|',
+    ':',
+    '.',
+    '"',
+    "'",
+    ' '
+  ];
+
+  /**
+   * Whether or not a deprecation was detected.
+   * When `null` no deprecations were found, if `string`
+   * value then deprecation was detected.
+   */
+  deprecation: { liquidrc: string; workspace: string } = {
+    liquidrc: null,
+    workspace: null
+  };
+
   /**
    * The  Liquid engine
    *
    * @default 'shopify'
    */
   engine: Engines = 'shopify';
+
+  /**
+   * Copy of the parsed `.liquidrc` file
+   *
+   * @default null
+   */
+  liquidrc: T.Liquidrc = null;
+
+  /**
+   * URI path referenced used by the extension
+   */
+  uri: T.URI = {
+    env: null,
+    root: null,
+    liquidrc: null,
+    workspace: null,
+    files: {
+      locales: null,
+      sections: null,
+      settings: null,
+      snippets: null
+    }
+  };
+
+  /**
+   * Format related configuration
+   */
+  format: T.Format = {
+    ignoreList: [],
+    ignoreMatch: null,
+    ignored: new Set(),
+    register: new Set(),
+    handler: null,
+    rules: clone(prettify.options.rules)
+  };
+
+  /**
+   * Format related configuration
+   */
+  config: T.Config = {
+    method: T.ConfigMethod.Undefined,
+    target: ConfigurationTarget.Workspace
+  };
+
+  /**
+   * Whether or not the extension can active
+   *
+   * @default true
+   */
+  canActivate: boolean = true;
 
   /**
    * Whether or not formatting is enabled
@@ -51,9 +129,9 @@ export class State {
   canFormat: boolean = false;
 
   /**
-   * Which completions are enabled
+   * Which hovers are enabled
    */
-  canHover: Workspace.Hover = {
+  canHover: T.Workspace.Hover = {
     tags: true,
     filters: true,
     objects: true,
@@ -63,127 +141,22 @@ export class State {
   /**
    * Which validations are enabled
    */
-  canValidate: Workspace.Validate = {
+  canValidate: T.Workspace.Validate = {
     schema: true
   };
 
   /**
    * Which completions are enabled
    */
-  canComplete: Workspace.Completion = {
+  canComplete: T.Workspace.Completion = {
     tags: true,
     filters: true,
     objects: true,
     operators: true,
     section: true,
-    logical: true
+    logical: true,
+    schema: true
   };
-
-  /**
-   * The extension official identifier, ie: sissel.vscode-liquid
-   */
-  id: string = 'sissel.shopify-liquid';
-
-  /**
-   * Github Repostory URL
-   */
-  displayName: string = 'Liquid';
-
-  /**
-   * Github Repostory URL
-   */
-  repository: string = 'https://github.com/panoply/vscode-liquid';
-
-  /**
-   * Extension version
-   */
-  version: string;
-
-  /**
-   * The workspace `fsPath`
-   *
-   * @default null
-   */
-  fsPath: string = null;
-  /**
-   * Base URL path (`null` if not provided)
-   *
-   * @default null
-   */
-  baseUrl: string = null;
-  /**
-   * URI root path of the project
-   *
-   * @default fsPath
-   */
-  rootPath: string;
-
-  /**
-   * URI Path to the `package.json` file
-   *
-   * @default fsPath/package.json
-   */
-  packagePath: string;
-
-  /**
-   * URI Path to the `.liquidrc` files
-   *
-   * @default null
-   */
-  liquidrcPath: string = null;
-
-  /**
-   * The extension configuration method being used
-   *
-   * @default Config.Workspace
-   */
-  configMethod: Config = Config.Workspace;
-
-  /**
-   * The workspace target
-   *
-   * @default ConfigurationTarget.Workspace
-   */
-  configTarget: ConfigurationTarget = ConfigurationTarget.Workspace;
-
-  /**
-   * A reference to the ignored list of files.
-   *
-   * @default []
-   */
-  ignoreList: string[] = [];
-
-  /**
-   * Anymatch pattern for ignored paths
-   *
-   * @default null
-   */
-  ignoreMatch: Tester = null;
-
-  /**
-   * Prettify version
-   */
-  prettifyVersion: string;
-
-  /**
-   * The current formatting rules
-   */
-  prettifyRules: Options = prettify.options.rules;
-
-  /**
-   * The formatting handler
-   */
-  formatHandler: Disposable = null;
-
-  /**
-   * Set list of ignore paths
-   */
-  formatIgnore: Set<string> = new Set();
-
-  /**
-   * Set list of `fsPath` URI paths
-   */
-  formatRegister: Set<string> = new Set();
 
   /**
    * Whether or not the extension was activated
@@ -229,7 +202,7 @@ export class State {
    * and the `extend` is the additional languages that can
    * be handled.
    */
-  selector: Selectors = {
+  selector: T.Selectors = {
     active: [
       { scheme: 'file', language: 'liquid' },
       { scheme: 'file', language: 'liquid-css' },
@@ -263,7 +236,7 @@ export class State {
    * Holds a reference to which language selectors are
    * currently enabled/disabled.
    */
-  languages: { [K in LanguageIds]: boolean } = {
+  languages: { [K in T.LanguageIds]: boolean } = {
     'liquid': true,
     'liquid-css': true,
     'liquid-scss': true,
@@ -288,13 +261,23 @@ export class State {
    * Holds a cache reference of completion items generated
    * in Liquid variations that support them.
    */
-  complete: Completions = {
+  complete: T.Completions = {
     textEdit: [],
     tags: null,
     logical: null,
     filters: null,
     objects: null,
-    common: null
+    common: null,
+    snippets: null,
+    sections: null,
+    settings: {
+      file: null,
+      items: null
+    },
+    locales: {
+      file: null,
+      items: null
+    }
   };
 
 }
