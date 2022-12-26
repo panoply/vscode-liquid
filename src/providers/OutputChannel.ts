@@ -14,7 +14,7 @@ export class OutputChannel extends StatusLanguageItem {
   /**
    * Liquid Output Channel
    */
-  public output = window.createOutputChannel(this.displayName, 'log-liquid');
+  public output = window.createOutputChannel(this.meta.displayName, 'log-liquid');
 
   /**
    * Info Output
@@ -50,12 +50,16 @@ export class OutputChannel extends StatusLanguageItem {
       this.output.appendLine(`\nERROR: ${message}\n`);
 
       if (has('message', error)) {
+
         const json = error.message.indexOf(' while parsing near');
         if (json > -1) error.message = error.message.slice(0, json) + ':';
+
         this.output.appendLine(error.message);
+
       }
 
       const stack = u.parseStack(error);
+
       if (u.isArray(stack)) for (const line of stack) this.output.appendLine(line);
 
     } else {
@@ -70,28 +74,19 @@ export class OutputChannel extends StatusLanguageItem {
    *
    * Error handling printed to output
    */
-  public error (message: string, context?: string[] | string) {
+  public error (message: string) {
 
-    if (this.deprecatedConfig === false) this.status.error();
+    if (this.deprecation.liquidrc === null && this.deprecation.workspace === null) {
+      this.status.error();
+    }
 
-    if (u.isUndefined(context)) {
+    this.output.appendLine(`${u.getTime()} ERROR: ${message}`);
 
-      this.output.appendLine(`${u.getTime()} ERROR: ${message}`);
-
-    } else if (u.isArray(context)) {
-
-      this.output.appendLine(`ERROR: ${message}\n`);
-
-      (context as string[]).push('');
+    return (...context: string[]) => {
 
       for (const line of context as string[]) this.output.appendLine('  ' + line);
 
-    } else if (u.isString(context)) {
-
-      this.output.appendLine(`ERROR: ${message}\n`);
-      this.output.appendLine(context as string + '\n');
-
-    }
+    };
 
   };
 
