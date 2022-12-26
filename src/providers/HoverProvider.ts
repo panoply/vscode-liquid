@@ -1,6 +1,6 @@
 import { $, Object as IObject } from '@liquify/liquid-language-specs';
 import { parseSchema } from 'parse/tokens';
-import { JSONLanguageService } from 'service/JsonLanguageService';
+import { JSONLanguageService } from 'service/JSONLanguageService';
 import { Workspace } from 'types';
 
 import {
