@@ -10,6 +10,6 @@ export async function activate ({ subscriptions, extension }: ExtensionContext) 
 
   const liquid = new VSCodeLiquid(extension);
 
-  return liquid.onActiveEditor(subscriptions);
+  return liquid.onActivate(subscriptions);
 
 };
