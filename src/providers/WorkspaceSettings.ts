@@ -1,19 +1,23 @@
 /* eslint-disable no-unused-vars */
 
-import { workspace, ConfigurationTarget } from 'vscode';
-import { join } from 'node:path';
-import { readFile } from 'node:fs/promises';
+import { workspace, ConfigurationTarget, Uri } from 'vscode';
 import { existsSync } from 'node:fs';
-import { has, isNil, difference } from 'rambdax';
-import prettify from '@liquify/prettify';
-import parseJSON from 'parse-json';
+import { has, isNil, difference, mapAsync, flatten, hasPath, isEmpty } from 'rambdax';
 import anymatch from 'anymatch';
 import { OutputChannel } from 'providers/OutputChannel';
-import { Setting, Config, Workspace } from 'types';
+import { Setting, ConfigMethod, Workspace, InLanguageIds, LanguageIds, Liquidrc } from 'types';
 import * as u from 'utils';
-import { Status } from 'providers/StatusBarItem';
 
 export class WorkspaceSettings extends OutputChannel {
+
+  /**
+   * Returns workspace configuration for `liquid.*`
+   */
+  get getConfig () {
+
+    return workspace.getConfiguration('liquid');
+
+  }
 
   /**
    * Formatting Disposals
@@ -21,18 +25,188 @@ export class WorkspaceSettings extends OutputChannel {
    * Disposes of the formatHandler and resets it reference
    * to `undefined` only when the handler is defined.
    */
-  public dispose () {
+  dispose () {
 
-    if (this.formatHandler) {
-      this.formatHandler.dispose();
-      this.formatHandler = undefined;
-      this.formatIgnore.clear();
-      this.formatRegister.clear();
+    if (this.format.handler) {
+
+      this.format.handler.dispose();
+      this.format.handler = undefined;
+      this.format.ignored.clear();
+      this.format.register.clear();
+
     } else {
-      this.formatIgnore.clear();
-      this.formatRegister.clear();
+
+      this.format.ignored.clear();
+      this.format.register.clear();
+
     }
 
+  }
+
+  /**
+   * Set Default Formatter
+   *
+   * Sets the in-language `editor.defaultFormatter` to use `sissel.shopify-liquid`
+   */
+  async setDefaultFormatter (languageId: InLanguageIds) {
+
+    if (this.isDefaultFormatter(languageId)) {
+      this.info(`Default formatter is already defined to use ${this.meta.id}`);
+      return true;
+    }
+
+    const config = workspace.getConfiguration('editor', { languageId });
+    await config.update('defaultFormatter', this.meta.id, this.config.target, true);
+
+    this.info(`Default formatter for ${languageId} was set to "${this.meta.id}"`);
+
+    return true;
+
+  }
+
+  /**
+   * Engine Defintion
+   *
+   * Assigns and returns the known Liquid engine being used.
+   */
+  async setFormatOnSave (languageId: InLanguageIds, enable?: boolean) {
+
+    await workspace
+      .getConfiguration('editor', { languageId })
+      .update('formatOnSave', enable, this.config.target, true);
+
+    this.canFormat = enable;
+
+    if (enable) {
+      this.status.enable();
+      this.info(`Enabled formatOnSave for ${languageId}`);
+    } else {
+      this.status.disable();
+      this.info(`Disabled formatOnSave for ${languageId}`);
+    }
+
+  }
+
+  /**
+   * Get Default Formatter
+   *
+   * Gets the in-language `editor.defaultFormatter` configuration
+   * currently defined in the settings for the given language id.
+   * Returns a boolean value indicating whether or not a default formatter
+   * is defined.
+   */
+  isDefaultFormatter (languageId: LanguageIds) {
+
+    const setting = workspace.getConfiguration().inspect(languageId);
+
+    if (setting.workspaceLanguageValue !== undefined) {
+      this.info(`Using workspace settings: ${this.uri.workspace}`);
+      if (has('editor.defaultFormatter', setting.workspaceLanguageValue)) {
+        return setting.workspaceLanguageValue['editor.defaultFormatter'] === this.meta.id;
+      }
+    } else if (setting.globalLanguageValue !== undefined) {
+      if (has('editor.defaultFormatter', setting.globalLanguageValue)) {
+        return setting.globalLanguageValue['editor.defaultFormatter'] === this.meta.id;
+      }
+    }
+
+    return false;
+
+  }
+
+  /**
+   * Engine Defintion
+   *
+   * Assigns and returns the known Liquid engine being used.
+   */
+  getEngine () {
+
+    if (this.config.method === ConfigMethod.Liquidrc) {
+      if (has('engine', this.liquidrc) && u.isString(this.liquidrc.engine)) {
+        this.engine = this.liquidrc.engine;
+      }
+    } else {
+      if (this.getConfig.has('engine')) {
+        this.engine = this.getConfig.get('engine');
+      } else {
+        this.engine = 'shopify';
+      }
+    }
+
+  }
+
+  /**
+   * Get Files
+   *
+   * Generates the URI paths defined either via workspace settings on
+   * `liquid.file.*` configurations or from the `.liquidrc` file.
+   */
+  async getFiles (): Promise<void> {
+
+    const files = Object.keys(this.uri.files); // returns the name of each file
+
+    let rcfile = false;
+
+    if (this.config.method === ConfigMethod.Liquidrc) {
+
+      if (has('files', this.liquidrc)) {
+        if (u.isObject(this.liquidrc.files) === false) {
+
+          this.error('Invalid type provided on "files" in .liquidrc')(
+            'The "files" setting expect a type object but recieved type',
+            `${typeof this.liquidrc.files} You need to use the correct type of`,
+            'alternatively you can define files in your workspace file via the',
+            '"liquid.files.*" option.'
+          );
+
+        } else {
+          rcfile = true;
+        }
+      }
+    } else {
+      if (this.getConfig.has('files') === false) return null;
+    }
+
+    for (const file of files) {
+
+      let defined = false;
+
+      if (rcfile) {
+        if (has(file, this.liquidrc.files)) {
+
+          if (u.isString(this.liquidrc.files[file])) {
+            this.uri.files[file] = Uri.file(this.liquidrc.files[file]);
+            defined = true;
+          } else if (u.isArray(this.liquidrc.files[file])) {
+
+            const paths = await mapAsync<string, Uri[]>(async (glob) => {
+              return workspace.findFiles(glob);
+            }, this.liquidrc.files[file]);
+
+            this.uri.files[file] = flatten<Uri>(paths);
+            defined = true;
+          }
+        }
+      }
+
+      if (defined === false && this.getConfig.has(`files.${file}`)) {
+
+        const source = this.getConfig.get<string | string[]>(`files.${file}`);
+
+        if (u.isString(source)) {
+          this.uri.files[file] = Uri.file(source as string);
+        } else if (u.isArray(source)) {
+
+          const paths = await mapAsync<string, Uri[]>(async (glob) => {
+            return workspace.findFiles(glob);
+          }, source as string[]);
+
+          this.uri.files[file] = flatten<Uri>(paths);
+
+        }
+
+      }
+    }
   }
 
   /**
@@ -42,9 +216,9 @@ export class WorkspaceSettings extends OutputChannel {
    * property values. When configuration is updated the `ignore` state
    * reference is updated and output is sent informing upon changes.
    */
-  public getIgnores (rules: string[]) {
+  getIgnores (rules: string[]) {
 
-    const current = this.ignoreList;
+    const current = this.format.ignoreList;
 
     if (u.isArray(rules)) {
 
@@ -62,7 +236,7 @@ export class WorkspaceSettings extends OutputChannel {
 
       }
 
-      this.ignoreList = rules;
+      this.format.ignoreList = rules;
 
       if (rules.length === 0) {
 
@@ -70,41 +244,15 @@ export class WorkspaceSettings extends OutputChannel {
           this.info('Ignore path removed: ' + remove);
         }
 
-        this.ignoreMatch = null;
+        this.format.ignoreMatch = null;
 
       } else {
 
-        this.ignoreMatch = anymatch(this.ignoreList);
+        this.format.ignoreMatch = anymatch(this.format.ignoreList);
+
       }
 
     }
-  }
-
-  /**
-   * Get Workspace Target
-   *
-   * Returns the workspace/user target to use and augments
-   * the `target` state reference. Returns the workspace property
-   * name to use when inspecting with the `workspace.getConfiguration()`
-   * method to check/update in~language settings.
-   */
-  public getTarget () {
-
-    const liquid = workspace.getConfiguration('liquid');
-
-    this.configTarget = liquid.has('settings.target')
-      ? liquid.get('settings.target') === 'workspace'
-        ? ConfigurationTarget.Workspace
-        : ConfigurationTarget.Global
-      : ConfigurationTarget.Workspace;
-
-    if (this.configTarget === ConfigurationTarget.Global) {
-      this.warn('Consider using "workspace" instead of "user" setting target');
-      return 'globalValue';
-    }
-
-    return 'workspaceValue';
-
   }
 
   /**
@@ -113,98 +261,138 @@ export class WorkspaceSettings extends OutputChannel {
    * Augments the `languages` object and aligns language values
    * using `sissel.shopify-liquid` in~language `editor.defaultFormatter`.
    */
-  public getLanguages () {
-
-    const target = this.getTarget();
+  getLanguages () {
 
     for (const id in this.languages) {
-      if (u.isDefaultFormatter(`[${id}]`, target) && this.languages[id] === false) {
+      if (this.isDefaultFormatter(id) && this.languages[id] === false) {
         this.languages[id] = true;
         this.selector.active.push({ language: id, scheme: 'file' });
-        this.info('Prettify was made the default formatter of ' + id);
+        this.info('The vscode-liquid extension is the default formatter for ' + id);
       }
     }
 
   };
 
   /**
-   * Get Settings
+   * Get Formatting Status
    *
-   * Shortcut handler for checking workspace settings to determine
-   * the current formatting status and options. Optionally accepts
-   * a `config` enum parameter which can be used to re-assignment
-   * before passing to `getWorkspace()` for checks.
-   *
-   * > **Note:** This function will re-assign Prettify options when
-   * config type is `Config.Workspace` and formatting is enabled.
+   * Returns the formatting status.
    */
-  public getSettings (config?: Config) {
+  isFormattingOnSave (languageId: string) {
 
-    if (u.isNumber(config)) this.configMethod = config;
+    if (this.isDefaultFormatter(languageId)) {
 
-    const canFormat = this.canFormat;
-    const settings = this.getWorkspace();
+      const setting = workspace.getConfiguration().inspect(languageId);
 
-    if (this.canFormat === false) {
-      this.status.disable();
-      this.info('Disabled formatting');
-    } else if ((this.canFormat !== canFormat) || (this.status.state === Status.Disabled && this.canFormat)) {
-      this.status.enable();
-      this.info('Enabled formatting');
+      if (setting.workspaceLanguageValue !== undefined) {
+        if (has('editor.defaultFormatter', setting.workspaceLanguageValue)) {
+          return setting.workspaceLanguageValue['editor.defaultFormatter'];
+        }
+      } else if (setting.globalLanguageValue !== undefined) {
+        if (has('editor.defaultFormatter', setting.globalLanguageValue)) {
+          return setting.globalLanguageValue['editor.defaultFormatter'];
+        }
+      } else {
+        this.warn(`The ${languageId} "editor.formatOnSave" setting is not defined`);
+      }
+
     }
 
-    if (this.canFormat && this.configMethod === Config.Workspace) {
-      prettify.options(this.prettifyRules);
-    }
-
-    return settings;
+    return false;
 
   }
 
   /**
-   * Get Workspace
+   * Get Hover Status
    *
-   * Walks over the editor settings and determines the configuration defined.
-   * Returns an enum that informs upon state of the editors options
+   * Applied the hover control settings
    */
-  public getWorkspace () {
+  getHovers () {
 
-    const liquid = workspace.getConfiguration('liquid');
-    const engine = liquid.get<Workspace.Engine>('engine');
-    const completions = liquid.get<Workspace.Completion>('completion');
-    const validate = liquid.get<Workspace.Validate>('validate');
-    const hovers = liquid.get<Workspace.Hover>('hover');
-    const target = liquid.get<Workspace.Target>('settings.target');
-    const format = liquid.get<Workspace.Format>('format');
-    const baseUrl = liquid.get<string>('config.baseUrl');
-    const rules = liquid.get('rules');
+    if (this.getConfig.has('hover') === false) return;
 
-    if (u.isBoolean(format) || u.isObject(rules)) {
+    const hovers = this.getConfig.get<Workspace.Hover>('hover');
 
-      if (this.deprecatedConfig) {
-        this.error('Deprecated settings are still existent in workspace');
+    if (u.isObject(hovers)) {
+
+      if (has('tags', hovers)) {
+        this.canHover.tags = hovers.tags;
+        if (hovers.tags) {
+          this.info('Hovers are enabled for: tags');
+        } else {
+          this.info('Hovers are disabled for: tags');
+        }
       }
 
-      return Setting.DeprecatedWorkspaceSettings;
+      if (has('filters', hovers)) {
+        this.canHover.filters = hovers.filters;
+        if (hovers.filters) {
+          this.info('Hovers are enabled for: filters');
+        } else {
+          this.info('Hovers are disabled for: filters');
+        }
+      }
+
+      if (has('schema', hovers)) {
+        if (this.engine === 'shopify') {
+          this.canComplete.schema = hovers.schema;
+          if (hovers.schema) {
+            this.info('Hovers are enabled for: {% schema %}');
+          } else {
+            this.info('Hovers are disabled for: {% schema %}');
+          }
+        } else {
+          if (hovers.schema) {
+            this.warn('Hovers for {% schema %} will not work in Liquid Standard');
+          }
+        }
+      }
 
     }
 
-    // No configuration defined for the extension
-    if (
-      isNil(target) &&
-      isNil(format) &&
-      isNil(baseUrl) &&
-      isNil(engine) &&
-      isNil(completions) &&
-      isNil(validate) &&
-      isNil(hovers)
-    ) return Setting.WorkspaceUndefined;
+  }
 
-    if (u.isString(engine) && this.engine !== engine) this.engine = engine;
+  /**
+   * Get Validations
+   *
+   * Applied validation control settings
+   */
+  getValidations () {
 
-    /* -------------------------------------------- */
-    /* COMPLETIONS                                  */
-    /* -------------------------------------------- */
+    if (this.getConfig.has('validate') === false) return;
+
+    const validate = this.getConfig.get<Workspace.Validate>('validate');
+
+    if (u.isObject(validate)) {
+      if (has('schema', validate)) {
+        if (this.engine === 'shopify') {
+          this.canValidate.schema = validate.schema;
+          if (validate.schema) {
+            this.info('Validations are enabled for: {% schema %}');
+          } else {
+            this.info('Validations are disabled for: {% schema %}');
+          }
+        } else {
+          if (validate.schema) {
+            this.warn('Validations for {% schema %} only work when the Liquid "engine" is Shopify');
+          }
+        }
+      }
+    }
+
+  }
+
+  /**
+   * Get Completions
+   *
+   * Applied configuration status of completions.
+   *
+   */
+  getCompletions () {
+
+    if (this.getConfig.has('completion') === false) return;
+
+    const completions = this.getConfig.get<Workspace.Completion>('completion');
 
     if (u.isObject(completions)) {
 
@@ -273,187 +461,78 @@ export class WorkspaceSettings extends OutputChannel {
           } else {
             this.info('Completions are disabled for: {% schema %}');
           }
-        } else {
-          if (validate.schema) {
-            this.warn('Completion for {% schema %} will not work in Liquid Standard');
-          }
         }
       }
 
     }
 
-    /* -------------------------------------------- */
-    /* VALIDATIONS                                  */
-    /* -------------------------------------------- */
-
-    if (u.isObject(validate)) {
-      if (has('schema', validate)) {
-        if (this.engine === 'shopify') {
-          this.canValidate.schema = validate.schema;
-          if (validate.schema) {
-            this.info('Validations are enabled for: {% schema %}');
-          } else {
-            this.info('Validations are disabled for: {% schema %}');
-          }
-        } else {
-          if (validate.schema) {
-            this.warn('Validations for {% schema %} will not work in Liquid Standard');
-          }
-        }
-      }
-    }
-
-    /* -------------------------------------------- */
-    /* HOVERS                                       */
-    /* -------------------------------------------- */
-
-    if (u.isObject(hovers)) {
-
-      if (has('tags', hovers)) {
-        this.canHover.tags = hovers.tags;
-        if (completions.tags) {
-          this.info('Hovers are enabled for: tags');
-        } else {
-          this.info('Hovers are disabled for: tags');
-        }
-      }
-
-      if (has('filters', hovers)) {
-        this.canHover.filters = hovers.filters;
-        if (completions.filters) {
-          this.info('Hovers are enabled for: filters');
-        } else {
-          this.info('Hovers are disabled for: filters');
-        }
-      }
-
-      if (has('schema', hovers)) {
-        if (this.engine === 'shopify') {
-          this.canComplete.schema = hovers.schema;
-          if (hovers.schema) {
-            this.info('Hovers are enabled for: {% schema %}');
-          } else {
-            this.info('Hovers are disabled for: {% schema %}');
-          }
-        } else {
-          if (hovers.schema) {
-            this.warn('Hovers for {% schema %} will not work in Liquid Standard');
-          }
-        }
-      }
-
-    }
-
-    /* -------------------------------------------- */
-    /* BASE URL                                     */
-    /* -------------------------------------------- */
-
-    if (u.isString(baseUrl)) {
-      const newRoot = join(this.rootPath, baseUrl);
-      if (newRoot !== this.rootPath && existsSync(newRoot)) {
-        this.baseUrl = baseUrl;
-        this.rootPath = newRoot;
-      }
-    } else if (isNil(baseUrl) && u.isString(this.baseUrl)) {
-      this.baseUrl = null;
-      this.rootPath = this.fsPath;
-    }
-
-    /* -------------------------------------------- */
-    /* FORMAT                                       */
-    /* -------------------------------------------- */
-
-    if (u.isObject(format)) {
-
-      let def: boolean = this.configMethod === Config.Workspace;
-      let opt: Setting = Setting.WorkspaceUndefined;
-
-      // If first run, we will assert editor settings is being used
-      if (isNaN(this.configMethod)) {
-        this.configMethod = Config.Workspace;
-        def = true;
-      }
-
-      if (has('ignore', format)) {
-        this.getIgnores(format.ignore);
-        opt = Setting.WorkspaceDefined;
-      } else if (def) {
-        this.getIgnores([]);
-      }
-
-      // lets determine if formatting is enabled or not
-      if (has('enable', format) && u.isBoolean(format.enable)) {
-        this.canFormat = format.enable;
-        opt = Setting.WorkspaceDefined;
-      }
-
-      // if we are using editor settings lets apply prettify rules
-      if (def) this.prettifyRules = u.rulesNormalize(format);
-
-      if (this.deprecatedConfig && opt === Setting.WorkspaceUndefined) {
-        this.deprecatedConfig = false;
-        this.languageDispose();
-      }
-
-      return opt;
-
-    }
-
-    return Setting.WorkspaceUndefined;
-
-  };
+  }
 
   /**
-   * Get Package JSON
-   *
-   * Checks for the existence of a `package.json` files
-   * and then looks for a _prettify_ property. When detected
-   * the extension will use the rules provided to the property.
+   * Get Format Rules
    */
-  public async getPackage () {
+  getFormatRules () {
 
-    this.packagePath = join(this.rootPath, 'package.json');
+    if (this.config.method === ConfigMethod.Liquidrc) {
+      if (has('format', this.liquidrc)) {
 
-    const path = await u.pathExists(this.packagePath);
-    if (!path) return Setting.PackageJsonUndefined;
+        this.format.rules = u.rulesNormalize(this.liquidrc.format);
 
-    try {
+        if (has('ignore', this.liquidrc.format) && u.isArray(this.liquidrc.format.ignore)) {
+          this.getIgnores(this.liquidrc.format.ignore);
+        } else if (this.format.ignoreList.length > 0) {
+          this.getIgnores([]);
+        }
 
-      const read = await readFile(this.packagePath);
-      const pkg = parseJSON(read.toString());
+      }
+    } else {
 
-      if (!has('prettify', pkg)) return Setting.PrettifyFieldUndefined;
-
-      if (!u.isObject(pkg.prettify)) {
-
-        this.error('Invalid configuration type provided in package.json', [
-          'The "prettify" field expects an {} (object) type to be provided but instead recieved',
-          `${typeof pkg.prettify} type which is invalid. You need to use the right configuration.`
-        ]);
-
-        return Setting.PrettifyFieldInvalid;
+      if (this.getConfig.has('format.rules')) {
+        const rules = this.getConfig.get('format.rules');
+        if (u.isObject(rules)) this.format.rules = rules;
       }
 
-      if (has('ignore', pkg.prettify)) {
-        this.getIgnores(pkg.prettify.ignore);
-      } else if (this.configMethod === Config.Package) {
-        this.getIgnores([]);
+      if (this.getConfig.has('format.ignore')) {
+
+        const ignore = this.getConfig.get<Workspace.Format['ignore']>('format.ignore');
+
+        if (has('ignore', ignore) && u.isArray(ignore)) {
+
+          this.getIgnores(ignore);
+
+        } else if (this.format.ignoreList.length > 0) {
+
+          this.getIgnores([]);
+
+        }
+
       }
 
-      this.configMethod = Config.Package;
-      this.prettifyRules = u.rulesNormalize(pkg.prettify);
+    }
+  }
 
-      if (this.canFormat === null) this.canFormat = true;
+  /**
+   * Get BaseURL
+   *
+   * Applied baseURL
+   */
+  getBaseUrl () {
 
-      return Setting.PrettifyFieldDefined;
+    if (this.getConfig.has('config.baseUrl')) {
 
-    } catch (e) {
-      this.catch('The package.json file could not be parsed', e);
+      const baseUrl = this.getConfig.get<string>('config.baseUrl');
+
+      if (u.isString(baseUrl)) {
+
+        const newRoot = Uri.joinPath(this.uri.root, baseUrl);
+
+        if (newRoot.fsPath !== this.uri.root.fsPath && existsSync(newRoot.fsPath)) {
+          this.uri.root = newRoot;
+        }
+      }
     }
 
-    return Setting.PackageJsonError;
-
-  };
+  }
 
   /**
    * Get Liquidrc
@@ -465,64 +544,295 @@ export class WorkspaceSettings extends OutputChannel {
    *
    * Returns a number based value which indicated what occured in the parse:
    */
-  public async getLiquidrc () {
+  async getLiquidrc (options: { fixDeprecated: boolean } = { fixDeprecated: false }) {
 
-    if (isNil(this.liquidrcPath)) {
+    if (isNil(this.uri.liquidrc)) {
 
-      const path = await u.hasLiquidrc(this.rootPath);
-      if (!path) return Setting.LiquidrcUndefined;
+      const path = await u.hasLiquidrc(this.uri.root.fsPath);
+      if (!path) {
+        this.config.method = ConfigMethod.Workspace;
+        return Setting.LiquidrcUndefined;
+      }
 
-      this.configMethod = Config.Liquidrc;
-      this.liquidrcPath = path;
+      this.uri.liquidrc = Uri.file(path);
+      this.config.method = ConfigMethod.Liquidrc;
 
     } else {
-      const exists = await u.pathExists(this.liquidrcPath);
-      if (!exists) return Setting.LiquidrcUndefined;
+      const exists = await u.pathExists(this.uri.liquidrc.fsPath);
+      if (!exists) {
+        this.config.method = ConfigMethod.Workspace;
+        return Setting.LiquidrcUndefined;
+      }
     }
 
     try {
 
-      const read = await readFile(this.liquidrcPath, { encoding: 'utf8' });
-      const rules = u.jsonc(read);
+      const read = await workspace.fs.readFile(this.uri.liquidrc);
 
-      if (!u.isObject(rules)) {
+      this.liquidrc = u.jsonc(read.toString());
 
-        this.error('Invalid configuration type provided in .liquidrc', [
-          'The .liquirc file expects an {} (object) type to be provided but instead recieved',
-          `${typeof rules} type which is invalid. You can generate a .liquidrc file via the command palette`
-        ]);
+      if (!u.isObject(this.liquidrc)) {
+
+        this.error('Invalid configuration type provided in .liquidrc')(
+          'The .liquirc file expects an {} (object) type to be provided but',
+          `instead recieved an ${typeof this.liquidrc} type which is invalid.`,
+          'You can generate a .liquidrc file via the command palette (CMD+SHIFT+P)'
+        );
+
+        this.liquidrc = null;
+        this.config.method = ConfigMethod.Workspace;
 
         return Setting.LiquidrcInvalidRules;
       }
 
-      if (u.hasDeprecatedSettings(rules)) {
-        this.canFormat = false;
-        this.status.error('Your .liquidrc file is using a deperecated configuration');
-        this.error('Deprecated configuration provided in .liquidrc file', [
-          'You are now using v3.0.0 of the Liquid extension and the old configuration is no longer',
-          'supported. You need to fix and align with the new configuration.'
-        ]);
+      if (options.fixDeprecated === true) {
 
-        return Setting.DeprecatedLiquidrc;
+        this.deprecation.liquidrc = u.hasDeprecatedSettings(this.liquidrc);
+
+        if (this.deprecation.liquidrc === '3.4.0') {
+
+          this.info('Updating your .liquidrc file to the latest structure');
+
+          const update: Liquidrc = {
+            engine: this.engine,
+            files: {
+              locales: '',
+              settings: '',
+              sections: [],
+              snippets: []
+            },
+            format: <Liquidrc['format']>{
+              ignore: has('ignore', this.liquidrc) ? (this.liquidrc as any).ignore : [],
+              ...u.updateRules(this.liquidrc)
+            }
+          };
+
+          await workspace.fs.writeFile(this.uri.liquidrc, new Uint8Array(
+            Buffer.from(JSON.stringify(update, null, 2))
+          ));
+
+          this.liquidrc = update;
+          this.info('Updated the .liquidrc file, you are now using the v3.4.0 structure');
+          this.deprecation.liquidrc = null;
+        }
+
       }
 
-      if (has('ignore', rules)) {
-        this.getIgnores(rules.ignore);
-      } else if (this.ignoreList.length > 0) {
-        this.getIgnores([]);
+      if (this.deprecation.liquidrc === null) {
+
+        await this.getFiles();
+        this.getFormatRules();
+        this.getEngine();
+
       }
-
-      this.prettifyRules = u.rulesNormalize(rules);
-
-      if (this.canFormat === null) this.canFormat = true;
 
       return Setting.LiquidrcDefined;
 
     } catch (e) {
+
       this.catch('The .liquidrc configuration file could not be parsed', e);
+
     }
 
+    this.config.method = ConfigMethod.Workspace;
+
     return Setting.LiquidrcError;
+
+  };
+
+  /**
+   * Get Runtime
+   *
+   * Invoked upon extension activation and quickly reason about with the
+   * required configuration settings to determine what action should take
+   * place in regards to which configuration method to use.
+   */
+  getConfigMethod () {
+
+    if (this.getConfig.has('config.method')) {
+
+      this.config.method = this.getConfig.get('config.method') === 'liquidrc'
+        ? ConfigMethod.Liquidrc
+        : ConfigMethod.Workspace;
+    }
+
+  }
+
+  /**
+   * Get Deprecations
+   *
+   * Detects configuration deprecatisons
+   */
+  async getDeprecations () {
+
+    const config = u.hasDeprecatedSettings();
+
+    if (isNil(this.uri.liquidrc)) {
+
+      const path = await u.hasLiquidrc(this.uri.root.fsPath);
+
+      if (!path) return { config, rcfile: null };
+
+      const liquidrc = Uri.file(path);
+      const read = await workspace.fs.readFile(liquidrc);
+
+      try {
+
+        const file = u.jsonc(read.toString());
+        const rcfile = u.hasDeprecatedSettings(file);
+
+        return { config, rcfile };
+
+      } catch (e) {
+
+        this.catch('The .liquidrc configuration file could not be parsed', e);
+
+      }
+
+    }
+
+  }
+
+  async fixWorkspace () {
+
+    const current = workspace.getConfiguration().inspect('liquid.format');
+    const engine = workspace.getConfiguration().inspect('liquid.engine');
+    const format = u.updateRules(current);
+    const update: any = {};
+
+    for (const prop of [
+      'enable',
+      'wrap',
+      'crlf',
+      'preserveLine',
+      'preserveComment',
+      'indentChar',
+      'indentSize',
+      'endNewline',
+      'endNewLine',
+      'commentIndent',
+      'liquid',
+      'markup',
+      'json',
+      'style',
+      'script'
+    ]) {
+
+      if (has(prop, current.globalValue) && current.globalValue[prop] !== null) {
+
+        if (prop === 'enable') {
+          this.info('The "liquid.format.enable" option is now deprecated and has been removed for your config');
+        }
+
+        await this.getConfig.update(`format.${prop}`, undefined, ConfigurationTarget.Global);
+
+        if (prop === 'markup') {
+          update.liquid = format.liquid;
+          update.markup = format.markup;
+        } else if (prop === 'json') {
+          update.json = format.json;
+        } else if (prop === 'style') {
+          update.style = format.style;
+        } else if (prop === 'script') {
+          update.script = format.script;
+        } else if (has(prop, format)) {
+          update[prop] = format[prop];
+        }
+
+      } else if (has(prop, current.workspaceValue) && current.workspaceValue[prop] !== null) {
+
+        if (prop === 'enable') {
+          this.info('The "liquid.format.enable" option is now deprecated and has been removed for your config');
+        }
+
+        await this.getConfig.update(`format.${prop}`, undefined, ConfigurationTarget.Workspace);
+
+        if (prop === 'markup') {
+          update.liquid = format.liquid;
+          update.markup = format.markup;
+        } else if (prop === 'json') {
+          update.json = format.json;
+        } else if (prop === 'style') {
+          update.style = format.style;
+        } else if (prop === 'script') {
+          update.script = format.script;
+        } else if (has(prop, format)) {
+          update[prop] = format[prop];
+        }
+
+      }
+    }
+
+    if (this.config.method === ConfigMethod.Workspace) {
+
+      if (!isEmpty(update)) {
+        await this.getConfig.update('format.rules', update, this.config.target);
+      }
+
+    } else if (this.config.method === ConfigMethod.Liquidrc) {
+
+      if (has('engine', this.liquidrc)) {
+        if (engine.workspaceValue) {
+          await this.getConfig.update('engine', undefined, ConfigurationTarget.Workspace);
+        } else if (engine.globalValue) {
+          await this.getConfig.update('engine', undefined, ConfigurationTarget.Global);
+        }
+      }
+
+      if (hasPath('format.ignore', this.liquidrc)) {
+        await this.getConfig.update('format.ignore', undefined, this.config.target);
+      }
+
+    }
+
+    return true;
+
+  }
+
+  /**
+   * Get Workspace
+   *
+   * Walks over the editor settings and determines the configuration defined.
+   * Returns an enum that informs upon state of the editors options
+   */
+  async getWorkspace (options: { fixDeprecated: boolean } = { fixDeprecated: false }) {
+
+    const exists = await u.pathExists(this.uri.workspace.fsPath);
+
+    this.config.target = exists
+      ? ConfigurationTarget.Workspace
+      : ConfigurationTarget.Global;
+
+    this.getBaseUrl();
+    this.getConfigMethod();
+
+    await this.getLiquidrc(options);
+
+    if (options.fixDeprecated === true) {
+
+      this.deprecation.workspace = u.hasDeprecatedSettings();
+
+      if (this.deprecation.workspace === '3.4.0') {
+
+        const updated = await this.fixWorkspace();
+
+        if (updated) this.info('Updated workspace settings to the latest v3.4.0 settings structure');
+
+        this.deprecation.workspace = null;
+
+      }
+
+    }
+
+    if (this.config.method === ConfigMethod.Workspace) {
+      await this.getFiles();
+      this.getFormatRules();
+      this.getEngine();
+    }
+
+    this.getCompletions();
+    this.getValidations();
+    this.getHovers();
 
   };
 
