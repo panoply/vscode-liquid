@@ -1,5 +1,5 @@
 import { getSectionCompletions, getSectionScope } from '../parse/sections';
-import { JSONLanguageService } from 'service/JsonLanguageService';
+import { JSONLanguageService } from 'service/JSONLanguageService';
 import { Char, Token } from 'parse/enums';
 import { EmptyTag, EmptyOutput } from 'parse/regex';
 import {
@@ -8,7 +8,9 @@ import {
   parseObject,
   parseSchema,
   typeToken,
-  getSchemaCompletions
+  getSchemaCompletions,
+  parseLocale,
+  applyTranslateFilter
 } from 'parse/tokens';
 
 import {
@@ -75,7 +77,14 @@ export function CompletionProvider (
 
       additionalTextEdits = null;
 
-      if ((trigger === Char.DQO || trigger === Char.COL || triggerKind === CompletionTriggerKind.Invoke)) {
+      /* -------------------------------------------- */
+      /* SCHEMA PROPERTY                              */
+      /* -------------------------------------------- */
+
+      if (
+        trigger === Char.DQO ||
+        trigger === Char.COL ||
+        triggerKind === CompletionTriggerKind.Invoke) {
 
         if (document.languageId === 'liquid') {
 
@@ -96,6 +105,10 @@ export function CompletionProvider (
           }
         }
       }
+
+      /* -------------------------------------------- */
+      /* TAG COMPLETIONS                              */
+      /* -------------------------------------------- */
 
       if (trigger === Char.PER) {
 
@@ -119,23 +132,53 @@ export function CompletionProvider (
 
           if (EmptyOutput.test(object.text) && canComplete.objects) return complete.objects;
 
-          const prev = prevChar(object.text, object.offset);
+          /* -------------------------------------------- */
+          /* LOCALES                                      */
+          /* -------------------------------------------- */
 
-          if (trigger === Char.PIP || prev === Token.Filter) {
+          if (
+            trigger === Char.SQO ||
+            trigger === Char.DQO ||
+            trigger === Char.DOT) {
 
-            return canComplete.filters
-              ? complete.filters
-              : null;
+            const locales = parseLocale(complete.locales, content, offset, {
+              addFilter: applyTranslateFilter(object.text.slice(object.offset)),
+              position
+            });
+
+            console.log(object.text.slice(object.offset), object.offset);
+
+            return locales;
 
           }
 
-          if (trigger === Char.DOT || prev === Token.Property || prev === Token.Block) {
+          /* -------------------------------------------- */
+          /* FILTERS                                      */
+          /* -------------------------------------------- */
 
-            const schema = canComplete.objects
-              ? parseObject(object.text, object.offset)
-              : null;
+          const prev = prevChar(object.text, object.offset);
+
+          if (
+            trigger === Char.PIP ||
+            prev === Token.Filter) {
+
+            return canComplete.filters ? complete.filters : null;
+
+          }
+
+          /* -------------------------------------------- */
+          /* LIQUID SCHEMA                                */
+          /* -------------------------------------------- */
+
+          if (
+            trigger === Char.DOT ||
+            prev === Token.Property ||
+            prev === Token.Block) {
+
+            const schema = canComplete.objects ? parseObject(object.text, object.offset) : null;
 
             if (schema !== null && canComplete.section) {
+
               if (schema === 'settings') {
 
                 return getSectionCompletions(content, offset, schema);
@@ -156,7 +199,13 @@ export function CompletionProvider (
 
           }
 
-          if (trigger === Char.COL || prev === Token.Object) {
+          /* -------------------------------------------- */
+          /* FILTER AFTER COLON                           */
+          /* -------------------------------------------- */
+
+          if (
+            trigger === Char.COL ||
+            prev === Token.Object) {
 
             return canComplete.objects
               ? complete.objects
@@ -178,9 +227,20 @@ export function CompletionProvider (
 
           const prev = prevChar(tag.text, tag.offset, tag.tagName);
 
+          if (prev === Token.Tag && tag.tagName === 'render' && (
+            trigger === Char.DQO ||
+            trigger === Char.SQO
+          )) {
+
+            return complete.snippets;
+
+          }
+
           if (prev === Token.Block) {
 
-            if (trigger === Char.DQO || trigger === Char.SQO) {
+            if (
+              trigger === Char.DQO ||
+              trigger === Char.SQO) {
 
               return getSectionCompletions(content, offset, 'type');
 
