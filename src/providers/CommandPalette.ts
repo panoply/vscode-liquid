@@ -1,10 +1,10 @@
 import { env, Uri, window, workspace } from 'vscode';
-import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import prettify from '@liquify/prettify';
 import { getRange, isString, pathExists, rulesDefault, rulesRecommend } from 'utils';
 import { FSWatch } from 'providers/FileSystemWatcher';
 import { has } from 'rambdax';
+import { FormatStatus } from './StatusBarItem';
 
 /**
  * Command Invocation
@@ -29,37 +29,48 @@ export class CommandPalette extends FSWatch {
 
   }
 
+  public deprecatedSettings () {
+
+  }
+
   public async releaseNotes () {
 
-    return env.openExternal(
-      Uri.parse('https://github.com/panoply/vscode-liquid/releases/tag/v' + this.version)
-    );
+    return env.openExternal(this.meta.releaseNotes);
+
   }
 
   private async generateLiquidrc (type: 'default' | 'recommended') {
 
-    const exists = await pathExists(this.liquidrcPath);
+    const exists = await pathExists(this.uri.liquidrc.fsPath);
 
     let action: string;
 
     if (exists) {
 
-      action = await this.infoMessage([ 'Open', 'Overwrite' ], [
+      action = await this.infoMessage([
+        'Open',
+        'Overwrite'
+      ], [
         'Your workspace already contains a .liquidrc file. You can overwrite the existing',
         `config with ${type} rules or open the file and inspect the formatting options.`
       ]);
 
-      if (action === 'OPEN') return this.openDocument(this.liquidrcPath);
+      if (action === 'OPEN') return this.openDocument(this.uri.liquidrc.fsPath);
 
     } else {
 
-      action = await this.infoMessage([ '.liquidrc', '.liquidrc.json' ], [
+      action = await this.infoMessage([
+        '.liquidrc',
+        '.liquidrc.json'
+      ], [
         'Choose a .liquidrc file type to be created. It does not matter which you select,',
         'both will be interpreted as JSONC (JSON with Comments) language types.'
       ]);
 
       if (action === '.LIQUIDRC.JSON' || action === '.LIQUIDRC') {
-        this.liquidrcPath = join(this.rootPath, action.toLowerCase());
+
+        this.uri.liquidrc = Uri.file(join(this.uri.root.fsPath, action.toLowerCase()));
+
       }
     }
 
@@ -73,9 +84,14 @@ export class CommandPalette extends FSWatch {
 
       try {
 
-        await writeFile(this.liquidrcPath, rules);
-        this.info('Generated .liquidrc file: ' + this.liquidrcPath);
-        return this.openDocument(this.liquidrcPath);
+        const content = Buffer.from(rules);
+
+        await workspace.fs.writeFile(this.uri.liquidrc, new Uint8Array(content));
+
+        this.info('Generated .liquidrc file: ' + this.uri.liquidrc.path);
+
+        return this.openDocument(this.uri.liquidrc.fsPath);
+
       } catch (e) {
         this.catch('Failed to write .liquidrc file to workspace root', e);
       }
@@ -95,24 +111,18 @@ export class CommandPalette extends FSWatch {
    * Enabled formatting (command)
    */
   public async enableFormatting () {
-
-    this.canFormat = true;
-
-    await workspace
-      .getConfiguration('liquid')
-      .update('format.enable', this.canFormat, this.configTarget);
+    if (this.status.state === FormatStatus.Disabled) {
+      await this.setFormatOnSave(window.activeTextEditor.document.languageId, true);
+    }
   }
 
   /**
    * Disable formatting (command)
    */
   public async disableFormatting () {
-
-    this.canFormat = false;
-
-    await workspace
-      .getConfiguration('liquid')
-      .update('format.enable', this.canFormat, this.configTarget);
+    if (this.status.state === FormatStatus.Enabled) {
+      await this.setFormatOnSave(window.activeTextEditor.document.languageId, false);
+    }
   }
 
   /**
@@ -145,7 +155,7 @@ export class CommandPalette extends FSWatch {
 
         if (this.hasError === false || this.errorCache !== e) {
           this.errorCache = e;
-          this.error('Formatting parse error occured in document', e);
+          this.error('Formatting parse error occured in document')(e);
         }
       }
 
