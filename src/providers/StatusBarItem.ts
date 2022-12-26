@@ -12,7 +12,7 @@ import { delay } from 'rambdax';
  * at which the extension is running due to the fact the status
  * bar item is reflective of different operations.
  */
-export const enum Status {
+export const enum FormatStatus {
   /**
    * The status is enabled - Formatting is enabled
    */
@@ -20,7 +20,14 @@ export const enum Status {
   /**
    * The status is disabled - Formatting is disabled
    */
+  /**
+   * Formatting `formatOnSave` is set to `false`
+   */
   Disabled,
+  /**
+   * Formatter is not the default
+   */
+  NotDefault,
   /**
    * The status is ignoring - File is excluded/ignored from formatting
    */
@@ -54,7 +61,7 @@ export class StatusBarItem {
   /**
    * The current state of the status bar item
    */
-  public state: Status = Status.Hidden;
+  public state: FormatStatus = FormatStatus.Hidden;
 
   /**
    * The status bar item instance
@@ -87,7 +94,7 @@ export class StatusBarItem {
    * Show the status bar item
    */
   private show () {
-    if (this.state === Status.Hidden) {
+    if (this.state === FormatStatus.Hidden) {
       this.item.show();
     }
   }
@@ -96,9 +103,9 @@ export class StatusBarItem {
    * Status Bar Item - Hide
    */
   public hide () {
-    if (this.state !== Status.Hidden) {
+    if (this.state !== FormatStatus.Hidden) {
       this.item.hide();
-      this.state = Status.Hidden;
+      this.state = FormatStatus.Hidden;
     }
   }
 
@@ -107,7 +114,7 @@ export class StatusBarItem {
    */
   public async loading (tooltip = 'Loading Extension', delayed = 1500) {
     this.show();
-    this.state = Status.Loading;
+    this.state = FormatStatus.Loading;
     this.item.text = '💧 $(sync~spin)';
     this.item.tooltip = tooltip;
     this.item.command = 'liquid.toggleOutput';
@@ -119,7 +126,7 @@ export class StatusBarItem {
    */
   public enable () {
     this.show();
-    this.state = Status.Enabled;
+    this.state = FormatStatus.Enabled;
     this.item.text = '💧 $(check)';
     this.item.tooltip = 'Disable Liquid Formatting';
     this.item.command = 'liquid.disableFormatting';
@@ -132,7 +139,7 @@ export class StatusBarItem {
    */
   public ignore () {
     this.show();
-    this.state = Status.Ignoring;
+    this.state = FormatStatus.Ignoring;
     this.item.text = '💧 $(eye-closed)';
     this.item.tooltip = mdString('<i>File is ignored from formatting</i>');
     this.item.command = 'liquid.openOutput';
@@ -145,7 +152,7 @@ export class StatusBarItem {
    */
   public disable () {
     this.show();
-    this.state = Status.Disabled;
+    this.state = FormatStatus.Disabled;
     this.item.text = '💧 $(x)';
     this.item.command = 'liquid.enableFormatting';
     this.item.tooltip = mdString('<i>Press to enable formatting</i>');
@@ -157,7 +164,7 @@ export class StatusBarItem {
    */
   public error (tooltip = 'Errors! Press to toggle output', command = 'liquid.openOutput') {
     this.show();
-    this.state = Status.Error;
+    this.state = FormatStatus.Error;
     this.item.text = '🩸 $(x)';
     this.item.tooltip = tooltip;
     this.item.command = command;
@@ -171,11 +178,11 @@ export class StatusBarItem {
 
     this.show();
 
-    if (this.state === Status.Warning) {
+    if (this.state === FormatStatus.Warning) {
       clearTimeout(this.timer);
     } else {
       this.last = getStatusBar(this.state);
-      this.state = Status.Warning;
+      this.state = FormatStatus.Warning;
     }
 
     this.item.tooltip = `${this.warnings > 1 ? 'Warnings' : 'Warnings'}! Toggle output`;
