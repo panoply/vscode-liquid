@@ -3,31 +3,38 @@
   "scopeName": "liquid.log",
   "patterns": [
     {
-      "name": "punctuation, log.punctuation",
-      "match": "\\b(ERROR)\\b(\\:)\\s(.*)",
-      "captures": {
-        "1": {
-          "name": "invalid log.error"
-        },
-        "2": {
-          "name": "punctuation, log.punctuation"
-        },
-        "3": {
-          "name": "invalid log.error"
-        }
-      }
+      "name": "invalid log.error",
+      "match": "\\b(ERROR|Error|Deprecated|DEPRECATED)\\b"
     },
     {
-      "match": "\\bPrettify\\sError\\b",
-      "name": "invalid log.error"
+      "name": "string log.string",
+      "match": "\\b(WARNING|Warning|Warn|WARN)\\b"
     },
     {
-      "match": "\\b(\\.liquidrc(\\.json)?|workspace)\\b",
-      "name": "constant.language log.constant"
+      "name": "string log.string",
+      "begin": "'",
+      "end": "'"
     },
     {
-      "match": "\\b([pP]rettify)\\b",
-      "name": "keyword.control.flow log.function"
+      "name": "string log.string",
+      "begin": "\"",
+      "end": "\""
+    },
+    {
+      "name": "punctuation.definition.tag log.control",
+      "match": "(?<=[A-Za-z]):"
+    },
+    {
+      "match": "\\.liquidrc(?:\\.json)?|[wW]orkspace|[Gg]lobal|[uU]ser",
+      "name": "support.function.filter log.keyword"
+    },
+    {
+      "match": "(?<=(?:[wW]orkspace|[Gg]lobal|[uU]ser)\\s)[Ss]ettings",
+      "name": "support.function.filter log.keyword"
+    },
+    {
+      "match": "(?<=\\:\\s)\\/[\\s\\S]*$",
+      "name": "string log.path"
     },
     {
       "match": "(?<=Ignore\\spath\\s(?:created|removed))(:)\\s*(.*)",
@@ -46,96 +53,59 @@
       "name": "support.class log.support"
     },
     {
-      "match": "\\b([lL]iquid(\\-(css|scss|javascript))?|JSONC?|jsonc?|CSS|css|JavaScript|javascript|html|HTML|typescript|jsx|JSX|tsx|TSX|XML|xml)\\b",
-      "name": "support.class log.support"
-    },
-    {
-      "match": "\\b([uU]pdated).*",
-      "name": "punctuation.definition.tag log.control"
-    },
-    {
-      "match": "\\b([iI]gnoring).*",
-      "name": "punctuation.definition.tag log.control"
-    },
-    {
-      "match": "Using\\s(\"prettify\")\\sfield\\sin\\s(package\\.json)\\sfile",
-      "captures": {
-        "1": {
-          "name": "support.function.filter log.path"
-        },
-        "2": {
-          "name": "constant.language log.constant"
-        }
-      }
-    },
-    {
-      "match": "(Completions|Validations|Hovers)\\sare\\s(enabled)\\sfor(\\:)\\s(.*)",
-      "captures": {
-        "1": {
-          "name": "string log.string"
-        },
-        "2": {
-          "name": "support.class log.support"
-        },
-        "3": {
-          "name": "punctuation.definition.tag log.control"
-        },
-        "4": {
-          "name": "constant.language log.constant"
-        }
-      }
-    },
-    {
-      "match": "(Completions|Validations|Hovers)\\sare\\s(disabled)\\sfor(\\:)\\s(.*)",
-      "captures": {
-        "1": {
-          "name": "string log.string"
-        },
-        "2": {
-          "name": "invalid log.error"
-        },
-        "3": {
-          "name": "punctuation.definition.tag log.control"
-        },
-        "4": {
-          "name": "constant.language log.constant"
-        }
-      }
-    },
-    {
-      "match": "Using\\s(workspace\\ssettings)\\sfor\\sconfiguration",
-      "captures": {
-        "1": {
-          "name": "constant.language log.constant"
-        }
-      }
-    },
-    {
-      "match": "\\b(formatOnSave|defaultFormatter)\\b",
-      "captures": {
-        "name": "support.class log.support"
-      }
-    },
-    {
-      "match": "Using\\s(\\.liquidrc(?:\\.json)?)\\sfile(\\:)\\s(.*)",
-      "captures": {
-        "1": {
-          "name": "constant.language log.constant"
-        },
-        "2": {
-          "name": "punctuation.definition.tag log.control"
-        },
-        "3": {
-          "name": "support.function.filter log.path"
-        }
-      }
-    },
-    {
-      "match": "\\.[0-9]+(ms|s)",
+      "match": "\\b(Liquid|liquid|html|HTML|javascript|JavaScript|typescript|TypeScript|TSX|tsx|JSX|jsx|JSONC?|jsonc?|CSS|css|LESS|less|Less|SCSS|scss|SASS|sass|XML|xml|YAML|Yaml|YML|Yml|yml)\\b",
       "name": "constant.language log.constant"
     },
     {
+      "match": "\\b([uU]pdated|[iI]gnoring|[cC]hanged|[wW]atching|[dD]eleted|[cC]reated)\\b",
+      "name": "punctuation.definition.tag log.control"
+    },
+    {
+      "match": "\\b([Ee]nabled|[Dd]isable)\\b",
+      "name": "support.class log.boolean"
+    },
+    {
+      "match": "\\b([Cc]ompletions|[Vv]alidations|[Hh]overs|[Cc]ode[lL]ens|[Ff]ormatting)\\b",
+      "name": "keyword.control.filter log.function"
+    },
+    {
+      "match": "\\b(sissel\\.shopify\\-liquid)\\b",
+      "name": "keyword.control.filter log.function"
+    },
+    {
+      "match": "\\b(vscode\\-liquid)\\b",
+      "name": "keyword.control.filter log.function"
+    },
+    {
+      "match": "\\b(formatOnSave|defaultFormatter)\\b",
+      "name": "support.function.filter log.keyword"
+    },
+    {
+      "match": "\\b(editor\\.formatOnSave|editor\\.defaultFormatter)\\b",
+      "name": "support.function.filter log.keyword"
+    },
+    {
+      "match": "\\.?[0-9]+(ms|s)",
+      "name": "constant.language log.constant"
+    },
+    {
+      "match": "v[0-9]\\.?[0-9]?\\.?[0-9]?",
+      "name": "comment log.constant"
+    },
+    {
       "include": "text.log"
+    },
+    {
+      "include": "source.liquid#tags"
+    },
+    {
+      "include": "source.liquid#output"
+    },
+    {
+      "include": "source.liquid#comment-line"
+    },
+    {
+      "include": "source.liquid#comment-block"
     }
   ]
 }
