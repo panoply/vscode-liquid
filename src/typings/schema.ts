@@ -379,6 +379,32 @@ export type SchemaSettings = (
   | Schema.VideoUrl
 );
 
+export type SchemaSettingsData = (
+  | Schema.Checkbox
+  | Schema.Number
+  | Schema.Radio
+  | Schema.Range
+  | Schema.Select
+  | Schema.Color
+  | Schema.ColorBackground
+  | Schema.FontPicker
+  | Schema.RichText
+  | Schema.Text
+  | Schema.Textarea
+);
+
+export interface SettingsData {
+  /**
+   * The `name` which will show as the name title in the settings editor.
+   */
+  name: string;
+  /**
+   * The `settings_data.json` settings array.
+   */
+  settings: SchemaSettingsData[];
+
+}
+
 export interface SchemaBlocks {
   /**
    * The block type. This is a free-form string that you can use

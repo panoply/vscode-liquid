@@ -1,6 +1,119 @@
 /* eslint-disable no-unused-vars */
 
 /* -------------------------------------------- */
+/* PARSE RELATED                                */
+/* -------------------------------------------- */
+
+/**
+ * Token Type
+ *
+ * Used to infer the _type_ of token we are working with.
+ * Used for completions and parse logics.
+ */
+export const enum Token {
+  /**
+   * Liquid Tag
+   */
+  Tag = 1,
+  /**
+   * Liquid Object
+   */
+  Object,
+  /**
+   * Liquid Object
+   */
+  Property,
+  /**
+   * Liquid Filter
+   */
+  Filter,
+  /**
+   * Liquid Parameter
+   */
+  Param,
+  /**
+   * Liquid Settings Data Object
+   */
+  Settings,
+  /**
+   * Liquid Locale
+   */
+  Locale,
+  /**
+   * Liquid Logical operators
+   */
+  Logical,
+  /**
+   * Liquid Schema Block Type
+   */
+  Block
+}
+
+/**
+ * Character Codes
+ *
+ * The character codes used for matching in parse logics.
+ */
+export const enum Char {
+  /**
+   * `%`
+   */
+  PER = 37,
+  /**
+   * `{`
+   */
+  LCB = 123,
+  /**
+   * `}`
+   */
+  RCB = 125,
+  /**
+   * `<`
+   */
+  LAN = 60,
+  /**
+   * `>`
+   */
+  RAN = 62,
+  /**
+   * `=`
+   */
+  EQL = 61,
+  /**
+   * `|`
+   */
+  PIP = 124,
+  /**
+   * `:`
+   */
+  COL = 58,
+  /**
+   * `-`
+   */
+  DSH = 45,
+  /**
+   * `.`
+   */
+  DOT = 46,
+  /**
+   * `"`
+   */
+  DQO = 34,
+  /**
+   * `'`
+   */
+  SQO = 39,
+  /**
+   * `[`
+   */
+  LSB = 91,
+  /**
+   * ` `
+   */
+  WSP = 32,
+}
+
+/* -------------------------------------------- */
 /* ENUMS                                        */
 /* -------------------------------------------- */
 
@@ -13,7 +126,13 @@ export const enum Services {
   /**
    * JSON Language Service
    */
-  JSON = 1
+  JSON = 1,
+  /**
+   * CSS Language Service
+   *
+   * **NOT YET AVAILABLE**
+   */
+  CSS = 2
 }
 
 /**

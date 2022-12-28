@@ -12,6 +12,7 @@ import {
   TextEdit,
   Uri
 } from 'vscode';
+import { SettingsData } from './schema';
 
 export interface DeprecationIssues {
 
@@ -117,13 +118,19 @@ export interface Config {
   /**
    * The vscode workspace configuration target
    *
-   * @default 2
+   * @default ConfigurationTarget.Global
    */
-  target: ConfigurationTarget
+  target: ConfigurationTarget;
+  /**
+   * The inspection scope to use.
+   *
+   * @default 'globalValue'
+   */
+  inspect: 'globalValue' | 'workspaceValue' | 'defaultValue'
   /**
    * The configuration method being used
    *
-   * @default '.liquidrc'
+   * @default ConfigMethod.Undefined
    */
   method: ConfigMethod
 }
@@ -212,11 +219,15 @@ export interface Completions {
     /**
      * The path of the locale file.
      */
-    file: Uri;
+    file: string;
     /**
      * Completion Items for locales
      */
-    items: object;
+    props: CompletionItem[];
+    /**
+     * Completion Items for locales
+     */
+    items: SettingsData[];
   }
   /**
    * Locale Completions
@@ -225,7 +236,7 @@ export interface Completions {
     /**
      * The path of the locale file.
      */
-    file: Uri;
+    file: string;
     /**
      * Completion Items for locales
      */
@@ -234,6 +245,10 @@ export interface Completions {
 }
 
 export interface URI {
+  /**
+   * Returns the base path url reference according to `liquid.config.baseUrl`
+   */
+  base?: Uri;
   /**
    * Returns the root uri of the workspace
    */

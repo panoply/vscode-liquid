@@ -52,7 +52,7 @@ export interface Selectors {
   /**
    * Liquid Language Selectors
    */
-  liquid: Array<{
+  liquid?: Array<{
     scheme: 'file';
     language:
     | 'liquid'
