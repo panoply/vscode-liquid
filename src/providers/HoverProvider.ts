@@ -1,14 +1,13 @@
+import { parseSchema } from 'lexical/parse';
+import { getTokenDescription } from 'lexical/describe';
 import { $, Object as IObject } from '@liquify/liquid-language-specs';
-import { parseSchema } from 'parse/tokens';
-import { JSONLanguageService } from 'service/JSONLanguageService';
-import { Workspace } from 'types';
-
+import { Service } from 'services';
 import {
-  TextDocument,
-  Position,
   CancellationToken,
   Hover,
-  MarkdownString
+  HoverProvider as IHoverProvider,
+  Position,
+  TextDocument
 } from 'vscode';
 
 export function getTagHover (word: string) {
@@ -24,7 +23,7 @@ export function getTagHover (word: string) {
 
   if (!cursor) return null;
 
-  return documentation(cursor.description, cursor.reference);
+  return getTokenDescription(cursor.description, cursor.reference);
 
 }
 
@@ -44,80 +43,101 @@ export function getPropertyHover (token: string, objects: string[]) {
 
   if (!prop) return null;
 
-  return documentation(spec.description, root.reference);
+  return getTokenDescription(spec.description, root.reference);
 
 }
 
-/**
- * Looks for match within values
- */
-export function documentation (
-  description: string,
-  reference: {
-    name: string,
-    url: string
-  }
-): MarkdownString {
+export interface IHoverEnable {
+  /**
+   * Whether or not tag hovers are enabled
+   *
+   * @default true
+   */
+  tags: boolean;
+  /**
+   * Whether or not filter hovers are enabled
+   *
+   * @default true
+   */
+  filters: boolean;
+  /**
+   * Whether or not object hovers are enabled
+   *
+   * @default true
+   */
+  objects: boolean;
+  /**
+   * Whether or not schema embedded JSON hovers are enabled
+   *
+   * @default true
+   */
+  schema: boolean;
+  /**
+   * Whether or not section schema completions are enabled
+   *
+   * **NOT YET AVAILABLE**
+   *
+   * @default true
+   */
+  sections?: boolean;
+}
 
-  if (!description && !reference?.name) return null;
+export class HoverProvider extends Service implements IHoverProvider {
 
-  if (!reference?.name) return null;
+  /* -------------------------------------------- */
+  /* STATE                                        */
+  /* -------------------------------------------- */
 
-  const contents = description +
-    '\n\n' +
-    '---' +
-    '\n\n' +
-    '[' + reference.name + ']' +
-    '(' + reference.url + ')' +
-    '\n\n';
-
-  return new MarkdownString(contents);
-
-};
-
-/**
- * Hover Provider
- *
- * This provides some basic completions. I have extracted some
- * logic from Liquify to make this possible as I feel as if I owe
- * users something worthwhile having them wait so f*cking long.
- *
- * Most of this will be purged and move to the Language Server
- * when Liquify supersedes. It is a shame because the specs can
- * do so much more in the grand scale and folks wont get to see that
- * until Liquify is made available.
- */
-export function HoverProvider (canHover: Workspace.Hover, service: JSONLanguageService) {
-
-  return {
-    async  provideHover (document: TextDocument, position: Position, _: CancellationToken): Promise<Hover> {
-
-      const offset = document.offsetAt(position);
-
-      if (canHover.schema === true) {
-
-        const schema = parseSchema(document.getText(), offset);
-
-        if (schema !== false && schema.within) {
-          const parse = service.doParse(document, position, schema);
-          const hover = await service.doHover(parse);
-          return new Hover(hover as any);
-        }
-      }
-
-      if (canHover.tags === true) {
-
-        const range = document.getWordRangeAtPosition(position);
-        const word = document.getText(range);
-        const hover = getTagHover(word);
-
-        if (hover === null) return null;
-
-        return new Hover(hover);
-      }
-
-      return null;
-
-    }
+  public enable: IHoverEnable = {
+    filters: true,
+    objects: true,
+    tags: true,
+    schema: true
   };
+
+  /* -------------------------------------------- */
+  /* PROVIDERS                                    */
+  /* -------------------------------------------- */
+
+  /**
+   * Provide a hover for the given position and document. Multiple hovers at the same
+   * position will be merged by the editor. A hover can have a range which defaults
+   * to the word range at the position when omitted.
+   *
+   * @param document The document in which the command was invoked.
+   * @param position The position at which the command was invoked.
+   * @param token A cancellation token.
+   * @return A hover or a thenable that resolves to such. The lack of a result can be
+   * signaled by returning `undefined` or `null`.
+   */
+  async provideHover (document: TextDocument, position: Position, token: CancellationToken): Promise<Hover> {
+
+    const offset = document.offsetAt(position);
+
+    if (this.enable.schema === true) {
+
+      const schema = parseSchema(document.getText(), offset);
+
+      if (schema !== false && schema.within) {
+        const parse = this.json.doParse(document, position, schema);
+        const hover = await this.json.doHover(parse);
+        return new Hover(hover as any);
+      }
+    }
+
+    if (this.enable.tags === true) {
+
+      const range = document.getWordRangeAtPosition(position);
+      const word = document.getText(range);
+      const hover = getTagHover(word);
+
+      if (hover === null) return null;
+
+      return new Hover(hover);
+    }
+
+    return null;
+
+  }
+
 }
