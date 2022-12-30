@@ -26,13 +26,6 @@ export class FSWatch extends NotificationMessage {
   public isWatching: boolean = false;
 
   /**
-   * Whether or not a watched file has changed
-   *
-   * @default false
-   */
-  private changed: boolean = false;
-
-  /**
    * File System Watchers
    *
    * Defaults to observing for .liquidrc files.
@@ -146,12 +139,11 @@ export class FSWatch extends NotificationMessage {
 
     if (liquidrc === Setting.LiquidrcDefined) {
 
-      this.isDirty = true;
-      this.formatting.register.clear();
-
       prettify.options(this.formatting.rules);
 
+      this.isDirty = true;
       this.info('Updated .liquidrc file configuration');
+
     }
 
   }
@@ -191,8 +183,6 @@ export class FSWatch extends NotificationMessage {
       } else {
         this.status.disable();
       }
-
-      this.changed = true;
 
       commands.executeCommand('liquid.restartExtension');
 
