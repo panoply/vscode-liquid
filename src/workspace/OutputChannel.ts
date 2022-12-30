@@ -105,7 +105,7 @@ export class OutputChannel extends StatusLanguageItem {
   public error (message: string) {
 
     this.status.error();
-    this.output.appendLine(`${u.getTime()} ERROR: ${message}`);
+    this.output.appendLine(`\nERROR: ${message}`);
 
     return (...context: string[]) => {
 
