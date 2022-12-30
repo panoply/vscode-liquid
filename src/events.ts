@@ -1,12 +1,11 @@
 import parseJson from 'parse-json';
 import { CommandPalette } from './workspace/CommandPalette';
 import { ConfigurationChangeEvent, TextDocument, TextDocumentChangeEvent, TextEditor } from 'vscode';
-import { ConfigMethod } from './types';
+import { ConfigMethod, StatusItem } from './types';
 import { FormatEvent, FormatEventType } from 'providers/FormattingProvider';
 import { getSchema } from 'lexical/parse';
 import { Engine } from '@liquify/liquid-language-specs';
 import { dirty, isFunction } from 'utils';
-import { FormatStatus } from 'workspace/StatusBarItem';
 
 /**
  * Workspace Events
@@ -21,6 +20,12 @@ import { FormatStatus } from 'workspace/StatusBarItem';
  */
 export class Events extends CommandPalette {
 
+  /**
+   * OnFormattingEvent
+   *
+   * An event dispatched from within the Formatting Provider
+   * that handles errors.
+   */
   public onFormattingEvent (data: FormatEvent) {
 
     if (data === FormatEventType.EnableStatus) {
@@ -31,6 +36,11 @@ export class Events extends CommandPalette {
 
   }
 
+  /**
+   * onDidCloseTextDocument
+   *
+   * Invoked when an opened document is closed.
+   */
   public onDidCloseTextDocument ({ uri }: TextDocument) {
 
     if (this.formatting.register.has(uri.fsPath)) {
@@ -96,51 +106,49 @@ export class Events extends CommandPalette {
   /**
    * onDidChangeActiveTextEditor
    *
-   * Invoked when a text document is opened or a document
+   * Invoked when a text document was opened or a document
    * has changed (ie: new tab or file).
    */
   async onDidChangeActiveTextEditor (textDocument: TextEditor | undefined) {
 
-    if (this.isDirty) {
-      this.isDirty = await dirty(textDocument.document);
-    }
-
-    if (!textDocument) {
+    if (!textDocument?.document) {
       this.json.diagnostics.clear();
       this.json.canFormat = true;
+      this.status.hide();
       return;
     };
 
-    const { uri, languageId } = textDocument.document;
+    const { document } = textDocument;
 
-    this.status.show();
-
-    if (this.formatting.register.has(uri.fsPath)) return;
-    if (this.formatting.ignored.has(uri.fsPath)) return;
-
-    if (isFunction(this.formatting.ignoreMatch) && this.formatting.ignoreMatch(uri.fsPath)) {
-      this.info(`Ignoring: ${uri.fsPath}`);
-      this.formatting.ignored.add(uri.fsPath);
-      return this.status.ignore();
-    }
-
-    if (this.formatting.enable) {
-      if (this.languages[languageId]) {
-        this.formatting.enable = true;
-        if (this.status.state !== FormatStatus.Enabled) this.status.enable();
-      } else {
-        this.formatting.enable = false;
-        return this.status.hide();
-      }
-    }
-
-    if (this.formatting.enable) {
-      if (this.status.state !== FormatStatus.Enabled) this.status.enable();
+    if (!this.languages[document.languageId]) {
+      this.status.hide();
+      return;
     } else {
-      if (this.status.state !== FormatStatus.Disabled) this.status.disable();
+      this.status.show();
     }
 
-    this.formatting.register.add(uri.fsPath);
+    if (this.isDirty) this.isDirty = await dirty(textDocument.document);
+
+    if (this.formatting.ignored.has(document.uri.fsPath)) {
+      this.status.ignore();
+      return;
+    }
+
+    if (isFunction(this.formatting.ignoreMatch) && this.formatting.ignoreMatch(document.uri.fsPath)) {
+      this.info(`Ignoring: ${document.uri.fsPath}`);
+      this.formatting.ignored.add(document.uri.fsPath);
+      this.status.ignore();
+      return;
+    }
+
+    if (this.isFormattingOnSave(document.languageId)) {
+      this.formatting.register.add(document.uri.fsPath);
+      this.formatting.enable = true;
+      this.status.enable();
+    } else {
+      this.formatting.enable = false;
+      this.status.disable();
+    }
 
   }
 
@@ -177,8 +185,8 @@ export class Events extends CommandPalette {
 
           if (!this.languages[id]) {
             this.languages[id] = true;
-            if (this.selector.active.some(({ language }) => language !== id)) {
-              this.selector.active.push({ language: id, scheme: 'file' });
+            if (this.selector.some(({ language }) => language !== id)) {
+              this.selector.push({ language: id, scheme: 'file' });
             }
           }
 
@@ -188,7 +196,7 @@ export class Events extends CommandPalette {
           if (this.languages[id]) {
             this.languages[id] = false;
             this.info('vscode-liquid is no longer formatting ' + id);
-            this.selector.active = this.selector.active.filter(({ language }) => {
+            this.selector = this.selector.filter(({ language }) => {
               if (language.startsWith('liquid')) return true;
               return language !== id;
             });
