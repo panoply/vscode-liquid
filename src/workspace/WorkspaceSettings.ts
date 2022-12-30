@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { has, isNil, difference, hasPath, isEmpty } from 'rambdax';
 import anymatch from 'anymatch';
 import { OutputChannel } from './OutputChannel';
-import { Setting, ConfigMethod, Workspace, InLanguageIds, LanguageIds, Liquidrc } from '../types';
+import { Setting, ConfigMethod, Workspace, InLanguageIds, LanguageIds, Liquidrc, LanguageParticipant } from '../types';
 import * as u from 'utils';
 
 export class WorkspaceSettings extends OutputChannel {
@@ -103,19 +103,13 @@ export class WorkspaceSettings extends OutputChannel {
 
     if (setting.workspaceValue !== undefined && has(prop, setting.workspaceValue)) {
 
-      this.info(`Using editor.defaultFormatter within workspace settings: ${setting.workspaceValue[prop]}`);
-
       return setting.workspaceValue[prop] === this.meta.id;
 
     } else if (setting.globalValue !== undefined && has(prop, setting.globalValue)) {
 
-      this.info(`Using editor.defaultFormatter within user settings: ${setting.globalValue[prop]}`);
-
       return setting.globalValue[prop] === this.meta.id;
 
     } else if (setting.defaultValue[prop] === this.meta.id) {
-
-      this.info(`Using editor.defaultFormatter within default settings: ${this.meta.id}`);
 
       return true;
 
@@ -266,6 +260,11 @@ export class WorkspaceSettings extends OutputChannel {
 
     if (u.isArray(rules)) {
 
+      for (let i = 0; i < rules.length; i++) {
+        const path = join(this.uri.root.fsPath, rules[i]);
+        if (!this.formatting.ignoreList.includes(path)) rules[i] = path;
+      }
+
       if (this.isReady && rules.length > 0) {
 
         if (current.length > 0) {
@@ -300,29 +299,11 @@ export class WorkspaceSettings extends OutputChannel {
   }
 
   /**
-   * Get Languages
-   *
-   * Augments the `languages` object and aligns language values
-   * using `sissel.shopify-liquid` in~language `editor.defaultFormatter`.
-   */
-  getLanguages () {
-
-    for (const id in this.languages) {
-      if (this.isDefaultFormatter(id) && this.languages[id] === false) {
-        this.languages[id] = true;
-        this.selector.active.push({ language: id, scheme: 'file' });
-        this.info('The vscode-liquid extension is the default formatter for ' + id);
-      }
-    }
-
-  };
-
-  /**
    * Get Formatting Status
    *
    * Returns the formatting status.
    */
-  isFormattingOnSave (languageId: string = 'liquid') {
+  isFormattingOnSave (languageId: string = 'liquid'): boolean {
 
     if (this.isDefaultFormatter(languageId)) {
 
@@ -597,9 +578,7 @@ export class WorkspaceSettings extends OutputChannel {
 
         this.hasLiquidrc = false;
         this.uri.liquidrc = null;
-        this.config.method = this.config.target === ConfigurationTarget.Workspace
-          ? ConfigMethod.Workspace
-          : ConfigMethod.Undefined;
+        this.config.method = ConfigMethod.Workspace;
 
         return Setting.LiquidrcUndefined;
 
@@ -816,8 +795,6 @@ export class WorkspaceSettings extends OutputChannel {
    * Returns an enum that informs upon state of the editors options
    */
   async getSettings () {
-
-    this.status.loading();
 
     const exists = await u.pathExists(this.uri.workspace.fsPath);
 
