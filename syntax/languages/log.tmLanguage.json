@@ -4,7 +4,7 @@
   "patterns": [
     {
       "name": "invalid log.error",
-      "match": "\\b(ERROR|Error|Deprecated|DEPRECATED)\\b"
+      "match": "\\b(ERROR|Error)\\b.*"
     },
     {
       "name": "string log.string",
