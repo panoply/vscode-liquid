@@ -176,6 +176,40 @@ export const enum WatchEvents {
  *
  * Informs upon the configuration type being used
  */
+export const enum LanguageParticipant {
+  /**
+   * Always, this is standard for all Liquid languages supported by the
+   * extension, which are as follows:
+   *
+   * - `liquid`
+   * - `liquid-css`
+   * - `liquid-scss`
+   * - `liquid-javascript`
+   *
+   * These language ids will never be set to `Determine` or `Disabled`
+   * and are controllers of the status bar item.
+   */
+  Active = 1,
+  /**
+   * Determine, this is for languages which _might_ be related
+   * to Liquid projects, typically for languages which have defined
+   * the `editor.defaultFormatter` to `sissel.shopify-liquid`
+   */
+  Determine,
+  /**
+   * Disabled languages, this is not final and can change, but
+   * requires explicit definition of `editor.defaultFormatter`
+   * to be define
+   */
+  Disabled,
+
+}
+
+/**
+ * Configuration Type
+ *
+ * Informs upon the configuration type being used
+ */
 export const enum ConfigMethod {
   /**
    * The initial value, when no method one will be determined.
@@ -209,7 +243,7 @@ export const enum StatusItem {
   /**
    * File is excluded/ignored from formatting
    */
-  Ignored,
+  Ignoring,
   /**
    * Formatting or extension error was detected
    */
