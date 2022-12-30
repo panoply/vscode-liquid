@@ -41,7 +41,7 @@ export class StatusLanguageItem extends Providers {
    */
   public languageError (message: string, command?: Command) {
 
-    const error = languages.createLanguageStatusItem('Liquid Errors', this.selector.active);
+    const error = languages.createLanguageStatusItem('Liquid Errors', this.selector);
 
     error.severity = LanguageStatusSeverity.Error;
     error.text = message;
