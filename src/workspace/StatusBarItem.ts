@@ -1,54 +1,9 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-unused-vars */
 import { StatusBarAlignment, ThemeColor, window } from 'vscode';
-import { getStatusBar, mdString } from 'utils';
+import { StatusItem } from 'types';
+import { mdString } from 'utils';
 import { delay } from 'rambdax';
-
-/**
- * Status States
- *
- * An enum which is used to determine the current state
- * of the status bar item. This also informs upon the state
- * at which the extension is running due to the fact the status
- * bar item is reflective of different operations.
- */
-export const enum FormatStatus {
-  /**
-   * The status is enabled - Formatting is enabled
-   */
-  Enabled = 1,
-  /**
-   * The status is disabled - Formatting is disabled
-   */
-  /**
-   * Formatting `formatOnSave` is set to `false`
-   */
-  Disabled,
-  /**
-   * Formatter is not the default
-   */
-  NotDefault,
-  /**
-   * The status is ignoring - File is excluded/ignored from formatting
-   */
-  Ignoring,
-  /**
-   * The status is error - Formatting or extension error
-   */
-  Error,
-  /**
-   * The status is warning - Formatting or extension warning
-   */
-  Warning,
-  /**
-   * The status is loading - Some long operation is happening
-   */
-  Loading,
-  /**
-   * The status bar item is hidden - Infers a non operational state
-   */
-  Hidden,
-}
 
 /**
  * Status Bar Item Provider
@@ -78,33 +33,31 @@ export class StatusBarItem {
    */
   private last: keyof Pick<StatusBarItem, | 'enable' | 'disable' | 'ignore' | 'loading' | 'hide' | 'error'>;
 
-  /**
-   * Show the status bar item
-   */
-  public show () {
-
-    if (this.state === FormatStatus.Hidden) {
-      this.item.show();
-    }
-
-  }
-
   /* -------------------------------------------- */
   /* PUBLIC EXPORTS                               */
   /* -------------------------------------------- */
   /**
    * The current state of the status bar item
    */
-  public state: FormatStatus = FormatStatus.Hidden;
+  public state: StatusItem = StatusItem.Hidden;
+
+  /**
+   * Show Bar Item - Show
+   */
+  public show () {
+
+    if (this.state === StatusItem.Hidden) this.item.show();
+
+  }
 
   /**
    * Status Bar Item - Hide
    */
   public hide () {
 
-    if (this.state !== FormatStatus.Hidden) {
+    if (this.state !== StatusItem.Hidden) {
       this.item.hide();
-      this.state = FormatStatus.Hidden;
+      this.state = StatusItem.Hidden;
     }
 
   }
@@ -115,7 +68,7 @@ export class StatusBarItem {
   public async loading (tooltip = 'Loading Extension', delayed = 1500) {
 
     this.show();
-    this.state = FormatStatus.Loading;
+    this.state = StatusItem.Loading;
     this.item.text = '💧 $(sync~spin)';
     this.item.tooltip = tooltip;
     this.item.command = 'liquid.toggleOutput';
@@ -128,7 +81,7 @@ export class StatusBarItem {
    */
   public enable () {
 
-    this.state = FormatStatus.Enabled;
+    this.state = StatusItem.Enabled;
     this.item.text = '💧 $(check)';
     this.item.tooltip = 'Disable Liquid Formatting';
     this.item.command = 'liquid.disableFormatting';
@@ -143,7 +96,7 @@ export class StatusBarItem {
    */
   public ignore () {
 
-    this.state = FormatStatus.Ignoring;
+    this.state = StatusItem.Ignoring;
     this.item.text = '💧 $(eye-closed)';
     this.item.tooltip = mdString('<i>File is ignored from formatting</i>');
     this.item.command = 'liquid.openOutput';
@@ -156,7 +109,7 @@ export class StatusBarItem {
    */
   public disable () {
 
-    this.state = FormatStatus.Disabled;
+    this.state = StatusItem.Disabled;
     this.item.text = '💧 $(x)';
     this.item.command = 'liquid.enableFormatting';
     this.item.tooltip = mdString('<i>Press to enable formatting</i>');
@@ -169,7 +122,7 @@ export class StatusBarItem {
    */
   public error (tooltip = 'Errors! Press to toggle output', command = 'liquid.openOutput') {
 
-    this.state = FormatStatus.Error;
+    this.state = StatusItem.Error;
     this.item.text = '🩸 ERROR';
     this.item.tooltip = tooltip;
     this.item.command = command;
@@ -185,10 +138,10 @@ export class StatusBarItem {
 
     this.show();
 
-    if (this.state === FormatStatus.Warning) {
+    if (this.state === StatusItem.Warning) {
       clearTimeout(this.timer);
     } else {
-      this.state = FormatStatus.Warning;
+      this.state = StatusItem.Warning;
     }
 
     this.item.tooltip = `${this.warnings > 1 ? 'Warnings' : 'Warnings'}! Toggle output`;
