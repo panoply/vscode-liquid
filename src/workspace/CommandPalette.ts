@@ -4,7 +4,6 @@ import prettify from '@liquify/prettify';
 import { getRange, isString, pathExists, rulesDefault, rulesRecommend } from 'utils';
 import { FSWatch } from './FileSystemWatcher';
 import { has } from 'rambdax';
-import { FormatStatus } from './StatusBarItem';
 
 /**
  * Commands
@@ -117,8 +116,11 @@ export class CommandPalette extends FSWatch {
    * Enabled formatting (command)
    */
   public async enableFormatting () {
-    if (this.status.state === FormatStatus.Disabled) {
+
+    if (this.formatting.enable === false) {
+
       await this.setFormatOnSave(window.activeTextEditor.document.languageId, true);
+
     }
   }
 
@@ -126,8 +128,10 @@ export class CommandPalette extends FSWatch {
    * Disable formatting (command)
    */
   public async disableFormatting () {
-    if (this.status.state === FormatStatus.Enabled) {
+    if (this.formatting.enable === true) {
+
       await this.setFormatOnSave(window.activeTextEditor.document.languageId, false);
+
     }
   }
 
