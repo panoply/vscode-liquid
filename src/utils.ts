@@ -1,9 +1,8 @@
-import { Range, workspace, TextDocument, MarkdownString } from 'vscode';
+import { Range, workspace, TextDocument, MarkdownString, WorkspaceEdit, Position } from 'vscode';
 import prettify, { LanguageNames, Options } from '@liquify/prettify';
 import { omit, isType, has, hasPath } from 'rambdax';
 import stripJsonComments from 'strip-json-comments';
-import { InLanguageIds, LanguageIds, Liquidrc } from './types';
-import { FormatStatus } from 'providers/StatusBarItem';
+import { InLanguageIds, LanguageIds, Liquidrc, StatusItem } from './types';
 import parseJSON from 'parse-json';
 import { access } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -343,6 +342,24 @@ export function hasDeprecatedSettings (rcfile: Liquidrc = undefined) {
 }
 
 /**
+ * For Inspect
+ *
+ * Iterator function that loops of the workspace configuration inspect
+ * names. Just some basic sugar for working with settings.
+ */
+export function forInspect (fn:(value: 'workspaceValue' | 'globalValue') => void) {
+
+  for (const value of [
+    'workspaceValue',
+    'globalValue'
+  ] as [
+    'workspaceValue',
+    'globalValue'
+  ]) fn(value);
+
+}
+
+/**
  * Has .liquidrc File
  *
  * Returns a string or undefined to check whether the
@@ -388,22 +405,22 @@ export function isFile (path: string, matchFile: string) {
  * Returns a string value of the `Status` enum that
  * will infer a method on the `StatusBarItem` class.
  */
-export function getStatusBar (status: FormatStatus) {
+export function getStatusBar (status: StatusItem) {
 
   switch (status) {
-    case FormatStatus.Enabled:
+    case StatusItem.Enabled:
       return 'enable';
-    case FormatStatus.Disabled:
+    case StatusItem.Disabled:
       return 'disable';
-    case FormatStatus.NotDefault:
+    case StatusItem.NotDefault:
       return 'hide';
-    case FormatStatus.Hidden:
+    case StatusItem.Hidden:
       return 'hide';
-    case FormatStatus.Error:
+    case StatusItem.Error:
       return 'error';
-    case FormatStatus.Loading:
+    case StatusItem.Loading:
       return 'loading';
-    case FormatStatus.Ignoring:
+    case StatusItem.Ignoring:
       return 'ignore';
   }
 
@@ -478,6 +495,30 @@ export function getLanguageFromExtension (path: string) {
 
   return undefined;
 
+}
+
+/**
+ * Dirty Document
+ *
+ * Applies a dirty edit to a file following a formatting rule change.
+ * This is used so when rules are edited the document will reflect
+ * the updated rule changes.
+ */
+export async function dirty (document: TextDocument) {
+
+  if (!document) return false;
+
+  const insert = new WorkspaceEdit();
+
+  insert.insert(document.uri, new Position(0, 0), ' ');
+  await workspace.applyEdit(insert);
+
+  const remove = new WorkspaceEdit();
+
+  remove.delete(document.uri, new Range(new Position(0, 0), new Position(0, 1)));
+  await workspace.applyEdit(remove);
+
+  return false;
 }
 
 /**
@@ -796,10 +837,8 @@ export function rulesRecommend (): Liquidrc {
   return {
     format: {
       wrap: 0,
-      commentIndent: true,
       crlf: false,
       indentSize: 2,
-      preserveComment: false,
       preserveLine: 2,
       endNewline: true,
       liquid: {
