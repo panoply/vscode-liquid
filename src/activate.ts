@@ -17,7 +17,6 @@ class VSCodeLiquid extends Events {
       await this.getSettings();
       await this.getContext();
 
-      // this.getLanguages();
       this.getWatchers();
       this.getFormatter();
       this.workspace(subscriptions);
@@ -32,37 +31,11 @@ class VSCodeLiquid extends Events {
 
         this.info('Using workspace settings for configuration');
 
-        if (window.activeTextEditor) {
-          if (this.deprecation.workspace === null) {
-            if (this.isFormattingOnSave(window.activeTextEditor.document.languageId)) {
-              this.formatting.enable = true;
-              this.status.enable();
-            } else {
-              this.status.disable();
-            }
-          } else {
-            this.status.error('Deprecated Settings');
-          }
-        }
-
       } else if (this.config.method === ConfigMethod.Liquidrc) {
 
         prettify.options(this.formatting.rules);
 
         this.info(`Using .liquidrc file: ${this.uri.liquidrc.path}`);
-
-        if (window.activeTextEditor) {
-          if (this.deprecation.liquidrc === null) {
-            if (this.isFormattingOnSave(window.activeTextEditor.document.languageId)) {
-              this.formatting.enable = true;
-              this.status.enable();
-            } else {
-              this.status.disable();
-            }
-          } else {
-            this.status.error('Deprecated Settings');
-          }
-        }
 
       }
 
@@ -144,11 +117,11 @@ class VSCodeLiquid extends Events {
   private register (subscriptions: { dispose(): void; }[]) {
 
     subscriptions.push(
-      languages.registerHoverProvider(this.selector.active, this.hovers),
-      languages.registerCompletionItemProvider(this.selector.active, this.completion, ...this.completion.triggers),
-      languages.registerDocumentLinkProvider(this.selector.active, this.links),
-      languages.registerDocumentFormattingEditProvider(this.selector.active, this.formatting),
-      languages.registerCodeLensProvider(this.selector.active, this.codelens)
+      languages.registerHoverProvider(this.selector, this.hovers),
+      languages.registerCompletionItemProvider(this.selector, this.completion, ...this.completion.triggers),
+      languages.registerDocumentLinkProvider(this.selector, this.links),
+      languages.registerDocumentFormattingEditProvider(this.selector, this.formatting),
+      languages.registerCodeLensProvider(this.selector, this.codelens)
     );
 
   }

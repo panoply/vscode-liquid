@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import prettify, { Options } from '@liquify/prettify';
+import prettify, { LanguageNames, Options } from '@liquify/prettify';
 import { Tester } from 'anymatch';
 import { DocumentFormattingEditProvider, EventEmitter, Range, TextDocument, TextEdit } from 'vscode';
 import * as u from 'utils';
@@ -93,7 +93,15 @@ export class FormattingProvider implements DocumentFormattingEditProvider {
     if (this.enable === false) return [];
     if (this.ignored.has(textDocument.uri.fsPath)) return [];
 
-    const language = u.getLanguage(textDocument.languageId);
+    let language: LanguageNames;
+
+    console.log(textDocument.fileName);
+
+    if (/\.liquidrc(?:\.json)?/.test(textDocument.fileName)) {
+      language = 'json';
+    } else {
+      language = u.getLanguage(textDocument.languageId);
+    }
 
     if (language === undefined) return [];
 
@@ -120,7 +128,7 @@ export class FormattingProvider implements DocumentFormattingEditProvider {
         this.hasError = true;
         this.listen.fire({
           type: FormatEventType.ThrowError,
-          message: 'Parse error occured when formatting document',
+          message: 'Parse error occured when formatting document\n',
           detail: e.message
         });
       }
