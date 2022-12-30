@@ -12,6 +12,7 @@ export type LanguageIds = LiteralUnion<(
   | 'html'
   | 'json'
   | 'jsonc'
+  | 'markdown'
   | 'css'
   | 'sass'
   | 'scss'
@@ -36,47 +37,12 @@ export type InLanguageIds = LiteralUnion<(
 /**
  * Language document selectors
  */
-export interface Selectors {
-  /**
-   * Liquid Language Selectors
-   */
-  active: Array<{
-    scheme: 'file';
-    language: LiteralUnion<(
-      | 'liquid'
-      | 'liquid-javascript'
-      | 'liquid-css'
-      | 'liquid-scss'
-    ), string>
-  }>
-  /**
-   * Liquid Language Selectors
-   */
-  liquid?: Array<{
-    scheme: 'file';
-    language:
+export type Selectors = Array<{
+  scheme: string;
+  language: LiteralUnion<(
     | 'liquid'
     | 'liquid-javascript'
     | 'liquid-css'
     | 'liquid-scss'
-  }>
-  /**
-   * Extended Language Selectors
-   */
-  extend: Array<{
-    scheme: 'file';
-    language:
-    | 'xml'
-    | 'html'
-    | 'json'
-    | 'jsonc'
-    | 'css'
-    | 'sass'
-    | 'scss'
-    | 'less'
-    | 'jsx'
-    | 'tsx'
-    | 'javascript'
-    | 'typescript'
-  }>
-}
+  ), string>
+}>
