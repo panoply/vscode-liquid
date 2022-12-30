@@ -5,7 +5,7 @@ import { Config, URI, Meta } from './typings/store';
 import { Liquidrc, PackageJSON } from './typings/files';
 import { Selectors, LanguageIds } from './typings/document';
 import { ConfigurationTarget, Extension as IExtension, Uri, workspace } from 'vscode';
-import { ConfigMethod } from './typings/enums';
+import { ConfigMethod, LanguageParticipant } from './typings/enums';
 import { Service } from 'services';
 
 /**
@@ -167,43 +167,30 @@ export class Extension extends Service {
    * and the `extend` is the additional languages that can
    * be handled.
    */
-  selector: Selectors = {
-    active: [
-      { scheme: 'file', language: 'liquid' },
-      { scheme: 'file', language: 'liquid-css' },
-      { scheme: 'file', language: 'liquid-scss' },
-      { scheme: 'file', language: 'liquid-javascript' }
-    ],
-    extend: [
-      { scheme: 'file', language: 'html' },
-      { scheme: 'file', language: 'xml' },
-      { scheme: 'file', language: 'css' },
-      { scheme: 'file', language: 'scss' },
-      { scheme: 'file', language: 'sass' },
-      { scheme: 'file', language: 'json' },
-      { scheme: 'file', language: 'jsonc' },
-      { scheme: 'file', language: 'javascript' },
-      { scheme: 'file', language: 'typescript' },
-      { scheme: 'file', language: 'jsx' },
-      { scheme: 'file', language: 'tsx' }
-    ]
-  };
+  selector: Selectors = [
+    { scheme: 'file', language: 'liquid' },
+    { scheme: 'file', language: 'liquid-css' },
+    { scheme: 'file', language: 'liquid-scss' },
+    { scheme: 'file', language: 'liquid-javascript' }
+  ];
 
   /**
    * Languages determination
    *
-   * Holds a reference to which language selectors are
-   * currently enabled/disabled.
+   * Holds a an actionable reference. We will determine
+   * how the extension behaves when dealing with these
+   * language schemes
    */
   languages: { [K in LanguageIds]: boolean } = {
     'liquid': true,
     'liquid-css': true,
     'liquid-scss': true,
     'liquid-javascript': true,
-    'xml': false,
-    'html': false,
     'json': false,
     'jsonc': false,
+    'markdown': false,
+    'xml': false,
+    'html': false,
     'css': false,
     'sass': false,
     'scss': false,
