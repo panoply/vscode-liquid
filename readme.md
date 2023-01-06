@@ -47,7 +47,7 @@ The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (
 - Supports Liquid embedded code block syntax highlighting.
 - Integrated Schema stores that provide IntelliSense capabilities within Shopify JSON files.
 - Preserves VSCode HTML IntelliSense capabilities in `.liquid` files.
-- Liquid Template Literal syntax highlighting support for TypeScript an JavaScript.
+- Liquid Template Literal syntax highlighting support for TypeScript and JavaScript.
 - Hover descriptions and reference links on tags, filters, objects and more!
 
 ### Showcase
