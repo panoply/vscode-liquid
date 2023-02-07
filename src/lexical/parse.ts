@@ -766,7 +766,7 @@ export function parseSchema (content: string, offset: number): false | {
   /**
    * Parse the inner contents of the `{% schema %}` tag
    */
-  parsed(): SchemaSectionTag
+  parse(): SchemaSectionTag
 } {
 
   const detect = content.indexOf('endschema', offset);
@@ -784,7 +784,7 @@ export function parseSchema (content: string, offset: number): false | {
     get content () {
       return content.slice(start, ender);
     },
-    parsed (): SchemaSectionTag {
+    parse (): SchemaSectionTag {
 
       return parseJson(content.slice(start, ender));
 
