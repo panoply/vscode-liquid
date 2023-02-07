@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Options } from '@liquify/prettify';
+import { Rules } from 'esthetic';
 import { Tester } from 'anymatch';
 import { ConfigMethod } from './enums';
 import {
@@ -89,9 +89,9 @@ export interface Meta {
    */
   releaseNotes: Uri;
   /**
-   * The Prettify version used in the extension.
+   * The Æsthetic version used in the extension.
    */
-  prettifyVersion: string;
+  estheticVersion: string;
   /**
    * The current extension version
    */
@@ -163,7 +163,7 @@ export interface Format {
   /**
    * The current formatting rules
    */
-  rules: Options;
+  rules: Rules;
 
 }
 
