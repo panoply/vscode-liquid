@@ -1,5 +1,5 @@
 import { Engines } from '@liquify/liquid-language-specs';
-import { Options } from '@liquify/prettify';
+import { Rules } from 'esthetic';
 
 export namespace Workspace {
 
@@ -174,7 +174,7 @@ export namespace Workspace {
     /**
      * The formatting rules for Prettify
      */
-    rules?: Options
+    rules?: Rules
   }
 
 }
