@@ -1,5 +1,5 @@
 import { Engines } from '@liquify/liquid-language-specs';
-import { Options } from '@liquify/prettify';
+import { Rules } from 'esthetic';
 import { Merge } from 'type-fest';
 
 /**
@@ -40,7 +40,7 @@ export interface Liquidrc {
   /**
    * Prettify formatting options
    */
-  format?: Merge<Options, {
+  format?: Merge<Rules, {
     /**
      * The string list of paths to ignore
      */
