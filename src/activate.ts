@@ -1,7 +1,7 @@
 import { ConfigMethod } from 'types';
 import { Events } from './events';
 import { languages, workspace, commands, ConfigurationTarget, ExtensionContext, window } from 'vscode';
-import prettify from '@liquify/prettify';
+import esthetic from 'esthetic';
 
 class VSCodeLiquid extends Events {
 
@@ -27,13 +27,13 @@ class VSCodeLiquid extends Events {
 
       if (this.config.method === ConfigMethod.Workspace) {
 
-        prettify.options(this.formatting.rules);
+        esthetic.rules(this.formatting.rules);
 
         this.info('Using workspace settings for configuration');
 
       } else if (this.config.method === ConfigMethod.Liquidrc) {
 
-        prettify.options(this.formatting.rules);
+        esthetic.rules(this.formatting.rules);
 
         this.info(`Using .liquidrc file: ${this.uri.liquidrc.path}`);
 
@@ -120,8 +120,8 @@ class VSCodeLiquid extends Events {
       languages.registerHoverProvider(this.selector, this.hovers),
       languages.registerCompletionItemProvider(this.selector, this.completion, ...this.completion.triggers),
       languages.registerDocumentLinkProvider(this.selector, this.links),
-      languages.registerDocumentFormattingEditProvider(this.selector, this.formatting),
-      languages.registerCodeLensProvider(this.selector, this.codelens)
+      languages.registerDocumentFormattingEditProvider(this.selector, this.formatting)
+      // languages.registerCodeLensProvider(this.selector, this.codelens)
     );
 
   }
