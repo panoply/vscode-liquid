@@ -1,6 +1,6 @@
 import { basename } from 'node:path';
 import { commands, FileSystemWatcher, GlobPattern, Uri, workspace } from 'vscode';
-import prettify from '@liquify/prettify';
+import esthetic from 'esthetic';
 import { ConfigMethod, Setting } from 'types';
 import { has } from 'rambdax';
 import { isArray } from 'utils';
@@ -139,7 +139,7 @@ export class FSWatch extends NotificationMessage {
 
     if (liquidrc === Setting.LiquidrcDefined) {
 
-      prettify.options(this.formatting.rules);
+      esthetic.rules(this.formatting.rules);
 
       this.isDirty = true;
       this.info('Updated .liquidrc file configuration');
