@@ -1,6 +1,6 @@
 import { env, Uri, window, workspace } from 'vscode';
 import { join } from 'node:path';
-import prettify from '@liquify/prettify';
+import esthetic from 'esthetic';
 import { getRange, isString, pathExists, rulesDefault, rulesRecommend } from 'utils';
 import { FSWatch } from './FileSystemWatcher';
 import { has } from 'rambdax';
@@ -13,15 +13,15 @@ import { has } from 'rambdax';
 export class CommandPalette extends FSWatch {
 
   /**
-   * Holds a cache copy of an error, typically returned by Prettify
+   * Holds a cache copy of an error, typically returned by esthetic
    */
   public errorCache: string = null;
 
   public getFormatter () {
 
-    prettify.format.after((_, { languageName }) => {
+    esthetic.on('format', ({ stats }) => {
       if (!this.hasError) {
-        this.info(`${languageName} formatted in ${prettify.format.stats.time}ms`);
+        this.info(`${stats.language} formatted in ${stats.time} (${stats.size})`);
       }
     });
 
@@ -76,9 +76,9 @@ export class CommandPalette extends FSWatch {
 
       const input = type === 'default' ? rulesDefault() : rulesRecommend();
       const stringify = JSON.stringify(input, null, 2);
-      const rules = await prettify.format(stringify, { ...input, language: 'json' });
+      const rules = await esthetic.format(stringify, { ...input, language: 'json' });
 
-      prettify.options({ language: 'auto' });
+      esthetic.rules({ language: 'liquid' });
 
       try {
 
@@ -152,7 +152,7 @@ export class CommandPalette extends FSWatch {
 
       try {
 
-        const output = await prettify.format(input, { language: languageId });
+        const output = await esthetic.format(input, { language: languageId });
 
         if (this.hasError) {
           this.errorCache = null;
@@ -188,7 +188,7 @@ export class CommandPalette extends FSWatch {
       await this.formatDocument();
       window.showInformationMessage('Document Formatted');
     } catch {
-      window.showInformationMessage('Formatting Failed! Failed! The document could not be beautified, see output.');
+      window.showInformationMessage('Formatting Failed! The document could not be beautified, see output.');
     }
   }
 
