@@ -118,7 +118,7 @@ export class HoverProvider extends Service implements IHoverProvider {
 
       const schema = parseSchema(document.getText(), offset);
 
-      if (schema !== false && schema.within) {
+      if (schema !== false && schema.within === true) {
         const parse = this.json.doParse(document, position, schema);
         const hover = await this.json.doHover(parse);
         return new Hover(hover as any);
