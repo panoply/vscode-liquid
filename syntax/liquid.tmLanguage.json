@@ -14,6 +14,8 @@
   "injections": {
     "L:meta - (meta.embedded.block.liquid)": {
       "patterns": [
+        { "include": "source.liquid#comment-block" },
+        { "include": "source.liquid#comment-line" },
         { "include": "source.liquid#tags" },
         { "include": "source.liquid#output" }
       ]
@@ -66,7 +68,7 @@
       "end": "{%-?\\s*\\bendcomment\\b\\s*-?%}"
     },
     "comment-line": {
-      "name": "comment.block.liquid",
+      "name": "comment.line.liquid",
       "begin": "{%-?\\s*#\\s+",
       "end": "-?%}"
     },
