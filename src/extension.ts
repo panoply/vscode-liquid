@@ -22,7 +22,7 @@ export class Extension extends Service {
     this.uri.workspace = Uri.joinPath(this.uri.root, '.vscode', 'settings.json');
     this.meta.version = packageJSON.version;
     this.meta.displayName = packageJSON.displayName;
-    this.meta.prettifyVersion = packageJSON.dependencies['@liquify/prettify'];
+    this.meta.estheticVersion = packageJSON.dependencies.esthetic;
     this.meta.releaseNotes = Uri.parse(`${this.meta.repository}/releases/tag/v${this.meta.version}`);
 
   }
@@ -35,7 +35,7 @@ export class Extension extends Service {
   meta: Meta = {
     releaseNotes: null,
     version: null,
-    prettifyVersion: null,
+    estheticVersion: null,
     displayName: null,
     id: 'sissel.shopify-liquid',
     projectName: 'vscode-liquid',
