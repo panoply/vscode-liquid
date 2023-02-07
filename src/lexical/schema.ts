@@ -130,7 +130,7 @@ export function getSectionCompletions (
 
   if (!schema) return null;
 
-  const parsed = schema.parsed();
+  const parsed = schema.parse();
 
   if (has('settings', parsed) && prop === 'settings') return getSchemaSettings(parsed);
 
