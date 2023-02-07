@@ -69,7 +69,7 @@
     },
     "comment-line": {
       "name": "comment.line.liquid",
-      "begin": "{%-?\\s*#\\s+",
+      "begin": "{%-?\\s*#\\s*",
       "end": "-?%}"
     },
     "liquid-tag": {
@@ -417,7 +417,7 @@
         {
           "name": "comment.block.liquid",
           "begin": "^\\s*\\b(comment)\\b$",
-          "end": "^\\s*\\b(endcomment)\\b$"
+          "end": "^\\s*\\b(endcomment)\\b"
         },
         {
           "name": "comment.line.liquid",
