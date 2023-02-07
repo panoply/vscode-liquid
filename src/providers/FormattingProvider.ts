@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import prettify, { LanguageNames, Options } from '@liquify/prettify';
+import esthetic, { LanguageName, Rules } from 'esthetic';
 import { Tester } from 'anymatch';
 import { DocumentFormattingEditProvider, EventEmitter, Range, TextDocument, TextEdit } from 'vscode';
 import * as u from 'utils';
@@ -51,7 +51,7 @@ export class FormattingProvider implements DocumentFormattingEditProvider {
   /**
    * The current formatting rules
    */
-  public rules: Options;
+  public rules: Rules;
   /**
    * The current formatting rules
    */
@@ -93,9 +93,7 @@ export class FormattingProvider implements DocumentFormattingEditProvider {
     if (this.enable === false) return [];
     if (this.ignored.has(textDocument.uri.fsPath)) return [];
 
-    let language: LanguageNames;
-
-    console.log(textDocument.fileName);
+    let language: LanguageName;
 
     if (/\.liquidrc(?:\.json)?/.test(textDocument.fileName)) {
       language = 'json';
@@ -109,21 +107,21 @@ export class FormattingProvider implements DocumentFormattingEditProvider {
     const fullRange = textDocument.validateRange(findRange);
     const source = textDocument.getText();
 
+    if (this.hasError) {
+      this.hasError = false;
+      this.error = null;
+      this.listen.fire(FormatEventType.EnableStatus);
+    }
+
     try {
 
-      const output = prettify.formatSync(source, { language });
-
-      if (this.hasError) {
-        this.hasError = false;
-        this.error = null;
-        this.listen.fire(FormatEventType.EnableStatus);
-      }
+      const output = esthetic.liquid.sync(source);
 
       return [ TextEdit.replace(fullRange, output) ];
 
     } catch (e) {
 
-      if (this.hasError === false || this.error !== e) {
+      if (this.hasError === false || this.error !== e.message) {
         this.error = e.message;
         this.hasError = true;
         this.listen.fire({
