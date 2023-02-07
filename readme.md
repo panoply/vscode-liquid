@@ -41,7 +41,7 @@ The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (
 ### Key Features
 
 - Syntax Highlighting for Liquid in CSS, SCSS, JavaScript, Markdown and more!
-- Formatting and beautification support using [Prettify](https://github.com/panoply/prettify).
+- Formatting and beautification support using [Æsthetic](https://github.com/panoply/esthetic).
 - Auto-Completions for Liquid tags, objects, filters, sections and more!
 - Embedded JSON Schema Tag language completions and diagnostics in Shopify theme sections.
 - Snippet auto-completion for Liquid tags and filters and Shopify Schema sections.
@@ -83,7 +83,7 @@ The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (
   - [Schema](#schema-shopify)
   - [Sections](#sections-shopify)
 - [Formatting](#formatting)
-  - [Prettify](#prettify)
+  - [Æsthetic](#esthetic)
   - [Setting Default Formatter](#setting-default-formatter)
   - [Status Bar](#status-bar)
   - [Ignoring Code and/or Files](#ignoring-code-andor-files)
@@ -267,7 +267,7 @@ When these languages contain Liquid syntax, vscode might complain about invalid 
   "json.validate.enable": false,
 
   // Disabling JavaScript validations when it contains Liquid syntax
-  "javascript.validate.enable": true
+  "javascript.validate.enable": false
 }
 ```
 
@@ -429,26 +429,24 @@ Liquid `section.*` object completions are provided in accordance with the conten
 
 # Formatting
 
-Formatting can be enabled/disabled via the command palette and will respect `editor.formatOnSave`. When Liquid formatting is **enabled** the extension will format Liquid and all suffixed `*.liquid` files with a language supported by [Prettify](https://github.com/panoply/prettify). You can **disable** beautification by clicking the 💧 emoji icon in the status bar or exclude directories/files from handling using the `format.ignore` setting.
+Formatting can be enabled/disabled via the command palette and will respect `editor.formatOnSave`. When Liquid formatting is **enabled** the extension will format Liquid and all suffixed `*.liquid` files with a language supported by [Æsthetic](https://github.com/panoply/esthetic). You can **disable** beautification by clicking the 💧 emoji icon in the status bar or exclude directories/files from handling using the `format.ignore` setting.
 
-Formatting options can be defined in a `.liquidrc` file, package.json `prettify` field or alternatively you can use workspace settings.
+### Æsthetic
 
-### Prettify 🎀
+[Æsthetic](https://github.com/panoply/esthetic) is used to facilitate formatting capabilities by the extension. Æsthetic is built atop of the late but powerful Sparser lexing algorithm and has since been adapted for refined usage with Liquid and this extension. Æsthetic exposes a granular set of rules and supports Liquid beautification in various markup, script and style languages.
 
-[Prettify](https://github.com/panoply/prettify) is used to facilitate formatting capabilities by the extension. Prettify is built atop of the late but powerful Sparser lexing algorithm and has since been adapted for refined usage with Liquid and this extension. Prettify exposes a granular set of rules and supports Liquid beautification in various markup, script and style languages.
+I actively maintain Æsthetic and it is currently in a **pre-release** (beta) stage. The ambition is to eventually have the tool become a competitive alternative to Prettier and disrupt "opinionated" conventions imposed upon the code nexus, one size does not fit all. Æsthetic was introduced in version **3.0.0** as the core formatter for this extension. Though Æsthetic has yet to ship an official release candidate it is stable enough for usage and its adaption fixes previous version defects.
 
-I actively maintain Prettify and it is currently in a **pre-release** (beta) stage. The ambition is to eventually have the tool become a competitive alternative to Prettier and disrupt "opinionated" conventions imposed upon the code nexus, one size does not fit all. Prettify was introduced in version **3.0.0** as the core formatter for this extension. Though Prettify has yet to ship an official release candidate it is stable enough for usage and its adaption fixes previous version defects.
-
-- [Repository](https://github.com/panoply/prettify)
+- [Repository](https://github.com/panoply/esthetic)
 - [Playground](https://liquify.dev/prettify)
 
-_Prettify, once stable enough for the big time will be made available for usage in a separate extension_
+_Æsthetic, once stable enough for the big time will be made available for usage in a separate extension_
 
 ### Setting Default Formatter
 
 In some situations you may have another extension handling formatting and you will need to explicitly define an in-language `editor.defaultFormatter` within your vscode workspace/user settings. VSCode will typically inform you about this but if for any reason you are unable to get formatting to work, try setting the in-language default formatter.
 
-_Be sure to define only the languages you wish to have formatted by the extension. If you don't want Prettify to handle formatting then set the option `liquid.format.enable` to `false`._
+_Be sure to define only the languages you wish to have formatted by the extension. If you don't want Æsthetic to handle formatting then set the option `liquid.format.enable` to `false`._
 
 ```jsonc
 {
@@ -471,10 +469,6 @@ In addition to the above defaults, you can also choose to have Prettify beautify
 {
   // Enables formatting of all .html files
   "[html]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid"
-  },
-  // Enables formatting of all .tsx files
-  "[xml]": {
     "editor.defaultFormatter": "sissel.shopify-liquid"
   },
   // Enables formatting of all .css files
@@ -506,28 +500,28 @@ When the extension is enabled and a supported file has been opened in the editor
 
 ### Ignoring Code and/or Files
 
-You can skip formatting on files, directories and code input a few different ways. If you are using workspace/user settings for configuration then you can pass a glob list of paths relative to the projects root using the `liquid.format.ignore[]` option. Folks leveraging the `.liquidrc` file or package.json `prettify` field for defining beautification rules can use the `ignore[]` option.
+You can skip formatting on files, directories and code input a few different ways. If you are using workspace/user settings for configuration then you can pass a glob list of paths relative to the projects root using the `liquid.format.ignore[]` option. Folks leveraging the `.liquidrc` file for defining beautification rules can use the `format.ignore[]` option.
 
-In addition to path ignores, users can also take advantage of Prettify's [inline control](https://github.com/panoply/prettify#inline-control) comments for skipping blocks of code and files from beautification.
+In addition to path ignores, users can also take advantage of Æsthetic [inline control](https://github.com/panoply/esthetic#inline-control) comments for skipping blocks of code and files from beautification.
 
 <strong>Ignoring Blocks</strong><br>
 
-- `@prettify-ignore-next`
+- `esthetic-ignore-next`
 
 <strong>Ignoring Regions</strong><br>
 
-- `@prettify-ignore-start`
-- `@prettify-ignore-end`
+- `esthetic-ignore-start`
+- `esthetic-ignore-end`
 
-_You can also annotate HTML tags with `data-prettify-ignore` attributes_
+_You can also annotate HTML tags with `data-esthetic-ignore` attributes_
 
 <strong>Ignoring Files</strong><br>
 
-- `<!-- @prettify-ignore -->`
-- `{% # @prettify-ignore %}`
-- `{% comment %} @prettify-ignore {% endcomment %}`
-- `/* @prettify-ignore */`
-- `// @prettify-ignore`
+- `<!-- esthetic-ignore -->`
+- `{% # esthetic-ignore %}`
+- `{% comment %} esthetic-ignore {% endcomment %}`
+- `/* esthetic-ignore */`
+- `// esthetic-ignore`
 
 > **Warning**&nbsp;
 > Inline comment ignores made possible via Prettify might be little flakey until an official release.
@@ -563,72 +557,81 @@ Below is the **default** rules. It is important to note that if the `liquid.form
 
 ```jsonc
 {
-  "ignore": [],
-  "wrap": 0,
-  "commentIndent": true,
-  "crlf": false,
-  "indentSize": 2,
-  "preserveLine": 2,
-  "endNewline": true,
-  "markup": {
-    "correct": false,
-    "quoteConvert": "none",
-    "selfCloseSpace": true,
-    "commentNewline": true,
-    "forceIndent": false,
-    "attributeSort": false,
-    "attributeSortList": [],
-    "normalizeSpacing": true,
-    "attributeCasing": "preserve",
-    "lineBreakSeparator": "before",
-    "forceAttribute": true,
-    "forceLeadAttribute": false,
-    "preserveCaptures": false,
-    "preserveAttributes": false,
-    "preserveText": false,
-    "delimiterTrims": "preserve",
-    "valueForce": "intent",
-    "ignoreScripts": false,
-    "ignoreStyles": false,
-    "ignoreJson": false
+  "engine": "shopify",
+  "files": {
+    "locales": [],
+    "settings": [],
+    "sections": [],
+    "snippets": []
   },
-  "json": {
-    "bracePadding": false,
-    "braceAllman": true,
-    "arrayFormat": "indent",
-    "objectIndent": "indent",
-    "objectSort": false
-  },
-  "style": {
-    "correct": false,
-    "sortProperties": true,
-    "sortSelectors": true,
-    "noLeadZero": true,
-    "quoteConvert": "single",
-    "classPadding": true
-  },
-  "script": {
-    "correct": false,
-    "arrayFormat": "indent",
-    "objectIndent": "indent",
-    "braceAllman": false,
-    "methodChain": 3,
-    "caseSpace": true,
-    "endComma": "never",
-    "elseNewline": true,
-    "functionNameSpace": false,
-    "functionSpace": true,
-    "ternaryLine": true,
-    "braceNewline": false,
-    "bracePadding": true,
-    "braceStyle": "none",
-    "neverFlatten": false,
-    "noCaseIndent": true,
-    "noSemicolon": false,
-    "objectSort": false,
-    "vertical": false,
-    "quoteConvert": "none",
-    "variableList": false
+  "format": {
+    "ignore": [],
+    "wrap": 0,
+    "commentIndent": true,
+    "crlf": false,
+    "indentSize": 2,
+    "preserveLine": 2,
+    "endNewline": true,
+    "markup": {
+      "correct": false,
+      "quoteConvert": "none",
+      "selfCloseSpace": true,
+      "commentNewline": true,
+      "forceIndent": false,
+      "attributeSort": false,
+      "attributeSortList": [],
+      "normalizeSpacing": true,
+      "attributeCasing": "preserve",
+      "lineBreakSeparator": "before",
+      "forceAttribute": true,
+      "forceLeadAttribute": false,
+      "preserveCaptures": false,
+      "preserveAttributes": false,
+      "preserveText": false,
+      "delimiterTrims": "preserve",
+      "valueForce": "intent",
+      "ignoreScripts": false,
+      "ignoreStyles": false,
+      "ignoreJson": false
+    },
+    "json": {
+      "bracePadding": false,
+      "braceAllman": true,
+      "arrayFormat": "indent",
+      "objectIndent": "indent",
+      "objectSort": false
+    },
+    "style": {
+      "correct": false,
+      "sortProperties": true,
+      "sortSelectors": true,
+      "noLeadZero": true,
+      "quoteConvert": "single",
+      "classPadding": true
+    },
+    "script": {
+      "correct": false,
+      "arrayFormat": "indent",
+      "objectIndent": "indent",
+      "braceAllman": false,
+      "methodChain": 3,
+      "caseSpace": true,
+      "endComma": "never",
+      "elseNewline": true,
+      "functionNameSpace": false,
+      "functionSpace": true,
+      "ternaryLine": true,
+      "braceNewline": false,
+      "bracePadding": true,
+      "braceStyle": "none",
+      "neverFlatten": false,
+      "noCaseIndent": true,
+      "noSemicolon": false,
+      "objectSort": false,
+      "vertical": false,
+      "quoteConvert": "none",
+      "variableList": false
+    }
   }
 }
 ```
