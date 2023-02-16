@@ -1,11 +1,11 @@
-import parseJson from 'parse-json';
-import { CommandPalette } from './workspace/CommandPalette';
-import { ConfigurationChangeEvent, TextDocument, TextDocumentChangeEvent, TextEditor } from 'vscode';
-import { ConfigMethod, StatusItem } from './types';
+import { ConfigurationChangeEvent, TextDocument, TextDocumentChangeEvent, TextEditor, Position, Range } from 'vscode';
+import { ConfigMethod } from './types';
 import { FormatEvent, FormatEventType } from 'providers/FormattingProvider';
 import { getSchema } from 'lexical/parse';
 import { Engine } from '@liquify/liquid-language-specs';
-import { dirty, isFunction } from 'utils';
+import { dirty, isFunction, parseJsonFile } from 'utils';
+import { CommandPalette } from 'workspace/CommandPalette';
+import { assigns } from 'lexical/variables';
 
 /**
  * Workspace Events
@@ -44,9 +44,11 @@ export class Events extends CommandPalette {
   public onDidCloseTextDocument ({ uri }: TextDocument) {
 
     if (this.formatting.register.has(uri.fsPath)) {
-
       this.formatting.register.delete(uri.fsPath);
+    }
 
+    if (this.completion.vars.has(uri.fsPath)) {
+      this.completion.vars.delete(uri.fsPath);
     }
 
   }
@@ -58,7 +60,19 @@ export class Events extends CommandPalette {
    * in the event (for now). In Liquify we use LSP so this is just a hot
    * patch for us the reason with diagnostics.
    */
-  public async onDidChangeTextDocument ({ document }: TextDocumentChangeEvent) {
+  public async onDidChangeTextDocument ({ document, contentChanges }: TextDocumentChangeEvent) {
+
+    const change = contentChanges[contentChanges.length - 1];
+
+    if (change?.range) {
+
+      const range = new Range(new Position(0, 0), change.range.end);
+      const content = document.getText(range);
+      const vars = this.completion.vars.get(document.uri.fsPath);
+
+      await assigns(content, vars);
+
+    }
 
     if (this.engine === Engine.shopify && this.json.config.validate === true) {
 
@@ -69,34 +83,36 @@ export class Events extends CommandPalette {
         const diagnostics = await this.json.doValidation(document.uri, schema);
 
         this.formatting.enable = this.json.canFormat;
-        this.json.diagnostics.set(document.uri, diagnostics as any);
+        this.json.diagnostics.set(document.uri, diagnostics);
 
-        if (!this.formatting.enable) {
+        // if (!this.formatting.enable) {
 
-          try {
+        //   try {
 
-            parseJson(schema.content);
+        //     parseJson(schema.content);
 
-            if (this.hasError) {
-              this.hasError = false;
-              this.errorCache = null;
-              this.status.enable();
-            }
+        //     if (this.hasError) {
+        //       this.hasError = false;
+        //       this.errorCache = null;
+        //       this.status.enable();
+        //     }
 
-          } catch (e) {
+        //   } catch (e) {
 
-            if (this.hasError === false || this.errorCache !== e) {
-              this.errorCache = e.message;
-              this.hasError = true;
-              this.error('Parse error occured when formatting document')(e.message);
-            }
-          }
+        //     if (this.hasError === false || this.errorCache !== e) {
+        //       this.errorCache = e.message;
+        //       this.hasError = true;
+        //       this.error('Parse error occured when formatting document')(e.message);
+        //     }
+        //   }
 
-        }
+        // }
 
       } else if (this.json.diagnostics.has(document.uri)) {
+
         this.json.canFormat = true;
         this.json.diagnostics.clear();
+
       }
 
     }
@@ -118,36 +134,71 @@ export class Events extends CommandPalette {
       return;
     };
 
-    const { document } = textDocument;
-
-    if (!this.languages[document.languageId]) {
+    if (!this.languages.get(textDocument.document.languageId)) {
       this.status.hide();
       return;
-    } else {
-      this.status.show();
     }
+
+    this.status.show();
 
     if (this.isDirty) this.isDirty = await dirty(textDocument.document);
 
-    if (this.formatting.ignored.has(document.uri.fsPath)) {
+    const { fsPath } = textDocument.document.uri;
+
+    if (!this.completion.vars.has(fsPath)) {
+      this.completion.vars.set(fsPath, new Map());
+    }
+
+    if (this.formatting.ignored.has(fsPath)) {
       this.status.ignore();
       return;
     }
 
-    if (isFunction(this.formatting.ignoreMatch) && this.formatting.ignoreMatch(document.uri.fsPath)) {
-      this.info(`Ignoring: ${document.uri.fsPath}`);
-      this.formatting.ignored.add(document.uri.fsPath);
+    if (isFunction(this.formatting.ignoreMatch) && this.formatting.ignoreMatch(fsPath)) {
+      this.info(`Ignoring: ${fsPath}`);
+      this.formatting.ignored.add(fsPath);
       this.status.ignore();
       return;
     }
 
-    if (this.isFormattingOnSave(document.languageId)) {
-      this.formatting.register.add(document.uri.fsPath);
+    if (this.isFormattingOnSave(textDocument.document.languageId)) {
+
+      if (!this.formatting.register.has(fsPath)) {
+        this.formatting.register.add(fsPath);
+      }
+
       this.formatting.enable = true;
       this.status.enable();
+
     } else {
+
       this.formatting.enable = false;
       this.status.disable();
+
+    }
+  }
+
+  /**
+   * OnDidSaveTextDocument
+   *
+   * Invoked when a text document has been saved. We need context
+   * of certain files to provide capabilities like (for example) locale
+   * completions. It is here where we keep our store in sync.
+   */
+  public async onDidSaveTextDocument (textDocument: TextDocument) {
+
+    const uri = textDocument.uri.fsPath;
+
+    if (this.engine === Engine.shopify) {
+
+      const { locales, settings } = this.files;
+
+      if (locales.fsPath === uri) {
+        this.completion.files.locales.items = await parseJsonFile(locales);
+      } else if (settings.fsPath === uri) {
+        this.completion.files.settings.items = await parseJsonFile(locales);
+      }
+
     }
 
   }
