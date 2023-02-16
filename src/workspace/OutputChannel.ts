@@ -84,7 +84,9 @@ export class OutputChannel extends StatusLanguageItem {
       const stack = u.parseStack(error);
 
       if (u.isArray(stack)) {
-        for (const line of stack) this.output.appendLine(line);
+        for (const line of stack) {
+          this.output.appendLine(line);
+        }
       }
 
     } else {
