@@ -59,7 +59,7 @@ export class JSONLanguageProvider {
   /* METHODS                                      */
   /* -------------------------------------------- */
 
-  public activate () {
+  constructor () {
 
     this.service.configure({
       validate: true,
@@ -67,7 +67,7 @@ export class JSONLanguageProvider {
       schemas: [
         {
           uri: 'http://json-schema.org/draft-07/schema',
-          fileMatch: [ '*' ],
+          fileMatch: [ '*.json' ],
           schema
         }
       ]
