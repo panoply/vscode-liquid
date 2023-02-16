@@ -33,6 +33,10 @@
       "name": "support.function.filter log.keyword"
     },
     {
+      "match": "(?<=Using\\s)\\b(snippet|locale|section|setting)",
+      "name": "support.function.filter log.keyword"
+    },
+    {
       "match": "(?<=\\:\\s)\\/[\\s\\S]*$",
       "name": "string log.path"
     },
@@ -57,7 +61,7 @@
       "name": "constant.language log.constant"
     },
     {
-      "match": "\\b([uU]pdated|[iI]gnoring|[cC]hanged|[wW]atching|[dD]eleted|[cC]reated)\\b",
+      "match": "\\b([uU]pdated|[iI]gnoring|[cC]hanged|[wW]atching|[dD]eleted|[cC]reated|[aA]dded|[rR]emoved)\\b",
       "name": "punctuation.definition.tag log.control"
     },
     {
