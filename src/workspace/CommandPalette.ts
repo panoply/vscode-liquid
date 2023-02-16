@@ -117,22 +117,36 @@ export class CommandPalette extends FSWatch {
    */
   public async enableFormatting () {
 
-    if (this.formatting.enable === false) {
+    const { languageId } = window.activeTextEditor.document;
 
-      await this.setFormatOnSave(window.activeTextEditor.document.languageId, true);
+    if (!this.isDefaultFormatter(languageId)) {
+
+      const answer = await this.notifyError([ 'Yes', 'No' ], [
+        'The vscode-liquid extension is not defined as the default formatter',
+        'Do you want to use vscode-liquid to format your Liquid files?'
+      ]);
+
+      if (answer === 'YES') {
+        const updated = await this.setDefaultFormatter(languageId);
+        if (!updated) return null;
+      } else {
+
+        return null;
+      }
 
     }
+
+    await this.setFormatOnSave(languageId, true);
+
   }
 
   /**
    * Disable formatting (command)
    */
   public async disableFormatting () {
-    if (this.formatting.enable === true) {
 
-      await this.setFormatOnSave(window.activeTextEditor.document.languageId, false);
+    await this.setFormatOnSave(window.activeTextEditor.document.languageId, false);
 
-    }
   }
 
   /**
