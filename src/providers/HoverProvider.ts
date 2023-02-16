@@ -110,7 +110,7 @@ export class HoverProvider extends Service implements IHoverProvider {
    * @return A hover or a thenable that resolves to such. The lack of a result can be
    * signaled by returning `undefined` or `null`.
    */
-  async provideHover (document: TextDocument, position: Position, token: CancellationToken): Promise<Hover> {
+  async provideHover (document: TextDocument, position: Position, _token: CancellationToken): Promise<Hover> {
 
     const offset = document.offsetAt(position);
 
