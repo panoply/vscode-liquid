@@ -38,7 +38,7 @@ export interface Liquidrc {
   };
 
   /**
-   * Prettify formatting options
+   * Æsthetic formatting options
    */
   format?: Merge<Rules, {
     /**
@@ -78,7 +78,7 @@ export interface PackageJSON {
    * The extension dependencies - Used to obtain prettify version
    */
   dependencies: {
-    '@liquify/prettify': string;
+    'esthetic': string;
   }
 }
 
