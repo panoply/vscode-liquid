@@ -212,36 +212,33 @@ export interface Completions {
    * Sections file Completions
    */
   sections: CompletionItem[];
+}
+
+export namespace Files {
+
   /**
-   * Settings Completions
+   * Shopify specific file URI records
    */
-  settings: {
+  export interface Shopify {
     /**
-     * The path of the locale file.
+     * Locales URI Path
      */
-    file: string;
+    locales: Uri;
     /**
-     * Completion Items for locales
-     */
-    props: CompletionItem[];
+    * Settings (`settings_data.json`) file path
+    */
+    settings: Uri;
     /**
-     * Completion Items for locales
+    * Sections directories
+    */
+    sections: Set<Uri>;
+    /**
+     * Snippets directories
      */
-    items: SettingsData[];
+    snippets: Set<Uri>;
+
   }
-  /**
-   * Locale Completions
-   */
-  locales: {
-    /**
-     * The path of the locale file.
-     */
-    file: string;
-    /**
-     * Completion Items for locales
-     */
-    items: object;
-  }
+
 }
 
 export interface URI {
@@ -272,21 +269,9 @@ export interface URI {
    */
   files: {
     /**
-     * Locales URI Path
+     * Shopify specific file URI records
      */
-    locales: Uri;
-    /**
-     * Settings (`settings_data.json`) file path
-     */
-    settings: Uri;
-    /**
-     * Sections directories
-     */
-    sections: Uri[];
-    /**
-     * Snippets directories
-     */
-    snippets: Uri[];
+    shopify: Files.Shopify
   }
 }
 
