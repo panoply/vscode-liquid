@@ -1,11 +1,11 @@
-import { Range, workspace, TextDocument, MarkdownString, WorkspaceEdit, Position } from 'vscode';
-import prettify, { LanguageNames, Options } from '@liquify/prettify';
+import { Range, workspace, TextDocument, MarkdownString, WorkspaceEdit, Position, Uri } from 'vscode';
+import esthetic, { LanguageName, Rules } from 'esthetic';
 import { omit, isType, has, hasPath } from 'rambdax';
 import stripJsonComments from 'strip-json-comments';
 import { InLanguageIds, LanguageIds, Liquidrc, StatusItem } from './types';
 import parseJSON from 'parse-json';
 import { access } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, basename } from 'node:path';
 import os from 'node:os';
 
 /* -------------------------------------------- */
@@ -44,7 +44,7 @@ export const isUndefined = isType('Undefined');
 export const isArray = isType('Array');
 
 /**
- * Whether type is boolean or not
+ * Whether type is string or not
  */
 export const isString = isType('String');
 
@@ -61,6 +61,11 @@ export const isBoolean = isType('Boolean');
  * Cache reference of `Object.entries`
  */
 export const entries = Object.entries;
+
+/**
+ * Cache reference of `Object.keys`
+ */
+export const keys = Object.keys;
 
 /* -------------------------------------------- */
 /* FILE SYSTEM                                  */
@@ -89,7 +94,7 @@ export async function pathExists (path: string) {
 /* -------------------------------------------- */
 
 /**
- * Normalize Prettify Rules
+ * Normalize esthetic Rules
  *
  * Omits the `ignore` and `enable` options
  * from the extended format configurations
@@ -97,9 +102,9 @@ export async function pathExists (path: string) {
 export const rulesNormalize = omit([ 'ignore' ]);
 
 /**
- * Omit Prettify Rules
+ * Omit esthetic Rules
  *
- * Omits the certain prettify rules from
+ * Omits the certain esthetic rules from
  * the option configuration - used when generating rcfiles
  */
 export const rulesOmitted = omit([
@@ -191,6 +196,34 @@ export function jsonc (input: string): Liquidrc {
   const json = isString(input) ? input : JSON.stringify(input);
 
   return parseJSON(stripJsonComments(json));
+
+}
+
+/**
+ * Parse JSON File
+ *
+ * Parses and returns the value of a JSON file from
+ * the provided URI. Also validates whether or not the
+ * file exists at the provided path, if path is not found
+ * it returns values of `null`
+ */
+export async function parseJsonFile (uri: Uri) {
+
+  const { fsPath } = uri;
+  const exists = await pathExists(fsPath);
+
+  if (exists) {
+
+    const file = await workspace.fs.readFile(uri);
+    const parsed = parseJSON(file.toString(), basename(fsPath));
+
+    return parsed;
+
+  } else {
+
+    return null;
+
+  }
 
 }
 
@@ -384,6 +417,17 @@ export async function hasLiquidrc (root: string) {
 }
 
 /**
+ * Refine URI
+ *
+ * Strips/removes leading `./` or `/` from uri paths
+ */
+export function refineURI (path: string) {
+
+  return path.replace(/^\.?\//, '');
+
+}
+
+/**
  * Is Path
  *
  * Returns an object indicating whether the provided
@@ -430,10 +474,10 @@ export function getStatusBar (status: StatusItem) {
  * Match Language
  *
  * Converts the provided vscode Language ID to the
- * Prettify language name. This is used to set the lexer mode
- * and have Prettify switch between languages.
+ * esthetic language name. This is used to set the lexer mode
+ * and have esthetic switch between languages.
  */
-export function getLanguage (language: LanguageIds): LanguageNames {
+export function getLanguage (language: LanguageIds): LanguageName {
 
   if (!isString(language)) return undefined;
 
@@ -475,7 +519,7 @@ export function getFileNameExtension (path: string) {
  * Get Language from Extension
  *
  * Parses a file path string and returns the file language ID
- * Prettify language name. This is used when trying to determine
+ * esthetic language name. This is used when trying to determine
  * the file being dealt with during a change.
  */
 export function getLanguageFromExtension (path: string) {
@@ -626,8 +670,8 @@ export function updateRules (rules: any) {
       forceIndent: hasPath('markup.forceIndent', rules)
         ? rules.commentIndent
         : true,
-      ignoreScripts: false,
-      ignoreStyles: false,
+      ignoreJS: false,
+      ignoreCSS: false,
       attributeSort: hasPath('markup.attributeSort', rules)
         ? rules.markup.attributeSort
         : false,
@@ -694,12 +738,14 @@ export function updateRules (rules: any) {
     }
   };
 
+  const currentRules = esthetic.rules();
+
   for (const rule in newRules) {
 
     if (rule === 'markup') {
 
       for (const mu in newRules[rule]) {
-        if (newRules[rule][mu] === prettify.options.rules.markup[mu]) {
+        if (newRules[rule][mu] === currentRules.markup[mu]) {
           delete newRules[rule][mu];
         }
       }
@@ -707,7 +753,7 @@ export function updateRules (rules: any) {
     } else if (rule === 'json') {
 
       for (const jn in newRules[rule]) {
-        if (newRules[rule][jn] === prettify.options.rules.json[jn]) {
+        if (newRules[rule][jn] === currentRules.json[jn]) {
           delete newRules[rule][jn];
         }
       }
@@ -715,7 +761,7 @@ export function updateRules (rules: any) {
     } else if (rule === 'style') {
 
       for (const st in newRules[rule]) {
-        if (newRules[rule][st] === prettify.options.rules.markup[st]) {
+        if (newRules[rule][st] === currentRules.style[st]) {
           delete newRules[rule][st];
         }
       }
@@ -723,7 +769,7 @@ export function updateRules (rules: any) {
     } else if (rule === 'script') {
 
       for (const sc in newRules[rule]) {
-        if (newRules[rule][sc] === prettify.options.rules.markup[sc]) {
+        if (newRules[rule][sc] === currentRules.script[sc]) {
           delete newRules[rule][sc];
         }
       }
@@ -740,11 +786,11 @@ export function updateRules (rules: any) {
  * Merge Preferences
  *
  * Extracts the users preference settings and returns
- * a Prettify model that will be merged with defaults.
+ * a esthetic model that will be merged with defaults.
  */
-export function rulesDefault (): Options {
+export function rulesDefault (): Rules {
 
-  const rules = rulesOmitted(prettify.options.rules);
+  const rules = rulesOmitted(esthetic.rules());
   const editor = workspace.getConfiguration('editor');
 
   rules.json.braceAllman = true;
@@ -760,11 +806,11 @@ export function rulesDefault (): Options {
       commentNewline: rules.liquid.commentNewline,
       delimiterTrims: rules.liquid.delimiterTrims,
       ignoreTagList: rules.liquid.ignoreTagList,
+      indentAttributes: rules.liquid.indentAttributes,
       lineBreakSeparator: rules.liquid.lineBreakSeparator,
       normalizeSpacing: rules.liquid.normalizeSpacing,
       preserveComment: rules.liquid.preserveComment,
-      quoteConvert: rules.liquid.quoteConvert,
-      valueForce: rules.liquid.valueForce
+      quoteConvert: rules.liquid.quoteConvert
     },
     markup: {
       correct: rules.markup.correct,
@@ -780,8 +826,9 @@ export function rulesDefault (): Options {
       forceLeadAttribute: rules.markup.forceLeadAttribute,
       preserveAttributes: rules.markup.preserveAttributes,
       preserveText: rules.markup.preserveText,
-      ignoreScripts: rules.markup.ignoreScripts,
-      ignoreStyles: rules.markup.ignoreStyles
+      ignoreJS: rules.markup.ignoreJS,
+      ignoreCSS: rules.markup.ignoreCSS,
+      ignoreJSON: rules.markup.ignoreJSON
     },
     json: {
       bracePadding: rules.json.bracePadding,
@@ -845,20 +892,22 @@ export function rulesRecommend (): Liquidrc {
         commentIndent: true,
         commentNewline: true,
         delimiterTrims: 'tags',
+        indentAttributes: true,
         lineBreakSeparator: 'before',
         normalizeSpacing: true,
         quoteConvert: 'single',
-        valueForce: 'intent',
         ignoreTagList: []
       },
       markup: {
         quoteConvert: 'double',
         selfCloseSpace: true,
+        delimiterForce: false,
         commentNewline: true,
         forceIndent: true,
         commentIndent: true,
-        ignoreScripts: true,
-        ignoreStyles: false,
+        ignoreJS: true,
+        ignoreCSS: false,
+        ignoreJSON: false,
         forceAttribute: 3,
         forceLeadAttribute: true
       },
