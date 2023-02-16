@@ -44,19 +44,27 @@ export class WorkspaceSettings extends OutputChannel {
   async setDefaultFormatter (languageId: InLanguageIds) {
 
     if (this.isDefaultFormatter(languageId)) {
+
       this.info(`The editor.defaultFormatter is already using: ${this.meta.id}`);
+
       return true;
+
     }
 
     const config = workspace.getConfiguration('editor', { languageId });
 
     try {
+
       await config.update('defaultFormatter', this.meta.id, this.config.target, true);
+
       this.info(`Using ${this.meta.id} as the editor.defaultFormatter for ${languageId}`);
+
       return true;
+
     } catch (e) {
       this.catch('Failed to set the editor.defaultFormatter', e.message);
     }
+
   }
 
   /**
@@ -74,7 +82,9 @@ export class WorkspaceSettings extends OutputChannel {
         .update('formatOnSave', enable, this.config.target, true);
 
     } catch (e) {
+
       this.catch(`Failed to set the editor.formatOnSave setting for ${languageId}`, e.message);
+
     }
 
     this.formatting.enable = enable;
@@ -109,7 +119,7 @@ export class WorkspaceSettings extends OutputChannel {
 
       return setting.globalValue[prop] === this.meta.id;
 
-    } else if (setting.defaultValue[prop] === this.meta.id) {
+    } else if (setting.defaultValue?.[prop] === this.meta.id) {
 
       return true;
 
@@ -127,11 +137,13 @@ export class WorkspaceSettings extends OutputChannel {
   getEngine () {
 
     if (this.config.method === ConfigMethod.Liquidrc) {
+
       if (has('engine', this.liquidrc) && u.isString(this.liquidrc.engine)) {
         this.engine = this.liquidrc.engine;
       } else {
         this.engine = workspace.getConfiguration('liquid').get('engine');
       }
+
     } else {
 
       const settings = workspace.getConfiguration().inspect('liquid');
@@ -149,12 +161,132 @@ export class WorkspaceSettings extends OutputChannel {
   }
 
   /**
+   * Get External
+   *
+   * Generates the URI paths defined either via workspace settings on
+   * `liquid.file.*` configurations or from the `.liquidrc` file.
+   */
+  async getExternal () {
+
+    for (const name of [
+      'locales',
+      'settings'
+    ]) {
+
+      if (this.files[name] !== null) {
+
+        const { fsPath } = this.files[name];
+        const exists = await u.pathExists(fsPath);
+
+        if (exists) {
+
+          try {
+
+            const items = await u.parseJsonFile(this.files[name]);
+
+            this.completion.files[name].path = fsPath;
+            this.completion.files[name].items = items;
+            this.completion.enable[name] = true;
+
+          } catch (e) {
+
+            this.catch('JSON Error', e);
+
+          }
+        } else {
+
+          this.error(`${fsPath}`)(
+            'Unable to resolve a file at the path that was provided.',
+            `Completion ${name} require you reference a file relative to your root.\n`
+          );
+
+        }
+      }
+    }
+  }
+
+  /**
    * Get Files
    *
    * Generates the URI paths defined either via workspace settings on
    * `liquid.file.*` configurations or from the `.liquidrc` file.
    */
   async getFiles (): Promise<void> {
+
+    const root = this.uri.root.fsPath;
+    const settings = workspace.getConfiguration().inspect('liquid');
+
+    /**
+     * Globs
+     *
+     * Adds globals to the completions store
+     */
+    const globs = async (file: string, array: string[]) => {
+
+      const curr = this.files[file].size;
+      const ends = array.length;
+
+      if (curr > 0) this.files[file].clear();
+
+      let added: number = 0;
+      let skips: number = 0;
+
+      for (let i = 0; i < ends; i++) {
+
+        const path = array[i];
+        const relative = new RelativePattern(root, u.refineURI(path));
+        const paths = await workspace.findFiles(relative);
+
+        if (paths.length > 0) {
+
+          for (const entry of paths) {
+            if (entry.fsPath.endsWith('.liquid')) {
+              this.files[file].add(entry);
+              added = added + 1;
+            } else {
+              skips = skips + 1;
+            }
+          }
+
+          if (i === ends - 1) {
+            if (added > 0 && curr > 0 && curr !== added) {
+              const amount = added - curr;
+
+              if (amount > 0) {
+                const plural = amount > 1 ? `${amount} files` : `${amount} file`;
+                this.info(`${plural} added to the ${file} completion list`);
+              } else {
+                const abs = Math.abs(amount);
+                const plural = abs > 1 ? `${abs} files` : `${abs} file`;
+                this.info(`${plural} removed from the ${file} completion list`);
+              }
+            }
+
+            if (skips > 0 && curr > 0 && curr !== skips) {
+              const plural = skips > 1 ? `${skips} files` : `${skips} file`;
+              this.info(`${plural} non Liquid files excluded from ${file} completions list`);
+            }
+
+            if (curr === 0) {
+              const plural = added > 1 ? `${added} files` : `${added} file`;
+              this.info(`Using ${file.slice(0, -1)} file completions: ${plural}`);
+            }
+          }
+
+        } else {
+          this.warn(`Unable to resolve any ${file} liquid files at: ${path}`);
+        }
+      }
+
+      if (this.files[file].size > 0) {
+        this.completion.enable[file] = true;
+      } else {
+        this.completion.enable[file] = false;
+      }
+
+      return this.completion.enable[file];
+
+    };
 
     let rcfile = false;
 
@@ -164,21 +296,17 @@ export class WorkspaceSettings extends OutputChannel {
         if (u.isObject(this.liquidrc.files) === false) {
 
           this.error('Invalid type provided on "files" in .liquidrc')(
-            'The "files" setting expect a type object but recieved type',
-            `${typeof this.liquidrc.files} You need to use the correct type of`,
+            'The "files" setting expects a type object be provided but recieved type',
+            `${typeof this.liquidrc.files}. You will need to correct this or`,
             'alternatively you can define files in your workspace file via the',
             '"liquid.files.*" option.'
           );
 
         } else {
-
           rcfile = true;
-
         }
       }
     }
-
-    const root = this.uri.root.fsPath;
 
     for (const file of [
       'locales',
@@ -191,30 +319,22 @@ export class WorkspaceSettings extends OutputChannel {
 
       if (rcfile) {
         if (has(file, this.liquidrc.files)) {
-
           if (u.isString(this.liquidrc.files[file])) {
 
-            this.uri.files[file] = Uri.file(join(root, this.liquidrc.files[file]));
-
-            defined = true;
-
-          } else if (u.isArray(this.liquidrc.files[file])) {
-
-            for (const path of this.liquidrc.files[file]) {
-
-              const relative = new RelativePattern(root, path);
-              const paths = await workspace.findFiles(relative);
-
-              this.uri.files[file].push(...paths);
-
+            if (this.liquidrc.files[file] !== '') {
+              this.files[file] = Uri.file(join(root, this.liquidrc.files[file]));
+              defined = true;
             }
 
-            defined = true;
+          } else if (u.isArray(this.liquidrc.files[file]) && this.liquidrc.files[file].length > 0) {
+
+            defined = await globs(file, this.liquidrc.files[file]);
+
+            console.log(defined, this.completion.enable);
+
           }
         }
       }
-
-      const settings = workspace.getConfiguration().inspect('liquid');
 
       if (defined === false) {
 
@@ -227,24 +347,15 @@ export class WorkspaceSettings extends OutputChannel {
         }
 
         if (u.isString(value)) {
-
-          this.uri.files[file] = Uri.file(value as string);
-
-        } else if (u.isArray(value)) {
-
-          for (const path of value as string[]) {
-
-            const relative = new RelativePattern(root, path);
-            const paths = await workspace.findFiles(relative);
-
-            this.uri.files[file].push(...paths);
-
+          if (this.liquidrc.files[file].length !== '') {
+            this.files[file] = Uri.file(value as string);
           }
-
+        } else if (u.isArray(value) && value.length > 0) {
+          await globs(file, value as string[]);
         }
-
       }
     }
+
   }
 
   /**
@@ -276,25 +387,16 @@ export class WorkspaceSettings extends OutputChannel {
         for (const added of difference(rules, current)) {
           this.info('Ignore path created: ' + added);
         }
-
       }
 
       this.formatting.ignoreList = rules;
 
       if (rules.length === 0) {
-
-        for (const remove of difference(current, rules)) {
-          this.info('Ignore path removed: ' + remove);
-        }
-
+        for (const del of difference(current, rules)) this.info('Ignore path removed: ' + del);
         this.formatting.ignoreMatch = null;
-
       } else {
-
         this.formatting.ignoreMatch = anymatch(this.formatting.ignoreList);
-
       }
-
     }
   }
 
@@ -339,14 +441,14 @@ export class WorkspaceSettings extends OutputChannel {
 
     if (!u.isObject(settings)) return;
 
-    for (const v of [ 'tags', 'filters', 'schema' ]) {
-
+    for (const v of [
+      'tags',
+      'filters',
+      'schema'
+    ]) {
       if (has(v, settings) && u.isBoolean(settings[v])) {
-
         if (v === 'schema' && this.engine !== 'shopify') {
-
           this.warn('Hovers for {% schema %} only work in the Shopify variation');
-
         } else {
 
           if (settings[v] !== this.hovers.enable[v]) {
@@ -360,7 +462,6 @@ export class WorkspaceSettings extends OutputChannel {
           this.hovers.enable[v] = settings[v];
 
         }
-
       }
     }
 
@@ -377,9 +478,7 @@ export class WorkspaceSettings extends OutputChannel {
 
     if (has('schema', settings) && u.isBoolean(settings.schema)) {
       if (this.engine !== 'shopify') {
-
         this.warn('Validations for {% schema %} only work when the Liquid "engine" is Shopify');
-
       } else {
 
         if (settings.schema !== this.json.config.validate) {
@@ -420,11 +519,9 @@ export class WorkspaceSettings extends OutputChannel {
         if (has(v, settings) && u.isBoolean(settings[v])) {
 
           if (v === 'section' || v === 'objects' || v === 'schema') {
-
             if (this.engine !== 'shopify' && settings[v] === true) {
               this.warn(`Completion for ${v} will not work in Liquid ${u.upcase(this.engine)}`);
             }
-
           } else {
 
             if (settings[v] !== this.completion.enable[v]) {
@@ -478,17 +575,12 @@ export class WorkspaceSettings extends OutputChannel {
         const ignore = settings.get<Workspace.Format['ignore']>('format.ignore');
 
         if (u.isArray(ignore)) {
-
           this.getIgnores(ignore);
-
         } else if (this.formatting.ignoreList.length > 0) {
-
           this.getIgnores([]);
-
         }
 
       }
-
     }
   }
 
@@ -607,7 +699,7 @@ export class WorkspaceSettings extends OutputChannel {
 
         this.deprecation.liquidrc = u.hasDeprecatedSettings(this.liquidrc);
 
-        if (this.deprecation.liquidrc === '3.4.0') {
+        if (this.deprecation.liquidrc === '4.0.0') {
 
           this.info('Updating your .liquidrc file to the latest structure');
 
@@ -629,9 +721,11 @@ export class WorkspaceSettings extends OutputChannel {
             Buffer.from(JSON.stringify(update, null, 2))
           ));
 
-          this.info('Updated the .liquidrc file, you are now using the v3.4.0 structure');
+          this.info('Updated the .liquidrc file, you are now using the v4.0.0 structure');
+
           this.liquidrc = update;
           this.deprecation.liquidrc = null;
+
         }
 
       }
@@ -639,6 +733,8 @@ export class WorkspaceSettings extends OutputChannel {
       if (this.deprecation.liquidrc === null) {
 
         await this.getFiles();
+        await this.getExternal();
+
         this.getFormatRules();
         this.getEngine();
 
@@ -813,16 +909,18 @@ export class WorkspaceSettings extends OutputChannel {
 
     if (this.isReady === false) {
       this.deprecation.workspace = u.hasDeprecatedSettings();
-      if (this.deprecation.workspace === '3.4.0') {
+      if (this.deprecation.workspace === '4.0.0') {
         const updated = await this.fixWorkspace();
         if (updated) {
-          this.info('Updated to the latest v3.4.0 workspace settings structure');
+          this.info('Updated to the latest v4.0.0 workspace settings structure');
         }
       }
     }
 
     if (this.config.method === ConfigMethod.Workspace) {
+
       await this.getFiles();
+
       this.getFormatRules();
       this.getEngine();
     }
@@ -830,6 +928,8 @@ export class WorkspaceSettings extends OutputChannel {
     this.getCompletions();
     this.getValidations();
     this.getHovers();
+
+    await this.getExternal();
 
   };
 
