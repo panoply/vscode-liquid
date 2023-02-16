@@ -39,6 +39,10 @@ class VSCodeLiquid extends Events {
 
       }
 
+      await this.onDidChangeActiveTextEditor(window.activeTextEditor);
+
+      console.log(this);
+
     } catch (e) {
 
       this.status.error('Extension failed to activate');
@@ -106,7 +110,7 @@ class VSCodeLiquid extends Events {
     workspace.onDidChangeConfiguration(this.onDidChangeConfiguration, this, subscriptions);
     workspace.onDidCloseTextDocument(this.onDidCloseTextDocument, this, subscriptions);
     workspace.onDidChangeTextDocument(this.onDidChangeTextDocument, this, subscriptions);
-
+    workspace.onDidSaveTextDocument(this.onDidSaveTextDocument, this, subscriptions);
   }
 
   /**
@@ -121,7 +125,6 @@ class VSCodeLiquid extends Events {
       languages.registerCompletionItemProvider(this.selector, this.completion, ...this.completion.triggers),
       languages.registerDocumentLinkProvider(this.selector, this.links),
       languages.registerDocumentFormattingEditProvider(this.selector, this.formatting)
-      // languages.registerCodeLensProvider(this.selector, this.codelens)
     );
 
   }
@@ -157,6 +160,6 @@ export async function activate ({ subscriptions, extension }: ExtensionContext) 
 
   const liquid = new VSCodeLiquid(extension);
 
-  return liquid.activate(subscriptions);
+  await liquid.activate(subscriptions);
 
 };
