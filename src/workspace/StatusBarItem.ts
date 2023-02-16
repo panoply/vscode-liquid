@@ -85,7 +85,7 @@ export class StatusBarItem {
     this.item.text = '💧 $(check)';
     this.item.tooltip = 'Disable Liquid Formatting';
     this.item.command = 'liquid.disableFormatting';
-    this.item.tooltip = mdString('<i>Press to disable formatting</i>');
+    this.item.tooltip = mdString('Press to disable formatting');
     this.item.color = 'white';
     this.show();
 
@@ -98,7 +98,7 @@ export class StatusBarItem {
 
     this.state = StatusItem.Ignoring;
     this.item.text = '💧 $(eye-closed)';
-    this.item.tooltip = mdString('<i>File is ignored from formatting</i>');
+    this.item.tooltip = mdString('File is ignored from formatting');
     this.item.command = 'liquid.openOutput';
     this.item.color = 'white';
     this.show();
@@ -112,7 +112,7 @@ export class StatusBarItem {
     this.state = StatusItem.Disabled;
     this.item.text = '💧 $(x)';
     this.item.command = 'liquid.enableFormatting';
-    this.item.tooltip = mdString('<i>Press to enable formatting</i>');
+    this.item.tooltip = mdString('Press to enable formatting');
     this.item.color = 'white';
     this.show();
   }
