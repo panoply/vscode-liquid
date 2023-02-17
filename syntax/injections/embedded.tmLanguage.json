@@ -257,7 +257,7 @@
           "name": "entity.name.tag.liquid"
         },
         "4": {
-          "name": "punctuation.definition.tag.end.liquid"
+          "name": "keyword.other.whitespace.liquid"
         },
         "5": {
           "name": "punctuation.definition.tag.end.liquid"
