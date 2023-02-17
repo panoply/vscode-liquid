@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable quote-props */
 import { Engines } from '@liquify/liquid-language-specs';
-import { Config, URI, Meta } from './typings/store';
+import { Config, URI, Meta, Files } from './typings/store';
 import { Liquidrc, PackageJSON } from './typings/files';
 import { Selectors, LanguageIds } from './typings/document';
 import { ConfigurationTarget, Extension as IExtension, Uri, workspace } from 'vscode';
@@ -24,6 +24,21 @@ export class Extension extends Service {
     this.meta.displayName = packageJSON.displayName;
     this.meta.estheticVersion = packageJSON.dependencies.esthetic;
     this.meta.releaseNotes = Uri.parse(`${this.meta.repository}/releases/tag/v${this.meta.version}`);
+
+  }
+
+  /**
+   * Files Getter
+   *
+   * Basic shortcut which will return current
+   * workspace files based on current engine. This is merely
+   * sugar for `this.uri.files.*`
+   *
+   * > Currently only Shopify variation files are supported.
+   */
+  get files (): Files.Shopify {
+
+    return this.uri.files[this.engine];
 
   }
 
@@ -76,10 +91,12 @@ export class Extension extends Service {
     liquidrc: null,
     workspace: null,
     files: {
-      locales: null,
-      settings: null,
-      snippets: [],
-      sections: []
+      shopify: {
+        locales: null,
+        settings: null,
+        snippets: new Set(),
+        sections: new Set()
+      }
     }
   };
 
@@ -181,24 +198,24 @@ export class Extension extends Service {
    * how the extension behaves when dealing with these
    * language schemes
    */
-  languages: { [K in LanguageIds]: boolean } = {
-    'liquid': true,
-    'liquid-css': true,
-    'liquid-scss': true,
-    'liquid-javascript': true,
-    'json': false,
-    'jsonc': false,
-    'markdown': false,
-    'xml': false,
-    'html': false,
-    'css': false,
-    'sass': false,
-    'scss': false,
-    'less': false,
-    'jsx': false,
-    'tsx': false,
-    'javascript': false,
-    'typescript': false
-  };
+  languages: Map<LanguageIds, boolean> = new Map([
+    [ 'liquid', true ],
+    [ 'liquid-css', true ],
+    [ 'liquid-scss', true ],
+    [ 'liquid-javascript', true ],
+    [ 'json', false ],
+    [ 'jsonc', false ],
+    [ 'markdown', false ],
+    [ 'xml', false ],
+    [ 'html', false ],
+    [ 'css', false ],
+    [ 'sass', false ],
+    [ 'scss', false ],
+    [ 'less', false ],
+    [ 'jsx', false ],
+    [ 'tsx', false ],
+    [ 'javascript', false ],
+    [ 'typescript', false ]
+  ]);
 
 }
