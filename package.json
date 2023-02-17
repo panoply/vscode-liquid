@@ -1108,7 +1108,7 @@
   },
   "tsup": {
     "entry": {
-      "extension": "./src/activate.ts"
+      "extension": "./extension/activate.ts"
     },
     "noExternal": [
       "@liquify/liquid-language-specs",
