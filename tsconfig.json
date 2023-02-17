@@ -36,6 +36,9 @@
     "pretty": true,
     "baseUrl": "./src",
     "paths": {
+      "completions/*": [
+        "completions/*.ts"
+      ],
       "providers/*": [
         "providers/*.ts"
       ],
