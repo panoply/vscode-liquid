@@ -23,7 +23,7 @@
     "schema": {
       "name": "meta.embedded.block.liquid",
       "contentName": "meta.embedded.block.schema.liquid",
-      "begin": "({%)(-)?\\s*(schema)\\s*(-)?(%})",
+      "begin": "({%)(-)?\\s*(schema)\\s*(-)?(%})\\s*",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.liquid"
@@ -68,7 +68,7 @@
     "style": {
       "name": "meta.embedded.block.liquid",
       "contentName": "meta.embedded.block.style.liquid",
-      "begin": "({%)(-)?\\s*\\b(style)\\b\\s*(-)?(%})",
+      "begin": "({%)(-)?\\s*\\b(style)\\b\\s*(-)?(%})\\s*",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.liquid"
@@ -164,7 +164,7 @@
     "stylesheet-scss": {
       "name": "meta.embedded.block.liquid",
       "contentName": "meta.embedded.block.stylesheet-scss.liquid",
-      "begin": "({%)(-)?\\s*(stylesheet)\\s*('(scss)')\\s*(-)?(%})",
+      "begin": "({%)(-)?\\s*(stylesheet)\\s*('(scss)')\\s*(-)?(%})\\s*",
       "beginCaptures": {
         "0": {
           "name": "meta.tag.metadata.stylesheet-scss.start.liquid"
@@ -221,7 +221,7 @@
     "javascript": {
       "name": "meta.embedded.block.liquid",
       "contentName": "meta.embedded.block.javascript.liquid",
-      "begin": "({%)(-)?\\s*(javascript)\\s*(-)?(%})",
+      "begin": "({%)(-)?\\s*(javascript)\\s*(-)?(%})\\s*",
       "beginCaptures": {
         "0": {
           "name": "meta.tag.metadata.javascript.start.liquid"
