@@ -2,12 +2,14 @@
 
 import { workspace, ConfigurationTarget, Uri, RelativePattern } from 'vscode';
 import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, basename } from 'node:path';
 import { has, isNil, difference, hasPath, isEmpty } from 'rambdax';
 import anymatch from 'anymatch';
 import { OutputChannel } from './OutputChannel';
 import { Setting, ConfigMethod, Workspace, InLanguageIds, LanguageIds, Liquidrc, LanguageParticipant } from '../types';
 import * as u from '../utils';
+import { getSettingsCompletions } from 'lexical/tags';
+import { $ } from '@liquify/specs';
 
 export class WorkspaceSettings extends OutputChannel {
 
@@ -168,10 +170,7 @@ export class WorkspaceSettings extends OutputChannel {
    */
   async getExternal () {
 
-    for (const name of [
-      'locales',
-      'settings'
-    ]) {
+    for (const name of [ 'locales', 'settings' ]) {
 
       if (this.files[name] !== null) {
 
@@ -182,11 +181,21 @@ export class WorkspaceSettings extends OutputChannel {
 
           try {
 
-            const items = await u.parseJsonFile(this.files[name]);
+            if (name === 'locales') {
 
-            this.completion.files[name].path = fsPath;
-            this.completion.files[name].items = items;
-            this.completion.enable[name] = true;
+              const locales = await u.parseJsonFile(this.files[name]);
+              const localesSchema = await u.parseJsonFile(this.files.localesSchema);
+
+              $.liquid.data.store.set('locales', localesSchema);
+              $.liquid.data.store.set('locales_schema', localesSchema);
+
+            } else if (name === 'settings') {
+
+              const data = await u.parseJsonFile(this.files[name]);
+
+              getSettingsCompletions(fsPath, data);
+
+            }
 
           } catch (e) {
 
@@ -322,15 +331,24 @@ export class WorkspaceSettings extends OutputChannel {
           if (u.isString(this.liquidrc.files[file])) {
 
             if (this.liquidrc.files[file] !== '') {
+
               this.files[file] = Uri.file(join(root, this.liquidrc.files[file]));
+
+              if (file === 'locales') {
+                const name = this.liquidrc.files[file].replace(/\.json$/, '.schema.json');
+                const schema = Uri.file(join(root, name));
+                if (u.pathExists(schema.fsPath)) {
+                  this.files.localesSchema = schema;
+                }
+              }
+
               defined = true;
+
             }
 
           } else if (u.isArray(this.liquidrc.files[file]) && this.liquidrc.files[file].length > 0) {
 
             defined = await globs(file, this.liquidrc.files[file]);
-
-            console.log(defined, this.completion.enable);
 
           }
         }
@@ -348,7 +366,14 @@ export class WorkspaceSettings extends OutputChannel {
 
         if (u.isString(value)) {
           if (this.liquidrc.files[file].length !== '') {
+
             this.files[file] = Uri.file(value as string);
+
+            if (file === 'locales') {
+              const name = (value as string).replace(/\.json$/, '.schema.json');
+              const schema = Uri.file(join(root, name));
+              if (u.pathExists(schema.fsPath)) this.files.localesSchema = schema;
+            }
           }
         } else if (u.isArray(value) && value.length > 0) {
           await globs(file, value as string[]);

@@ -1,7 +1,8 @@
 import { entries, keys } from '../utils';
 import { basename, join } from 'node:path';
-import { Filter, Tags, Object as IObject, Type } from '@liquify/liquid-language-specs';
+import { Filter, Tags, IObject, Type, Types, liquid, IProperty, $ } from '@liquify/specs';
 import * as md from '../completions/helpers/markdown';
+import { path } from 'rambdax';
 import {
   CompletionItemKind,
   CompletionItem,
@@ -12,6 +13,7 @@ import {
   TextEdit,
   Uri
 } from 'vscode';
+import { SettingsData } from 'types';
 
 /**
  * Get Logical Completions
@@ -32,7 +34,7 @@ export function getOperatorCompletions (items: CompletionItem[]): CompletionItem
  * This is also used for filtering completions so
  * otherwise invalid items don't show up at certain entries.
  */
-export function getItemKind (type: Type): CompletionItemKind {
+export function getItemKind (type: any): CompletionItemKind {
 
   if (type === Type.constant) {
     return CompletionItemKind.Constant;
@@ -50,6 +52,18 @@ export function getItemKind (type: Type): CompletionItemKind {
   if (type === Type.data) return CompletionItemKind.Value;
 
 };
+
+export function getDetailName (type: Types.Basic | Type) {
+
+  if (type === Type.array) return 'array';
+  else if (type === Type.boolean) return 'boolean';
+  else if (type === Type.number) return 'number';
+  else if (type === Type.string) return 'start';
+  else if (type === Type.object) return 'object';
+  else if (type === Type.unknown) return 'unknown';
+
+  return 'any';
+}
 
 /**
  * Get Schema Completions
@@ -124,6 +138,115 @@ export function getFileCompletions (files: Set<Uri>): CompletionItem[] {
 
 }
 
+export function getLocaleSchemaSetting (key: string) {
+
+  const locale: any = null;
+
+  if ($.liquid.data.store.has('locales_schema')) {
+    return path(key.slice(2), $.liquid.data.store.get('locales_schema'));
+  }
+
+  return locale || key;
+}
+
+/**
+ * Get Settings Completions
+ *
+ * Generates the `settings_data.json` completions following the
+ * `settings.*` object.
+ */
+export function getSettingsCompletions (uri: string, data: SettingsData[]) {
+
+  const items = [];
+  const reference = `[${basename(uri)}](${uri})`;
+  const location = uri.split('/');
+  const filename = location.pop();
+  const objects:{ [prop: string]: IProperty } = {};
+  const locale = $.liquid.data.store.get('locales_schema');
+
+  for (const setting of data) {
+
+    if (setting.name === 'theme_info') continue;
+    if (setting.name.startsWith('t:settings_schema.')) {
+
+      const prop = setting.name.slice(18, setting.name.indexOf('.', 18));
+
+      objects[prop] = <IProperty>{
+        global: true,
+        scope: 'settings',
+        type: 'object',
+        summary: `${prop} (${filename})`,
+        description: [
+          `**Setting**: \`${prop}\`\n\n`,
+          `${setting.settings.length} available fields\n\n`,
+          `${reference}`
+        ].join(''),
+        properties: {}
+      };
+
+      for (const type of setting.settings) {
+        if (type.id) {
+
+          const label = type.label.startsWith('t:')
+            ? path(type.label.slice(2), locale) || type.label
+            : type.label;
+
+          objects[prop].properties[type.id] = <IProperty>{
+            type: type.type,
+            summary: `${type.type} (default: ${type.default})`,
+            scope: 'settings',
+            description: [
+              label ? `**${label}**\n\n` : '',
+              type.info ? path(type.info.slice(2), locale) + '\n\n' || '' : '',
+              reference
+            ].join('')
+          };
+        }
+      }
+
+    } else {
+
+      objects[setting.name] = <IProperty>{
+        global: true,
+        type: 'object',
+        scope: 'settings',
+        summary: `${setting.name} (${filename})`,
+        description: `${setting.settings.length} available fields\n\n${reference}`,
+        properties: {}
+      };
+
+      for (const type of setting.settings) {
+        if (type.id) {
+
+          const label = type.label.startsWith('t:')
+            ? path(type.label.slice(2), locale) || type.label
+            : type.label;
+
+          const info = type.info.startsWith('t:')
+            ? path(type.info.slice(2), locale) || type.label
+            : type.info;
+
+          objects[setting.name].properties[type.id] = <IProperty>{
+            type: type.type,
+            summary: `${type.type} (${type.default})`,
+            scope: 'settings',
+            description: [
+              `**Label**: ${label}\n\n`,
+              type.info ? info + '\n\n' : '',
+              reference
+            ].join('')
+          };
+
+        }
+      }
+    }
+  }
+
+  liquid.shopify.objects.settings.properties = objects;
+
+  return liquid.shopify.objects;
+};
+
 /**
  * Get Locale Completions
  *
@@ -176,17 +299,18 @@ export function getLocaleCompletions (
  */
 export function getObjectCompletions (items: IObject): CompletionItem[] {
 
-  return entries(items).map(([ label, object ]): CompletionItem => {
+  return entries(items).map(([ label, object ]: [ string, IObject]): CompletionItem => {
 
     return {
       label,
       tags: object.deprecated
         ? [ CompletionItemTag.Deprecated ]
         : [],
+      detail: getDetailName(object.type),
       kind: object.const
         ? CompletionItemKind.Constant
         : getItemKind(object.type),
-      documentation: md.string(object.description, object.reference)
+      documentation: md.string(object.description)
     };
 
   });
@@ -239,7 +363,7 @@ export function getTagCompletions (items: Tags): CompletionItem[] {
       description,
       reference,
       deprecated = false,
-      singular = false,
+      singleton = false,
       snippet = '$1'
     }
   ]): CompletionItem => {
@@ -248,7 +372,7 @@ export function getTagCompletions (items: Tags): CompletionItem[] {
       ? new SnippetString(` ${label} %}$0`)
       : label === 'liquid'
         ? new SnippetString(` ${label} ${snippet} %}$0`)
-        : singular
+        : singleton
           ? new SnippetString(` ${label} ${snippet} %}$0`)
           : new SnippetString(` ${label} ${snippet} %} $0 {% end${label} %}`);
 
