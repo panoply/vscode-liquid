@@ -1,4 +1,4 @@
-import { Engines } from '@liquify/liquid-language-specs';
+import { Engines } from '@liquify/specs';
 import { Rules } from 'esthetic';
 
 export namespace Workspace {
