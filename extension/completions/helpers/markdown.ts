@@ -21,16 +21,18 @@ export function string (description: string, reference?: {
   url: string;
 }) {
 
+  const md = new MarkdownString();
+
+  md.supportThemeIcons = true;
+  md.supportHtml = true;
+  md.appendMarkdown(description);
+
   if (
     reference &&
     has('name', reference) &&
-    has('url', reference)) {
+    has('url', reference)) md.appendMarkdown(link(reference.name, reference.url));
 
-    return new MarkdownString(description + link(reference.name, reference.url));
-
-  }
-
-  return new MarkdownString(description);
+  return md;
 
 }
 
@@ -39,21 +41,14 @@ export function string (description: string, reference?: {
  *
  * Returns an instance of `Markdown` to be rendered.
  */
-export function lines (...description: [
-  title: string,
-  description: string,
-  url: string
-]) {
+export function lines (title: string, description: string, url: string) {
 
-  if (
-    reference &&
-    has('name', reference) &&
-    has('url', reference)) {
+  const md = new MarkdownString();
 
-    return new MarkdownString(description + link(reference.name, reference.url));
+  md.supportThemeIcons = true;
+  md.supportHtml = true;
+  md.appendMarkdown(title + '\n\n' + description + '\n\n' + url);
 
-  }
-
-  return new MarkdownString(description);
+  return md;
 
 }

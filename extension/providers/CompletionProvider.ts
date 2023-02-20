@@ -4,7 +4,7 @@ import { EmptyOutput, EmptyTag } from '../lexical/regex';
 import { getSectionCompletions, getSectionScope } from '../lexical/schema';
 import { getVariableCompletions } from '../lexical/variables';
 import { Service } from '../services';
-import { Char, Token, Completions } from '../types';
+import { Char, Token, Completions, SettingsData } from '../types';
 import {
   CancellationToken,
   CompletionContext,
@@ -15,6 +15,7 @@ import {
   TextDocument,
   TextEdit
 } from 'vscode';
+import { schema } from 'lexical/store';
 
 /**
  * Liquid Completions
@@ -132,7 +133,7 @@ export interface ICompletionEnable {
   frontmatter: boolean;
 }
 
-export interface ICompletionFiles {
+export interface ICompletionLinkedRefs {
   /**
    * Settings Completions
    */
@@ -140,11 +141,19 @@ export interface ICompletionFiles {
     /**
      * The settings file path
      */
-    path: string;
+    uri: string;
     /**
      * The settings parsed file
      */
-    items: object;
+    data: SettingsData[];
+    /**
+     * Whether to enable
+     */
+    enable: boolean;
+    /**
+     * Completion Items
+     */
+    items: CompletionItem[]
   }
   /**
    * Locale Completions
@@ -153,11 +162,21 @@ export interface ICompletionFiles {
     /**
      * The locales file path
      */
-    path: string;
+    uri: string;
     /**
      * The locales parsed file
      */
-    items: object;
+    data: object;
+    /**
+     * Whether to enable
+     */
+    enable: boolean;
+    /**
+     * Completion Items
+     */
+    items: {
+      [prop: string]: CompletionItem[]
+    }
   }
 }
 
@@ -229,21 +248,6 @@ export class CompletionProvider extends Service implements CompletionItemProvide
     type: Type,
     keyword: string
   }>> = new Map();
-
-  /**
-   * Completion Files
-   *
-   */
-  public files: ICompletionFiles = {
-    locales: {
-      path: null,
-      items: {}
-    },
-    settings: {
-      path: null,
-      items: {}
-    }
-  };
 
   /**
    * Completion Items
@@ -347,7 +351,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
         if (trigger === Char.SQO || trigger === Char.DQO || (prev === Token.Locale && trigger === Char.DOT)) {
 
-          const locales = parseLocale(this.files.locales, content, offset, {
+          const locales = parseLocale(this.refs.locales, content, offset, {
             addFilter: applyTranslateFilter(object.text.slice(object.offset)),
             position
           });
@@ -374,7 +378,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
           const schema = this.enable.objects
             ? vars.has(object.tagName)
-              ? getVariableObject(vars.get(object.tagName), this.items.settings)
+              ? getVariableObject(vars.get(object.tagName))
               : parseObject(object.text, object.offset)
             : null;
 
@@ -389,7 +393,14 @@ export class CompletionProvider extends Service implements CompletionItemProvide
               const type = getSectionScope(content, offset);
 
               if (type !== null) {
-                return getSectionCompletions(content, offset, schema, type);
+
+                return getSectionCompletions(
+                  content,
+                  offset,
+                  schema,
+                  type
+                );
+
               }
             }
           }
@@ -404,7 +415,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
         if (trigger === Char.COL || prev === Token.Object) {
           return this.enable.objects
-            ? this.items.get('objects')
+            ? [].concat(getVariableCompletions(vars), this.items.get('objects'))
             : null;
         }
 
@@ -475,8 +486,6 @@ export class CompletionProvider extends Service implements CompletionItemProvide
               }
             }
           }
-
-          console.log(schema);
 
           return schema;
 
