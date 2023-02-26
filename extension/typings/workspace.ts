@@ -39,45 +39,124 @@ export namespace Workspace {
     /**
      * Whether or not tag completions are enabled
      *
+     * - Standard
+     * - Shopify
+     * - Jekyll
+     * - Eleventy
+     *
      * @default true
      */
-    tags?: boolean;
+    tags: boolean;
+    /**
+     * Whether or not operator completions are enabled
+     *
+     * - Standard
+     * - Shopify
+     * - Jekyll
+     * - Eleventy
+     *
+     * @default true
+     */
+    operators: boolean;
     /**
      * Whether or not filter completions are enabled
      *
-     * @default true
-     */
-    filters?: boolean;
-    /**
-     * Whether or not logical completions are enabled
+     * - Standard
+     * - Shopify
+     * - Jekyll
+     * - Eleventy
      *
      * @default true
      */
-    logical?: boolean;
+    filters: boolean;
     /**
      * Whether or not object completions are enabled
      *
-     * @default true
-     */
-    objects?: boolean;
-    /**
-     * Whether or not control flow operators are enabled
+     * - Shopify
+     * - Jekyll
+     * - Eleventy
      *
      * @default true
      */
-    operators?: boolean;
+    objects: boolean;
     /**
-     * Whether or not section object completions are enabled
+     * Whether or not section schema completions are enabled
+     *
+     * - Shopify
      *
      * @default true
      */
-    section?: boolean;
+    schema: boolean;
     /**
-     * Whether or not schema tag JSON completions are enabled
+     * Whether or not locale file completions are enabled
+     *
+     * - Shopify
      *
      * @default true
      */
-    schema?: boolean;
+    locales: boolean;
+    /**
+     * Whether or not `settings_data.json` file completions are enabled
+     *
+     * - Shopify
+     *
+     * @default true
+     */
+    settings: boolean;
+    /**
+     * Whether or not `snippet` file completions are enabled
+     *
+     * - Shopify
+     *
+     * @default true
+     */
+    snippets: boolean;
+    /**
+     * Whether or not `_include` file completions are enabled
+     *
+     * - Jekyll
+     * - Eleventy
+     *
+     * @default true
+     */
+    includes: boolean;
+    /**
+     * Whether or not `section` file completions are enabled
+     *
+     * - Shopify
+     *
+     * @default true
+     */
+    sections: boolean;
+    /**
+     * Whether or not to variable completions are enabled
+     *
+     * - Standard
+     * - Shopify
+     * - Jekyll
+     * - Eleventy
+     *
+     * @default true
+     */
+    variables: boolean;
+    /**
+     * Whether or not data file completions are enabled
+     *
+     * - Jekyll
+     * - Eleventy
+     *
+     * @default true
+     */
+    data: boolean;
+    /**
+     * Whether or not frontmatter completions are enabled
+     *
+     * - Jekyll
+     * - Eleventy
+     *
+     * @default true
+     */
+    frontmatter: boolean;
   }
 
   /**
