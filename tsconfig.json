@@ -45,6 +45,12 @@
       "service/*": [
         "service/*.ts"
       ],
+      "data/*": [
+        "data/*.ts"
+      ],
+      "parse/*": [
+        "parse/*.ts"
+      ],
       "utils": [
         "utils.ts"
       ],
