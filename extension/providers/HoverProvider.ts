@@ -1,7 +1,6 @@
-import { parseSchema } from '../lexical/parse';
-import { getTokenDescription } from '../lexical/describe';
-import { $, Object as IObject } from '@liquify/liquid-language-specs';
-import { Service } from '../services';
+import { mdString } from 'parse/helpers';
+import { $, IObject } from '@liquify/specs';
+import { Service } from 'services';
 import {
   CancellationToken,
   Hover,
@@ -23,7 +22,7 @@ export function getTagHover (word: string) {
 
   if (!cursor) return null;
 
-  return getTokenDescription(cursor.description, cursor.reference);
+  return mdString(cursor.description, cursor.reference);
 
 }
 
@@ -43,7 +42,7 @@ export function getPropertyHover (token: string, objects: string[]) {
 
   if (!prop) return null;
 
-  return getTokenDescription(spec.description, root.reference);
+  return mdString(spec.description, root.reference);
 
 }
 
@@ -112,13 +111,12 @@ export class HoverProvider extends Service implements IHoverProvider {
    */
   async provideHover (document: TextDocument, position: Position, _token: CancellationToken): Promise<Hover> {
 
-    const offset = document.offsetAt(position);
-
     if (this.enable.schema === true) {
 
-      const schema = parseSchema(document.getText(), offset);
+      const offset = document.offsetAt(position);
+      const schema = this.json.schema.get(document.uri.fsPath);
 
-      if (schema !== false && schema.within === true) {
+      if (offset > schema.begin && offset < schema.ender) {
         const parse = this.json.doParse(document, position, schema);
         const hover = await this.json.doHover(parse);
         return new Hover(hover as any);
