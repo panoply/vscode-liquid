@@ -1,11 +1,29 @@
 {% # COMMENT KEYWORD %}
 
-{% if blog.comments_enabled? %}
-
-{% endif %}
+{% if blog.comments_enabled? %}{% endif %}
 
 {% # COMMENT KEYWORD %}
 
-{% for comment in article.comments %}
+{% for comment in article.comments %}{% endfor %}
 
-{% endfor %}
+  {% # COMMENT KEYWORD %}
+
+{% assign comment = endcomment %}
+
+<div
+  id="xxx"
+  {% # COMMENT %}
+  class="some-class"
+  data-{{ additional_checkout_buttons }}></div>
+
+<div
+  id="xxx"
+  {% comment %}
+  class="some-class"
+  {% endcomment %}
+  data-attribute="xxx"></div>
+
+{% liquid
+  comment
+    foo
+  endcomment %}
