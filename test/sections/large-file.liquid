@@ -17,7 +17,8 @@
   data-controller="carousel">
 
 
-  {%- if section.settings.buttons -%}
+  {% if section.settings.buttons %}
+
     <div class="previous d-flex ai-center">
       <button
         aria-label="Previous"
@@ -26,6 +27,8 @@
         <icon name="chevron-left" />
       </button>
     </div>
+
+
     <div class="next d-flex ai-center">
       <button
         aria-label="Next"
@@ -34,198 +37,163 @@
         <icon name="chevron-right" />
       </button>
     </div>
-  {%- endif -%}
+
+  {% endif %}
 
 
+  {{ section. }}
   {{ section.settings. }}
   <div data-carousel-target="siema">
 
-    {%- for block in section.blocks -%}
+    {% for block in section.blocks %}
 
-      {%- assign item = block.settings -%}
+      {% assign item = block.settings %}
 
-      <div class="{%- unless forloop.first %}col px-0 d-none{% else %}col px-0{% endunless %}" data-carousel-target="slide">
+      <div class="{%- unless forloop.first %}col px-0 d-none{% else %}col px-0{% endunless %}"
+        data-carousel-target="slide">
 
-        {%- if block.type == 'image_with_content' -%}
+        {% if block.type == 'image_with_content' %}
 
-          {%- capture spacing -%}
-            mb-
-            {{- item.py_mobile }}
-            mb-sm-
-            {{- item.py_desktop }}
-          {%- endcapture -%}
 
-          {%- capture gutter -%}
-            px-{{- item.mx_mobile }}
-            py-{{- item.my_mobile }}
-            px-sm-{{- item.mx_desktop }}
-          {%- endcapture -%}
+          {% capture spacing %}
+            mb-{{ item.py_mobile }}
+            mb-sm-{{ item.py_desktop }}
+          {% endcapture %}
 
-          <div class="hero-caption d-flex p-3 p-sm-5 {{ item.pos_mobile }} {{ item.pos_desktop }}">
-            <div class="{{ gutter }} py-sm-{{ item.my_desktop }} {{ item.ta_mobile }} {{ item.ta_desktop }}">
+          {{ 'accessibility' | t }} {% capture gutter %}
+            px-{{ item.mx_mobile }} py-{{ item.my_mobile }} px-sm-{{ item.mx_desktop }}
+          {% endcapture %}
 
-              {%- if item.title != blank -%}
+          {{ 'products.product.pickup_availability.hello_word' | t }}
 
-                {%- capture styles -%}
-                  color:
-                  {{- item.title_fc | default: 'inherit' -}}
-                  ;
-                  letter-spacing:
-                  {{- item.title_ls | default: 'inherit' -}}
-                  px;
-                  font-size:
-                  {{- item.title_fs | default: 'inherit' -}}
-                  px;
-                  font-weight:
-                  {{- item.title_fw | default: 'inherit' -}}
-                  ;
-                {%- endcapture -%}
+          <div class="hero-caption d-flex p-3 p-sm-5 {{ item.pos_mobile }} {{ item.pos_desktop
+               }}">
+            <div class="{{ gutter }} py-sm-{{ item.my_desktop }} {{ item.ta_mobile }} {{
+                 item.ta_desktop }}">
 
-                <h1 class="{{ spacing }}" style="{{ styles }}">
-                  {{- item.title -}}
+              {% if item.title != blank %}
+
+                {% capture styles %}
+                  color: {{ item.title_fc | default: 'inherit' }};
+                  letter-spacing: {{ item.title_ls | default: 'inherit' }}px;
+                  font-size: {{ item.title_fs | default: 'inherit' }}px;
+                  font-weight:{{ item.title_fw | default: 'inherit' }};
+                {% endcapture %}
+
+                <h1 class="{{ spacing }}"
+
+
+                  style="{{ styles }}">
+                  {{ item.title }}
                 </h1>
 
-              {%- endif -%}
+              {% endif %}
 
-              {%- if item.subtitle != blank -%}
+              {% if item.subtitle != blank %}
 
-                {%- capture style -%}
-                  color:
-                  {{- item.subtitle_fc | default: 'inherit' -}}
-                  ;
-                  letter-spacing:
-                  {{- item.subtitle_ls | default: 'inherit' -}}
-                  px;
-                  font-size:
-                  {{- item.subtitle_fs | default: 'inherit' -}}
-                  px;
-                  font-weight:
-                  {{- item.subtitle_fw | default: 'inherit' -}}
-                  ;
-                {%- endcapture -%}
+                {% capture style %}
+                  color: {{ item.subtitle_fc | default: 'inherit' }};
+                  letter-spacing: {{ item.subtitle_ls | default: 'inherit' }} px;
+                  font-size: {{ item.subtitle_fs | default: 'inherit' }} px;
+                  font-weight: {{ item.subtitle_fw | default: 'inherit' }};
+                {% endcapture %}
 
-                <h1 class="{{ spacing }}" style="{{ style }}">
-                  {{- item.subtitle -}}
+                <h1 class="{{ spacing }}"
+                  style="{{ style }}">
+                  {{ item.subtitle }}
                 </h1>
 
-              {%- endif -%}
+              {% endif %}
 
-              {%- if item.caption != blank -%}
 
-                {%- capture style -%}
-                  color:
-                  {{- item.caption_fc | default: 'inherit' -}}
-                  ;
-                  letter-spacing:
-                  {{- item.caption_ls | default: 'inherit' -}}
-                  px;
-                  font-size:
-                  {{- item.caption_fs | default: 'inherit' -}}
-                  px;
-                  font-weight:
-                  {{- item.caption_fw | default: 'inherit' -}}
-                  ;
-                  max-width:
-                  {{- item.caption_width -}}
-                  px;
-                  {%- if item.caption_lh != 0 -%}
-                    line-height:
-                    {{- item.caption_lh -}}
-                    px;
-                  {%- endif -%}
-                {%- endcapture -%}
+              {% if item.caption != blank %}
 
-                <p class="{{ spacing }}" style="{{ style }}">
-                  {{- item.caption | remove: '<p>' | remove: '</p>' -}}
+                {% capture style %}
+
+                  color: {{ item.caption_fc | default: 'inherit' }} ; letter-spacing:
+                  {{ item.caption_ls | default: 'inherit' }} px; font-size:
+                  {{ item.caption_fs | default: 'inherit' }} px; font-weight:
+                  {{ item.caption_fw | default: 'inherit' }} ; max-width:
+                  {{ item.caption_width }} px;
+                  {% if item.caption_lh != 0 %}
+                    line-height:{{ item.caption_lh }} px;
+                  {% endif %}
+                {% endcapture %}
+
+                <p class="{{ spacing }}"
+                  style="{{ style }}">
+                  {{ item.caption | remove: ' < p > ' | remove: ' < /p > ' }}
                 </p>
 
-              {%- endif -%}
+              {% endif %}
 
-              {%- if item.btn != blank -%}
+              {% if item.btn != blank %}
 
-                {%- capture style -%}
-                  color:
-                  {{- item.btn_fc | default: 'inherit' -}}
-                  ;
-                  background-color:
-                  {{- item.btn_bg | default: 'inherit' -}}
-                  ;
-                  font-size:
-                  {{- item.btn_fs | default: 'inherit' -}}
-                  px;
-                  font-weight:
-                  {{- item.btn_fw | default: 'inherit' -}}
-                  ;
-                  height:
-                  {{- item.btn_height }}
-                  px;
-                  max-width:
-                  {{- item.btn_width }}
-                  px;
-                {%- endcapture -%}
 
-                {%- capture class -%}
-                  {%- if item.btn_radius and item.btn_shadow -%}
-                    btn-radius btn-shadow mt-
-                    {{ item.btn_mt }}
-                  {%- elsif item.btn_shadow -%}
-                    btn-shadow mt-
-                    {{ item.btn_mt }}
-                  {%- elsif item.btn_radius -%}
-                    btn-radius mt-
-                    {{ item.btn_mt }}
-                  {%- else -%}
-                    mt-
-                    {{ item.btn_mt }}
-                  {%- endif -%}
-                {%- endcapture -%}
+                {% capture style %}
+                  color:{{ item.btn_fc | default: 'inherit' }}; background-color:
+                  {{ item.btn_bg | default: 'inherit' }}; font-size:
+                  {{ item.btn_fs | default: 'inherit' }}px; font-weight:
+                  {{ item.btn_fw | default: 'inherit' }}; height:
+                  {{ item.btn_height }} px; max-width:{{ item.btn_width }}px;
+                {% endcapture %}
+
 
                 <a
-                  class="btn btn-line {{ class }}"
+                  class="btn btn-line {{ class }}
+                     {% if item.btn_radius and item.btn_shadow %}
+                     btn-radius btn-shadow mt- {{ item.btn_mt }}
+                     {% elsif item.btn_shadows %}
+                     btn-shadow mt-{{ item.btn_mt }}
+                     {% elsif item.btn_radius %}
+                     btn-radius mt-{{ item.btn_mt }}
+                     {% else %}
+                     mt-{{ item.btn_mt }}
+                     {% endif %}"
+
+
                   href="{{ item.url }}"
                   style="{{ style }}">
-                  {{- item.btn -}}
+                  {{ item.btn }}
                 </a>
 
-              {%- endif -%}
+              {% endif %}
 
             </div>
           </div>
-        {%- endif -%}
+        {% endif %}
 
-        {%- unless block.type contains 'video' -%}
+        {% unless block.type contains 'video' %}
 
-          {%- capture aspect_ratio -%}
-            --ratio-width:
-            {{- item.img_desktop.width -}}
-            ;
-            --ratio-height:
-            {{- item.img_desktop.height -}}
-            ;
-            --ratio-width-sm:
-            {{- item.img_mobile.width -}}
-            ;
-            --ratio-height-sm:
-            {{- item.img_mobile.height -}}
-            ;
-          {%- endcapture -%}
+          {% capture aspect_ratio %}
+            --ratio-width: {{ item.img_desktop.width }};
+            --ratio-height: {{ item.img_desktop.height }};
+            --ratio-width-sm: {{ item.img_mobile.width }} ;
+            --ratio-height-sm: {{ item.img_mobile.height }} ;
+          {% endcapture %}
 
-          <div class="aspect-ratio" style="{{ aspect_ratio }}">
-            {%- if item.img_desktop != blank and item.img_mobile != blank -%}
+          <div class="aspect-ratio"
+            style="{{ aspect_ratio }}">
+            {% if item.img_desktop != blank and item.img_mobile != blank %}
               <picture>
-                <source data-srcset="{{ item.img_desktop | img_url: '1440x' | format: 'pjpg' }}" media="lg" />
-                <source data-srcset="{{ item.img_desktop | img_url: '1240x' | format: 'pjpg' }}" media="md" />
-                <source data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}" media="sm" />
-                <source data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}" media="xs" />
-                <img class="img-fluid lazy" data-src=" {{- item.img_desktop | img_url: '1440x' | format: 'pjpg' }}">
+                <source data-srcset="{{ item.img_desktop | img_url: '1440x' | format: 'pjpg' }}"
+                  media="lg" />
+                <source data-srcset="{{ item.img_desktop | img_url: '1240x' | format: 'pjpg' }}"
+                  media="md" />
+                <source data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}"
+                  media="sm" />
+                <source data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}"
+                  media="xs" />
+                <img class="img-fluid lazy"
+                  data-src=" {{- item.img_desktop | img_url: '1440x' | format: 'pjpg' }}" />
               </picture>
-            {%- else -%}
-              {%- render 'placeholder', type: 'hero_image' -%}
-            {%- endif -%}
+            {% else %}
+              {% render 'placeholder', type: 'hero_image' %}
+            {% endif %}
           </div>
-        {%- endunless -%}
+        {% endunless %}
       </div>
-    {%- endfor -%}
+    {% endfor %}
   </div>
 </div>
 
@@ -284,6 +252,7 @@
             "info": "Controls the viewport content position and text alignment"
           },
           {
+
             "type": "select",
             "id": "pos_desktop",
             "label": "Desktop Position",
@@ -811,6 +780,7 @@
         "step": 100,
         "default": 0
       },
+
       {
         "type": "range",
         "id": "duration",

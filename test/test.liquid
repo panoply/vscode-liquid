@@ -1,98 +1,10 @@
-<div class="container-fluid as-center">
-  <form {{ section.settings.id }}>
-
-    {%- for block in section.blocks -%}
-
-      {%- if block.type == "text" -%}
-
-        <div class="col-12 mt-{{ block.mt }} mb-4">
-
-          <h4 class="mb-3">
-            {{ block.settings.some_textarea }}
-          </h4>
-
-        </div>
-
-      {% elsif block.type == 'text_2' %}
-
-        <div class="fs-sm">
-          {{ block.settings.xxx_textarea }}
-        </div>
-
-      {% endif %}
-
-    {% endfor %}
-  </form>
-</div>
-
-
 {% schema %}
-
-  {
-    "name": "sections",
-    "settings": [
-      {
-        "type": "text",
-        "id": "id",
-        "info": "Some information",
-        "label": "Some Labels"
-      },
-      {
-        "type": "select",
-        "id": "select",
-        "label": "Select Labels",
-        "options": [
-          {
-            "label": "Some Label",
-            "value": "value"
-          }
-        ]
-      }
-    ],
-    "blocks": [
-      {
-        "type": "text",
-        "name": "Some Block",
-        "settings": [
-          {
-            "type": "textarea",
-            "id": "some_textarea",
-            "label": "Some Textarea Label"
-          },
-          {
-            "type": "text",
-            "id": "some_text",
-            "label": "Some Text Label"
-          },
-          {
-            "type": "article",
-            "id": "some_article",
-            "label": "Some Article Label"
-          }
-        ]
-      },
-      {
-        "type": "text_2",
-        "name": "Another Block",
-        "settings": [
-          {
-            "type": "textarea",
-            "id": "xxx_textarea",
-            "label": "Some Textarea Label"
-          },
-          {
-            "type": "text",
-            "id": "one_text",
-            "label": "Some Text Label"
-          },
-          {
-            "type": "article",
-            "id": "two_article",
-            "label": "Some Article Label"
-          }
-        ]
-      }
-    ]
-
-  }
+  {}
 {% endschema %}
+
+{% liquid
+
+  comment
+    foo
+  endcomment
+%}

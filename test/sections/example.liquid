@@ -6,64 +6,67 @@
   px-{{ section.settings.px }}
 {%- endcapture -%}
 
+
 <div
   class="{{ grid }}"
-  data-controller='form'
-  data-form-type-value='shopify:contact'
-  data-form-response-value='toggle'>
+  data-controller="form"
+  data-form-response-value="toggle"
+  data-form-type-value="shopify:contact"
+  data-{{ some.value }}-foo>
 
-  {%- form 'contact'
+
+  {% form 'contact'
     , action: '/pages/customer-support#contact_form'
-    , data-form-target: 'form' -%}
+    , data-form-target: 'form' %}
 
     {% if form.posted_successfully? %}
-      <p
-        class='note form-success'>
+      <p class="note form-success">
         {{ 'contact.form.post_success' | t }}
       </p>
     {% endif %}
 
     <!-- FAILED LOGIN -->
-    {%- if form.errors -%}
-      <output
-        class='form-errors'>
-        {{- form.errors | default_errors -}}
+
+
+    {% if form.errors %}
+      <output class="form-errors">
+        {{ form.errors | default_errors }}
       </output>
-    {%- endif -%}
+    {% endif %}
 
     {% for block in section.blocks %}
 
-      {% if block.type == "hidden" %}
+      {% assign b = block.settings %}
+
+      {% if block..type == 'hidden' %}
 
         <input
-          class='d-none'
-          type='hidden'
+          class="d-none"
+          data-form-target="field"
           name="{{ block.settings.name }}"
-          value="{{ block.settings.value }}"
-          data-form-target='field'>
+          type="hidden"
+          value="{{ block.settings.value }}" /> {{ b }}
 
       {% elsif block.type == 'text' %}
 
-        <div
-          class="col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
-          <div
-            class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+        <div class="col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{
+             block.settings.xl }}">
+          <div class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
 
-            <input
-              class='fm-input'
-              data-form-target='field'
-              data-action='form#onInput'
-              type="{{ block.type }}"
-              name="{{ block.settings.name }}"
-              id="{{ block.settings.name }}"
-              placeholder="{{ block.settings.placeholder }}"
+            {{ b.autocomplete }} <input
               autocomplete="{{ block.settings.autocomplete }}"
-              minlength="{{ block.settings.minlength }}"
+              class="fm-input"
+              data-action="form#onInput"
+              data-form-target="field"
+              id="{{ block.settings.name }}"
               maxlength="{{ block.settings.maxlength }}"
-              required="{{ block.settings.required }}">
+              minlength="{{ block.settings.minlength }}"
+              name="{{ block.settings.name }}"
+              placeholder="{{ block.settings.placeholder }}"
+              required="{{ block.settings.required }}"
+              type="{{ block.type }}" />
 
-            <label
-              class='fm-label'
+            <label class="fm-label"
               for="{{ block.settings.name }}">
               {{ block.settings.placeholder }}
             </label>
@@ -71,24 +74,23 @@
           </div>
         </div>
 
+
       {% elsif type == 'file' %}
 
-        <div
-          class="col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
+        <div class=" col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
 
           <input
-            class='fm-input'
-            data-form-target='field'
-            data-action='input->form#onInput'
-            type="{{ block.type }}"
-            id="{{ block.settings.name }}"
-            name="{{ block.settings.name }}"
+            class="fm-input"
+            data-action="input->form#onInput"
+            data-form-target="field"
+            id="{{ block.settings.name [] }}"
             multiple="{{ block.settings.multiple }}"
-            required="{{ block.settings.required }}">
+            name="{{ block.settings.name }}"
+            required="{{ block.settings.required }}"
+            type="{{ block.type }}" />
 
-          <label
-            for="{{ block.settings.name }}"
-            class='fm-label'>
+          <label class="fm-label"
+            for="{{ block.settings.name }}">
             {{ block.settings. }}
           </label>
 
@@ -96,23 +98,23 @@
 
       {% elsif block.type == 'email' %}
 
-        <div
-          class="col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
-          <div
-            class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+        <div class=" col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
+
+          <div class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
 
             <input
-              class='fm-input'
-              data-form-target='field'
-              data-action='form#onInput'
-              type="{{ block.type }}"
+              autocomplete="{{ block.settings.autocomplete }}"
+              class="fm-input"
+              data-action="form#onInput"
+              data-form-target="field"
               name="{{ block.settings.name }}"
               placeholder="{{ block.settings.placeholder }}"
               required="{{ block.settings.required }}"
-              autocomplete="{{ block.settings.autocomplete }}">
+              type="{{ block.type }}" />
 
-            <label
-              class='fm-label'
+            {{ block.settings }}
+
+            <label class="fm-label"
               for="{{ block.settings.name }}">
               {{ block.settings }}
             </label>
@@ -123,48 +125,55 @@
 
       {% elsif block.type == 'tel' %}
 
-        <div
-          class="col-{{ block.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
-          <div
-            class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+        <div class="col-{{ block.xs }} col-md-{{ block.settings.md }} col-xl-{{
+             block.settings.xl }}">
+          <div class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+            {{ product.s }}
+            {{- address.address1
+              | img_tag
+              | abs
+              | append: 'xxxx'
+              | camelcase
+              | param_2: 200
+              | xxxx: 1234 }}
 
-            <input
+            {{ b.autocomplete }} <input
+              autocomplete='{{ block.settings.autocomplete }}'
               class='fm-input upper'
-              data-form-target='field'
               data-action='form#onInput'
-              type="{{ type }}"
-              name="{{ block.settings.name }}"
-              required="{{ block.settings.required }}"
-              autocomplete="{{ block.settings.autocomplete }}">
+              data-form-target='field'
+              name='{{ block.settings.name }}'
+              required='{{ block.settings.required }}'
+              type='{{ type }}' />
 
-            <label
-              class='fm-label'
-              for="{{ block.settings.name }}">
+            <label class='fm-label'
+              for='{{ block.settings.name }}'>
               {{ block.settings }}
-            </label>
+            </labe>
 
           </div>
         </div>
 
       {% elsif block.type == 'textarea' %}
 
-        <div
-          class='col-12'>
-          <div
-            class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+        <div class="col-12">
+          <div class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
 
             <textarea
-              class='fm-input'
-              style="height: {{ block.settings.height }}px;"
-              name="{{ block.settings.name }}"
+              class="fm-input"
               id="{{ block.settings.name }}"
+              name="{{ block.settings.name }}"
               placeholder="{{ block.settings.placeholder }}"
-              required="{{ block.settings.required }}"></textarea>
+              required="{{ block.settings.required }}"
+              style="height: {{ block.settings.height }}px;"></textarea>
 
-            <label
-              class='fm-label'
+
+            <label class="fm-label"
               for="{{ block.settings.name }}">
-              {{ block.settings.placeholder }}
+
+              {{ block.settings.placeholder | abs }}
+
+
             </label>
 
           </div>
@@ -172,53 +181,48 @@
 
       {% elsif block.type == 'dropdown' %}
 
-        <div
-          class='col-12'>
+        <div class="col-12">
 
-          <div
-            class="col-12 mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+          <div class="col-12 mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
 
             <div
-              class='fm-dropdown fm-float'
-              data-controller='dropdown'
-              data-form-target='dropdown'>
+              class="fm-dropdown fm-float"
+              data-controller="dropdown"
+              data-form-target="dropdown">
 
               <button
-                type='button'
-                class='btn btn-dropdown fw-light'
-                data-action='dropdown#toggle'
-                data-dropdown-target='button'>
+                class="btn btn-dropdown fw-light"
+                data-action="dropdown#toggle"
+                data-dropdown-target="button"
+                type="button">
                 {{ block.settings.placeholder }}
               </button>
 
               <fieldset>
-                {%- assign items = block.settings.items
+
+                {% assign items = block.settings.items
                   | newline_to_br
-                  | split: '<br />' -%}
+                  | split: '<br />' %}
 
                 {% for item in items %}
 
-                  {% liquid
-                    # STRIP + CLEAN
-                    assign value = item | strip_html | strip
-                    assign id = value | handle
-                  %}
 
-                  <label
-                    class='upper fs-sm'
+                  <label class="upper fs-sm"
                     for="{{ id }}">
                     {{ value }}
                   </label>
+
                   <input
-                    class='d-none'
-                    type='radio'
+                    class="d-none"
+                    type="radio"
                     name="{{ block.settings.name }}"
                     id="{{ id }}"
                     value="{{ value }}"
                     aria-label="{{ value }}"
-                    data-form-target='field'
-                    data-action='dropdown#select form#onInput'
-                    {% if forloop.first and block.settings.required %}required{% endif %}>
+                    data-form-target="field"
+                    data-action="dropdown#select form#onInput"
+                    {% if forloop.first and block.settings.required %}
+                    {% endif %} />
 
                 {% endfor %}
 
@@ -230,24 +234,25 @@
 
       {% elsif block.type == 'switch' %}
 
-        <div
-          class="col-12 mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
-          <div
-            class="fm-switch d-flex ai-center {{ block.settings.row }}">
+        <div class="col-12 mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+          <div class="fm-switch d-flex ai-center {{ block.settings.row }}">
 
             <input
-              type='checkbox'
-              class='fm-check-input'
-              data-form-target='field'
-              data-action='form#onInput'
+              type="checkbox"
+              class="fm-check-input"
+              data-form-target="field"
+              data-action="form#onInput"
               id="{{ block.settings.name }}"
               name="{{ block.settings.name }}"
               required="{{ block.settings.required }}"
-              {% if block.settings.checked %}checked{% endif %}>
+              {% if block.settings.checked %}
 
-            <label
-              for="{{ block.settings.name }}"
-              class='fm-label ml-3'>
+
+              checked
+              {% endif %} />
+
+            <label class="fm-label ml-3"
+              for="{{ block.settings.name }}">
               {{ block.settings }}
             </label>
 
@@ -259,27 +264,19 @@
     {% endfor %}
 
     {% if section.blocks and section.settings.btn_label %}
-      <div
-        class="col-12 {{ section.settings.btn_position }}">
+      <div class="col-12 {{ section.settings.btn_position }}">
         <button
-          class='btn btn-black fw-light d-flex mt-4 py-3'
-          type='submit'
-          data-form-target='submit'>
+          class="btn btn-black fw-light d-flex mt-4 py-3"
+          type="submit"
+          {% if condition %}
+          data-form-target="submit"
+          {% endif %}>
           {{ section.settings.btn_label }}
         </button>
       </div>
     {% endif %}
 
   {% endform %}
-
-  <div
-    class='tc fs-lg ac-center d-none'>
-
-    <div
-      data-form-target='response'></div>
-
-  </div>
-
 </div>
 
 {% schema %}
@@ -413,6 +410,8 @@
         "info": "The amount of columns in tablet",
         "min": 1,
         "max": 12,
+
+
         "step": 1,
         "default": 12
       },
@@ -1149,6 +1148,7 @@
             "step": 1,
             "default": 0
           },
+          {},
           {
             "type": "range",
             "id": "mb",
@@ -1221,4 +1221,6 @@
       }
     ]
   }
+
+
 {% endschema %}

@@ -1,0 +1,37 @@
+<div
+  class="hero col mt-{{ section.settings.mt }} mb-{{ section.settings.mb }}"
+  data-carousel-desktop-value="1"
+  data-carousel-draggable-value="{{ section.settings.draggable }}"
+  data-carousel-duration-value="{{ section.settings.duration }}"
+  {% if condition %}
+    data-carousel-hydrate-value="true"
+    data-carousel-id-value="{{ section.id | base64_encode }}"
+  {% else %}
+    data-carousel-interval-value="{{ section.settings.interval }}"
+  {% endif %}
+  data-carousel-loop-value="{{ section.settings.loop }}"
+  data-carousel-mobile-value="1"
+  data-carousel-tablet-value="1"
+  data-controller="carousel">
+
+  <!-- @prettify-ignore-start -->
+
+  <div>
+
+  {% if condition %} fooo {% endif %}
+
+  </div>
+
+  <!-- @prettify-ignore-end -->
+
+
+  <!-- @prettify-ignore-start -->
+<div>
+
+{% if condition %} fooo {% endif %}
+
+</div>
+<!-- @prettify-ignore-end -->
+
+
+</div>

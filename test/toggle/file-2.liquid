@@ -1,0 +1,69 @@
+{% if condition %}
+
+  {% assign s = settings.badges %}
+
+  {{ s.badge_corner_radius }}
+
+  {% assign b = product.collections %}
+
+
+  {{ s..badge_corner_radius | file_url: b.sale_badge_color_scheme }}
+  <div class="col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{
+       block.settings.xl }}">
+    <div class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
+
+      {{ b. }} <input
+        autocomplete="{{ block.settings.autocomplete }}"
+        class="fm-input"
+        data-action="form#onInput"
+        data-form-target="field"
+        id="{{ block.settings.name }}"
+        maxlength="{{ block.settings.maxlength }}"
+        minlength="{{ block.settings.minlength }}"
+        name="{{ block.settings.name }}"
+        placeholder="{{ block.settings.placeholder }}"
+        required="{{ block.settings.required }}"
+        type="{{ block.type }}" /> {{ 'products' | t }}
+
+      <label class="fm-label"
+        for="{{ block.settings.name }}">
+        {{ block.settings.placeholder }}
+      </label>
+
+      {% assign items = block.settings.items
+        | newline_to_br
+        | newline_to_br
+        | split: '<br />' %}
+
+    </div>
+  </div>
+
+{% endif %}
+{{  }}
+
+{% schema %}
+
+  {
+    "blocks": [],
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "some_check",
+        "label": "Some Check",
+        "default": true,
+        "info": "Hellow some check"
+      },
+      {
+        "type": "range",
+        "id": "some",
+        "label": "Some",
+        "min": 10,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "default": 1
+      }
+    ]
+  }
+
+{% endschema %}

@@ -1,0 +1,84 @@
+
+[29-12-2022 10:54:40]
+
+110.25ms
+1ms
+2s
+
+v3
+v2.3
+v1.1.1
+
+ERROR:
+Error:
+Deprecated:
+
+
+WARNING:
+Warning:
+WARN:
+Warn:
+
+
+Using workspace file: /Users/Panoply/Sites/vscode-liquid/test/.vscode/settings.json
+Using .liquidrc file: /Users/Panoply/Sites/vscode-liquid/test/.liquidrc
+
+Completions
+Validations
+Hovers
+Codelens
+Formatting
+
+Enabled
+Disable
+
+Created
+Updated
+Deleted
+Changed
+Watching
+Ignoring
+
+.liquidrc
+.liquidrc.json
+workspace
+Workspace Settings
+User Settings
+Global Settings
+
+'string'
+"string"
+
+{{ product.available }}
+
+{% tag %}
+
+Liquid
+liquid
+json
+JSON
+jsonc
+JSONC
+css
+CSS
+SCSS
+scss
+SASS
+LESS
+Less
+javascript
+JavaScript
+HTML
+html
+typescript
+TypeScript
+JSX
+jsx
+TSX
+tsx
+XML
+xml
+YAML
+Yaml
+YML
+Yml

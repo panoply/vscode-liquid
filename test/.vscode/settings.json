@@ -1,133 +1,17 @@
 {
-
-  // "[html]": {
-  // "editor.defaultFormatter": "sissel.shopify-liquid",
-  // "editor.bracketPairColorization.enabled": false
+  // "[liquid]": {
+  //   "editor.defaultFormatter": "sissel.shopify-liquid",
+  //   "editor.formatOnSave": true
   // },
-  // "liquid.format.enable": true,
-  // "liquid.completion.tags": true,
-  // "liquid.completion.filters": true,
-  // "liquid.completion.objects": true,
-  // "liquid.format.ignore": ["**/ignore.liquid"],
-  // "json.validate.enable": false,
-
-  "editor.foldingStrategy": "indentation",
-  "[liquid]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid",
-    "editor.formatOnSave": true
-  },
-
-  "emmet.includeLanguages": {
-    "liquid": "html"
-  },
-
-  "[liquid-javascript]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid",
-    "editor.formatOnSave": true
-  },
-
-  // "html.validate.scripts": false,
-  // "html.validate.styles": false
-  // "liquid.format": true,
-  // "liquid.rules": {},
-  // "liquid.format.enable": true
-  // "liquid.enable": true,
-  // "liquid.format.enable": true,
-  "[html]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "sissel.shopify-liquid",
-    "editor.formatOnSave": true
-  },
-
-
-  "liquid.format.enable": false,
   "liquid.completion.tags": true,
   "liquid.completion.schema": true,
   "liquid.completion.filters": true,
   "liquid.completion.objects": true,
   "liquid.completion.operators": true,
   "liquid.completion.properties": true,
-  "liquid.completion.sections": true
-  /* -------------------------------------------- */
-  /* VSCODE NATIVES                               */
-  /* -------------------------------------------- */
-  // "[liquid-css]": {},
-  // "[liquid-scss]": {},
-  // "[liquid-javascript]": {},
-  // "[liquid-json]": {},
-  // "[liquid-yaml]": {},
-  /* -------------------------------------------- */
-  /* FORMATTING OPTIONS                           */
-  /* -------------------------------------------- */
-  /*
-  "liquid.enable": true,
-  "liquid.format.enable": true,
-  "liquid.format.ignore": ["ignore.liquid"],
-  "liquid.format.crlf": false,
-  "liquid.format.commentIndent": false,
-  "liquid.format.endNewline": false,
-  "liquid.format.indentChar": " ",
-  "liquid.format.indentSize": 2,
-  "liquid.format.preserveComment": false,
-  "liquid.format.preserveLine": 2,
-  "liquid.format.wrap": 0,
-  "liquid.format.markup": {
-  "correct": false,
-  "commentNewline": false,
-  "attributeCasing": "preserve",
-  "attributeSort": false,
-  "attributeSortList": [],
-  "forceAttribute": false,
-  "forceLeadAttribute": false,
-  "forceIndent": false,
-  "preserveText": false,
-  "preserveAttributes": false,
-  "selfCloseSpace": false,
-  "quoteConvert": "none",
-  },
-  "liquid.format.style": {
-  "correct": false,
-  "commentNewline": false,
-  "attributeCasing": "preserve",
-  "attributeValues": "preserve",
-  "attributeSort": false,
-  "attributeSortList": [],
-  "forceAttribute": false,
-  "forceLeadAttribute": false,
-  "forceIndent": false,
-  "preserveText": false,
-  "preserveAttributes": false,
-  "selfCloseSpace": false,
-  "quoteConvert": "none"
-  },
-  "liquid.format.script": {
-  "correct": false,
-  "braceNewline": false,
-  "bracePadding": false,
-  "braceStyle": "none",
-  "braceAllman": false,
-  "caseSpace": false,
-  "inlineReturn": true,
-  "elseNewline": false,
-  "endComma": "never",
-  "arrayFormat": "default",
-  "objectIndent": "default",
-  "functionNameSpace": false,
-  "functionSpace": false,
-  "styleGuide": "none",
-  "ternaryLine": false,
-  "methodChain": 4,
-  "neverFlatten": false,
-  "noCaseIndent": false,
-  "noSemicolon": false,
-  "quoteConvert": "none"
-  },
-  "liquid.format.json": {
-  "arrayFormat": "default",
-  "braceAllman": false,
-  "bracePadding": false,
-  "objectIndent": "default"
-  }*/
+  "liquid.completion.sections": true,
+  "[liquid]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "sissel.shopify-liquid",
+  }
 }

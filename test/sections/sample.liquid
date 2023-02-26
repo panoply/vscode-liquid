@@ -6,14 +6,19 @@
     id="test"
     {% if condition == false %}
     data-id="{{ x }}"
-    {% endif %}></div>
+    {% endif %}>
+    sss
+
+  </div>
 
 </div>
 
+
 {% form %}{% endform %}
 
-
 {{ section.settings }}
+
+{% assign foo = section.settings %}
 
 
 <div
@@ -21,73 +26,94 @@
   data-carousel-desktop-value="1"
   data-carousel-draggable-value="{{ section.settings.draggable }}"
   data-carousel-duration-value="{{ section.settings.duration }}"
-  {%- if condition -%}
-  data-carousel-hydrate-value="true"
-  data-carousel-id-value="{{ section.id | base64_encode }}"
-  {%- else -%}
-  data-carousel-interval-value="{{ section.settings.interval }}"
-  {% endif %}
   data-carousel-loop-value="{{ section.settings.loop }}"
   data-carousel-mobile-value="1"
   data-carousel-tablet-value="1"
-  data-controller="carousel">
+  {% if condition %}
+  data-carousel-hydrate-value="true"
+  data-carousel-id-value="{{ section.id | base64_encode }}"
+  {% else %}
+  data-carousel-interval-value="{{ section.settings.interval }}"
+  {% endif %}>
 
-  {%- if section.settings.buttons -%}
+  {% assign bar = 'baz' %}
+  {% if section.settings.buttons %}
     <div
       class="previous d-flex ai-center"
-      {%- if section.settings.buttons -%}
-      {%- endif -%}>
+      {% if foo %}
+      {% endif %}>
+
+      {{ foo.button_color }}
+
+{% capture foo %}
+        I will not be formatter
+      {% endcapture %}
+
+{% capture foo %}{% endcapture %}
+
+      {% assign foo = '' %} {% capture pros %}
+        {{ section.blocks }} {{ foo | append: '' | append: article }}
+      {% endcapture %}
+
+
+      {% if %}{% endif %}
+
+
+      {% liquid
+        if if
+          foo == bar
+        elsif
+          'foo'
+        endif
+        assign name = 'bar'
+      %}
+
       <button
         aria-label="Previous"
         data-action="click->carousel#prev"
         type="button">
-        <icon
-          name="chevron-left" />
+        <icon name="chevron-left" />
       </button>
+
+
     </div>
-    <div
-      class="next d-flex ai-center">
+    <div class="next d-flex ai-center">
       <button
         aria-label="Next"
         data-action="click->carousel#next"
         type="button">
-        <icon
-          name="chevron-right" />
+        <icon name="chevron-right" />
       </button>
-    </div>
-  {%- endif -%}
 
+
+    </div>
+  {% endif %}
 </div>
 
 
-{% capture foo %}{% endcapture %}
+<ul>
+  <li></li>
+</ul>
 
 
-{% assign foo = '' %}
-
-{% capture pros %}
-
-  {{ section.blocks }}
-
-  {{ foo | append: '' | append: article }}
-
-{% endcapture %}
-{% if %}{% endif %}
-
-
-<!-- @prettify-ignore-start -->
-
-
-{%- liquid
-  if
+{% liquid
+  if xxx
     foo == bar
   elsif
     'foo'
   endif
   assign name = 'bar' | filter: 100
--%}
+%}
 
-<!-- @prettify-ignore-end -->
+
+{% liquid
+  if foo == bar
+    echo 'fff'
+  elsif 'foo'
+    assign name = 'bar' | filter: 100
+  endif
+%}
+
 
 {% # TEST: Liquid Schema Tag Block Validations %}
 
@@ -106,34 +132,35 @@
   data-carousel-tablet-value="1"
   data-controller="carousel">
 
-  {%- if section.settings.buttons -%}
-    <div
-      class="previous d-flex ai-center">
+
+
+  {% if section.settings.buttons %}
+    <div class="previous d-flex ai-center">
       <button
         aria-label="Previous"
         data-action="click->carousel#prev"
         type="button">
-        <icon
-          name="chevron-left" />
+        <icon name="chevron-left" />
       </button>
     </div>
-    <div
-      class="next d-flex ai-center">
+    <div class="next d-flex ai-center">
       <button
         aria-label="Next"
         data-action="click->carousel#next"
         type="button">
-        <icon
-          name="chevron-right" />
+        <icon name="chevron-right" />
       </button>
     </div>
-  {%- endif -%}
+  {% endif %}
 </div>
 
-{% if block.type == "collection_links" %}{% endif %}
+
+{% if block.type == 'collection_links' %}{% endif %}
+{{ section.settings }}
+
 
 {{ section.settings }}
-{{ section.settings }}
+
 
 {% schema %}
   {
@@ -200,7 +227,7 @@
       {
         "type": "header",
         "content": "Caption",
-        "info": "Customize the text caption to be displayed on each collection image block",
+        "info": "Customize the text caption to be displayed on each collection image block"
       },
       {
         "type": "radio",
@@ -231,7 +258,7 @@
         "type": "color",
         "label": "Text Colour",
         "id": "text_color",
-        "default": "#ffffff",
+        "default": "#ffffff"
       },
       {
         "type": "color",
@@ -267,8 +294,7 @@
             "type": "image_picker",
             "id": "image",
             "label": "Image"
-          },
-
+          }
         ]
       },
       {
