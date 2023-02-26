@@ -5,7 +5,9 @@
   const foo = 'bar'
 
 
-  const x = function ( param ) {
+  const x = function(param) {
+
+    true
 
     const x = 100
 
@@ -18,3 +20,20 @@
   }
 
 {% endjavascript %}
+
+
+<!-- TEST: Import Injection when Liquid tag expression is defined -->
+
+<!-- @prettify-ignore-next -->
+<script type="module">
+
+import {} from './'
+import * as x from '';
+import {{ 'file.js' | asset_url | json }};
+import {{ 'file.js' | asset_url | json }};
+
+
+const foo = 'bar';
+
+
+</script>
