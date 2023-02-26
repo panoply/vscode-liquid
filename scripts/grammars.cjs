@@ -1,4 +1,4 @@
-const { liquid, Type } = require('@liquify/liquid-language-specs');
+const { liquid, Type } = require('@liquify/specs');
 const { join } = require('path');
 const { has, uniq, isEmpty } = require('rambdax');
 const { writeFileSync } = require('fs');
@@ -86,7 +86,7 @@ function generate () {
         insert('object')(object).push(prop);
       } else if (spec.type === Type.string) {
         insert('string')(object).push(prop);
-      } else if (spec.type === Type.number) {
+      } else if (spec.type === Type.number || spec.type === Type.float) {
         insert('integer')(object).push(prop);
       } else if (spec.type === Type.boolean) {
         insert('boolean')(object).push(prop);
@@ -100,13 +100,17 @@ function generate () {
       if (has('properties', spec)) {
         props(object, spec.properties);
         captures.object.values.push(object);
+      } else if (spec.type === Type.object) {
+        captures.object.values.push(object);
       } else if (spec.type === Type.string) {
         captures.string.values.push(object);
-      } else if (spec.type === Type.number) {
+      } else if (spec.type === Type.number || spec.type === Type.float) {
         captures.integer.values.push(object);
-      } else if (spec.type === Type.constant) {
+      } else {
         captures.constant.push(object);
       }
+    } else if (spec.const === true) {
+      captures.constant.push(object);
     }
   }
 
