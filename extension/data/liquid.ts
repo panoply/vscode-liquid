@@ -169,7 +169,6 @@ export function getSettingsCompletions (uri: string, data: SettingsData[]) {
 
       objects[prop] = <IProperty>{
         global: true,
-        scope: 'settings',
         type: 'object',
         summary: `${prop} (${filename})`,
         description: [
@@ -187,10 +186,9 @@ export function getSettingsCompletions (uri: string, data: SettingsData[]) {
             ? path(type.label.slice(2), locale) || type.label
             : type.label;
 
-          objects[prop].properties[type.id] = <IProperty>{
+          objects[prop].properties[type.id] = <IProperty> {
             type: type.type,
             summary: `${type.type} (default: ${type.default})`,
-            scope: 'settings',
             description: [
               label ? `**${label}**\n\n` : '',
               type.info ? path(type.info.slice(2), locale) + '\n\n' || '' : '',
@@ -205,7 +203,6 @@ export function getSettingsCompletions (uri: string, data: SettingsData[]) {
       objects[setting.name] = <IProperty>{
         global: true,
         type: 'object',
-        scope: 'settings',
         summary: `${setting.name} (${filename})`,
         description: `${setting.settings.length} available fields\n\n${reference}`,
         properties: {}
