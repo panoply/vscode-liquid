@@ -23,23 +23,18 @@
 
 {% # FOR LOOP %}
 
-{% for product in collection.products limit: 2 -%}
+{% for product in collection.products limit: 2 %}
 
   {{ product.title }}
 
-{%- endfor %}
+{% endfor %}
 
 
 {% # FOR LOOP INFERRED ARRAY ITERATION %}
 
-{% for variable in inferred %}
+{% for variable in inferred %}{% endfor %}
 
-{% endfor %}
-
-{% for variable in (1..200) %}
-
-
-{% endfor %}
+{% for variable in (1..200) %}{% endfor %}
 
 {% render 'filename'
  , param: 1.20
@@ -49,28 +44,24 @@
  , param_foo: nil
  , 123_param: product.available %}
 
+ {% render 'filename',
+   param: 1.20,
+   param2: foo.prop.foo.bar,
+   param3: 'string',
+   param5: false,
+   param_foo: nil,
+   123_param: product.available %}
+
 {% # CONDITION %}
 
-{%- if condition == product.available -%}
-
-  {%- elsif condition -%}
-
-{%- endif -%}
-
-{%- case variable -%}
-  {%- when condition == product.available -%}
-
-  {%- else -%}
-
-{%- endcase -%}
+{% if condition == product.available %}{% elsif condition %}{% endif %}{% case variable %}
+{% when condition == product.available %}{% else %}{% endcase %}
 
 {% # FOR LOOP %}
 
-{% for product in collection.products limit: 2 -%}
+{% for product in collection.products limit: 2 %}
 
-  {{ product.title }}
-
-{%- endfor %}
+{{ product.title }}{% endfor %}
 
 {% for variable in (1..200) %}
 
@@ -78,12 +69,12 @@
 
 {% endfor %}
 
-{% for product in collection.products reversed -%}
+{% for product in collection.products reversed %}
 
-  {{ product.title }}
+{{ product.title }}
 
-{%- endfor %}
+{% endfor %}
 
-{%- for item in collection -%}{%- endfor -%}
+{% for item in collection %}
 
-
+{% endfor %}
