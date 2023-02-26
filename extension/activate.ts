@@ -15,7 +15,7 @@ class VSCodeLiquid extends Events {
     try {
 
       await this.getSettings();
-      await this.getContext();
+      await this.setFeatures();
 
       this.getWatchers();
       this.getFormatter();
@@ -35,13 +35,11 @@ class VSCodeLiquid extends Events {
 
         esthetic.rules(this.formatting.rules);
 
-        this.info(`Using .liquidrc file: ${this.uri.liquidrc.path}`);
+        this.info(`Using .liquidrc file for settings: ${this.uri.liquidrc.path}`);
 
       }
 
       await this.onDidChangeActiveTextEditor(window.activeTextEditor);
-
-      console.log(this);
 
     } catch (e) {
 
@@ -69,13 +67,10 @@ class VSCodeLiquid extends Events {
     this.config.method = ConfigMethod.Workspace;
     this.config.target = ConfigurationTarget.Workspace;
     this.uri.liquidrc = null;
-    this.dispose();
     this.formatting.reset();
     this.getWatchers(false);
 
-    for (const subscription of subscriptions) {
-      subscription.dispose();
-    }
+    for (const subscription of subscriptions) subscription.dispose();
 
     await this.activate(subscriptions);
 
@@ -121,9 +116,9 @@ class VSCodeLiquid extends Events {
   private register (subscriptions: { dispose(): void; }[]) {
 
     subscriptions.push(
-      languages.registerHoverProvider(this.selector, this.hovers),
+      // languages.registerHoverProvider(this.selector, this.hovers),
       languages.registerCompletionItemProvider(this.selector, this.completion, ...this.completion.triggers),
-      languages.registerDocumentLinkProvider(this.selector, this.links),
+      // languages.registerDocumentLinkProvider(this.selector, this.links),
       languages.registerDocumentFormattingEditProvider(this.selector, this.formatting)
     );
 
