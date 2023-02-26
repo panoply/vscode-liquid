@@ -5,6 +5,67 @@
 /* -------------------------------------------- */
 
 /**
+ * Tags
+ *
+ * Used to signal a certain _type_ of tag based on
+ * the tag name.
+ */
+export const enum Tag {
+  /**
+   * `{% assign %}`
+   */
+  Assign = 1,
+  /**
+   * `{% capture %}`
+   */
+  Capture,
+  /**
+   * `{% increment %}`
+   */
+  Increment,
+  /**
+   * `{% decrement %}`
+   */
+  Decrement,
+  /**
+   * `{% render %}`
+   */
+  Render,
+  /**
+   * `{% include %}`
+   */
+  Include,
+  /**
+   * `{% for %}`
+   */
+  For,
+  /**
+   * `{% if %}`
+   */
+  If,
+  /**
+   * `{% else %}`
+   */
+  Else,
+  /**
+   * `{% elsif %}`
+   */
+  Elsif,
+  /**
+   * `{% case %}`
+   */
+  Case,
+  /**
+   * `{% when %}`
+   */
+  When,
+  /**
+   * `{% liquid %}`
+   */
+  Liquid
+}
+
+/**
  * Token Type
  *
  * Used to infer the _type_ of token we are working with.
@@ -20,9 +81,17 @@ export const enum Token {
    */
   Object,
   /**
-   * Liquid Object
+   * Liquid argument, typically proceeding a colon `:`
+   */
+  Argument,
+  /**
+   * Liquid Object Property
    */
   Property,
+  /**
+   * Liquid Object Array (typically for loops)
+   */
+  Array,
   /**
    * Liquid Filter
    */
@@ -46,7 +115,27 @@ export const enum Token {
   /**
    * Liquid Schema Block Type
    */
-  Block
+  Block,
+  /**
+   * Liquid import type, like `{% render %}`, `{% include %}` etc
+   */
+  Import,
+  /**
+   * Liquid assign tag, assignment variable
+   */
+  Assignment,
+  /**
+   * Schema Settings
+   */
+  SchemaSettings,
+  /**
+   * Schema Block Settings
+   */
+  SchemaBlock,
+  /**
+   * Schema Block Type
+   */
+  SchemaBlockType,
 }
 
 /**
@@ -111,6 +200,10 @@ export const enum Char {
    * ` `
    */
   WSP = 32,
+  /**
+   * `\`
+   */
+  BWS = 92
 }
 
 /* -------------------------------------------- */
