@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable quote-props */
-import { Engines } from '@liquify/liquid-language-specs';
+import { Engines } from '@liquify/specs';
 import { Config, URI, Meta, Files } from './typings/store';
 import { Liquidrc, PackageJSON } from './typings/files';
 import { Selectors, LanguageIds } from './typings/document';
 import { ConfigurationTarget, Extension as IExtension, Uri, workspace } from 'vscode';
-import { ConfigMethod, LanguageParticipant } from './typings/enums';
+import { ConfigMethod } from './typings/enums';
 import { Service } from './services';
 
 /**
@@ -93,6 +93,7 @@ export class Extension extends Service {
     files: {
       shopify: {
         locales: null,
+        localesSchema: null,
         settings: null,
         snippets: new Set(),
         sections: new Set()
