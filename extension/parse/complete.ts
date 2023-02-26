@@ -143,13 +143,31 @@ export function getPropertyCompletions (token: IToken, vars: Complete.Vars) {
 
   let props: any;
   let vprop: any;
+  let array: boolean = false;
 
   if (token.object && vars.has(token.object)) {
 
     const item = vars.get(token.object);
+    array = item.kind === Tag.For;
 
-    props = item.value;
-    vprop = token.tagName;
+    if (array === true || item.type === Type.object || item.type === Type.keyword) {
+      props = item.value;
+      vprop = token.tagName;
+    } else {
+      props = token.tagName;
+    }
+
+  } else if (vars.has(token.tagName)) {
+
+    const item = vars.get(token.tagName);
+    array = item.kind === Tag.For;
+
+    if (array === true || item.type === Type.object || item.type === Type.keyword) {
+      props = item.value;
+      vprop = token.object;
+    } else {
+      props = token.object;
+    }
 
   } else {
 
@@ -158,8 +176,6 @@ export function getPropertyCompletions (token: IToken, vars: Complete.Vars) {
   }
 
   props = props.split('.').filter(Boolean);
-
-  console.log(props, vars);
 
   if (vprop) {
     vprop = vprop.split('.').filter(Boolean);
