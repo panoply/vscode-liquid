@@ -1,13 +1,38 @@
-{% for block in section.blocks %}
+{% # SECTION COMPLETIONS - TESTING SECTION SETTINGS %}
 
-  {% if block.type == "foo_block_type" %}
+{{ section.settings }}
 
-    {{ block.settings.xs }}
+{% # SECTION COMPLETIONS - TESTING ASSIGN VARIABLES %}
+
+{% assign foo = section %}
+{% assign bar = section.settings %}
+
+{{ foo.settings }}
+
+{{ bar }}
+
+{% # SECTION COMPLETIONS - TESTING BLOCK SCOPES %}
+
+{% for b_lock in foo.blocks  %}
+
+  {% # SECTION ASSIGN - TEST VARIABLE ASSIGNED BLOCK SETTINGS %}
+
+  {% assign b = b_lock %}
+  {% assign s = b_lock.settings %}
+
+  {{ b_lock }}
+
+  {{ b_lock.settings    }}
+  {% if b.type == "foo_block_type" %}
+
+    {{ b |  }}
+    {{ s  }}
 
   {% elsif block.type == "testing_blocks" %}
 
-    {{ block.settings }}
+    {{ block.settings. }}
 
+    {{ b.settings  }}
 
   {% endif %}
 
@@ -16,6 +41,8 @@
 
 {% schema %}
   {
+    "class": "",
+    "tag": "article",
     "name": "Example",
     "settings": [
       {

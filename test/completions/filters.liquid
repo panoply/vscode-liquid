@@ -1,2 +1,17 @@
-{{ foo |append: '' |prepend}
-}
+{% # FILTER COMPLETES %}
+
+{{ foo | append: '' |  }}
+
+{% # FILTER COMPLETES - ONLY SHOW TYPE STRING OBJECTS  %}
+
+{{ foo | append:  | prepend:  }}
+
+{% # FILTER COMPLETES - ONLY SHOW TYPE NUMBER OBJECTS  %}
+
+{{ foo | plus:  | minus:  }}
+
+{% # FILTER COMPLETES - ONLY SHOW IN ASSIGN %}
+
+{% render 'xxx' | %}
+
+{% assign bar = 'xxx' | %}

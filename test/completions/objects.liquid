@@ -1,18 +1,63 @@
-{{ article }}
+{% # OBJECTS - PROPERTY COMPLETES %}
 
-{% if product.available or product %}{% endif %}
+{{ address }}
+{{ collection }}
 
-<div>
-  {{ product }}
-  {% if product.available %}
+{% # LOCALES - PROPERTY COMPLETES %}
 
-    {% assign variable = value %}
+{{ 'general.cart' }}
+{{ 'sections.cart' }}
 
-    {% if address.address1 %}{% endif %}
+{% # VARIABLE ITEREE - ONLY ARRAY TYPES WILL SHOW %}
 
-    {{ }}
+{% for item in product.collections %}
 
-  {% endif %}
-</div>
+  {% # ASSIGNMENT IN LOOP %}
 
-{% for i in product.available %}{% endfor %}
+  {% assign xxx = product.collections %}
+
+  {% # ITEREE COMPLETES %}
+
+  {{ item }}
+
+  {{ xxx }}
+
+{% endfor %}
+
+{% # ITEREE TEST - NO COMPLETION SHOULD SHOW %}
+
+{{ item }}
+
+{% # ITEREE TEST - SHOW COMPLETION: xxx %}
+
+{{  }}
+
+{% # VARIABLES - SIMPLE COMPLETES %}
+
+{% assign foo = 'string' %}
+{% assign bar = 1000 %}
+{% assign baz = false %}
+
+{{  }}
+
+{% # VARIABLE OBJECTS - PROPERTY COMPLETES %}
+
+{% assign obj_1 = product %}
+
+{{ obj_1.collections }}
+
+{% assign prop = product.featured_image %}
+
+{{ prop.presentation }}
+
+{% # VARIABLE RE-ASSIGN %}
+
+{% assign baz = product %}
+
+{{ baz }}
+
+{% # VARIABLE FILTERS - NO PROPERTY DUE TO FILTER %}
+
+{% assign obj_2 = product | append: 'xxx' %}
+
+{{ obj_2 }}
