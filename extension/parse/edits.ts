@@ -41,3 +41,15 @@ export function insertSpace (position: Position) {
   ];
 
 }
+
+/**
+ * Insert Translate Filter
+ *
+ * Inserts a translate filter to locale object tags
+ */
+export function insertTranslate (position: Position, token: string) {
+
+  return (/['"]\s*(?=-?}})/).test(token) ? [
+    TextEdit.insert(new Position(position.line, position.character + 2), '| t ')
+  ] : [];
+}
