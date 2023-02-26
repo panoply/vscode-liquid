@@ -1,6 +1,6 @@
-import { SchemaRegion } from '../types';
-import { languages, Position, Range, TextDocument as ITextDocument, Uri } from 'vscode';
-import { schema } from '../lexical/store';
+import { Complete, SchemaRegion } from 'types';
+import { languages, Position, Range, TextDocument as ITextDocument, Uri, CompletionItem } from 'vscode';
+import { schema } from 'data/store';
 import {
   getLanguageService,
   DiagnosticSeverity,
@@ -12,9 +12,17 @@ import {
 
 export class JSONLanguageProvider {
 
-  public config: { validate: boolean } = {
-    validate: true
-  };
+  /**
+   * Schema Regions
+   *
+   * The schema tag regions
+   */
+  static schema: Complete.Schema = new Map();
+
+  /**
+   * Configuration
+   */
+  public config: { validate: boolean } = { validate: true };
 
   /**
    * Can Format
@@ -75,15 +83,22 @@ export class JSONLanguageProvider {
 
   }
 
-  public doParse (document: ITextDocument, position: Position, schema: {
-    within: boolean;
-    start: number;
-    ender: number;
-    readonly content: string
-  }) {
+  /**
+   * Schema Getter
+   *
+   * Returns the static `schema` Map reference
+   */
+  get schema () { return JSONLanguageProvider.schema; }
+
+  /**
+   * Parse JSON
+   *
+   * Parses the inner contents of the JSON schema tag
+   */
+  public doParse (document: ITextDocument, position: Position, schema: Complete.ISchema) {
 
     const uri = document.fileName + '.json';
-    const { line } = document.positionAt(schema.start);
+    const { line } = document.positionAt(schema.begin);
 
     return {
       get position () {
@@ -115,12 +130,12 @@ export class JSONLanguageProvider {
    *
    * Parse the JSON generated content and returns the completion results.
    */
-  async doCompletions ({ textDocument, position }: SchemaRegion) {
+  async doCompletions ({ textDocument, position }: SchemaRegion): Promise<CompletionItem[]> {
 
     const JSONDocument = this.service.parseJSONDocument(textDocument);
-    const competionResult = await this.service.doComplete(textDocument, position, JSONDocument);
+    const competion = await this.service.doComplete(textDocument, position, JSONDocument);
 
-    return competionResult.items;
+    return competion.items;
   }
 
   /**
@@ -128,8 +143,9 @@ export class JSONLanguageProvider {
    *
    * Applies JSON validation to the Schema code region.
    */
-  async doValidation (uri: Uri, { content, offset }: { content: string; offset: number }): Promise< Diagnostic[]> {
+  async doValidation (uri: Uri): Promise< Diagnostic[]> {
 
+    const { content, offset } = this.schema.get(uri.fsPath);
     const textDocument = TextDocument.create(uri, 'json', 1, content);
     const JSONDocument = this.service.parseJSONDocument(textDocument);
     const diagnostics = await this.service.doValidation(textDocument, JSONDocument, {
