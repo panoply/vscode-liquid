@@ -8,7 +8,7 @@ import anymatch from 'anymatch';
 import { OutputChannel } from './OutputChannel';
 import { Setting, ConfigMethod, Workspace, InLanguageIds, LanguageIds, Liquidrc, LanguageParticipant } from '../types';
 import * as u from '../utils';
-import { getSettingsCompletions } from 'lexical/tags';
+import { getSettingsCompletions } from 'data/liquid';
 import { $ } from '@liquify/specs';
 
 export class WorkspaceSettings extends OutputChannel {
@@ -168,9 +168,9 @@ export class WorkspaceSettings extends OutputChannel {
    * Generates the URI paths defined either via workspace settings on
    * `liquid.file.*` configurations or from the `.liquidrc` file.
    */
-  async getExternal () {
+  async getExternal (files: string[]) {
 
-    for (const name of [ 'locales', 'settings' ]) {
+    for (const name of files) {
 
       if (this.files[name] !== null) {
 
@@ -184,10 +184,10 @@ export class WorkspaceSettings extends OutputChannel {
             if (name === 'locales') {
 
               const locales = await u.parseJsonFile(this.files[name]);
-              const localesSchema = await u.parseJsonFile(this.files.localesSchema);
+              const schema = await u.parseJsonFile(this.files.localesSchema);
 
-              $.liquid.data.store.set('locales', localesSchema);
-              $.liquid.data.store.set('locales_schema', localesSchema);
+              $.liquid.files.set('locales', locales);
+              $.liquid.files.set('locales_schema', schema);
 
             } else if (name === 'settings') {
 
@@ -337,9 +337,7 @@ export class WorkspaceSettings extends OutputChannel {
               if (file === 'locales') {
                 const name = this.liquidrc.files[file].replace(/\.json$/, '.schema.json');
                 const schema = Uri.file(join(root, name));
-                if (u.pathExists(schema.fsPath)) {
-                  this.files.localesSchema = schema;
-                }
+                if (await u.pathExists(schema.fsPath)) this.files.localesSchema = schema;
               }
 
               defined = true;
@@ -758,7 +756,7 @@ export class WorkspaceSettings extends OutputChannel {
       if (this.deprecation.liquidrc === null) {
 
         await this.getFiles();
-        await this.getExternal();
+        await this.getExternal([ 'locales', 'settings' ]);
 
         this.getFormatRules();
         this.getEngine();
@@ -954,7 +952,7 @@ export class WorkspaceSettings extends OutputChannel {
     this.getValidations();
     this.getHovers();
 
-    await this.getExternal();
+    await this.getExternal([ 'locales', 'settings' ]);
 
   };
 
