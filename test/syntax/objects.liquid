@@ -2,7 +2,6 @@
 
 {{ page_title }}
 {{ page_description }}
-{{ page_image }}
 
 {% # OBJECT > NUMERIC %}
 
@@ -23,6 +22,7 @@
 
 {{ product.variants }}
 {{ collection.products }}
+{{ page_image }}
 
 {% # OBJECT > PROPERTY DEEP DROP %}
 
@@ -55,7 +55,7 @@
 {% # UNKNOWN EDGE CASES OBJECT > PROPERTY %}
 
 {{ _foo.bar | prepend: _.bar | append: foo-bar.baz[prop.object.prop] }}
-{{ object.property_1.property_2.property_2.collection.name }}
+{{ object.property_1.collection.name }}
 
 {% # KNOWN OBJECT > PROPERTY DROPS %}
 
