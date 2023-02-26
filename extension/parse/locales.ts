@@ -18,12 +18,6 @@ export function LocaleSchema (key: string) {
 
 }
 
-export function LocaleFilter (text: string) {
-
-  return (/['"]\s*(?=-?}})/).test(text);
-
-}
-
 /**
  * Get Locale Completions
  *
