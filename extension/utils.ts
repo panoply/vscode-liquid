@@ -65,7 +65,32 @@ export const entries = Object.entries;
 /**
  * Cache reference of `Object.keys`
  */
+export const values = Object.values;
+
+/**
+ * Cache reference of `Object.keys`
+ */
 export const keys = Object.keys;
+
+/**
+ * Cache reference of `Object.keys`
+ */
+export const assign = Object.assign;
+
+/* -------------------------------------------- */
+/* COMMON                                       */
+/* -------------------------------------------- */
+
+/**
+ * Set Ending Range
+ *
+ * Returns `Range` from the start of document until the provided position
+ */
+export function setEndRange (end: Position) {
+
+  return new Range(new Position(0, 0), new Position(end.line + 1, 0));
+
+}
 
 /* -------------------------------------------- */
 /* FILE SYSTEM                                  */
