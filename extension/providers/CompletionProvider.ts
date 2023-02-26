@@ -1,10 +1,15 @@
-import { Type } from '@liquify/liquid-language-specs';
-import { parseSchema, getSchemaCompletions, typeToken, parseToken, prevChar, parseLocale, applyTranslateFilter, parseObject, getVariableObject } from '../lexical/parse';
-import { EmptyOutput, EmptyTag } from '../lexical/regex';
-import { getSectionCompletions, getSectionScope } from '../lexical/schema';
-import { getVariableCompletions } from '../lexical/variables';
-import { Service } from '../services';
-import { Char, Token, Completions, SettingsData } from '../types';
+import { $, Type, q } from '@liquify/specs';
+import { Service } from 'services';
+import { Char, Token, Complete, Workspace } from 'types';
+import { getTokenCursor, getToken, isEmptyOutput, isEmptyTag } from 'parse/tokens';
+import { getSectionCompletions, getSectionScope } from 'parse/schema';
+import { insertSpace, insertTag } from 'parse/edits';
+import {
+  getObjectCompletions,
+  getSchemaCompletions,
+  getPropertyCompletions,
+  getLocaleCompletions
+} from 'parse/complete';
 import {
   CancellationToken,
   CompletionContext,
@@ -15,181 +20,6 @@ import {
   TextDocument,
   TextEdit
 } from 'vscode';
-import { schema } from 'lexical/store';
-
-/**
- * Liquid Completions
- */
-export interface ICompletionEnable {
-  /**
-   * Whether or not tag completions are enabled
-   *
-   * - Standard
-   * - Shopify
-   * - Jekyll
-   * - Eleventy
-   *
-   * @default true
-   */
-  tags: boolean;
-  /**
-   * Whether or not operator completions are enabled
-   *
-   * - Standard
-   * - Shopify
-   * - Jekyll
-   * - Eleventy
-   *
-   * @default true
-   */
-  operators: boolean;
-  /**
-   * Whether or not filter completions are enabled
-   *
-   * - Standard
-   * - Shopify
-   * - Jekyll
-   * - Eleventy
-   *
-   * @default true
-   */
-  filters: boolean;
-  /**
-   * Whether or not object completions are enabled
-   *
-   * - Shopify
-   * - Jekyll
-   * - Eleventy
-   *
-   * @default true
-   */
-  objects: boolean;
-  /**
-   * Whether or not section schema completions are enabled
-   *
-   * - Shopify
-   *
-   * @default true
-   */
-  schema: boolean;
-  /**
-   * Whether or not locale file completions are enabled
-   *
-   * - Shopify
-   *
-   * @default true
-   */
-  locales: boolean;
-  /**
-   * Whether or not `settings_data.json` file completions are enabled
-   *
-   * - Shopify
-   *
-   * @default true
-   */
-  settings: boolean;
-  /**
-   * Whether or not `snippet` file completions are enabled
-   *
-   * - Shopify
-   *
-   * @default true
-   */
-  snippets: boolean;
-  /**
-   * Whether or not `_include` file completions are enabled
-   *
-   * - Jekyll
-   * - Eleventy
-   *
-   * @default true
-   */
-  includes: boolean;
-  /**
-   * Whether or not `section` file completions are enabled
-   *
-   * - Shopify
-   *
-   * @default true
-   */
-  sections: boolean;
-  /**
-   * Whether or not data file completions are enabled
-   *
-   * - Jekyll
-   * - Eleventy
-   *
-   * @default true
-   */
-  data: boolean;
-  /**
-   * Whether or not frontmatter completions are enabled
-   *
-   * - Jekyll
-   * - Eleventy
-   *
-   * @default true
-   */
-  frontmatter: boolean;
-}
-
-export interface ICompletionLinkedRefs {
-  /**
-   * Settings Completions
-   */
-  settings: {
-    /**
-     * The settings file path
-     */
-    uri: string;
-    /**
-     * The settings parsed file
-     */
-    data: SettingsData[];
-    /**
-     * Whether to enable
-     */
-    enable: boolean;
-    /**
-     * Completion Items
-     */
-    items: CompletionItem[]
-  }
-  /**
-   * Locale Completions
-   */
-  locales: {
-    /**
-     * The locales file path
-     */
-    uri: string;
-    /**
-     * The locales parsed file
-     */
-    data: object;
-    /**
-     * Whether to enable
-     */
-    enable: boolean;
-    /**
-     * Completion Items
-     */
-    items: {
-      [prop: string]: CompletionItem[]
-    }
-  }
-}
-
-export type ICompletionItems = Map<
-| 'tags'
-| 'operators'
-| 'filters'
-| 'objects'
-| 'common'
-| 'snippets'
-| 'sections'
-| 'settings'
-| 'localea', CompletionItem[]>
 
 export class CompletionProvider extends Service implements CompletionItemProvider {
 
@@ -217,45 +47,48 @@ export class CompletionProvider extends Service implements CompletionItemProvide
    *
    * Determines whether or not a completion can be shown
    */
-  public enable: ICompletionEnable = {
+  public enable: Workspace.Completion = {
     tags: true,
     operators: true,
     filters: true,
     objects: true,
     schema: true,
-
-    // File References Required
+    variables: true,
     locales: false,
     sections: false,
     settings: false,
     snippets: false,
-
-    // 11ty & Jekyll
     data: false,
     frontmatter: false,
     includes: false
-
   };
-
-  /**
-   * Completion Variables
-   */
-  public vars: Map<string, Map<string, {
-    start: number,
-    ender: number,
-    value: string,
-    detail: string,
-    type: Type,
-    keyword: string
-  }>> = new Map();
 
   /**
    * Completion Items
    *
    * The completion items to be provided on resolution
    */
-  public items: ICompletionItems = new Map();
+  public items: Complete.Items = new Map();
 
+  /**
+   * Completion Files
+   *
+   * The completion file uri path references
+   */
+  public files: { locales: string; settings: string } = { locales: null, settings: null };
+
+  /**
+   * Completion Variables
+   *
+   * The completion variables to be provided on resolution
+   */
+  public vars: Complete.Vars = new Map();
+
+  /**
+   * Text Edits
+   *
+   * An additional set of text edits to be provided on resolution
+   */
   private textEdits: TextEdit[] = null;
 
   /* -------------------------------------------- */
@@ -265,15 +98,6 @@ export class CompletionProvider extends Service implements CompletionItemProvide
   /**
    * The completion item provider interface defines the contract between extensions and
    * [IntelliSense](https://code.visualstudio.com/docs/editor/intellisense).
-   *
-   * Providers can delay the computation of the {@linkcode CompletionItem.detail detail}
-   * and {@linkcode CompletionItem.documentation documentation} properties by implementing the
-   * {@linkcode CompletionItemProvider.resolveCompletionItem resolveCompletionItem}-function. However, properties that
-   * are needed for the initial sorting and filtering, like `sortText`, `filterText`, `insertText`, and `range`, must
-   * not be changed during resolve.
-   *
-   * Providers are asked for completions either explicitly by a user gesture or -depending on the configuration-
-   * implicitly when typing words or trigger characters.
    */
   async provideCompletionItems (
     document: TextDocument,
@@ -286,13 +110,9 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
     this.textEdits = null;
 
-    const trigger = CompletionTriggerKind.TriggerCharacter === triggerKind
-      ? triggerCharacter.charCodeAt(0)
-      : false;
-
     const content = document.getText();
     const offset = document.offsetAt(position);
-    const vars = this.vars.get(document.uri.path);
+    const trigger = CompletionTriggerKind.TriggerCharacter === triggerKind ? triggerCharacter.charCodeAt(0) : false;
 
     /* -------------------------------------------- */
     /* SCHEMA PROPERTY                              */
@@ -300,213 +120,261 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
     if (trigger === Char.DQO || trigger === Char.COL || triggerKind === CompletionTriggerKind.Invoke) {
 
-      const isSchema = parseSchema(content, offset);
+      if (!this.enable.schema) return null;
 
-      if (isSchema !== false && isSchema.within === true) {
+      if (this.json.schema.has(document.uri.fsPath)) {
 
-        const schema = this.json.doParse(document, position, isSchema);
-        const items = await this.json.doCompletions(schema);
+        q.setType(null);
 
-        return getSchemaCompletions(
-          trigger === Char.DQO ? 1 : 0,
-          position.line,
-          position.character,
-          items as any
+        const schema = this.json.schema.get(document.uri.fsPath);
+
+        if (offset > schema.begin && offset < schema.ender) {
+
+          const parse = this.json.doParse(document, position, schema);
+          const items = await this.json.doCompletions(parse);
+
+          return getSchemaCompletions(trigger === Char.DQO ? 1 : 0, position, items);
+        }
+      }
+    }
+
+    /* -------------------------------------------- */
+    /* INTELLISENSE                                 */
+    /* -------------------------------------------- */
+
+    const token = getToken(content, offset);
+
+    if (token.within === false) {
+
+      /* -------------------------------------------- */
+      /* TAG COMPLETIONS                              */
+      /* -------------------------------------------- */
+      if (trigger === Char.PER) {
+
+        if (!this.enable.tags) return null;
+
+        q.setType(null);
+
+        this.textEdits = insertTag(position);
+
+        return this.items.get('tags');
+
+      }
+
+      return null;
+
+    }
+
+    /* -------------------------------------------- */
+    /* EMPTY OUTPUT                                 */
+    /* -------------------------------------------- */
+
+    if (isEmptyOutput(token.text)) {
+
+      q.setType(null);
+
+      return this.enable.objects ? getObjectCompletions(
+        document,
+        this.items.get('objects'),
+        this.vars,
+        offset
+      ) : null;
+    }
+
+    /* -------------------------------------------- */
+    /* EMPTY TAG                                    */
+    /* -------------------------------------------- */
+
+    if (token.type === Token.Tag && isEmptyTag(token.text)) {
+
+      q.setType(null);
+
+      return this.enable.tags ? this.items.get('tags') : null;
+
+    }
+
+    const cursor = getTokenCursor(token);
+
+    /* -------------------------------------------- */
+    /* ARGUMENTS                                    */
+    /* -------------------------------------------- */
+
+    if (cursor === Token.Argument) {
+
+      if (!this.enable.objects) return null;
+
+      if (token.filter && q.setFilter(token.filter)) {
+
+        q.setType($.liquid.argument.type as Type);
+
+        return getObjectCompletions(
+          document,
+          this.items.get(`object:${$.liquid.argument.type as any}`),
+          this.vars
+        );
+
+      } else {
+
+        q.setType(null);
+
+        return getObjectCompletions(
+          document,
+          this.items.get('objects'),
+          this.vars
         );
 
       }
+    }
+
+    /* -------------------------------------------- */
+    /* FILTERS                                      */
+    /* -------------------------------------------- */
+
+    if (cursor === Token.Filter && (
+      trigger === Char.PIP ||
+      trigger === Char.WSP ||
+      triggerKind === CompletionTriggerKind.Invoke
+    )) {
+
+      q.setType(null);
+
+      if (!this.enable.filters) return null;
+
+      this.textEdits = insertSpace(position);
+
+      if (token.type === Token.Tag) {
+
+        return q.setTag(token.tagName)
+          ? $.liquid.tag.filters ? this.items.get('filters') : null
+          : null;
+      }
+
+      return this.items.get('filters');
 
     }
 
     /* -------------------------------------------- */
-    /* TAG COMPLETIONS                              */
+    /* LOCALES                                      */
     /* -------------------------------------------- */
 
-    if (trigger === Char.PER) {
-      if (!this.enable.tags) return null;
-      this.textEdits = [ TextEdit.insert(new Position(position.line, position.character - 1), '{') ];
-      return this.items.get('tags');
+    if (token.type === Token.Object) {
+      if (trigger === Char.SQO || trigger === Char.DQO || (cursor === Token.Locale && trigger === Char.DOT)) {
+
+        return getLocaleCompletions(
+          document.uri.fsPath,
+          token.object
+        );
+
+      }
     }
 
-    const type = typeToken(content, offset);
+    /* -------------------------------------------- */
+    /* OBJECT PROPERTIES                            */
+    /* -------------------------------------------- */
 
-    if (type === Token.Object) {
+    if (trigger === Char.DOT || cursor === Token.Property || cursor === Token.Block) {
 
-      const object = parseToken(Token.Object, content, offset);
+      if (!this.enable.objects) return null;
 
-      if (object.within) {
+      const props = getPropertyCompletions(token, this.vars);
 
-        if (EmptyOutput.test(object.text) && this.enable.objects) {
+      if (props !== null && this.enable.schema) {
 
-          // Concatenate variables and objects
-          return [].concat(getVariableCompletions(vars), this.items.get('objects'));
+        const schema = this.json.schema.get(document.uri.fsPath);
 
+        if (props === Token.SchemaSettings) {
+          return getSectionCompletions(schema, props);
         }
 
-        const prev = prevChar(object.text, object.offset);
+        if (props === Token.SchemaBlock) {
 
-        /* -------------------------------------------- */
-        /* LOCALES                                      */
-        /* -------------------------------------------- */
+          const type = getSectionScope(content, offset);
 
-        if (trigger === Char.SQO || trigger === Char.DQO || (prev === Token.Locale && trigger === Char.DOT)) {
-
-          const locales = parseLocale(this.refs.locales, content, offset, {
-            addFilter: applyTranslateFilter(object.text.slice(object.offset)),
-            position
-          });
-
-          return locales;
+          if (type !== null) return getSectionCompletions(schema, props, type);
 
         }
+      }
 
-        /* -------------------------------------------- */
-        /* FILTERS                                      */
-        /* -------------------------------------------- */
+      return props;
 
-        if (trigger === Char.PIP || prev === Token.Filter) {
+    }
 
-          return this.enable.filters ? this.items.get('filters') : null;
+    if (token.type === Token.Tag) {
 
+      /* -------------------------------------------- */
+      /* FILE IMPORTS                                 */
+      /* -------------------------------------------- */
+
+      if (cursor === Token.Import && (trigger === Char.DQO || trigger === Char.SQO)) {
+
+        q.setType(null);
+
+        if (token.tagName === 'render' || token.tagName === 'include') {
+          return this.items.get('snippets');
         }
 
-        /* -------------------------------------------- */
-        /* LIQUID SCHEMA                                */
-        /* -------------------------------------------- */
-
-        if (trigger === Char.DOT || prev === Token.Property || prev === Token.Block) {
-
-          const schema = this.enable.objects
-            ? vars.has(object.tagName)
-              ? getVariableObject(vars.get(object.tagName))
-              : parseObject(object.text, object.offset)
-            : null;
-
-          if (schema !== null && this.enable.schema) {
-
-            if (schema === 'settings') {
-
-              return getSectionCompletions(content, offset, schema);
-
-            } else if (schema === 'block') {
-
-              const type = getSectionScope(content, offset);
-
-              if (type !== null) {
-
-                return getSectionCompletions(
-                  content,
-                  offset,
-                  schema,
-                  type
-                );
-
-              }
-            }
-          }
-
-          return schema;
-
+        if (token.tagName === 'section') {
+          return this.items.get('sections');
         }
-
-        /* -------------------------------------------- */
-        /* FILTER AFTER COLON                           */
-        /* -------------------------------------------- */
-
-        if (trigger === Char.COL || prev === Token.Object) {
-          return this.enable.objects
-            ? [].concat(getVariableCompletions(vars), this.items.get('objects'))
-            : null;
-        }
-
-        return null;
 
       }
 
-    } else if (type === Token.Tag) {
+      if (trigger === Char.WSP) {
 
-      const tag = parseToken(Token.Tag, content, offset);
+        /* -------------------------------------------- */
+        /* FOR LOOP ARRAY                               */
+        /* -------------------------------------------- */
 
-      if (tag.within) {
+        if (cursor === Token.Array) {
 
-        if (EmptyTag.test(tag.text) && this.enable.tags) return this.items.get('tags');
+          if (!this.enable.objects) return null;
 
-        const prev = prevChar(tag.text, tag.offset, tag.tagName);
+          q.setType(Type.array);
 
-        if (prev === Token.Tag && (trigger === Char.DQO || trigger === Char.SQO)) {
-          if (tag.tagName === 'render' || tag.tagName === 'include') {
-
-            return this.items.get('snippets');
-
-          } else if (tag.tagName === 'section') {
-
-            return this.items.get('sections');
-
-          }
-        }
-
-        if (prev === Token.Block) {
-
-          if (trigger === Char.DQO || trigger === Char.SQO) {
-
-            return getSectionCompletions(content, offset, 'type');
-
-          } else {
-
-            return getSectionCompletions(content, offset, 'type', 'string');
-
-          }
-        }
-
-        if (trigger === Char.PIP || prev === Token.Filter) {
-          return this.enable.filters
-            ? this.items.get('filters')
-            : null;
-        }
-
-        if (trigger === Char.DOT || prev === Token.Property) {
-
-          const schema = this.enable.objects
-            ? parseObject(tag.text, tag.offset, this.items.settings)
-            : null;
-
-          if (schema !== null && this.enable.schema) {
-            if (schema === 'settings') {
-
-              return getSectionCompletions(content, offset, schema);
-
-            } else if (schema === 'block') {
-
-              const type = getSectionScope(content, offset);
-
-              if (type !== null) {
-
-                return getSectionCompletions(content, offset, schema, type);
-
-              }
-            }
-          }
-
-          return schema;
+          return getObjectCompletions(
+            document,
+            this.items.get(`object:${Type.array}`),
+            this.vars,
+            offset
+          );
 
         }
 
-        if (trigger === Char.COL || prev === Token.Object) {
+        /* -------------------------------------------- */
+        /* ASSIGNMENT                                   */
+        /* -------------------------------------------- */
 
-          return this.enable.objects
-            ? this.items.common
+        if (cursor === Token.Assignment) {
+
+          if (!this.enable.objects) return null;
+
+          q.setType(null);
+
+          return getObjectCompletions(
+            document,
+            this.items.get('objects'),
+            this.vars,
+            offset
+          );
+
+        }
+
+        /* -------------------------------------------- */
+        /* OPERATORS                                    */
+        /* -------------------------------------------- */
+
+        if (token.type === Token.Tag && cursor === Token.Logical) {
+
+          return this.enable.operators
+            ? this.items.get('operators')
             : null;
 
         }
 
-        if (prev === Token.Logical && this.enable.operators) {
-          return this.items.get('operators');
-        }
-
-        return null;
       }
-
     }
+
+    return null;
 
   }
 
