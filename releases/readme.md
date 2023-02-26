@@ -1,6 +1,6 @@
 # Releases
 
-This directory contains release notes and changelogs pertaining to each version of the extension. Versioning for this extension is not quite semantic but does borrow from the semantic foundations. Whenever a considerable amount of changes which require refactors by the end user result in a **major** version update.
+This directory contains release notes and changelogs pertaining to each version of the extension. Versioning for vscode-liquid extension is not quite semantic but does borrow from the semantic foundations. Whenever a considerable amount of changes are shipped or those which are considered **breaking** and require a refactors/alignment by users will result in a **major** version update.
 
 The extension is currently in the version **4.x.x** range.
 
