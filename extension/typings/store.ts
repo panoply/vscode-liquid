@@ -225,6 +225,10 @@ export namespace Files {
      */
     locales: Uri;
     /**
+     * An automated resolve of a locales schema file.
+     */
+    localesSchema: Uri;
+    /**
     * Settings (`settings_data.json`) file path
     */
     settings: Uri;
