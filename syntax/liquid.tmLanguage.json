@@ -1,11 +1,14 @@
 {
   "information_for_contributors": [
-    "The provided text mate grammars provide Liquid syntax highlighting support. This is not a forked",
-    "grammar file and if you wish to use or borrow logic please ask for permission before doing so.",
-    "The grammars are written for usage within vscode and support all Liquid variations. The contents of",
-    "this file is supporting the Liquid standard variation and it's from this grammar which all Liquid",
-    "variations are extended. Embedded code regions of external scoped languages is made possible through",
-    "grammar injections"
+    "IMPORTANT",
+    "----------",
+    "These text mate grammars provide Liquid syntax highlighting support. This is NOT a forked",
+    "grammar file not does it borrow implied patterns. If you wish to use, borrow or apply its logic",
+    "you must first ask for permission. The grammars are written for usage within vscode and support all",
+    "Liquid variations. The contents of this file in particular supports the Liquid Standard variation and it",
+    "is from this grammar all additional Liquid variations are extended. The Embedded code regions of external",
+    "scoped languages are made possible through grammar injections and liquid variation extensions can also be",
+    "appropriated using grammar injections."
   ],
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Liquid",
@@ -14,21 +17,35 @@
   "injections": {
     "L:meta - (meta.embedded.block.liquid)": {
       "patterns": [
-        { "include": "source.liquid#comment-line" },
-        { "include": "source.liquid#tags" },
-        { "include": "source.liquid#output" }
+        {
+          "include": "source.liquid#comment-line"
+        },
+        {
+          "include": "source.liquid#tags"
+        },
+        {
+          "include": "source.liquid#output"
+        }
       ]
     },
     "L:entity.other.attribute-name.class.css": {
       "patterns": [
-        { "include": "source.liquid#tags" },
-        { "include": "source.liquid#output" }
+        {
+          "include": "source.liquid#tags"
+        },
+        {
+          "include": "source.liquid#output"
+        }
       ]
     },
     "L:string - (string.quoted.*.html)": {
       "patterns": [
-        { "include": "source.liquid#tags" },
-        { "include": "source.liquid#output" }
+        {
+          "include": "source.liquid#tags"
+        },
+        {
+          "include": "source.liquid#output"
+        }
       ]
     },
     "L:source.js": {
@@ -237,23 +254,28 @@
       "patterns": [
         {
           "name": "variable.parameter.liquid",
-          "match": "(?!\\|)\\s*\\b([a-zA-Z0-9_-]+)\\b\\s*(?=:)"
+          "match": "(?![\\|\\S])\\s+\\b([a-zA-Z0-9_-]+)\\b\\s*(?=:)"
         }
       ]
     },
     "numeric": {
       "patterns": [
         {
-          "name": "constant.numeric.float.liquid",
-          "match": "(?!\\B)([\\-|\\+])?([0-9]{1,}((?:\\.)[0-9]{1,})?)"
+          "name": "constant.numeric.index.liquid",
+          "match": "(?<=[\\[(]\\s*)(\\d+)(?=\\s*[\\]\\)])"
         },
         {
           "name": "constant.numeric.integer.liquid",
-          "match": "(\\+|\\-)[\\d]+"
+          "match": "\\s([\\+\\-]|\\.)?\\d+[\\d.]+?(?!\\.)\\s",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.arithmetic.liquid"
+            }
+          }
         },
         {
           "name": "constant.numeric.natural.liquid",
-          "match": "\\B([\\d]+)\\B"
+          "match": "\\s(\\d+)\\s"
         }
       ]
     },
@@ -264,13 +286,10 @@
       "patterns": [
         {
           "name": "keyword.operator.spread.liquid",
-          "match": "\\.{2}"
+          "match": "\\.\\."
         },
         {
           "include": "#objects"
-        },
-        {
-          "include": "#numeric"
         }
       ]
     },
@@ -469,19 +488,19 @@
         },
         {
           "name": "entity.name.tag.object.liquid",
-          "match": "\\b(content_for_additional_checkout_buttons|content_for_header|content_for_index|content_for_layout|country_option_tags)\\b"
+          "match": "\\b(collections|pages|all_products|articles|blogs|content_for_header|images|linklists|additional_checkout_buttons|current_tags)\\b"
         },
         {
           "name": "support.class.object-value.liquid",
-          "match": "(?!\\.)\\b(address|article|block|blog|cart|checkout|collection|color|comment|country|currency|customer|customer_address|discount_allocation|discount_application|external_video|font|form|forloop|fulfillment|gift_card|group|image|line_item|link|linklist|localization|page|product|product_options|location|order|recommendations|request|robots|routes|rule|script|scripts|search|section|selling_plan|selling_plan_allocation|selling_plan_allocation_price_adjustment|selling_plan_checkout_charge|selling_plan_group|selling_plan_group_option|selling_plan_option|selling_plan_price_adjustment|shipping_method|shop|shop_locale|sitemap|sort_option|store_availability|tablerowloop|tax_line|template|theme|transaction|transaction_payment_details|unit_price_measurement|user_agent|model|model_source|media|variant|video|video_source)\\b(?![\\.])"
+          "match": "(?!\\.)\\b(media|address|app|discount|article|block|blog|cart|collection|color|company_address|company|company_location|country|currency|customer|discount_allocation|discount_application|external_video|filter|filter_value|focal_point|font|form|fulfillment|generic_file|gift_card|image|image_presentation|line_item|link|linklist|forloop|tablerowloop|localization|location|measurement|metafield|metaobject_definition|metaobject|metaobject_system|model|model_source|money|order|page|paginate|predictive_search|selling_plan_price_adjustment|product|product_option|variant|rating|recommendations|request|robots|group|rule|routes|script|search|section|selling_plan_allocation|selling_plan_allocation_price_adjustment|selling_plan_checkout_charge|selling_plan|selling_plan_group|selling_plan_group_option|selling_plan_option|shipping_method|shop|shop_locale|policy|store_availability|tax_line|theme|template|transaction|unit_price_measurement|user|video|video_source|checkout|comment|form_errors|page_image|part|pending_payment_instruction_input|predictive_search_resources|quantity_rule|scripts|sitemap|sort_option|transaction_payment_details|user_agent)\\b(?![\\.])"
         },
         {
           "name": "support.class.object-value.liquid",
-          "match": "(?<=\\.\\s*)\\b(address|article|block|blog|cart|checkout|collection|color|comment|country|currency|customer|customer_address|discount_allocation|discount_application|external_video|font|form|forloop|fulfillment|gift_card|group|image|line_item|link|linklist|localization|page|product|product_options|location|order|recommendations|request|robots|routes|rule|script|scripts|search|section|selling_plan|selling_plan_allocation|selling_plan_allocation_price_adjustment|selling_plan_checkout_charge|selling_plan_group|selling_plan_group_option|selling_plan_option|selling_plan_price_adjustment|shipping_method|shop|shop_locale|sitemap|sort_option|store_availability|tablerowloop|tax_line|template|theme|transaction|transaction_payment_details|unit_price_measurement|user_agent|model|model_source|media|variant|video|video_source)\\b"
+          "match": "(?<=\\.\\s*)\\b(media|address|app|discount|article|block|blog|cart|collection|color|company_address|company|company_location|country|currency|customer|discount_allocation|discount_application|external_video|filter|filter_value|focal_point|font|form|fulfillment|generic_file|gift_card|image|image_presentation|line_item|link|linklist|forloop|tablerowloop|localization|location|measurement|metafield|metaobject_definition|metaobject|metaobject_system|model|model_source|money|order|page|paginate|predictive_search|selling_plan_price_adjustment|product|product_option|variant|rating|recommendations|request|robots|group|rule|routes|script|search|section|selling_plan_allocation|selling_plan_allocation_price_adjustment|selling_plan_checkout_charge|selling_plan|selling_plan_group|selling_plan_group_option|selling_plan_option|shipping_method|shop|shop_locale|policy|store_availability|tax_line|theme|template|transaction|unit_price_measurement|user|video|video_source|checkout|comment|form_errors|page_image|part|pending_payment_instruction_input|predictive_search_resources|quantity_rule|scripts|sitemap|sort_option|transaction_payment_details|user_agent)\\b"
         },
         {
           "name": "string.other.object-value.liquid",
-          "match": "\\b(handle|page_description|page_image|page_title)\\b"
+          "match": "\\b(all_country_option_tags|canonical_url|content_for_additional_checkout_buttons|content_for_index|content_for_layout|country_option_tags|handle|page_description|page_title)\\b"
         },
         {
           "name": "constant.numeric.object-value.liquid",
@@ -489,15 +508,15 @@
         },
         {
           "name": "string.other.property-value.liquid",
-          "match": "(?<=(?:address|article|block|blog|cart|checkout|collection|comment|country|currency|customer|customer_address|discount_allocation|discount_application|external_video|font|form|fulfillment|gift_card|image|line_item|link|linklist|page|product|product_options|location|order|request|routes|rule|script|scripts|search|selling_plan|selling_plan_allocation|selling_plan_checkout_charge|selling_plan_group|selling_plan_group_option|selling_plan_option|selling_plan_price_adjustment|shipping_method|shop|shop_locale|sitemap|sort_option|store_availability|tax_line|template|theme|transaction|transaction_payment_details|unit_price_measurement|user_agent|model|model_source|media|variant|video|video_source)\\s*\\.)\\s*\\b(province_code|street|url|address1|address2|city|company|country_code|country|first_name|last_name|phone|zip|province|name|excerpt_or_content|content|excerpt|author|handle|comment_post_url|created_at|title|shopify_attributes|type|next_article|previous_article|link|attributes|currency|note|billing_address|email|order_name|shipping_address|shipping_method|tax_price|published_at|description|image|template_suffix|next_product|previous_product|current_type|sort_by|default_sort_by|current_vendor|status|updated_at|iso_code|unit_system|symbol|default_address|last_order|total_spent|discount_application|target_selection|target_type|value_type|alt|aspect_ratio|video_host|position|media_type|family|baseline_ratio|style|weight|fallback_families|body|tracking_company|tracking_number|tracking_url|customer|expires_on|src|fulfillment|fulfillment_service|message|id|featured_image|vendor|selected_value|address|latitude|longitude|cancelled|cancelled_at|cancel_reason|cancel_reason_label|customer_url|discount_applications|financial_status|financial_status_label|fulfillment_status|fulfillment_status_label|line_items_subtotal_price|location|order_status_url|shipping_methods|shipping_price|subtotal_price|tax_lines|total_discounts|total_net_amount|total_price|total_refunded_amount|host|locale|path|page_type|root_url|account_url|account_login_url|account_logout_url|account_register_url|account_addresses_url|collections_url|all_products_collection_url|search_url|cart_url|cart_add_url|cart_change_url|cart_clear_url|cart_update_url|product_recommendations_url|directive|value|terms|checkout_charge_amount|selling_plan_group_id|order_count|domain|money_format|money_with_currency_format|password_message|permanent_domain|secure_url|endonym_name|pick_up_time|rate_percentage|directory|suffix|amount|gateway|kind|receipt|status_label|credit_card_company|credit_card_number|measured_type|reference_unit|reference_value|preview_image|mime_type|format|barcode|compare_at_price|featured_media|inventory_management|inventory_policy|next_incoming_date|option1|option2|option3|price|sku|unit_price)\\b"
+          "match": "(?<=(?:media|address|discount|article|block|blog|cart|collection|color|company_address|company|company_location|country|currency|customer|discount_application|external_video|filter|filter_value|font|form|fulfillment|generic_file|gift_card|image|line_item|link|linklist|location|measurement|metafield|metaobject_system|model|model_source|order|page|paginate|predictive_search|selling_plan_price_adjustment|product|product_option|variant|recommendations|request|rule|routes|script|search|section|selling_plan_allocation|selling_plan_checkout_charge|selling_plan|selling_plan_group|selling_plan_group_option|selling_plan_option|shipping_method|shop|shop_locale|policy|store_availability|tax_line|theme|template|transaction|unit_price_measurement|user|video|video_source|checkout|comment|part|pending_payment_instruction_input|sitemap|sort_option|transaction_payment_details|user_agent)\\s*\\.)\\s*\\b(media_type|alt|company|phone|first_name|last_name|name|url|summary|address1|address2|city|zip|country_code|province_code|street|province|code|title|type|author|handle|id|template_suffix|created_at|published_at|updated_at|comment_post_url|content|excerpt|excerpt_or_content|shopify_attributes|note|description|current_vendor|current_type|sort_by|default_sort_by|rgb|rgba|attention|url_to_set_as_current|iso_code|unit_system|symbol|email|target_selection|value_type|target_type|external_id|host|param_name|label|url_to_remove|value|url_to_add|family|fallback_families|style|body|country|set_as_default_checkbox|tracking_company|tracking_number|tracking_url|currency|expires_on|qr_identifier|pass_url|last_four_characters|src|fulfillment_service|sku|message|vendor|key|unit|format|mime_type|cancel_reason|cancel_reason_label|cancelled_at|customer_url|financial_status|fulfillment_status|fulfillment_status_label|order_status_url|customer_order_url|page_param|terms|selected_value|barcode|options|option1|option2|option3|weight_unit|inventory_management|inventory_policy|next_incoming_date|intent|page_type|origin|path|directive|root_url|account_url|account_login_url|account_logout_url|account_recover_url|account_register_url|account_addresses_url|collections_url|all_products_collection_url|search_url|predictive_search_url|cart_url|cart_add_url|cart_change_url|cart_clear_url|cart_update_url|product_recommendations_url|selling_plan_group_id|group_id|app_id|secure_url|domain|permanent_domain|password_message|enabled_payment_types|endonym_name|pick_up_time|role|suffix|directory|status|receipt|kind|gateway|status_label|amount|gateway_display_name|buyer_pending_payment_notice|measured_type|quantity_unit|reference_unit|bio|homepage|fulfilled_at|gift_cards_amount|order_id|order_name|order_number|header|credit_card_company|credit_card_last_four_digits|credit_card_number)\\b"
         },
         {
           "name": "constant.numeric.property-value.liquid",
-          "match": "(?<=(?:article|block|blog|cart|checkout|collection|color|comment|customer|customer_address|discount_allocation|discount_application|external_video|form|forloop|gift_card|image|line_item|link|linklist|product|product_options|order|recommendations|script|scripts|search|section|selling_plan|selling_plan_allocation|selling_plan_allocation_price_adjustment|selling_plan_checkout_charge|selling_plan_group|selling_plan_group_option|selling_plan_option|selling_plan_price_adjustment|shipping_method|shop|tablerowloop|tax_line|transaction|unit_price_measurement|model|media|variant|video|video_source)\\s*\\.)\\s*\\b(id|comments_count|articles_count|item_count|original_total_price|items_subtotal_price|total_discount|total_price|total_weight|discounts_amount|discounts_savings|gift_cards_amount|line_items_subtotal_price|order_id|order_number|shipping_price|products_count|all_products_count|alpha|blue|green|hue|lightness|red|saturation|addresses_count|orders_count|amount|total_allocated_amount|value|external_id|rindex|rindex0|index0|index|length|balance|code|initial_value|last_four_characters|height|product_id|position|width|final_line_price|final_price|grams|key|original_line_price|original_price|quantity|sku|successfully_fulfilled_quantity|unit_price|variant_id|levels|compare_at_price_max|price_max|compare_at_price_min|price|price_min|results_count|group_id|recurring_deliveries|compare_at_price|per_delivery_price|remaining_balance_charge_amount|app_id|collections_count|col|col0|row|rate|created_at|quantity_unit|quantity_value|inventory_quantity|selected_selling_plan_allocation|weight|weight_unit|weight_in_unit|aspect_ratio|duration)\\b"
+          "match": "(?<=(?:media|address|discount|article|blog|cart|collection|color|company_address|company|company_location|customer|discount_allocation|discount_application|external_video|filter|filter_value|focal_point|font|fulfillment|generic_file|gift_card|image|line_item|link|linklist|forloop|tablerowloop|location|measurement|metaobject_definition|metaobject_system|model|order|page|paginate|selling_plan_price_adjustment|product|product_option|variant|rating|recommendations|script|search|selling_plan_allocation|selling_plan_allocation_price_adjustment|selling_plan_checkout_charge|selling_plan|selling_plan_group|selling_plan_group_option|selling_plan_option|shipping_method|shop|tax_line|theme|transaction|unit_price_measurement|video|video_source|checkout|comment|quantity_rule)\\s*\\.)\\s*\\b(id|position|amount|total_amount|savings|total_savings|comments_count|articles_count|item_count|total_price|checkout_charge_amount|original_total_price|items_subtotal_price|total_discount|total_weight|products_count|all_products_count|red|green|blue|hue|saturation|lightness|alpha|tax_registration_id|orders_count|total_spent|addresses_count|total_allocated_amount|value|aspect_ratio|range_max|count|x|y|baseline_ratio|weight|balance|initial_value|width|height|product_id|quantity|price|line_price|final_price|final_line_price|variant_id|successfully_fulfilled_quantity|unit_price|original_price|original_line_price|line_level_total_discount|grams|levels|length|index|index0|rindex|rindex0|col|row|col0|latitude|longitude|values_count|total_duties|total_discounts|total_net_amount|tax_price|total_refunded_amount|order_number|line_items_subtotal_price|subtotal_price|shipping_price|page_size|current_offset|current_page|items|pages|order_count|price_min|price_max|compare_at_price_min|compare_at_price_max|compare_at_price|weight_in_unit|inventory_quantity|rating|scale_min|scale_max|results_count|per_delivery_price|remaining_balance_charge_amount|name|collections_count|rate|rate_percentage|quantity_value|reference_value|duration|mime_type|min|max|increment)\\b"
         },
         {
           "name": "constant.language.object-value.liquid",
-          "match": "(?<=(?:article|blog|checkout|customer|form|forloop|gift_card|image|line_item|link|product|recommendations|request|search|selling_plan|selling_plan_group|shop|shop_locale|store_availability|tablerowloop|variant)\\s*\\.)\\s*\\b(comments_enabled|moderated|buyer_accepts_marketing|requires_shipping|accepts_marketing|has_account|tax_exempt|password_needed|posted_successfully?|first|last|enabled|expired|attached_to_variant|gift_card|taxable|active|child_active|child_current|current|available|compare_at_price_varies|has_only_default_variant|price_varies|performed|design_mode|selected|selling_plan_selected|customer_accounts_enabled|customer_accounts_optional|primary|pick_up_enabled|col_first|col_last|incoming|requires_selling_plan)\\b"
+          "match": "(?<=(?:article|blog|cart|company_location|customer|filter_value|font|form|gift_card|image|line_item|link|forloop|tablerowloop|metafield|order|predictive_search|product|variant|recommendations|request|search|selling_plan|selling_plan_group|shop|shop_locale|store_availability|transaction|user|checkout|part)\\s*\\.)\\s*\\b(moderated?|comments_enabled?|requires_shipping|empty?|taxes_included|current?|has_account|accepts_marketing|tax_exempt|b2b?|active|system?|password_needed|posted_successfully?|enabled|expired|attached_to_variant?|taxable|gift_card|current|child_active|child_current|first|last|col_first|col_last|list?|cancelled|performed|price_varies|available|compare_at_price_varies|has_only_default_variant|requires_selling_plan|gift_card?|selected|matched|incoming|performed?|design_mode|recurring_deliveries|selling_plan_selected|customer_accounts_enabled|customer_accounts_optional|accepts_gift_cards|primary|pick_up_enabled|show_buyer_pending_payment_instructions?|account_owner|buyer_accepts_marketing|is_link)\\b"
         }
       ]
     }
