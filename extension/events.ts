@@ -1,11 +1,11 @@
-import { ConfigurationChangeEvent, TextDocument, TextDocumentChangeEvent, TextEditor, Position, Range } from 'vscode';
-import { ConfigMethod } from './types';
-import { FormatEvent, FormatEventType } from './providers/FormattingProvider';
-import { getSchema } from './lexical/parse';
-import { Engine } from '@liquify/liquid-language-specs';
-import { dirty, isFunction, parseJsonFile } from './utils';
-import { CommandPalette } from './workspace/CommandPalette';
-import { assigns } from './lexical/variables';
+import { ConfigurationChangeEvent, TextDocument, TextDocumentChangeEvent, TextEditor } from 'vscode';
+import { ConfigMethod } from 'types';
+import { FormatEvent, FormatEventType } from 'providers/FormattingProvider';
+import { Engine } from '@liquify/specs';
+import { dirty, isFunction, isObject, setEndRange } from 'utils';
+import { CommandPalette } from 'workspace/CommandPalette';
+import { parseSchema, parseDocument } from 'parse/document';
+import { getObjectCompletions } from 'data/liquid';
 
 /**
  * Workspace Events
@@ -43,13 +43,7 @@ export class Events extends CommandPalette {
    */
   public onDidCloseTextDocument ({ uri }: TextDocument) {
 
-    if (this.formatting.register.has(uri.fsPath)) {
-      this.formatting.register.delete(uri.fsPath);
-    }
-
-    if (this.completion.vars.has(uri.fsPath)) {
-      this.completion.vars.delete(uri.fsPath);
-    }
+    if (this.formatting.register.has(uri.fsPath)) this.formatting.register.delete(uri.fsPath);
 
   }
 
@@ -58,65 +52,40 @@ export class Events extends CommandPalette {
    *
    * Invoked when a text document has changed. We only care about schema
    * in the event (for now). In Liquify we use LSP so this is just a hot
-   * patch for us the reason with diagnostics.
+   * patch for the time being.
    */
   public async onDidChangeTextDocument ({ document, contentChanges }: TextDocumentChangeEvent) {
 
     const change = contentChanges[contentChanges.length - 1];
 
-    if (change?.range) {
-
-      const range = new Range(new Position(0, 0), change.range.end);
-      const content = document.getText(range);
-      const vars = this.completion.vars.get(document.uri.fsPath);
-
-      await assigns(content, vars);
-
+    if (isObject(change?.range) && this.completion.enable.variables) {
+      await parseDocument(document.getText(setEndRange(change.range.end)), this.completion.vars);
     }
 
-    if (this.engine === Engine.shopify && this.json.config.validate === true) {
+    if (this.completion.enable.schema && this.json.config.validate) {
 
-      const schema = getSchema(document);
+      const schema = await parseSchema(document);
 
       if (schema !== false) {
 
-        const diagnostics = await this.json.doValidation(document.uri, schema);
+        this.json.schema.set(document.uri.fsPath, schema);
+        const diagnostics = await this.json.doValidation(document.uri);
 
         this.formatting.enable = this.json.canFormat;
         this.json.diagnostics.set(document.uri, diagnostics);
 
-        // if (!this.formatting.enable) {
+      } else {
 
-        //   try {
+        if (this.json.diagnostics.has(document.uri)) {
+          this.json.canFormat = true;
+          this.json.diagnostics.clear();
+        }
 
-        //     parseJson(schema.content);
-
-        //     if (this.hasError) {
-        //       this.hasError = false;
-        //       this.errorCache = null;
-        //       this.status.enable();
-        //     }
-
-        //   } catch (e) {
-
-        //     if (this.hasError === false || this.errorCache !== e) {
-        //       this.errorCache = e.message;
-        //       this.hasError = true;
-        //       this.error('Parse error occured when formatting document')(e.message);
-        //     }
-        //   }
-
-        // }
-
-      } else if (this.json.diagnostics.has(document.uri)) {
-
-        this.json.canFormat = true;
-        this.json.diagnostics.clear();
-
+        if (this.json.schema.has(document.uri.fsPath)) {
+          this.json.schema.delete(document.uri.fsPath);
+        }
       }
-
     }
-
   }
 
   /**
@@ -128,53 +97,63 @@ export class Events extends CommandPalette {
   async onDidChangeActiveTextEditor (textDocument: TextEditor | undefined) {
 
     if (!textDocument?.document) {
+
       this.json.diagnostics.clear();
       this.json.canFormat = true;
       this.status.hide();
-      return;
-    };
-
-    if (!this.languages.get(textDocument.document.languageId)) {
-      this.status.hide();
-      return;
-    }
-
-    this.status.show();
-
-    if (this.isDirty) this.isDirty = await dirty(textDocument.document);
-
-    const { fsPath } = textDocument.document.uri;
-
-    if (!this.completion.vars.has(fsPath)) {
-      this.completion.vars.set(fsPath, new Map());
-    }
-
-    if (this.formatting.ignored.has(fsPath)) {
-      this.status.ignore();
-      return;
-    }
-
-    if (isFunction(this.formatting.ignoreMatch) && this.formatting.ignoreMatch(fsPath)) {
-      this.info(`Ignoring: ${fsPath}`);
-      this.formatting.ignored.add(fsPath);
-      this.status.ignore();
-      return;
-    }
-
-    if (this.isFormattingOnSave(textDocument.document.languageId)) {
-
-      if (!this.formatting.register.has(fsPath)) {
-        this.formatting.register.add(fsPath);
-      }
-
-      this.formatting.enable = true;
-      this.status.enable();
 
     } else {
 
-      this.formatting.enable = false;
-      this.status.disable();
+      const { uri, languageId } = textDocument.document;
 
+      if (!this.languages.get(languageId)) {
+
+        this.status.hide();
+
+      } else {
+
+        this.status.show();
+
+        if (this.completion.enable.objects) {
+          getObjectCompletions(uri.fsPath, this.completion.items);
+        }
+
+        if (this.isDirty) {
+          this.isDirty = await dirty(textDocument.document);
+        }
+
+        if (this.formatting.ignored.has(uri.fsPath)) {
+
+          this.status.ignore();
+
+        } else {
+
+          if (isFunction(this.formatting.ignoreMatch) && this.formatting.ignoreMatch(uri.fsPath)) {
+
+            this.status.ignore();
+            this.formatting.ignored.add(uri.fsPath);
+            this.info(`Ignoring: ${uri.fsPath}`);
+
+          } else {
+
+            if (this.isFormattingOnSave(languageId)) {
+
+              if (!this.formatting.register.has(uri.fsPath)) {
+                this.formatting.register.add(uri.fsPath);
+              }
+
+              this.formatting.enable = true;
+              this.status.enable();
+
+            } else {
+
+              this.formatting.enable = false;
+              this.status.disable();
+
+            }
+          }
+        }
+      }
     }
   }
 
@@ -187,20 +166,20 @@ export class Events extends CommandPalette {
    */
   public async onDidSaveTextDocument (textDocument: TextDocument) {
 
-    const uri = textDocument.uri.fsPath;
-
     if (this.engine === Engine.shopify) {
 
-      const { locales, settings } = this.files;
+      const { fsPath } = textDocument.uri;
 
-      if (locales.fsPath === uri) {
-        this.completion.files.locales.items = await parseJsonFile(locales);
-      } else if (settings.fsPath === uri) {
-        this.completion.files.settings.items = await parseJsonFile(locales);
+      if (this.files.locales.fsPath === fsPath) {
+
+        await this.getExternal([ 'locales' ]);
+
+      } else if (this.files.settings.fsPath === fsPath) {
+
+        await this.getExternal([ 'settings' ]);
+
       }
-
     }
-
   }
 
   /**
@@ -219,9 +198,9 @@ export class Events extends CommandPalette {
       if (this.config.method === ConfigMethod.Workspace) {
         if (config.affectsConfiguration('liquid.format')) {
           if (config.affectsConfiguration('liquid.format.ignore')) {
-            this.info('workspace ignore list changed');
             this.formatting.ignored.clear();
             this.formatting.register.clear();
+            this.info('workspace ignore list changed');
           }
         }
       }
@@ -233,28 +212,28 @@ export class Events extends CommandPalette {
         if (!config.affectsConfiguration(id)) continue;
 
         if (this.isDefaultFormatter(id)) {
-
           if (!this.languages[id]) {
+
             this.languages[id] = true;
+
             if (this.selector.some(({ language }) => language !== id)) {
-              this.selector.push({ language: id, scheme: 'file' });
+              this.selector.push({
+                language: id,
+                scheme: 'file'
+              });
             }
           }
 
           this.info('The vscode-liquid extension will format ' + id);
 
-        } else {
-          if (this.languages[id]) {
-            this.languages[id] = false;
-            this.info('vscode-liquid is no longer formatting ' + id);
-            this.selector = this.selector.filter(({ language }) => {
-              if (language.startsWith('liquid')) return true;
-              return language !== id;
-            });
-          }
-        }
-      }
+        } else if (this.languages[id]) {
 
+          this.languages[id] = false;
+          this.selector = this.selector.filter(({ language }) => language.startsWith('liquid') || language !== id);
+          this.info('vscode-liquid is no longer formatting ' + id);
+        }
+
+      }
     };
   }
 
