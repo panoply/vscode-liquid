@@ -137,11 +137,15 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
 
       } else {
 
-        const prop = value.indexOf('.');
+        const prop = value.split('.').filter(Boolean);
 
-        if (prop > -1) {
-          const isvar = value.slice(0, prop);
-          if (vars.has(isvar)) value = vars.get(isvar).value;
+        if (prop.length > 1) {
+          if (vars.has(prop[0])) {
+            prop[0] = vars.get(prop[0]).value;
+            value = prop.join('.');
+          }
+        } else if (prop.length === 1 && vars.has(prop[0])) {
+          value = vars.get(prop[0]).value;
         }
 
         vars.set(label, {
