@@ -99,7 +99,6 @@ export class Events extends CommandPalette {
     if (!textDocument?.document) {
 
       this.json.diagnostics.clear();
-      this.json.canFormat = true;
       this.status.hide();
 
     } else {
@@ -108,11 +107,26 @@ export class Events extends CommandPalette {
 
       if (!this.languages.get(languageId)) {
 
+        this.json.diagnostics.clear();
+        this.json.canFormat = true;
         this.status.hide();
 
       } else {
 
         this.status.show();
+
+        const schema = await parseSchema(textDocument.document);
+
+        if (schema !== false) {
+
+          this.json.schema.set(uri.fsPath, schema);
+
+          const diagnostics = await this.json.doValidation(uri);
+
+          this.formatting.enable = this.json.canFormat;
+          this.json.diagnostics.set(uri, diagnostics);
+
+        }
 
         if (this.completion.enable.objects) {
           getObjectCompletions(uri.fsPath, this.completion.items);
@@ -165,6 +179,8 @@ export class Events extends CommandPalette {
    * completions. It is here where we keep our store in sync.
    */
   public async onDidSaveTextDocument (textDocument: TextDocument) {
+
+    if (!this.languages.get(textDocument.languageId)) return;
 
     if (this.engine === Engine.shopify) {
 
