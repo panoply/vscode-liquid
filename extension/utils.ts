@@ -831,26 +831,34 @@ export function rulesDefault (): Rules {
       commentNewline: rules.liquid.commentNewline,
       delimiterTrims: rules.liquid.delimiterTrims,
       ignoreTagList: rules.liquid.ignoreTagList,
-      indentAttributes: rules.liquid.indentAttributes,
+      indentAttribute: rules.liquid.indentAttribute,
       lineBreakSeparator: rules.liquid.lineBreakSeparator,
       normalizeSpacing: rules.liquid.normalizeSpacing,
       preserveComment: rules.liquid.preserveComment,
-      quoteConvert: rules.liquid.quoteConvert
+      quoteConvert: rules.liquid.quoteConvert,
+      dedentTagList: rules.liquid.dedentTagList,
+      delimiterPlacement: rules.liquid.delimiterPlacement,
+      forceArgument: rules.liquid.forceArgument,
+      forceFilter: rules.liquid.forceFilter,
+      preserveInternal: rules.liquid.preserveInternal
     },
     markup: {
-      correct: rules.markup.correct,
       quoteConvert: rules.markup.quoteConvert,
       selfCloseSpace: rules.markup.selfCloseSpace,
       commentNewline: rules.markup.commentNewline,
       commentIndent: rules.markup.commentIndent,
       forceIndent: rules.markup.forceIndent,
       attributeSort: rules.markup.attributeSort,
-      attributeSortList: rules.markup.attributeSortList,
       attributeCasing: rules.markup.attributeCasing,
       forceAttribute: rules.markup.forceAttribute,
-      forceLeadAttribute: rules.markup.forceLeadAttribute,
-      preserveAttributes: rules.markup.preserveAttributes,
+      preserveAttribute: rules.markup.preserveAttribute,
       preserveText: rules.markup.preserveText,
+      delimiterTerminus: rules.markup.delimiterTerminus,
+      forceAttributeValue: rules.markup.forceAttributeValue,
+      lineBreakValue: rules.markup.lineBreakValue,
+      preserveComment: rules.markup.preserveComment,
+      selfCloseSVG: rules.markup.selfCloseSVG,
+      stripAttributeLines: rules.markup.stripAttributeLines,
       ignoreJS: rules.markup.ignoreJS,
       ignoreCSS: rules.markup.ignoreCSS,
       ignoreJSON: rules.markup.ignoreJSON
@@ -863,7 +871,9 @@ export function rulesDefault (): Rules {
       objectSort: rules.json.objectSort
     },
     style: {
-      correct: rules.style.correct,
+      commentIndent: rules.style.commentIndent,
+      commentNewline: rules.style.commentNewline,
+      preserveComment: rules.style.preserveComment,
       sortProperties: rules.style.sortProperties,
       sortSelectors: rules.style.sortSelectors,
       noLeadZero: rules.style.noLeadZero,
@@ -872,7 +882,6 @@ export function rulesDefault (): Rules {
       atRuleSpace: rules.style.atRuleSpace
     },
     script: {
-      correct: rules.script.correct,
       arrayFormat: rules.script.arrayFormat,
       braceAllman: rules.script.braceAllman,
       braceNewline: rules.script.braceNewline,
@@ -893,7 +902,10 @@ export function rulesDefault (): Rules {
       noSemicolon: rules.script.noSemicolon,
       objectSort: rules.script.objectSort,
       variableList: rules.script.variableList,
-      vertical: rules.script.vertical
+      vertical: rules.script.vertical,
+      commentIndent: rules.script.commentIndent,
+      inlineReturn: rules.script.inlineReturn,
+      preserveComment: rules.script.preserveComment
     }
   };
 
@@ -917,7 +929,7 @@ export function rulesRecommend (): Liquidrc {
         commentIndent: true,
         commentNewline: true,
         delimiterTrims: 'tags',
-        indentAttributes: true,
+        indentAttribute: true,
         lineBreakSeparator: 'before',
         normalizeSpacing: true,
         quoteConvert: 'single',
@@ -926,15 +938,14 @@ export function rulesRecommend (): Liquidrc {
       markup: {
         quoteConvert: 'double',
         selfCloseSpace: true,
-        delimiterForce: false,
+        delimiterTerminus: 'inline',
         commentNewline: true,
         forceIndent: true,
         commentIndent: true,
         ignoreJS: true,
         ignoreCSS: false,
         ignoreJSON: false,
-        forceAttribute: 3,
-        forceLeadAttribute: true
+        forceAttribute: 3
       },
       json: {
         bracePadding: false,
@@ -944,13 +955,11 @@ export function rulesRecommend (): Liquidrc {
         objectSort: false
       },
       style: {
-        correct: true,
         noLeadZero: true,
         quoteConvert: 'single',
         atRuleSpace: true
       },
       script: {
-        correct: true,
         arrayFormat: 'indent',
         objectIndent: 'indent',
         braceAllman: false,
