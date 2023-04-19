@@ -116,9 +116,8 @@ class VSCodeLiquid extends Events {
   private register (subscriptions: { dispose(): void; }[]) {
 
     subscriptions.push(
-      // languages.registerHoverProvider(this.selector, this.hovers),
+      languages.registerHoverProvider(this.selector, this.hovers),
       languages.registerCompletionItemProvider(this.selector, this.completion, ...this.completion.triggers),
-      // languages.registerDocumentLinkProvider(this.selector, this.links),
       languages.registerDocumentFormattingEditProvider(this.selector, this.formatting)
     );
 
