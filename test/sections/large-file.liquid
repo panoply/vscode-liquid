@@ -49,8 +49,7 @@
 
       {% assign item = block.settings %}
 
-      <div class="{%- unless forloop.first %}col px-0 d-none{% else %}col px-0{% endunless %}"
-        data-carousel-target="slide">
+      <div class="{%- unless forloop.first %}col px-0 d-none{% else %}col px-0{% endunless %}" data-carousel-target="slide">
 
         {% if block.type == 'image_with_content' %}
 
@@ -68,8 +67,7 @@
 
           <div class="hero-caption d-flex p-3 p-sm-5 {{ item.pos_mobile }} {{ item.pos_desktop
                }}">
-            <div class="{{ gutter }} py-sm-{{ item.my_desktop }} {{ item.ta_mobile }} {{
-                 item.ta_desktop }}">
+            <div class="{{ gutter }} py-sm-{{ item.my_desktop }} {{ item.ta_mobile }} {{ item.ta_desktop }}">
 
               {% if item.title != blank %}
 
@@ -80,10 +78,7 @@
                   font-weight:{{ item.title_fw | default: 'inherit' }};
                 {% endcapture %}
 
-                <h1 class="{{ spacing }}"
-
-
-                  style="{{ styles }}">
+                <h1 class="{{ spacing }}" style="{{ styles }}">
                   {{ item.title }}
                 </h1>
 
@@ -98,8 +93,7 @@
                   font-weight: {{ item.subtitle_fw | default: 'inherit' }};
                 {% endcapture %}
 
-                <h1 class="{{ spacing }}"
-                  style="{{ style }}">
+                <h1 class="{{ spacing }}" style="{{ style }}">
                   {{ item.subtitle }}
                 </h1>
 
@@ -120,8 +114,7 @@
                   {% endif %}
                 {% endcapture %}
 
-                <p class="{{ spacing }}"
-                  style="{{ style }}">
+                <p class="{{ spacing }}" style="{{ style }}">
                   {{ item.caption | remove: ' < p > ' | remove: ' < /p > ' }}
                 </p>
 
@@ -150,8 +143,6 @@
                      {% else %}
                      mt-{{ item.btn_mt }}
                      {% endif %}"
-
-
                   href="{{ item.url }}"
                   style="{{ style }}">
                   {{ item.btn }}
@@ -172,23 +163,18 @@
             --ratio-height-sm: {{ item.img_mobile.height }} ;
           {% endcapture %}
 
-          <div class="aspect-ratio"
-            style="{{ aspect_ratio }}">
+          <div class="aspect-ratio" style="{{ aspect_ratio }}">
             {% if item.img_desktop != blank and item.img_mobile != blank %}
               <picture>
-                <source data-srcset="{{ item.img_desktop | img_url: '1440x' | format: 'pjpg' }}"
-                  media="lg" />
-                <source data-srcset="{{ item.img_desktop | img_url: '1240x' | format: 'pjpg' }}"
-                  media="md" />
-                <source data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}"
-                  media="sm" />
-                <source data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}"
-                  media="xs" />
-                <img class="img-fluid lazy"
-                  data-src=" {{- item.img_desktop | img_url: '1440x' | format: 'pjpg' }}" />
+                <source data-srcset="{{ item.img_desktop | img_url: '1440x' | format: 'pjpg' }}" media="lg" />
+                <source data-srcset="{{ item.img_desktop | img_url: '1240x' | format: 'pjpg' }}" media="md" />
+                <source data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}" media="sm" />
+                <source data-srcset="{{ item.img_mobile | img_url: '1024x' | format: 'pjpg' }}" media="xs" />
+                <img class="img-fluid lazy" data-src=" {{- item.img_desktop | img_url: '1440x' | format: 'pjpg' }}" />
               </picture>
             {% else %}
-              {% render 'placeholder', type: 'hero_image' %}
+              {% render 'placeholder'
+                , type: 'hero_image' %}
             {% endif %}
           </div>
         {% endunless %}

@@ -1,8 +1,9 @@
 {% liquid
 
-  assign fit = product.metafields.specification.fit_reference | default: product.metafields.product.fit_reference
-  assign fabric = product.metafields.specification.fabric.value | default: product.metafields.product.fabric
-  assign gender = "men"
+  assign fit = product.metafields.specification.fit_reference | default:
+  product.metafields.product.fit_reference
+  assign fabric = product.metafields.specification.fabric.value | default:
+  product.metafields.product.fabric assign gender = "men"
 
   # MODEL SIZES - GET METAFIELD
   if product.tags contains "Women"
@@ -15,8 +16,7 @@
   endif
 
   # MATERIAL PROPERTIES AND COUNT REFERENCE
-  assign mp = "shell,lining,padding,piping,webbing" | split: ","
-  assign mc = 0
+  assign mp = "shell,lining,padding,piping,webbing" | split: "," assign mc = 0
 
   # MODEL SIZES - REQUIRED DATA
   capture height_cm

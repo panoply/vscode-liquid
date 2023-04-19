@@ -1,5 +1,6 @@
 <!-- TEST: Liquid String Injections -->
-<div class="{{ object.prop | filter: 'string' }}">
+<div
+  class="{{ object.prop | filter: 'string' }}">
 
   <!-- TEST: Liquid Attribute Injections -->
   <div
@@ -131,7 +132,6 @@
   data-carousel-mobile-value="1"
   data-carousel-tablet-value="1"
   data-controller="carousel">
-
 
 
   {% if section.settings.buttons %}
