@@ -115,7 +115,7 @@ export class FormattingProvider implements DocumentFormattingEditProvider {
 
     try {
 
-      const output = esthetic.liquid.sync(source);
+      const output = esthetic.format(source, { language });
 
       return [ TextEdit.replace(fullRange, output) ];
 
