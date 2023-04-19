@@ -8,10 +8,16 @@
 
 {% # FILTER COMPLETES - ONLY SHOW TYPE NUMBER OBJECTS  %}
 
-{{ foo | plus:  | minus:  }}
+{{ produc    | plus:  | minus:  }}
 
 {% # FILTER COMPLETES - ONLY SHOW IN ASSIGN %}
 
 {% render 'xxx' | %}
 
-{% assign bar = 'xxx' | %}
+{% assign bar = 1200 %}
+
+{% for item in product %}
+
+  {{ item.price | plus   }}
+
+{% endfor %}
