@@ -56,6 +56,8 @@ export class Events extends CommandPalette {
    */
   public async onDidChangeTextDocument ({ document, contentChanges }: TextDocumentChangeEvent) {
 
+    if (!this.languages.get(document.languageId)) return;
+
     const change = contentChanges[contentChanges.length - 1];
 
     if (isObject(change?.range) && this.completion.enable.variables) {
