@@ -189,7 +189,7 @@ export function getPropertyCompletions (token: IToken, vars: Complete.Vars) {
       if (props[0] === 'block') return Token.SchemaBlock;
     }
   } else if (props.length === 3) {
-    if (props[0] === 'section' && props[1] === 'settings' && props[2] === 'settings') {
+    if (props[0] === 'section' && props[1] === 'blocks' && props[2] === 'settings') {
       return Token.SchemaBlock;
     }
   }
