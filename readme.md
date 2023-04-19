@@ -470,7 +470,7 @@ Formatting can be enabled/disabled via the command palette and use the language 
 I actively maintain Æsthetic and it is currently in a **pre-release** (beta) stage. The ambition is to eventually have the tool become a competitive alternative to Prettier and disrupt "opinionated" conventions imposed upon the code nexus, one size does not fit all. Æsthetic was introduced in version **3.0.0** as the core formatter for this extension. Though Æsthetic has yet to ship an official release candidate it is stable enough for usage and its adaption fixes previous version defects.
 
 - [Repository](https://github.com/panoply/esthetic)
-- [Playground](https://liquify.dev/prettify)
+- [Playground](https://æsthetic.dev/playground)
 
 _Æsthetic, once stable enough for the big time will be made available for usage in a separate extension_
 
