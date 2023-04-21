@@ -170,6 +170,8 @@ export class WorkspaceSettings extends OutputChannel {
    */
   async getExternal (files: string[]) {
 
+    console.log(this.files);
+
     for (const name of files) {
 
       if (this.files[name] !== null) {
@@ -326,29 +328,23 @@ export class WorkspaceSettings extends OutputChannel {
 
       let defined = false;
 
-      if (rcfile) {
-        if (has(file, this.liquidrc.files)) {
-          if (u.isString(this.liquidrc.files[file])) {
+      if (rcfile && has(file, this.liquidrc.files)) {
+        if (u.isString(this.liquidrc.files[file]) && this.liquidrc.files[file] !== '') {
 
-            if (this.liquidrc.files[file] !== '') {
+          this.files[file] = Uri.file(join(root, this.liquidrc.files[file]));
 
-              this.files[file] = Uri.file(join(root, this.liquidrc.files[file]));
-
-              if (file === 'locales') {
-                const name = this.liquidrc.files[file].replace(/\.json$/, '.schema.json');
-                const schema = Uri.file(join(root, name));
-                if (await u.pathExists(schema.fsPath)) this.files.localesSchema = schema;
-              }
-
-              defined = true;
-
-            }
-
-          } else if (u.isArray(this.liquidrc.files[file]) && this.liquidrc.files[file].length > 0) {
-
-            defined = await globs(file, this.liquidrc.files[file]);
-
+          if (file === 'locales') {
+            const name = this.liquidrc.files[file].replace(/\.json$/, '.schema.json');
+            const schema = Uri.file(join(root, name));
+            if (await u.pathExists(schema.fsPath)) this.files.localesSchema = schema;
           }
+
+          defined = true;
+
+        } else if (u.isArray(this.liquidrc.files[file]) && this.liquidrc.files[file].length > 0) {
+
+          defined = await globs(file, this.liquidrc.files[file]);
+
         }
       }
 
@@ -669,7 +665,7 @@ export class WorkspaceSettings extends OutputChannel {
 
     if (isNil(this.uri.liquidrc)) {
 
-      const path = await u.hasLiquidrc(this.uri.base.fsPath);
+      const path = u.hasLiquidrc(this.uri.base.fsPath);
 
       if (!path) {
 
@@ -755,11 +751,11 @@ export class WorkspaceSettings extends OutputChannel {
 
       if (this.deprecation.liquidrc === null) {
 
-        await this.getFiles();
-        await this.getExternal([ 'locales', 'settings' ]);
-
         this.getFormatRules();
         this.getEngine();
+
+        await this.getFiles();
+        await this.getExternal([ 'locales', 'settings' ]);
 
       }
 
@@ -786,7 +782,7 @@ export class WorkspaceSettings extends OutputChannel {
 
     if (isNil(this.uri.liquidrc)) {
 
-      const path = await u.hasLiquidrc(this.uri.root.fsPath);
+      const path = u.hasLiquidrc(this.uri.root.fsPath);
 
       if (!path) return { config, rcfile: null };
 
@@ -930,22 +926,23 @@ export class WorkspaceSettings extends OutputChannel {
 
     await this.getLiquidrc();
 
-    if (this.isReady === false) {
-      this.deprecation.workspace = u.hasDeprecatedSettings();
-      if (this.deprecation.workspace === '4.0.0') {
-        const updated = await this.fixWorkspace();
-        if (updated) {
-          this.info('Updated to the latest v4.0.0 workspace settings structure');
-        }
-      }
-    }
+    // if (this.isReady === false) {
+    //   this.deprecation.workspace = u.hasDeprecatedSettings();
+    //   if (this.deprecation.workspace === '4.0.0') {
+    //     const updated = await this.fixWorkspace();
+    //     if (updated) {
+    //       this.info('Updated to the latest v4.0.0 workspace settings structure');
+    //     }
+    //   }
+    // }
 
     if (this.config.method === ConfigMethod.Workspace) {
 
-      await this.getFiles();
-
       this.getFormatRules();
       this.getEngine();
+
+      await this.getFiles();
+
     }
 
     this.getCompletions();
@@ -953,7 +950,6 @@ export class WorkspaceSettings extends OutputChannel {
     this.getHovers();
 
     await this.getExternal([ 'locales', 'settings' ]);
-
   };
 
 }
