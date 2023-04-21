@@ -2,7 +2,7 @@ import { entries, keys } from 'utils';
 import { basename, join, dirname } from 'node:path';
 import { Filter, Tags, IObject, Type, Types, liquid, IProperty, $, p } from '@liquify/specs';
 import { mdLines, mdString } from 'parse/helpers';
-import { path } from 'rambdax';
+import { has, path } from 'rambdax';
 import { Complete, SettingsData } from 'types';
 import {
   CompletionItemKind,
@@ -167,65 +167,70 @@ export function getSettingsCompletions (uri: string, data: SettingsData[]) {
 
       const prop = setting.name.slice(18, setting.name.indexOf('.', 18));
 
-      objects[prop] = <IProperty>{
-        global: true,
-        type: 'object',
-        summary: `${prop} (${filename})`,
-        description: [
-          `**Setting**: \`${prop}\`\n\n`,
-          `${setting.settings.length} available fields\n\n`,
-          `${reference}`
-        ].join(''),
-        properties: {}
-      };
-
       for (const type of setting.settings) {
-        if (type.id) {
+        if (type?.id && type?.label) {
 
           const label = type.label.startsWith('t:')
             ? path(type.label.slice(2), locale) || type.label
             : type.label;
 
-          objects[prop].properties[type.id] = <IProperty> {
+          let info: string;
+
+          if (has('info', type)) {
+            if (type.info.startsWith('t:')) {
+              info = path(type.info.slice(2), locale) + '\n\n';
+            } else {
+              info = type.info + '\n\n';
+            }
+          } else {
+            info = '';
+          }
+
+          objects[type.id] = <IProperty>{
+            global: true,
             type: type.type,
-            summary: `${type.type} (default: ${type.default})`,
+            scope: 'settings',
+            summary: `${prop} (${filename})`,
             description: [
-              label ? `**${label}**\n\n` : '',
-              type.info ? path(type.info.slice(2), locale) + '\n\n' || '' : '',
+              `**Label**: ${label}\n\n`,
+              type?.default ? `**Default**: ${type.default}` : '',
+              info,
               reference
             ].join('')
           };
+
         }
       }
 
     } else {
 
-      objects[setting.name] = <IProperty>{
-        global: true,
-        type: 'object',
-        summary: `${setting.name} (${filename})`,
-        description: `${setting.settings.length} available fields\n\n${reference}`,
-        properties: {}
-      };
-
       for (const type of setting.settings) {
-        if (type.id) {
+        if (type?.id && type?.label) {
 
           const label = type.label.startsWith('t:')
             ? path(type.label.slice(2), locale) || type.label
             : type.label;
 
-          const info = type.info.startsWith('t:')
-            ? path(type.info.slice(2), locale) || type.label
-            : type.info;
+          let info: string;
 
-          objects[setting.name].properties[type.id] = <IProperty>{
+          if (has('info', type)) {
+            if (type.info.startsWith('t:')) {
+              info = path(type.info.slice(2), locale) + '\n\n';
+            } else {
+              info = type.info + '\n\n';
+            }
+          } else {
+            info = '';
+          }
+
+          objects[type.id] = <IProperty>{
+            global: true,
             type: type.type,
-            summary: `${type.type} (${type.default})`,
             scope: 'settings',
+            summary: `${setting.name} (${filename})`,
             description: [
               `**Label**: ${label}\n\n`,
-              type.info ? info + '\n\n' : '',
+              info,
               reference
             ].join('')
           };
