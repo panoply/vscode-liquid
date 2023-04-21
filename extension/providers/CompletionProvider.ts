@@ -193,7 +193,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
     }
 
-    const cursor = getTokenCursor(token);
+    const cursor = getTokenCursor(token, this.vars);
 
     /* -------------------------------------------- */
     /* ARGUMENTS                                    */
@@ -281,13 +281,11 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
         const schema = this.json.schema.get(document.uri.fsPath);
 
-        if (props === Token.SchemaSettings) {
-          return getSectionCompletions(schema, props);
-        }
+        if (props === Token.SchemaSettings) return getSectionCompletions(schema, props);
 
         if (props === Token.SchemaBlock) {
 
-          const type = getSectionScope(content, offset);
+          const type = getSectionScope(schema, content, offset);
 
           if (type !== null) return getSectionCompletions(schema, props, type);
 
@@ -299,6 +297,20 @@ export class CompletionProvider extends Service implements CompletionItemProvide
     }
 
     if (token.type === Token.Tag) {
+
+      /* -------------------------------------------- */
+      /* SCHEMA BLOCK TYPE                            */
+      /* -------------------------------------------- */
+
+      if (cursor === Token.SchemaBlockType && (trigger === Char.DQO || trigger === Char.SQO)) {
+
+        if (!this.enable.schema) return null;
+
+        const schema = this.json.schema.get(document.uri.fsPath);
+
+        return getSectionCompletions(schema, cursor);
+
+      }
 
       /* -------------------------------------------- */
       /* FILE IMPORTS                                 */
