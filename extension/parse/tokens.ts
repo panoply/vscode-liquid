@@ -1,4 +1,4 @@
-import { Token, Char } from 'types';
+import { Token, Char, Complete } from 'types';
 import { isString } from 'utils';
 import * as r from 'parse/helpers';
 
@@ -81,18 +81,28 @@ export function getTokenScope () {
  * Get Token Cursor
  *
  * Determines the previous character from the current cursor location.
- * This is a series of validation checks which is used to infer the
- * type of completion to be provided.
+ * This is a series of validation checks which is used to control the
+ * type of completion to be provided based on the surrounding content.
  */
-export function getTokenCursor ({ text, offset, tagName }: IToken): Token {
+export function getTokenCursor ({ text, offset, tagName }: IToken, vars: Complete.Vars): Token {
 
+  /**
+   * Previous character excluding whitespace
+   */
   const prev = text.slice(0, offset).trim();
+
+  /**
+   * The character code of `prev`
+   */
   const last = prev.charCodeAt(prev.length - 1);
 
   if (last === Char.PIP) return Token.Filter;
   if (last === Char.COL) return Token.Argument;
   if (last === Char.DOT) return /["'][^'"]*?$/.test(text.slice(2, offset - 1)) ? Token.Locale : Token.Property;
 
+  /**
+   * Object Properties expression, eg: `object['']`
+   */
   if (prev.charCodeAt(prev.length - 2) === Char.LSB && (last === Char.SQO || last === Char.DQO)) {
     return Token.Property;
   }
@@ -117,8 +127,22 @@ export function getTokenCursor ({ text, offset, tagName }: IToken): Token {
         const condition = text.slice(token).trimLeft();
         const logical = condition.slice(0, condition.indexOf(word)).trim().split('.');
 
-        if (logical[0] === 'block' && logical[1] === 'type') return Token.Block;
+        if (logical[0] === 'block' && logical[1] === 'type') {
 
+          return Token.SchemaBlockType;
+
+        } else if (vars.has(logical[0])) {
+
+          const { props } = vars.get(logical[0]);
+
+          if (props[0] === 'block') {
+            if (props.length === 1 && logical.length > 1 && logical[1] === 'type') {
+              return Token.SchemaBlockType;
+            } else if (props.length === 2 && props[1] === 'type') {
+              return Token.SchemaBlockType;
+            }
+          }
+        }
       }
 
       return Token.Object;
@@ -126,6 +150,7 @@ export function getTokenCursor ({ text, offset, tagName }: IToken): Token {
   }
 
   if (isString(tagName)) {
+
     switch (tagName) {
 
       case 'if':
