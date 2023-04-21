@@ -1,5 +1,5 @@
 import { has } from 'rambdax';
-import { SchemaSettings, SchemaSettingTypes } from 'types';
+import { SchemaSectionTag, SchemaSettings, SchemaSettingTypes } from 'types';
 import { MarkdownString, CompletionItemKind } from 'vscode';
 import { Type, Types } from '@liquify/specs';
 
@@ -53,6 +53,19 @@ export const EmptyTag = /{%-?\s*-?%}/;
  * An empty tag ender, eg: `/^\s*-?%}/`
  */
 export const EmptyEnder = /^\s*-?%}/;
+
+export function schemaType (schema: SchemaSectionTag) {
+
+  if (has('blocks', schema) && schema.blocks.length > 0) {
+
+    const types = schema.blocks.map(block => block.type).join('|');
+
+    return new RegExp(`(?:\\bwhen\\s+|==\\s*)["']\\b(${types})['"]`, 'g');
+
+  }
+
+  return false;
+}
 
 /**
  * Markdown String
