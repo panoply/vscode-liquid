@@ -40,6 +40,11 @@ function walkProps (next: string[], objectProps: Properties) {
 
 };
 
+/**
+ * Locale Walks
+ *
+ * Walks over locale entries
+ */
 function walkLocales (next: string[], objectProps: object) {
 
   if (next.length > 0) {
