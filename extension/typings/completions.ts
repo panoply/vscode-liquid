@@ -57,9 +57,13 @@ export namespace Complete {
      */
     ender: number;
     /**
-     * The variable value in string form
+     * The variable value in string form, eg: `object.prop`
      */
     value: string;
+    /**
+     * The variable value split, eg: `['object', 'prop']`
+     */
+    props: string[];
     /**
      * The type which the variable holds
      */
