@@ -1,13 +1,13 @@
-import { Char, Complete, SchemaSectionTag, Token } from 'types';
+import { Complete, SchemaSectionTag, Token } from 'types';
 import { CompletionItem, CompletionItemKind } from 'vscode';
-import { kind, mdSchema } from 'parse/helpers';
+import { kind, mdSchema, schemaType } from 'parse/helpers';
 
 /**
  * Get Schema Block Types
  *
  * Schema block type completions
  */
-export function getSchemaBlockTypeCompletions (schema: SchemaSectionTag, type: string) {
+export function getSchemaBlockTypeCompletions (schema: SchemaSectionTag, type?: string) {
 
   return schema.blocks.map(block => ({
     label: block.type,
@@ -115,29 +115,22 @@ export function getSectionCompletions (
  * Get Section Scope
  *
  * Obtains regional based scope, based on the last
- * known schema block type
+ * known schema block type comparison from the current cursor
+ * location.
  */
-export function getSectionScope (content: string, offset: number) {
+export function getSectionScope (schema: Complete.ISchema, content: string, offset: number) {
+
+  const types = schemaType(schema.parse());
+
+  if (types === false) return null;
 
   const string = content.slice(0, offset);
-  const match = string.match(/\bcase\b\s+\bblock\.type|block\.type\s*==\s*[^"']/g);
+  const match = string.match(types);
 
   if (match === null) return null;
 
-  const type = match.pop();
-  const last = string.lastIndexOf(type) + type.length;
+  const type = match.pop().trim();
 
-  if (type.startsWith('case')) {
-
-    const cond = string.lastIndexOf('when', offset) + 4;
-    const when = string.slice(cond).trimStart();
-
-    return (when.charCodeAt(0) !== Char.DQO && when.charCodeAt(0) !== Char.SQO)
-      ? null
-      : when.slice(1, when.indexOf(when[0], 1));
-
-  }
-
-  return string.slice(last + 1, string.indexOf(type[type.length - 1], last) - 1);
+  return type.slice(type.indexOf(type[type.length - 1]) + 1, -1);
 
 }
