@@ -11,8 +11,8 @@
   <img src="https://img.shields.io/visual-studio-marketplace/i/sissel.shopify-liquid?style=flat-square">
 </a>
 &nbsp;
-<a href="https://github.com/panoply/prettify">
-  <img src="https://img.shields.io/npm/v/@liquify/prettify?style=popout-square&color=hotpink&label=%F0%9F%8E%80%20prettify%20%20">
+<a href="https://github.com/panoply/esthetic">
+  <img src="https://img.shields.io/npm/v/@liquify/prettify?style=popout-square&color=hotpink&label=%F0%9F%8E%80%20Æsthetic%20%20">
 </a>
 &nbsp;
 </h2>
@@ -603,71 +603,97 @@ Below is the **default** rules. It is important to note that if the `liquid.form
   },
   "format": {
     "ignore": [],
-    "wrap": 0,
-    "commentIndent": true,
-    "crlf": false,
+    "preset": "none",
+    "language": "auto",
     "indentSize": 2,
-    "preserveLine": 2,
-    "endNewline": true,
+    "indentChar": " ",
+    "wrap": 0,
+    "crlf": false,
+    "endNewline": false,
+    "preserveLine": 3,
+    "liquid": {
+      "commentIndent": false,
+      "commentNewline": false,
+      "correct": true,
+      "delimiterPlacement": "preserve",
+      "delimiterTrims": "preserve",
+      "forceFilerWrap": 0,
+      "ignoreTagList": [],
+      "indentAttributes": false,
+      "lineBreakSeparator": "default",
+      "normalizeSpacing": true,
+      "preserveComment": true,
+      "quoteConvert": "double"
+    },
     "markup": {
-      "correct": false,
-      "quoteConvert": "none",
-      "selfCloseSpace": true,
-      "commentNewline": true,
-      "forceIndent": false,
+      "attributeCasing": "preserve",
       "attributeSort": false,
       "attributeSortList": [],
-      "normalizeSpacing": true,
-      "attributeCasing": "preserve",
-      "lineBreakSeparator": "before",
-      "forceAttribute": true,
+      "commentIndent": false,
+      "commentNewline": false,
+      "correct": true,
+      "delimiterTerminus": false,
+      "forceAttribute": false,
       "forceLeadAttribute": false,
-      "preserveCaptures": false,
+      "forceIndent": false,
+      "ignoreCSS": false,
+      "ignoreJS": false,
+      "ignoreJSON": false,
       "preserveAttributes": false,
-      "preserveText": false,
-      "delimiterTrims": "preserve",
-      "valueForce": "intent",
-      "ignoreScripts": false,
-      "ignoreStyles": false,
-      "ignoreJson": false
+      "preserveComment": true,
+      "preserveText": true,
+      "selfCloseSpace": false,
+      "selfCloseSVG": true,
+      "stripAttributeLines": false,
+      "quoteConvert": "double"
+    },
+    "style": {
+      "atRuleSpace": false,
+      "commentIndent": false,
+      "commentNewline": false,
+      "correct": false,
+      "classPadding": false,
+      "noLeadZero": false,
+      "preserveComment": true,
+      "sortProperties": false,
+      "sortSelectors": false,
+      "quoteConvert": "none"
     },
     "json": {
-      "bracePadding": false,
+      "allowComments": false,
+      "arrayFormat": "default",
       "braceAllman": true,
-      "arrayFormat": "indent",
+      "bracePadding": false,
       "objectIndent": "indent",
       "objectSort": false
     },
-    "style": {
-      "correct": false,
-      "sortProperties": true,
-      "sortSelectors": true,
-      "noLeadZero": true,
-      "quoteConvert": "single",
-      "classPadding": true
-    },
     "script": {
-      "correct": false,
-      "arrayFormat": "indent",
-      "objectIndent": "indent",
+      "commentIndent": false,
+      "commentNewline": false,
+      "arrayFormat": "default",
       "braceAllman": false,
-      "methodChain": 3,
-      "caseSpace": true,
-      "endComma": "never",
-      "elseNewline": true,
-      "functionNameSpace": false,
-      "functionSpace": true,
-      "ternaryLine": true,
-      "braceNewline": false,
-      "bracePadding": true,
+      "bracePadding": false,
       "braceStyle": "none",
+      "endComma": "never",
+      "braceNewline": true,
+      "correct": false,
+      "caseSpace": false,
+      "elseNewline": true,
+      "functionNameSpace": true,
+      "functionSpace": false,
+      "methodChain": 0,
       "neverFlatten": false,
-      "noCaseIndent": true,
+      "noCaseIndent": false,
       "noSemicolon": false,
+      "objectIndent": "indent",
       "objectSort": false,
+      "preserveComment": true,
+      "preserveText": true,
+      "quoteConvert": "single",
+      "ternaryLine": false,
+      "variableList": "none",
       "vertical": false,
-      "quoteConvert": "none",
-      "variableList": false
+      "styleGuide": "none"
     }
   }
 }
@@ -700,7 +726,7 @@ If you are using or have installed the [Liquid Languages Support](https://market
 
 If you are using or have installed [Shopify Liquid (Theme Check)](https://marketplace.visualstudio.com/items?itemName=Shopify.theme-check-vscode) then you _may_ need to choose (or alternate) between the Shopify Liquid (Theme Check )extension and this extension. The Shopify Liquid (Theme Check) extension is for Shopify projects (specifically themes) but tends to create a lot of noise.
 
-The capabilities made available by Shopify Liquid (Theme Check) are nice but they come with limitations as that extension does not support Windows and its LSP (Language Server) implementation requires Ruby to function making it rather resource heavy and exhaustive on your machine. Though the extra features like validations do indeed help in _some_ cases, they are specific to Shopify themes and not much use outside of that. If you require linting features maybe consider running their CLI solution.
+The capabilities made available by Shopify Liquid (Theme Check) are nice but they come with limitations as the extension does not support Windows and its LSP (Language Server) implementation requires Ruby to function making it rather resource heavy and exhaustive on your machine. Though the extra features like validations do indeed help in _some_ cases, they are specific to Shopify themes and not much use outside of that. If you require linting features maybe consider running their CLI solution.
 
 _Capabilities available in the future release (Liquify) support all current features of the Shopify Liquid extension._
 
