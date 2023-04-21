@@ -1,7 +1,7 @@
 {
   "engine": "shopify",
   "files": {
-    "settings": "./theme/config/settings_data.json",
+    "settings": "./theme/config/settings_schema.json",
     "locales": "./theme/locales/en.default.json",
     "snippets": ["/sections/*.liquid"],
     "sections": ["./completions/*.liquid"]
