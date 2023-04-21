@@ -113,6 +113,7 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
         token,
         label,
         value,
+        props: [ value ],
         type: Type.string
       });
 
@@ -155,6 +156,9 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
           token,
           label,
           value,
+          get props () {
+            return getProps(value as string);
+          },
           type: Type.array
         });
 
@@ -195,6 +199,9 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
             token,
             label,
             value,
+            get props () {
+              return getProps(value as string);
+            },
             type: getType(value)
           });
 
@@ -236,6 +243,45 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
 
     return index > -1;
 
+  }
+
+  /**
+   * Get Props
+   *
+   * Splits an object expression and gracefully handles
+   * string brace properties.
+   *
+   * @todo Handle variable properties
+   */
+  function getProps (val: string) {
+
+    const props: string[] = val.split('.');
+
+    if (props.length > 1) {
+
+      return props.flatMap(item => {
+
+        const brace = val.indexOf('[');
+
+        if (brace > -1) {
+
+          const prop = item.slice(0, brace);
+          const match = item
+            .slice(brace + 1)
+            .match(/["'][^'"]*['"]/g)
+            .map(m => m.slice(1, -1).trim());
+
+          return [ prop, ...match ];
+
+        }
+
+        return item.trim();
+
+      });
+
+    }
+
+    return props;
   }
 
   /**
@@ -312,6 +358,7 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
       }
 
       logic = logic + 1;
+
     } while (logic < ender);
 
     return false;
