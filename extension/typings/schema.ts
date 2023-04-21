@@ -427,6 +427,28 @@ export interface SchemaBlocks {
   settings?: SchemaSettings[]
 }
 
+export interface EnabledOn {
+  /**
+   * Array list of templates to enabled this section on
+   */
+  templates?: string[];
+  /**
+   * Array list of groups to enabled this section on
+   */
+  groups?: string[];
+}
+
+export interface DisabledOn {
+  /**
+   * Array list of templates to disable this section on
+   */
+  templates?: string[];
+  /**
+   * Array list of groups to disable this section on
+   */
+  groups?: string[];
+}
+
 export interface SchemaSectionTag {
   /**
    * The name attribute determines the section title that is
@@ -450,6 +472,20 @@ export interface SchemaSectionTag {
    * added to a template. You can specify a limit of `1` or `2` with the limit attribute.
    */
   limit?: number;
+  /**
+   * You can prevent a section from being used on certain template page types and
+   * section group types by setting them in the disabled_on attribute. When you use
+   * `disabled_on`, the section is available to all templates and section groups except
+   * the ones that you specified.
+   */
+  enabled_on?: EnabledOn;
+  /**
+   * You can prevent a section from being used on certain template page types and
+   * section group types by setting them in the disabled_on attribute. When you use
+   * `disabled_on`, the section is available to all templates and section groups except
+   * the ones that you specified.
+   */
+  disabled_on?: DisabledOn;
   /**
    * You can create section specific settings to allow merchants
    * to customize the section with the settings object:
