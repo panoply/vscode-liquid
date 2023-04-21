@@ -61,7 +61,11 @@ export class Events extends CommandPalette {
     const change = contentChanges[contentChanges.length - 1];
 
     if (isObject(change?.range) && this.completion.enable.variables) {
-      await parseDocument(document.getText(setEndRange(change.range.end)), this.completion.vars);
+
+      const range = setEndRange(change.range.end);
+
+      await parseDocument(document.getText(range), this.completion.vars);
+
     }
 
     if (this.completion.enable.schema && this.json.config.validate) {
@@ -71,6 +75,7 @@ export class Events extends CommandPalette {
       if (schema !== false) {
 
         this.json.schema.set(document.uri.fsPath, schema);
+
         const diagnostics = await this.json.doValidation(document.uri);
 
         this.formatting.enable = this.json.canFormat;
