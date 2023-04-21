@@ -4,6 +4,7 @@ import { omit, isType, has, hasPath } from 'rambdax';
 import stripJsonComments from 'strip-json-comments';
 import { InLanguageIds, LanguageIds, Liquidrc, StatusItem } from './types';
 import parseJSON from 'parse-json';
+import { existsSync } from 'node:fs';
 import { access } from 'node:fs/promises';
 import { join, basename } from 'node:path';
 import os from 'node:os';
@@ -234,7 +235,9 @@ export function jsonc (input: string): Liquidrc {
  */
 export async function parseJsonFile (uri: Uri) {
 
-  const { fsPath } = uri;
+  if (uri === null || !uri.fsPath) return null;
+
+  const fsPath = uri.fsPath;
   const exists = await pathExists(fsPath);
 
   if (exists) {
@@ -422,18 +425,18 @@ export function forInspect (fn:(value: 'workspaceValue' | 'globalValue') => void
  *
  * Returns a string or undefined to check whether the
  * current workspace contains a `.liquidrc` or `.liquidrc.json`
- * file. When undefined is returned not file exists.
+ * file. When undefined is returned no file exists.
  */
-export async function hasLiquidrc (root: string) {
+export function hasLiquidrc (root: string) {
 
   if (!isString(root)) return undefined;
 
   const rcfile = join(root, '.liquidrc');
-  const exists = await pathExists(rcfile);
+  const exists = existsSync(rcfile);
 
   if (!exists) {
     const rcjson = join(root, '.liquidrc.json');
-    const exists = await pathExists(rcjson);
+    const exists = existsSync(rcjson);
 
     return exists ? rcjson : undefined;
   }
