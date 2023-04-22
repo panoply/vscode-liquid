@@ -155,8 +155,6 @@ export function getLocaleSchemaSetting (key: string) {
 export function getSettingsCompletions (uri: string, data: SettingsData[]) {
 
   const reference = `[${basename(uri)}](${uri})`;
-  const location = uri.split('/');
-  const filename = location.pop();
   const objects:{ [prop: string]: IProperty } = {};
   const locale = $.liquid.files.get('locales_schema');
 
@@ -170,33 +168,32 @@ export function getSettingsCompletions (uri: string, data: SettingsData[]) {
       for (const type of setting.settings) {
         if (type?.id && type?.label) {
 
-          const label = type.label.startsWith('t:')
-            ? path(type.label.slice(2), locale) || type.label
-            : type.label;
+          const description: string[] = [];
 
-          let info: string;
+          if (type.label.startsWith('t:')) {
+            description.push(`**${path(type.label.slice(2), locale) || type.label}**`, '\n');
+          } else {
+            description.push(`**${type.label}**`, '\n');
+          }
 
           if (has('info', type)) {
             if (type.info.startsWith('t:')) {
-              info = path(type.info.slice(2), locale) + '\n\n';
+              description.push('\n', path(type.info.slice(2), locale), '\n\n');
             } else {
-              info = type.info + '\n\n';
+              description.push('\n', type.info, '\n\n');
             }
-          } else {
-            info = '';
           }
+
+          if (type?.default) description.push(`\n\`${type.default}\``, '\n\n');
+
+          description.push('\n---\n\n', reference);
 
           objects[type.id] = <IProperty>{
             global: true,
-            type: type.type,
             scope: 'settings',
-            summary: `${prop} (${filename})`,
-            description: [
-              `**Label**: ${label}\n\n`,
-              type?.default ? `**Default**: ${type.default}` : '',
-              info,
-              reference
-            ].join('')
+            type: type.type,
+            summary: `${prop} (${type.type})`,
+            description: description.join('')
           };
 
         }
@@ -205,34 +202,35 @@ export function getSettingsCompletions (uri: string, data: SettingsData[]) {
     } else {
 
       for (const type of setting.settings) {
+
         if (type?.id && type?.label) {
 
-          const label = type.label.startsWith('t:')
-            ? path(type.label.slice(2), locale) || type.label
-            : type.label;
+          const description: string[] = [];
 
-          let info: string;
+          if (type.label.startsWith('t:')) {
+            description.push(`**${path(type.label.slice(2), locale) || type.label}**`, '\n');
+          } else {
+            description.push(`**${type.label}**`, '\n');
+          }
 
           if (has('info', type)) {
             if (type.info.startsWith('t:')) {
-              info = path(type.info.slice(2), locale) + '\n\n';
+              description.push(path(type.info.slice(2), locale), '\n\n');
             } else {
-              info = type.info + '\n\n';
+              description.push(type.info + '\n\n');
             }
-          } else {
-            info = '';
           }
+
+          if (type?.default) description.push(`**Default:** ${type.default}`, '\n\n');
+
+          description.push('---\n\n', reference);
 
           objects[type.id] = <IProperty>{
             global: true,
             type: type.type,
             scope: 'settings',
-            summary: `${setting.name} (${filename})`,
-            description: [
-              `**Label**: ${label}\n\n`,
-              info,
-              reference
-            ].join('')
+            summary: `${setting.name} (${type.type})`,
+            description: description.join('')
           };
 
         }
