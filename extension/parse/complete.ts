@@ -168,7 +168,7 @@ export function getPropertyCompletions (token: IToken, vars: Complete.Vars) {
     array = item.kind === Tag.For;
 
     if (array === true || item.type === Type.object || item.type === Type.keyword) {
-      props = item.props;
+      props = item.value;
       vprop = token.tagName;
     } else {
       props = token.tagName;
@@ -180,7 +180,7 @@ export function getPropertyCompletions (token: IToken, vars: Complete.Vars) {
     array = item.kind === Tag.For;
 
     if (array === true || item.type === Type.object || item.type === Type.keyword) {
-      props = item.props;
+      props = item.value;
       vprop = token.object;
     } else {
       props = token.object;
@@ -191,6 +191,8 @@ export function getPropertyCompletions (token: IToken, vars: Complete.Vars) {
     props = token.object;
 
   }
+
+  props = props.split('.').filter(Boolean);
 
   if (vprop) {
     vprop = vprop.split('.').filter(Boolean);
