@@ -215,15 +215,15 @@ export function getSettingsCompletions (uri: string, data: SettingsData[]) {
 
           if (has('info', type)) {
             if (type.info.startsWith('t:')) {
-              description.push(path(type.info.slice(2), locale), '\n\n');
+              description.push('\n', path(type.info.slice(2), locale), '\n\n');
             } else {
-              description.push(type.info + '\n\n');
+              description.push('\n', type.info, '\n\n');
             }
           }
 
-          if (type?.default) description.push(`**Default:** ${type.default}`, '\n\n');
+          if (type?.default) description.push(`\n\`${type.default}\``, '\n\n');
 
-          description.push('---\n\n', reference);
+          description.push('\n---\n\n', reference);
 
           objects[type.id] = <IProperty>{
             global: true,
