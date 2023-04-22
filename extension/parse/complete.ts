@@ -146,17 +146,29 @@ function getObjectProperties ([ label, spec ]): CompletionItem {
  */
 export function getPropertyCompletions (token: IToken, vars: Complete.Vars) {
 
+  /**
+   * Reference of the `token.props` value
+   */
   let props: any;
+
+  /**
+   * Reference of the first known object name, eg: `object` in `object.prop.foo`
+   */
   let vprop: any;
+
+  /**
+   * Whether or not we are within an for loop
+   */
   let array: boolean = false;
 
   if (token.object && vars.has(token.object)) {
 
     const item = vars.get(token.object);
+
     array = item.kind === Tag.For;
 
     if (array === true || item.type === Type.object || item.type === Type.keyword) {
-      props = item.value;
+      props = item.props;
       vprop = token.tagName;
     } else {
       props = token.tagName;
@@ -168,7 +180,7 @@ export function getPropertyCompletions (token: IToken, vars: Complete.Vars) {
     array = item.kind === Tag.For;
 
     if (array === true || item.type === Type.object || item.type === Type.keyword) {
-      props = item.value;
+      props = item.props;
       vprop = token.object;
     } else {
       props = token.object;
@@ -179,8 +191,6 @@ export function getPropertyCompletions (token: IToken, vars: Complete.Vars) {
     props = token.object;
 
   }
-
-  props = props.split('.').filter(Boolean);
 
   if (vprop) {
     vprop = vprop.split('.').filter(Boolean);

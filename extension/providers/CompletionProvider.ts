@@ -3,7 +3,7 @@ import { Service } from 'services';
 import { Char, Token, Complete, Workspace } from 'types';
 import { getTokenCursor, getToken, isEmptyOutput, isEmptyTag } from 'parse/tokens';
 import { getSectionCompletions, getSectionScope } from 'parse/schema';
-import { insertSpace, insertTag, insertTranslate } from 'parse/edits';
+import { insertSpace, insertTag } from 'parse/edits';
 import {
   getObjectCompletions,
   getSchemaCompletions,
@@ -134,6 +134,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
           const items = await this.json.doCompletions(parse);
 
           return getSchemaCompletions(trigger === Char.DQO ? 1 : 0, position, items);
+
         }
       }
     }
@@ -259,11 +260,14 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
     if (token.type === Token.Object) {
       if (trigger === Char.SQO || trigger === Char.DQO || (cursor === Token.Locale && trigger === Char.DOT)) {
-        return getLocaleCompletions(
-          document.uri.fsPath,
-          token.object,
-          insertTranslate(position, token.text)
+
+        console.log(
+          triggerKind,
+          triggerCharacter,
+          token.text
         );
+
+        return getLocaleCompletions(document.uri.fsPath, token.object);
       }
     }
 
