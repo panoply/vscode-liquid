@@ -260,13 +260,6 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
     if (token.type === Token.Object) {
       if (trigger === Char.SQO || trigger === Char.DQO || (cursor === Token.Locale && trigger === Char.DOT)) {
-
-        console.log(
-          triggerKind,
-          triggerCharacter,
-          token.text
-        );
-
         return getLocaleCompletions(document.uri.fsPath, token.object);
       }
     }
