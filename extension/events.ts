@@ -61,11 +61,8 @@ export class Events extends CommandPalette {
     const change = contentChanges[contentChanges.length - 1];
 
     if (isObject(change?.range) && this.completion.enable.variables) {
-
-      const range = setEndRange(change.range.end);
-
-      await parseDocument(document.getText(range), this.completion.vars);
-
+      const range = setEndRange(document, change.range.end);
+      parseDocument(document.getText(range), this.completion.vars);
     }
 
     if (this.completion.enable.schema && this.json.config.validate) {
@@ -195,11 +192,11 @@ export class Events extends CommandPalette {
 
       if (this.files.locales.fsPath === fsPath) {
 
-        await this.getExternal([ 'locales' ]);
+        return this.getExternal([ 'locales' ]);
 
       } else if (this.files.settings.fsPath === fsPath) {
 
-        await this.getExternal([ 'settings' ]);
+        return this.getExternal([ 'settings' ]);
 
       }
     }
