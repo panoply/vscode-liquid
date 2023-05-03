@@ -1,6 +1,7 @@
 dist/
 src/language/liquid.configuration.json
 test/format.html
+schema/
 *.ts
 *.js
 *.cjs
