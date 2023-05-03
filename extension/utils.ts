@@ -87,7 +87,15 @@ export const assign = Object.assign;
  *
  * Returns `Range` from the start of document until the provided position
  */
-export function setEndRange (end: Position) {
+export function setEndRange (document: TextDocument, end: Position) {
+
+  const content = document.getText();
+  const forward = content.indexOf('%}', document.offsetAt(end));
+
+  if (forward > -1) {
+    const { line } = document.positionAt(forward + 2);
+    return new Range(new Position(0, 0), new Position(line + 1, 0));
+  }
 
   return new Range(new Position(0, 0), new Position(end.line + 1, 0));
 
