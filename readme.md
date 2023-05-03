@@ -36,7 +36,7 @@
 
 # Liquid <small style="color:#999;">(vscode)</small>
 
-The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (template language). Supports formatting, tag, filter, object, locales and schema auto-completions, hovers, syntax highlighting and diagnostic capabilities.
+The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (template language). Supports formatting, tag, filter, object, locale, snippet and schema auto-completions, hovers, syntax highlighting and diagnostic capabilities.
 
 ### Key Features
 
@@ -547,7 +547,7 @@ _You can also annotate HTML tags with `data-esthetic-ignore` attributes_
 - `// esthetic-ignore`
 
 > **Warning**&nbsp;
-> Inline comment ignores made possible via Prettify might be little flakey until an official release.
+> Inline comment ignores made possible via Æsthetic might be little flakey until an official release.
 
 # Status Bar
 
@@ -716,7 +716,7 @@ The vscode marketplace has 3 different extensions for Liquid support:
 - Liquid Languages Support
 - Shopify Liquid (Theme Check)
 
-This extension uses the **Liquid** display name and is considered the official Liquid extension for vscode.
+This extension uses the **Liquid** display name and is considered the official Liquid extension for vscode by developers.
 
 ### Liquid Languages Support
 
@@ -724,7 +724,7 @@ If you are using or have installed the [Liquid Languages Support](https://market
 
 ### Shopify Liquid (Theme Check)
 
-If you are using or have installed [Shopify Liquid (Theme Check)](https://marketplace.visualstudio.com/items?itemName=Shopify.theme-check-vscode) then you _may_ need to choose (or alternate) between the Shopify Liquid (Theme Check )extension and this extension. The Shopify Liquid (Theme Check) extension is for Shopify projects (specifically themes) but tends to create a lot of noise.
+If you are using or have installed [Shopify Liquid (Theme Check)](https://marketplace.visualstudio.com/items?itemName=Shopify.theme-check-vscode) then you _may_ need to choose (or alternate) between the Shopify Liquid (Theme Check) extension and this extension. The Shopify Liquid (Theme Check) extension is for Shopify projects (specifically themes) but tends to create a lot of noise.
 
 The capabilities made available by Shopify Liquid (Theme Check) are nice but they come with limitations as the extension does not support Windows and its LSP (Language Server) implementation requires Ruby to function making it rather resource heavy and exhaustive on your machine. Though the extra features like validations do indeed help in _some_ cases, they are specific to Shopify themes and not much use outside of that. If you require linting features maybe consider running their CLI solution.
 
