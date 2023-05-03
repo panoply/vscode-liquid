@@ -90,7 +90,7 @@
     },
     "liquid-tag": {
       "name": "punctuation.output.liquid",
-      "begin": "({%)(-)?\\s*\\b(liquid)\\s+",
+      "begin": "({%)(-)?\\s*(liquid)\\s+",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.liquid"
@@ -434,12 +434,12 @@
       "patterns": [
         {
           "name": "comment.block.liquid",
-          "begin": "^\\s*\\b(comment)\\b$",
-          "end": "^\\s*\\b(endcomment)\\b"
+          "begin": "\\s*\\b(comment)\\b$",
+          "end": "\\s*\\b(endcomment)\\b"
         },
         {
           "name": "comment.line.liquid",
-          "begin": "^\\s*\\#\\s+",
+          "begin": "^\\s*\\#\\s*",
           "end": "\\Z"
         }
       ]
