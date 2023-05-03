@@ -36,7 +36,9 @@
     "Snippets",
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "extensionDependencies": [
     "vscode.html-language-features"
@@ -1140,7 +1142,7 @@
   },
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup --minify-identifiers --minify-whitespace --onSuccess \"vsce package --no-dependencies\"",
+    "build": "tsup --minify --onSuccess \"vsce package --no-dependencies\"",
     "dry": "vsce ls package --no-dependencies",
     "grammar": "node ./scripts/grammars.cjs"
   },
