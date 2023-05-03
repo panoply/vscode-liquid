@@ -19,7 +19,9 @@ import parseJson from 'parse-json';
  * - Handle Filters
  * - Support Liquid Tags
  */
-export async function parseDocument (content: string, vars: Complete.Vars) {
+export function parseDocument (content: string, vars: Complete.Vars) {
+
+  // console.log(content);
 
   vars.clear();
 
@@ -31,6 +33,11 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
    * The content length reference
    */
   const length = content.length;
+
+  /**
+   * Timestamp which will prevent infinate loops or long running parses.
+   */
+  const ts = Date.now();
 
   /* -------------------------------------------- */
   /* LEXICAL SCOPES                               */
@@ -81,13 +88,48 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
    */
   let value: string | false;
 
+  /**
+   * Whether or not we are within a `{% liquid %}` tag.
+   */
+  let isliq: number = -1;
+
   do {
+
+    // 350ms time limit imposed before breaking
+    if ((Date.now() - ts) > 350) {
+
+      console.error(
+        'Internal Parse Error occured in Liquid Extension\n',
+        'Liquid parse took longer than 350ms to complete. Please submit an issue at:',
+        'https://github.com/panoply/vscode-liquid\n\n',
+        'The parse was cancelled to prevent leaks from occuring, maybe check your',
+        'code. If you are working in a large document this could also be the issue.\n\n',
+        'The last known sequence handled:\n\n',
+        `Index: ${i}\n`,
+        `Token: ${token}\n`,
+        `Label: ${label}\n`,
+        `Value: ${value}`
+      );
+
+      break;
+    }
 
     if (getOrder(i) === false) break;
 
+    if (kind === Tag.Liquid && isliq < 0) {
+      isliq = content.lastIndexOf('{%', index);
+      i = i + index + 6;
+      if (getOrder(i) === false) break;
+    }
+
     if (kind === Tag.Capture) {
 
-      begin = content.indexOf('%}', index) + 2;
+      if (isliq > -1) {
+        begin = content.indexOf('\n', index);
+      } else {
+        begin = content.indexOf('%}', index) + 2;
+      }
+
       ender = content.indexOf('endcapture', begin);
 
       if (ender < 0) {
@@ -95,59 +137,12 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
         continue;
       }
 
-      ender = content.lastIndexOf('{%', ender);
-      token = content.slice(content.lastIndexOf('{%', index), begin);
+      // Within {% liquid %} tag
+      if (isliq > -1) {
 
-      if (content.charCodeAt(begin - 2) === Char.DSH) {
-        label = content.slice(index + 7, begin - 3).trim();
-      } else {
-        label = content.slice(index + 7, begin - 2).trim();
-      }
-
-      value = content.slice(begin, ender);
-
-      vars.set(label, {
-        begin,
-        ender,
-        kind,
-        token,
-        label,
-        value,
-        props: [ value ],
-        type: Type.string
-      });
-
-      if (ender > i) {
-        i = content.indexOf('%}', ender) + 2;
-        continue;
-      }
-
-    } else if (kind === Tag.For) {
-
-      begin = content.lastIndexOf('{%', index);
-      ender = content.indexOf('%}', index) + 2;
-      logic = content.lastIndexOf('in', ender - 2);
-      token = content.slice(begin, ender);
-      label = content.slice(index + 3, logic).trim();
-      value = getValue(token.lastIndexOf('in') + 2);
-
-      if (value === false) {
-
-        i = index + 3;
-        continue;
-
-      } else {
-
-        const prop = value.split('.').filter(Boolean);
-
-        if (prop.length > 1) {
-          if (vars.has(prop[0])) {
-            prop[0] = vars.get(prop[0]).value;
-            value = prop.join('.');
-          }
-        } else if (prop.length === 1 && vars.has(prop[0])) {
-          value = vars.get(prop[0]).value;
-        }
+        token = content.slice(content.lastIndexOf('\n', index), begin);
+        label = content.slice(index + 7, begin).trim();
+        value = content.slice(begin, ender);
 
         vars.set(label, {
           begin,
@@ -156,16 +151,101 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
           token,
           label,
           value,
-          get props () {
-            return getProps(value as string);
-          },
-          type: Type.array
+          props: [ value ],
+          type: Type.string
         });
 
         if (ender > i) {
-          i = ender;
+          i = isLiqTagEnd(10);
           continue;
         }
+
+      } else {
+
+        ender = content.lastIndexOf('{%', ender);
+        token = content.slice(content.lastIndexOf('{%', index), begin);
+
+        if (content.charCodeAt(begin - 2) === Char.DSH) {
+          label = content.slice(index + 7, begin - 3).trim();
+        } else {
+          label = content.slice(index + 7, begin - 2).trim();
+        }
+
+        value = content.slice(begin, ender);
+
+        vars.set(label, {
+          begin,
+          ender,
+          kind,
+          token,
+          label,
+          value,
+          props: [ value ],
+          type: Type.string
+        });
+
+        if (ender > i) {
+          i = content.indexOf('%}', ender) + 2;
+          continue;
+        }
+
+      }
+
+    } else if (kind === Tag.For) {
+
+      if (isliq > -1) {
+
+        begin = content.lastIndexOf('\n', index);
+        ender = content.indexOf('\n', index);
+        logic = content.lastIndexOf('in', ender);
+        token = content.slice(begin, ender);
+
+      } else {
+
+        begin = content.lastIndexOf('{%', index);
+        ender = content.indexOf('%}', index) + 2;
+        logic = content.lastIndexOf('in', ender - 2);
+        token = content.slice(begin, ender);
+
+      }
+
+      label = content.slice(index + 3, logic).trim();
+      value = getValue(token.lastIndexOf('in') + 2);
+
+      if (value === false) {
+        i = index + 3;
+        continue;
+      }
+
+      // Lets obtain the array value in the loop
+
+      const prop = value.split('.').filter(Boolean);
+
+      if (prop.length > 1) {
+        if (vars.has(prop[0])) {
+          prop[0] = vars.get(prop[0]).value;
+          value = prop.join('.');
+        }
+      } else if (prop.length === 1 && vars.has(prop[0])) {
+        value = vars.get(prop[0]).value;
+      }
+
+      vars.set(label, {
+        begin,
+        ender,
+        kind,
+        token,
+        label,
+        value,
+        get props () {
+          return getProps(value as string);
+        },
+        type: Type.array
+      });
+
+      if (ender > i) {
+        i = ender;
+        continue;
       }
 
     } else if (kind === Tag.Assign) {
@@ -179,8 +259,14 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
 
       } else {
 
-        begin = content.lastIndexOf('{%', index);
-        ender = content.indexOf('%}', index) + 2;
+        if (isliq > -1) {
+          begin = content.lastIndexOf('\n', index);
+          ender = content.indexOf('\n', index);
+        } else {
+          begin = content.lastIndexOf('{%', index);
+          ender = content.indexOf('%}', index) + 2;
+        }
+
         token = content.slice(begin, ender);
         label = content.slice(index + 6, logic - 1).trim();
         value = getValue(token.indexOf('=') + 1);
@@ -206,7 +292,7 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
           });
 
           if (ender > i) {
-            i = ender;
+            i = isliq > -1 ? isLiqTagEnd(0) : ender;
             continue;
           }
         }
@@ -217,6 +303,24 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
   } while (i < length);
 
   /**
+   * Get Liquid Tag Ender
+   *
+   * Returns the index of the ending delimiter or a `{% liquid %}` tag
+   */
+  function isLiqTagEnd (endTrim: number) {
+
+    const delim = content.slice(ender + endTrim).trim();
+
+    if (delim.startsWith('-%}') || delim.startsWith('%}')) {
+      isliq = -1;
+      return content.indexOf('%}', ender + endTrim) + 2;
+    }
+
+    return ender;
+
+  }
+
+  /**
    * Get First
    *
    * Returns the first occurance match in the document
@@ -225,20 +329,29 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
 
     index = -1;
 
-    for (const [ tag, ref ] of [
-      [ 'assign', Tag.Assign ],
-      [ 'capture', Tag.Capture ],
-      [ 'for', Tag.For ],
-      [ 'liquid', Tag.Liquid ]
-    ]) {
+    const regexp = isliq > -1
+      ? /\b(?:assign|capture|for)\b/
+      : /\b(?:assign|capture|for|liquid)\b/;
 
-      const match = content.indexOf(tag as string, from);
+    let at = content.slice(from).search(regexp);
 
-      if ((index < 0 && match > -1) || (match < index && /{%-?/.test(content.slice(match).trimEnd()))) {
-        index = match;
-        kind = ref as Tag;
+    if (at > -1) {
+
+      at = at + from;
+
+      if (content.startsWith('assign', at)) {
+        index = at;
+        kind = Tag.Assign;
+      } else if (content.startsWith('capture', at)) {
+        index = at;
+        kind = Tag.Capture;
+      } else if (content.startsWith('for', at)) {
+        index = at;
+        kind = Tag.For;
+      } else if (content.startsWith('liquid', at)) {
+        index = at;
+        kind = Tag.Liquid;
       }
-
     }
 
     return index > -1;
@@ -344,7 +457,11 @@ export async function parseDocument (content: string, vars: Complete.Vars) {
         return q < 0 ? false : token.slice(from, q + 1).trim();
       }
 
-      if (token.charCodeAt(logic + 1) === Char.PIP || ((
+      if (isliq > -1 && token.charCodeAt(logic + 1) === Char.NWL) {
+
+        return token.slice(from, logic).trim();
+
+      } else if (token.charCodeAt(logic + 1) === Char.PIP || ((
         token.charCodeAt(logic + 1) === Char.DSH &&
         token.charCodeAt(logic + 2) === Char.PER &&
         token.charCodeAt(logic + 3) === Char.RCB
