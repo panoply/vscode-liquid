@@ -201,6 +201,10 @@ export const enum Char {
    */
   WSP = 32,
   /**
+   * `\n`
+   */
+  NWL = 10,
+  /**
    * `\`
    */
   BWS = 92
