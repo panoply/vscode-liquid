@@ -1,6 +1,6 @@
 {% # FILTER COMPLETES %}
 
-{{ foo | append: '' |  }}
+{{ foo | append: '' | upcase   }}
 
 {% # FILTER COMPLETES - ONLY SHOW TYPE STRING OBJECTS  %}
 
@@ -12,7 +12,7 @@
 
 {% # FILTER COMPLETES - ONLY SHOW IN ASSIGN %}
 
-{% render 'xxx' | %}
+{% render 'xxx'  %}
 
 {% assign bar = 1200 %}
 

@@ -1,20 +1,20 @@
 {% # SNIPPET FILE COMPLETIONS %}
 
-{% render '' %}
-{% include %}
+{% render 'large-file' %}
+{% include 'mock' %}
 
 {% # SECTION FILE COMPLETIONS %}
 
-{% section %}
+{% section 'operators' %}
 
 
 {% # SETTINGS DATA FILE COMPLETIONS %}
 
-{{ settings.collection_cards }}
+{{ settings.cart }}
 
 
 {% # LOCALE FILE COMPLETIONS %}
 
-{{ 'accessibility' }}
+{{ 'accessibility.link_messages.external' | t }}
 
 {{ 'accessibility.close' | t }}

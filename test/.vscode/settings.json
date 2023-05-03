@@ -10,6 +10,8 @@
   "liquid.completion.operators": true,
   "liquid.completion.properties": true,
   "liquid.completion.sections": true,
+  "liquid.hover.schema": true,
+  "liquid.config.method": "liquidrc",
   "[liquid]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "sissel.shopify-liquid",

@@ -9,22 +9,25 @@
 
 {{ foo.settings }}
 
-{{  bar.   }}
+{{  bar   }}
 
 {% # SECTION COMPLETIONS - TESTING BLOCK SCOPES %}
 
-{% for b in foo.blocks  %}
+{% for b in section.blocks  %}
+
+  {% if b.type ==  %}  {% endif %}
 
   {% # SECTION ASSIGN - TEST VARIABLE ASSIGNED BLOCK SETTINGS %}
 
-  {% if b.type == "foo_block_type" %}
+  {% if b.type == '' %}
 
+    {{ block }}
 
     {{ b |  }}
 
   {% elsif b.type == "testing_blocks" %}
 
-    {{ b.settings. }}
+    {{ b.settings }}
 
     {{ b.settings  }}
 

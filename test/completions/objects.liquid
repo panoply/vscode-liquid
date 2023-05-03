@@ -1,12 +1,17 @@
 {% # OBJECTS - PROPERTY COMPLETES %}
 
 {{ address }}
-{{ collection }}
+{{ collection. }}
+
+{% # SETTINGS - PROPERTY COMPLETES %}
+
+{{ settings.accent_icons  }}
+{{ 'sections' }}
 
 {% # LOCALES - PROPERTY COMPLETES %}
 
-{{ 'general.pagination.previous' | t }}
-{{ 'sections.cart' }}
+{{ 'general' | t }}
+{{ 'sections.collection_list' }}
 
 {% # VARIABLE ITEREE - ONLY ARRAY TYPES WILL SHOW %}
 
@@ -18,15 +23,15 @@
 
   {% # ITEREE COMPLETES %}
 
-  {{ item }}
+  {{ xxx  }}
 
-  {{ xxx }}
+  {{   }}
 
 {% endfor %}
 
 {% # ITEREE TEST - NO COMPLETION SHOULD SHOW %}
 
-{{ item }}
+{{  }}
 
 {% # ITEREE TEST - SHOW COMPLETION: xxx %}
 
@@ -38,13 +43,13 @@
 {% assign bar = 1000 %}
 {% assign baz = false %}
 
-{{  }}
+{{   }}
 
 {% # VARIABLE OBJECTS - PROPERTY COMPLETES %}
 
 {% assign obj_1 = product %}
 
-{{ obj_1.collections }}
+{{ obj_1 }}
 
 {% assign prop = product.featured_image %}
 
