@@ -1,5 +1,5 @@
 import { mdString } from 'parse/helpers';
-import { $, IObject } from '@liquify/specs';
+import { $, IProperty, q } from '@liquify/specs';
 import { Service } from 'services';
 import {
   CancellationToken,
@@ -26,21 +26,37 @@ export function getTagHover (word: string) {
 
 }
 
-export function getPropertyHover (token: string, objects: string[]) {
+function walkProps (cursor: string, next: string[], object: IProperty) {
+
+  if (next.length > 0 && q.isProperty(next[0])) {
+
+    const prop = next.shift();
+    const item = object[prop];
+
+    if (item === cursor) return item;
+
+    return walkProps(cursor, next, object[prop]);
+
+  }
+
+  return object;
+
+}
+
+export function getPropertyHover (cursor: string, token: string, objects: string[]) {
 
   if (!$.liquid.data.variation?.objects) return null;
 
-  const prop = objects.indexOf(token);
-  const root = $.liquid.data.variation.objects[objects[0]];
+  const root = $.liquid.data.variation.objects[token];
 
   if (!root) return null;
 
-  let spec: IObject = root?.properties;
-  let walk: number = 1;
+  if (cursor === token) {
+    return mdString(root.description, root.reference);
+  }
 
-  while (prop < walk) spec = spec.properties?.[objects[walk++]];
-
-  if (!prop) return null;
+  const prop = objects.shift();
+  const spec = walkProps(cursor, objects, root.properties[prop]);
 
   return mdString(spec.description, root.reference);
 
@@ -111,7 +127,7 @@ export class HoverProvider extends Service implements IHoverProvider {
    */
   async provideHover (document: TextDocument, position: Position, _token: CancellationToken): Promise<Hover> {
 
-    if (this.enable.schema === true) {
+    if (this.enable.schema === true && this.json.schema.has(document.uri.fsPath)) {
 
       const offset = document.offsetAt(position);
       const schema = this.json.schema.get(document.uri.fsPath);
@@ -129,8 +145,23 @@ export class HoverProvider extends Service implements IHoverProvider {
       const word = document.getText(range);
       const hover = getTagHover(word);
 
-      if (hover === null) return null;
+      if (hover === null) {
 
+        if (this.enable.objects === true) {
+
+          const range = document.getWordRangeAtPosition(position, /[a-zA-Z][\w.]+/);
+          const words = document.getText(range).split('.').filter(Boolean);
+          const hover = getPropertyHover(word, words.shift(), words);
+
+          if (hover === null) return null;
+
+          return new Hover(hover);
+
+        }
+
+        return null;
+
+      }
       return new Hover(hover);
     }
 
