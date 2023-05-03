@@ -88,7 +88,7 @@ export class FormattingProvider implements DocumentFormattingEditProvider {
    * @return A set of text edits or a thenable that resolves to such. The lack of a result can be
    * signaled by returning `undefined`, `null`, or an empty array.
    */
-  provideDocumentFormattingEdits (textDocument: TextDocument) {
+  async provideDocumentFormattingEdits (textDocument: TextDocument) {
 
     if (this.enable === false) return [];
     if (this.ignored.has(textDocument.uri.fsPath)) return [];
