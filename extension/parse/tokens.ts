@@ -135,8 +135,6 @@ export function getTokenCursor ({ text, offset, tagName }: IToken, vars: Complet
 
           const { props } = vars.get(logical[0]);
 
-          console.log(props);
-
           if (props[0] === 'block') {
             if (props.length === 1 && logical.length > 1 && logical[1] === 'type') {
               return Token.SchemaBlockType;
