@@ -170,8 +170,6 @@ export class WorkspaceSettings extends OutputChannel {
    */
   async getExternal (files: string[]) {
 
-    console.log(this.files);
-
     for (const name of files) {
 
       if (this.files[name] !== null) {
@@ -462,6 +460,7 @@ export class WorkspaceSettings extends OutputChannel {
 
     for (const v of [
       'tags',
+      'objects',
       'filters',
       'schema'
     ]) {
@@ -751,10 +750,11 @@ export class WorkspaceSettings extends OutputChannel {
 
       if (this.deprecation.liquidrc === null) {
 
+        await this.getFiles();
+
         this.getFormatRules();
         this.getEngine();
 
-        await this.getFiles();
         await this.getExternal([ 'locales', 'settings' ]);
 
       }
@@ -938,11 +938,9 @@ export class WorkspaceSettings extends OutputChannel {
 
     if (this.config.method === ConfigMethod.Workspace) {
 
+      await this.getFiles();
       this.getFormatRules();
       this.getEngine();
-
-      await this.getFiles();
-
     }
 
     this.getCompletions();
