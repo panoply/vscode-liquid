@@ -21,7 +21,7 @@ export class CommandPalette extends FSWatch {
 
     esthetic.on('format', ({ stats }) => {
       if (!this.hasError) {
-        this.info(`${stats.language} formatted in ${stats.time} (${stats.size})`);
+        this.info(`${stats.language} formatted in ${stats.time}`);
       }
     });
 
