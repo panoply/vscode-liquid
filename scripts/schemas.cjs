@@ -21,6 +21,10 @@ const templates = require('../node_modules/@liquify/schema/shopify/templates.jso
 writeFileSync(join(schema, 'shopify-templates.json'), JSON.stringify(templates));
 log('schema/shopify-templates.json');
 
+const section_groups = require('../node_modules/@liquify/schema/shopify/section-groups.json');
+writeFileSync(join(schema, 'section-groups.json'), JSON.stringify(section_groups));
+log('schema/section-groups.json');
+
 const pkg = require('../package.json');
 const config = require('../node_modules/@liquify/schema/vscode/configuration.json');
 
@@ -35,15 +39,14 @@ log('updated vscode configuration');
 
 const store = [
   '/**',
-  '* LICENSE',
+  '* LICENSE - THIS FILE IS NOT MIT',
   '*',
-  '* THIS LICENCE IS STRICTLY IMPOSED',
+  '* THIS LICENCE IS STRICTLY IMPOSED AND IS LIMITED TO APPROVED USAGE',
   '* YOU ARE NOT PERMITTED TO USE THE CONTENTS OF THIS FILE IN ANY FORM',
-  '* YOUR ARE NOT AUTHORISED TO COPY, RE-DISTRIBUTE OR MODIFY THE CONTENTS OF THIS FILE',
-  '* YOU MUST FIRST ASK PERMISSION FROM THE PROJECT AUTHOR BEFORE USAGE OR RE-PURPOSING OF ANY KIND',
+  '* YOUR ARE NOT AUTHORISED TO COPY, RE-DISTRIBUTE OR MODIFY THIS FILE',
+  '* ASK PERMISSION FROM THE PROJECT AUTHOR BEFORE USAGE OR RE-PURPOSING',
   '*',
   '*/',
-  '',
   '/* eslint-disable */',
   `export const schema = ${JSON.stringify(require('../node_modules/@liquify/schema/shopify/sections.json'))}`
 ].join('\n');
