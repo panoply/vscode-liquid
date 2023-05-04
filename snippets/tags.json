@@ -136,27 +136,28 @@
   },
   "render": {
     "prefix": "render",
-    "body": ["{% render '${1:snippet}' %}"]
+    "body": ["{% render $1 %}"]
   },
   "render, parameters": {
     "prefix": "render",
-    "body": [
-      "{% render '${1:snippet}', ${2:param}: ${3:value}"
-    ]
+    "body": ["{% render $1, ${2:param}: ${3:value}"]
   },
   "include": {
     "prefix": "include",
-    "body": ["{% include '${1:snippet}' %}"]
+    "body": ["{% include $1 %}"]
   },
   "include, parameters": {
     "prefix": "includewith",
-    "body": [
-      "{% include '${1:snippet}', ${2:param}: ${3:value} %}"
-    ]
+    "body": ["{% include 1, ${2:param}: ${3:value} %}"]
   },
   "section": {
     "prefix": "section",
-    "body": ["{% section '${1:section}' %}"]
+    "body": ["{% section $1 %}"]
+  },
+  "sections": {
+    "prefix": "sections",
+    "description": "Section Group",
+    "body": ["{% sections '${1:group}' %}"]
   },
   "raw": {
     "prefix": "raw",
