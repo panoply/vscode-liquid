@@ -75,11 +75,6 @@ The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (
   - [JSON Completions](#json-completions)
   - [JSON Diagnostics](#json-diagnostics)
 - [Completions](#completions)
-  - [Tags](#tags)
-  - [Objects](#objects)
-  - [Filters](#filters)
-  - [Operators](#operators)
-  - [Variables](#variables)
 - [Formatting](#formatting)
   - [Æsthetic](#esthetic)
   - [Setting Default Formatter](#setting-default-formatter)
@@ -382,7 +377,10 @@ The extension supports Standard and Shopify variation completions. This feature 
 }
 ```
 
-### Tags
+<details>
+<summary>
+<strong>Tags</strong>
+</summary>
 
 Liquid tag completions are tokens which are encapsulated within `{%` and `%}` delimiters. Tag completions can be invoked by typing the `%` character.
 
@@ -394,7 +392,12 @@ Liquid tag completions are tokens which are encapsulated within `{%` and `%}` de
 }
 ```
 
-### Objects
+</details>
+
+<details>
+<summary>
+<strong>Objects</strong>
+</summary>
 
 Liquid object completions will be invoked within tokens at different points. The parse algorithm will uses the previous character sequence to determine when object completions are to be provided. Object properties are triggered when a dot `.`character is typed that follows a known keyword (object) reference.
 
@@ -406,7 +409,12 @@ Liquid object completions will be invoked within tokens at different points. The
 }
 ```
 
-### Filters
+</details>
+
+<details>
+<summary>
+<strong>Filters</strong>
+</summary>
 
 Liquid filter completions will be invoked by typing the `|` character. Filter completions are persisted with whitespace, so the completion list will remain open when the previous character is determined to be a filter operator.
 
@@ -418,7 +426,12 @@ Liquid filter completions will be invoked by typing the `|` character. Filter co
 }
 ```
 
-### Operators
+</details>
+
+<details>
+<summary>
+<strong>Operators</strong>
+</summary>
 
 Liquid operator completions will be invoked within control flow tokens such as `{% if %}`, `{% elsif %}` and `{% unless %}` tag types. Operator completions will be provided according to surrounding structures and support the `and`, `or` and `contains` keyword logics.
 
@@ -430,7 +443,12 @@ Liquid operator completions will be invoked within control flow tokens such as `
 }
 ```
 
-### Variables
+</details>
+
+<details>
+<summary>
+<strong>Variables</strong>
+</summary>
 
 Liquid variable completions are supported and made available a per-document basis. The extension will use your current cursor position when providing variable completions and only those which are accessible via the Liquid rendering engine will be shown. Liquid `{% assign %}` and `{% capture %}` tokens are analyzed and will be provided within completion items.
 
@@ -441,6 +459,8 @@ Liquid variable completions are supported and made available a per-document basi
   "liquid.completion.variables": true // Pass a value of false to disable
 }
 ```
+
+</details>
 
 # Files
 
