@@ -1,4 +1,4 @@
-import { Char, Complete, Tag } from 'types';
+import { Char, Complete, SchemaSectionTag, Tag } from 'types';
 import { Type } from '@liquify/specs';
 import { TextDocument } from 'vscode';
 import parseJson from 'parse-json';
@@ -491,7 +491,7 @@ export function parseDocument (content: string, vars: Complete.Vars) {
  * located within the document. This process is executed for every document
  * change as we need to ensure validations align.
  */
-export async function parseSchema (textDocument: TextDocument) {
+export async function parseSchema (textDocument: TextDocument): Promise<false | Complete.ISchema> {
 
   const content = textDocument.getText();
   const detect = content.indexOf('endschema');
@@ -511,7 +511,7 @@ export async function parseSchema (textDocument: TextDocument) {
       ender,
       offset: textDocument.positionAt(begin).line,
       content: content.slice(begin, ender),
-      parse: () => parseJson(content.slice(begin, ender))
+      parse: () => parseJson(content.slice(begin, ender)) as unknown as SchemaSectionTag
     };
 
   }
