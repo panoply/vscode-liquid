@@ -6,6 +6,10 @@
   endif
 %}
 
+
+{{  }}
+
+
 {{ article.author }}
 
 <div class="row jc-center py-{{ section.settings.gutter }}">
@@ -33,3 +37,22 @@
 
   {% endfor %}
 </div>
+
+
+{% schema %}
+  {
+    "name": "foo",
+    "disabled_on": {
+      "groups": []
+    },
+    "settings": [
+      {
+        "type": "article",
+        "id": "",
+        "label": ""
+      }
+
+
+    ]
+  }
+{% endschema %}

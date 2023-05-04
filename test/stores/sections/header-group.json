@@ -1,0 +1,13 @@
+{
+  "type": "header",
+  "name": "Header Group",
+  "sections": {
+    "some-section": {
+      "type": "file",
+      "settings": {}
+    }
+  },
+  "order": [
+    "some-section"
+  ]
+}

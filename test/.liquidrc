@@ -3,8 +3,12 @@
   "files": {
     "settings": "./theme/config/settings_schema.json",
     "locales": "./theme/locales/en.default.json",
-    "snippets": ["/sections/*.liquid"],
-    "sections": ["./completions/*.liquid"]
+    "snippets": [
+      "/sections/*.liquid"
+    ],
+    "sections": [
+      "./completions/*.liquid"
+    ]
   },
   "format": {
     "ignore": [
@@ -22,19 +26,17 @@
       "commentNewline": true,
       "delimiterPlacement": "inline",
       "delimiterTrims": "preserve",
-      "ignoreTagList": ["capture"],
+      "ignoreTagList": [
+        "capture"
+      ],
       "lineBreakSeparator": "before",
       "normalizeSpacing": true,
       "preserveComment": false,
-      "quoteConvert": "single",
-      "valueForce": "intent"
+      "quoteConvert": "single"
     },
+    "markup": {},
     "json": {
       "braceAllman": true
-    },
-    "markup": {
-      "attributeSortList": [],
-      "forceLeadAttribute": true
     }
   }
 }
