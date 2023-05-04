@@ -2,40 +2,16 @@
 
 import { workspace, ConfigurationTarget, Uri, RelativePattern } from 'vscode';
 import { existsSync } from 'node:fs';
-import { join, basename } from 'node:path';
+import { join } from 'node:path';
 import { has, isNil, difference, hasPath, isEmpty } from 'rambdax';
 import anymatch from 'anymatch';
 import { OutputChannel } from './OutputChannel';
-import { Setting, ConfigMethod, Workspace, InLanguageIds, LanguageIds, Liquidrc, LanguageParticipant } from '../types';
+import { Setting, ConfigMethod, Workspace, InLanguageIds, LanguageIds, Liquidrc, SettingsData } from '../types';
 import * as u from '../utils';
 import { getSettingsCompletions } from 'data/liquid';
 import { $ } from '@liquify/specs';
 
 export class WorkspaceSettings extends OutputChannel {
-
-  /**
-   * Formatting Disposals
-   *
-   * Disposes of the formatHandler and resets it reference
-   * to `undefined` only when the handler is defined.
-   */
-  dispose () {
-
-    // if (this.format.handler) {
-
-    //   this.format.handler.dispose();
-    //   this.format.handler = undefined;
-    //   this.format.ignored.clear();
-    //   this.format.register.clear();
-
-    // } else {
-
-    //   this.format.ignored.clear();
-    //   this.format.register.clear();
-
-    // }
-
-  }
 
   /**
    * Set Default Formatter
@@ -191,7 +167,7 @@ export class WorkspaceSettings extends OutputChannel {
 
             } else if (name === 'settings') {
 
-              const data = await u.parseJsonFile(this.files[name]);
+              const data = await u.parseJsonFile(this.files[name]) as unknown as SettingsData[];
 
               getSettingsCompletions(fsPath, data);
 
