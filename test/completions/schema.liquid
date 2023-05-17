@@ -9,13 +9,13 @@
 
 {{ foo.settings }}
 
-{{  bar   }}
+{{ bar }}
 
 {% # SECTION COMPLETIONS - TESTING BLOCK SCOPES %}
 
-{% for b in section.blocks  %}
+{% for b in section.blocks %}
 
-  {% if b.type ==   %}  {% endif %}
+  {% if b.type == %}{% endif %}
 
   {% # SECTION ASSIGN - TEST VARIABLE ASSIGNED BLOCK SETTINGS %}
 
@@ -23,17 +23,19 @@
 
     {{ block }}
 
-    {{ b |  }}
+    {{ b | }}
 
   {% elsif b.type == "testing_blocks" %}
 
     {{ b.settings }}
 
-    {{ b.settings  }}
+    {{ b.settings }}
 
   {% endif %}
 
 {% endfor %}
+
+{% section '' %}
 
 
 {% schema %}
@@ -53,15 +55,15 @@
         "label": "Richtext",
         "info": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       },
-     {
-      "type": "range",
-      "id": "foo_bar",
-      "label": "Foo Bar",
-      "min": 20,
-      "max": 20,
-      "step": 1,
-      "unit": ""
-     },
+      {
+        "type": "range",
+        "id": "foo_bar",
+        "label": "Foo Bar",
+        "min": 20,
+        "max": 20,
+        "step": 1,
+        "unit": ""
+      },
       {
         "type": "text",
         "id": "test_text_input",
