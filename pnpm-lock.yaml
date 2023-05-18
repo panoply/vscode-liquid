@@ -1,6 +1,9 @@
 lockfileVersion: '6.0'
 
 dependencies:
+  '@liquify/schema':
+    specifier: ^0.4.1
+    version: 0.4.1
   '@liquify/specs':
     specifier: ^0.1.8
     version: 0.1.8
@@ -33,9 +36,6 @@ devDependencies:
   '@liquify/prettier-config':
     specifier: ^1.2.1
     version: 1.2.1
-  '@liquify/schema':
-    specifier: ^0.3.0
-    version: 0.3.0
   '@vscode/vsce':
     specifier: ^2.19.0
     version: 2.19.0
@@ -388,10 +388,10 @@ packages:
     engines: {pnpm: '>=6'}
     dev: true
 
-  /@liquify/schema@0.3.0:
-    resolution: {integrity: sha512-b/JgSndTc4O75xjlP9bMAY9Mb1uIDCGJ66x/aRGwcEisbGABBVLS8yPXXNGwVpekCxecW3+r0rsV4ZwoGniFUw==}
+  /@liquify/schema@0.4.1:
+    resolution: {integrity: sha512-4AZw4EsFUrAEgeZFkqNYKQtptdTSJPygqwDllPqNSoFn+CAkehv8jSIb3yB+PXwQ8vEigPygBH1WXeWdvmjMoQ==}
     engines: {node: '>=12', pnpm: '>=4'}
-    dev: true
+    dev: false
 
   /@liquify/specs@0.1.8:
     resolution: {integrity: sha512-ZPpKkwIFxoeTTZlbyTT6QdlllRHKR9o+Z8klcZPbvk/gvWadt23qP+fOmrEqhqeK1oYxyjOPAAK0Q8ROYhpRzw==}
