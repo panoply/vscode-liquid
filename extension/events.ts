@@ -184,20 +184,19 @@ export class Events extends CommandPalette {
    */
   public async onDidSaveTextDocument (textDocument: TextDocument) {
 
-    if (!this.languages.get(textDocument.languageId)) return;
-
     if (this.engine === Engine.shopify) {
 
-      const { fsPath } = textDocument.uri;
+      if (this.files.locales.fsPath === textDocument.uri.fsPath) {
 
-      if (this.files.locales.fsPath === fsPath) {
+        await this.getExternal([ 'locales' ]);
 
-        return this.getExternal([ 'locales' ]);
+        this.info(`Updated: ${textDocument.uri.fsPath}`);
 
-      } else if (this.files.settings.fsPath === fsPath) {
+      } else if (this.files.settings.fsPath === textDocument.uri.fsPath) {
 
-        return this.getExternal([ 'settings' ]);
+        await this.getExternal([ 'settings' ]);
 
+        this.info(`Updated: ${textDocument.uri.fsPath}`);
       }
     }
   }
