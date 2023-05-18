@@ -1,5 +1,6 @@
 import { getCSSLanguageService, DiagnosticSeverity, LanguageService, TextDocument } from 'vscode-css-languageservice';
 import { languages, Position, Range, TextDocument as ITextDocument, Uri, CompletionItem } from 'vscode';
+
 export class CSSLanguageService {
 
   /**
