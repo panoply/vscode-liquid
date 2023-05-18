@@ -68,7 +68,7 @@
         ]
       },
       {
-        "url": "./schema/shopify-settings.json",
+        "url": "./schema/shopify-schema.json",
         "fileMatch": [
           "settings_schema.json"
         ]
@@ -1201,7 +1201,6 @@
   "devDependencies": {
     "@liquify/eslint-config": "^1.2.0",
     "@liquify/prettier-config": "^1.2.1",
-    "@liquify/schema": "^0.3.0",
     "@vscode/vsce": "^2.19.0",
     "eslint": "^8.39.0",
     "prettier": "^2.8.8",
@@ -1209,6 +1208,7 @@
     "type-fest": "^3.9.0"
   },
   "dependencies": {
+    "@liquify/schema": "^0.4.1",
     "@liquify/specs": "^0.1.8",
     "anymatch": "^3.1.3",
     "esthetic": "link:../liquify/packages/esthetic",
