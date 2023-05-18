@@ -17,6 +17,10 @@ const settings_data = require('../node_modules/@liquify/schema/shopify/settings_
 writeFileSync(join(schema, 'shopify-settings.json'), JSON.stringify(settings_data));
 log('schema/shopify-settings.json');
 
+const settings_schema = require('../node_modules/@liquify/schema/shopify/settings_schema.json');
+writeFileSync(join(schema, 'shopify-schema.json'), JSON.stringify(settings_schema));
+log('schema/shopify-schema.json');
+
 const templates = require('../node_modules/@liquify/schema/shopify/templates.json');
 writeFileSync(join(schema, 'shopify-templates.json'), JSON.stringify(templates));
 log('schema/shopify-templates.json');
