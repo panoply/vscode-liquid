@@ -164,8 +164,6 @@ export class FSWatch extends NotificationMessage {
 
     if (this.isMatch(fsPath)) return null;
 
-    this.dispose();
-
     const fileName = basename(fsPath);
 
     if (this.config.method === ConfigMethod.Workspace) {
@@ -199,7 +197,6 @@ export class FSWatch extends NotificationMessage {
 
     if (this.isMatch(fsPath)) return null;
 
-    this.dispose();
     this.config.method = ConfigMethod.Workspace;
     this.info('Using workspace settings for configuration');
 
