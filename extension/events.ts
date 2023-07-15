@@ -132,7 +132,7 @@ export class Events extends CommandPalette {
 
         }
 
-        if (this.completion.enable.objects) {
+        if (this.completion.enable.objects && this.engine === 'shopify') {
           getObjectCompletions(uri.fsPath, this.completion.items);
         }
 
