@@ -36,7 +36,7 @@ export class Extension extends Service {
    *
    * > Currently only Shopify variation files are supported.
    */
-  get files (): Files.Shopify {
+  get files (): Files.Shopify & Files.Eleventy {
 
     return this.uri.files[this.engine];
 
@@ -72,7 +72,7 @@ export class Extension extends Service {
    *
    * @default 'shopify'
    */
-  engine: Engines = 'shopify';
+  engine: '11ty' | Engines = 'shopify';
 
   /**
    * Copy of the parsed `.liquidrc` file
@@ -91,6 +91,17 @@ export class Extension extends Service {
     liquidrc: null,
     workspace: null,
     files: {
+      jekyll: {
+        collectons: null,
+        data: null,
+        includes: null,
+        layouts: null
+      },
+      '11ty': {
+        data: null,
+        includes: new Set(),
+        layouts: new Set()
+      },
       shopify: {
         locales: null,
         localesSchema: null,
