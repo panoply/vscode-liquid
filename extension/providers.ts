@@ -87,8 +87,8 @@ export class Providers extends Extension {
 
     } else {
 
-      if (this.engine === 'eleventy') {
-        q.setEngine(Engine.eleventy);
+      if (this.engine === '11ty') {
+        q.setEngine(Engine.standard);
       } else if (this.engine === 'jekyll') {
         q.setEngine(Engine.jekyll);
       } else if (this.engine === 'standard') {
@@ -108,7 +108,7 @@ export class Providers extends Extension {
       }
 
       if (this.completion.enable.includes) {
-        this.completion.items.set('snippets', getFileCompletions(this.files.snippets));
+        this.completion.items.set('snippets', getFileCompletions(this.files.includes));
       }
     }
 
