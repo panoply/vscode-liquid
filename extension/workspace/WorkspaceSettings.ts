@@ -148,7 +148,7 @@ export class WorkspaceSettings extends OutputChannel {
 
     for (const name of files) {
 
-      if (this.files[name] !== null) {
+      if (name in this.files && this.files[name] !== null) {
 
         const { fsPath } = this.files[name];
         const exists = await u.pathExists(fsPath);
@@ -198,6 +198,8 @@ export class WorkspaceSettings extends OutputChannel {
    */
   async getFiles (): Promise<void> {
 
+    if (this.engine === 'standard' || this.engine === 'jekyll') return;
+
     const root = this.uri.root.fsPath;
     const settings = workspace.getConfiguration().inspect('liquid');
 
@@ -207,6 +209,8 @@ export class WorkspaceSettings extends OutputChannel {
      * Adds globals to the completions store
      */
     const globs = async (file: string, array: string[]) => {
+
+      if (this.files[file] === null) return false;
 
       const curr = this.files[file].size;
       const ends = array.length;
@@ -235,6 +239,7 @@ export class WorkspaceSettings extends OutputChannel {
 
           if (i === ends - 1) {
             if (added > 0 && curr > 0 && curr !== added) {
+
               const amount = added - curr;
 
               if (amount > 0) {
@@ -284,7 +289,7 @@ export class WorkspaceSettings extends OutputChannel {
             'The "files" setting expects a type object be provided but recieved type',
             `${typeof this.liquidrc.files}. You will need to correct this or`,
             'alternatively you can define files in your workspace file via the',
-            '"liquid.files.*" option.'
+            `"liquid.files.${this.liquidrc.engine}" option.`
           );
 
         } else {
@@ -293,12 +298,28 @@ export class WorkspaceSettings extends OutputChannel {
       }
     }
 
-    for (const file of [
-      'locales',
-      'settings',
-      'snippets',
-      'sections'
-    ]) {
+    let files: string[];
+
+    if (this.engine === 'shopify') {
+
+      files = [
+        'locales',
+        'settings',
+        'snippets',
+        'sections'
+      ];
+
+    } else if (this.engine === 'eleventy' || this.engine === '11ty') {
+
+      files = [
+        'data',
+        'layouts',
+        'includes'
+      ];
+
+    }
+
+    for (const file of files) {
 
       let defined = false;
 
@@ -307,10 +328,12 @@ export class WorkspaceSettings extends OutputChannel {
 
           this.files[file] = Uri.file(join(root, this.liquidrc.files[file]));
 
-          if (file === 'locales') {
-            const name = this.liquidrc.files[file].replace(/\.json$/, '.schema.json');
-            const schema = Uri.file(join(root, name));
-            if (await u.pathExists(schema.fsPath)) this.files.localesSchema = schema;
+          if (this.engine === 'shopify') {
+            if (file === 'locales') {
+              const name = this.liquidrc.files[file].replace(/\.json$/, '.schema.json');
+              const schema = Uri.file(join(root, name));
+              if (await u.pathExists(schema.fsPath)) this.files.localesSchema = schema;
+            }
           }
 
           defined = true;
@@ -326,25 +349,36 @@ export class WorkspaceSettings extends OutputChannel {
 
         let value: string | string[];
 
-        if (has(`files.${file}`, settings.workspaceValue)) {
-          value = settings.workspaceValue[`files.${file}`];
-        } else if (has(`files.${file}`, settings.globalValue)) {
-          value = settings.globalValue[`files.${file}`];
+        if (has(`files.${this.engine}`, settings.workspaceValue)) {
+          if (has(file, settings.workspaceValue[`files.${this.engine}`])) {
+            value = settings.workspaceValue[`files.${file}`];
+          } else if (has(`files.${this.engine}`, settings.globalValue)) {
+            if (has(file, settings.globalValue[`files.${this.engine}`])) {
+              value = settings.globalValue[`files.${file}`];
+            }
+          }
         }
 
         if (u.isString(value)) {
+
           if (this.liquidrc.files[file].length !== '') {
 
             this.files[file] = Uri.file(value as string);
 
-            if (file === 'locales') {
-              const name = (value as string).replace(/\.json$/, '.schema.json');
-              const schema = Uri.file(join(root, name));
-              if (u.pathExists(schema.fsPath)) this.files.localesSchema = schema;
+            if (this.engine === 'shopify') {
+              if (file === 'locales') {
+                const name = (value as string).replace(/\.json$/, '.schema.json');
+                const schema = Uri.file(join(root, name));
+                if (await u.pathExists(schema.fsPath)) this.files.localesSchema = schema;
+              }
             }
+
           }
+
         } else if (u.isArray(value) && value.length > 0) {
+
           await globs(file, value as string[]);
+
         }
       }
     }
@@ -699,7 +733,11 @@ export class WorkspaceSettings extends OutputChannel {
 
           const update: Liquidrc = {
             engine: this.engine,
-            files: {
+            files: this.engine === '11ty' ? {
+              data: [],
+              includes: [],
+              layouts: []
+            } : {
               locales: '',
               settings: '',
               sections: [],
@@ -902,15 +940,15 @@ export class WorkspaceSettings extends OutputChannel {
 
     await this.getLiquidrc();
 
-    // if (this.isReady === false) {
-    //   this.deprecation.workspace = u.hasDeprecatedSettings();
-    //   if (this.deprecation.workspace === '4.0.0') {
-    //     const updated = await this.fixWorkspace();
-    //     if (updated) {
-    //       this.info('Updated to the latest v4.0.0 workspace settings structure');
-    //     }
-    //   }
-    // }
+    if (this.isReady === false) {
+      this.deprecation.workspace = u.hasDeprecatedSettings();
+      if (this.deprecation.workspace === '4.0.0') {
+        const updated = await this.fixWorkspace();
+        if (updated) {
+          this.info('Updated to the latest v4.0.0 workspace settings structure');
+        }
+      }
+    }
 
     if (this.config.method === ConfigMethod.Workspace) {
 
@@ -924,6 +962,7 @@ export class WorkspaceSettings extends OutputChannel {
     this.getHovers();
 
     await this.getExternal([ 'locales', 'settings' ]);
+
   };
 
 }
