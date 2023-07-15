@@ -1,18 +1,19 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@liquify/schema':
-    specifier: ^0.4.1
-    version: 0.4.1
+    specifier: ^0.5.1
+    version: 0.5.1
   '@liquify/specs':
-    specifier: ^0.1.8
-    version: 0.1.8
+    specifier: ^0.2.1
+    version: 0.2.1
   anymatch:
     specifier: ^3.1.3
     version: 3.1.3
-  esthetic:
-    specifier: link:../liquify/packages/esthetic
-    version: link:../liquify/packages/esthetic
   parse-json:
     specifier: ^7.0.0
     version: 7.0.0
@@ -42,6 +43,9 @@ devDependencies:
   eslint:
     specifier: ^8.39.0
     version: 8.39.0
+  esthetic:
+    specifier: link:../liquify/packages/esthetic
+    version: link:../liquify/packages/esthetic
   prettier:
     specifier: ^2.8.8
     version: 2.8.8
@@ -388,13 +392,13 @@ packages:
     engines: {pnpm: '>=6'}
     dev: true
 
-  /@liquify/schema@0.4.1:
-    resolution: {integrity: sha512-4AZw4EsFUrAEgeZFkqNYKQtptdTSJPygqwDllPqNSoFn+CAkehv8jSIb3yB+PXwQ8vEigPygBH1WXeWdvmjMoQ==}
+  /@liquify/schema@0.5.1:
+    resolution: {integrity: sha512-Mp199ScfXeoCfjpWqqynB8mQnRtkeQgyZobvv8E5PAnJOSh6mI2yQAUobl+ITf2XkLPFmFUWJuJSkuuWyyfKFA==}
     engines: {node: '>=12', pnpm: '>=4'}
     dev: false
 
-  /@liquify/specs@0.1.8:
-    resolution: {integrity: sha512-ZPpKkwIFxoeTTZlbyTT6QdlllRHKR9o+Z8klcZPbvk/gvWadt23qP+fOmrEqhqeK1oYxyjOPAAK0Q8ROYhpRzw==}
+  /@liquify/specs@0.2.1:
+    resolution: {integrity: sha512-B05cKscPHvrKhqGFGN9A2HqcFeO8BM+1DANlYv+teC3BnizggjDtmCLODUehnnt8BoxSXBadEPp5ycPAwRM9tg==}
     engines: {node: '>=12', pnpm: '>=4'}
     dev: false
 
