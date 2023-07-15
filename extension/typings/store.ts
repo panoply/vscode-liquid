@@ -243,6 +243,45 @@ export namespace Files {
 
   }
 
+  /**
+   * Eleventy specific file URI records
+   */
+  export interface Jekyll {
+    /**
+    * Settings (`settings_data.json`) file path
+    */
+    data: Set<Uri>;
+    /**
+    * Include directories
+    */
+    includes: Set<Uri>;
+    /**
+     * Layouts directories
+     */
+    layouts: Set<Uri>;
+    /**
+     * Collections directories
+     */
+    collectons: Set<Uri>;
+  }
+
+  /**
+   * Eleventy specific file URI records
+   */
+  export interface Eleventy {
+    /**
+    * Settings (`settings_data.json`) file path
+    */
+    data: Set<Uri>;
+    /**
+    * Include directories
+    */
+    includes: Set<Uri>;
+    /**
+     * Layouts directories
+     */
+    layouts: Set<Uri>;
+  }
 }
 
 export interface URI {
@@ -275,7 +314,15 @@ export interface URI {
     /**
      * Shopify specific file URI records
      */
-    shopify: Files.Shopify
+    shopify: Files.Shopify;
+    /**
+     * Eleventy secific file URI records;
+     */
+    '11ty': Files.Eleventy;
+    /**
+     * Jekyll secific file URI records;
+     */
+    jekyll: Files.Jekyll;
   }
 }
 
