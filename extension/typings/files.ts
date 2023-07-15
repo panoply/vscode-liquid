@@ -14,24 +14,50 @@ export interface Liquidrc {
   /**
    * Liquid Engine Reference
    */
-  engine?: Engines;
+  engine?: Engines | '11ty';
   /**
    * File references
    */
   files?: {
     /**
+     * **11ty**
+     *
+     * Reference to the `data` files
+     */
+    data?: string[];
+    /**
+     * **11ty**
+     *
+     * Reference to the `includes` files
+    */
+    includes?: string[];
+    /**
+     * **11ty**
+     *
+     * Reference to layouts
+     */
+    layouts?: string[];
+    /**
+     * **Shopify**
+     *
      * Reference to the `*.default.json` Shopify locale file.
      */
     locales?: string;
     /**
+     * **Shopify**
+     *
      * Reference to the `settings_data.json` Shopify file
      */
     settings?: string;
     /**
+     * **Shopify**
+     *
      * Reference to directory or files used as snippets.
      */
     snippets?: string[];
     /**
+     * **Shopify**
+     *
      * Reference to directory of files used as sections.
      */
     sections?: string[];
