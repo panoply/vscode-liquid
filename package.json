@@ -414,33 +414,69 @@
           ],
           "markdownDescription": "**Default** `shopify`\n\nThe `liquid.engine` option is used to determine the Liquid template variation you are working with. This extension supports the following Liquid variations:\n\n- Standard\n- Shopify\n- 11ty\n- Jekyll\n\nFeatures and capabilities differ depending on the engine you define. For example, if you are working with the Shopify Liquid variation and you have set the engine to `Standard` then features like object and property completions will not work.\n\n**Tip**\n\nYou can optionally infer the engine with your `.liquidrc` file.\n"
         },
-        "liquid.files.locales": {
-          "type": "string",
-          "default": "",
-          "markdownDescription": "**Default** `\"\"`\n\nProvide the path location to the default locale (ie: `en.default.json`) file. Use a path that is relative to the current project root directory. When you provide a locale file path reference then completions will show for locales in output type object tags.\n\n**IMPORTANT**\n\nYou must point to path to **default** language file.\n"
-        },
-        "liquid.files.settings": {
-          "type": "string",
-          "default": "",
-          "markdownDescription": "**Default** `\"\"`\n\nProvide the path location to your `settings_schema.json` file. Use a path that is relative to the current project root directory. When you provide a path reference then completions will show for liquid objects starting with `settings.*`.\n\n**IMPORTANT**\n\nYou must point to path to `settings_schema.json` file.\n\n"
-        },
-        "liquid.files.snippets": {
-          "type": "array",
-          "markdownDescription": "**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain snippet files. When you providing snippet file paths location references the snippets will be provided in `{% render '' %}` completions.\n\n",
-          "items": {
-            "uniqueItems": true,
-            "type": "string"
+        "liquid.files.shopify": {
+          "type": "object",
+          "additionalProperties": false,
+          "markdownDescription": "[11ty](https://shopify.dev) file references.",
+          "properties": {
+            "locales": {
+              "type": "string",
+              "markdownDescription": "**Default** `\"\"`\n\nProvide the path location to the default locale (ie: `en.default.json`) file. Use a path that is relative to the current project root directory. When you provide a locale file path reference then completions will show for locales in output type object tags.\n\n**IMPORTANT**\n\nYou must point to path to **default** language file.\n"
+            },
+            "settings": {
+              "type": "string",
+              "markdownDescription": "**Default** `\"\"`\n\nProvide the path location to your `settings_schema.json` file. Use a path that is relative to the current project root directory. When you provide a path reference then completions will show for liquid objects starting with `settings.*`.\n\n**IMPORTANT**\n\nYou must point to path to `settings_schema.json` file.\n\n"
+            },
+            "snippets": {
+              "type": "array",
+              "markdownDescription": "**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain snippet files. When you providing snippet file paths location references the snippets will be provided in `{% render '' %}` completions.\n\n",
+              "items": {
+                "uniqueItems": true,
+                "type": "string"
+              }
+            },
+            "sections": {
+              "type": [
+                "array",
+                "string"
+              ],
+              "markdownDescription": "**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain section files. When you provide section file location references the sections will be made available in `{% section '' %}` tag completions and `cmd + click` will allow quick opening.\n\n",
+              "items": {
+                "uniqueItems": true,
+                "type": "string"
+              }
+            }
           }
         },
-        "liquid.files.sections": {
-          "type": [
-            "array",
-            "string"
-          ],
-          "markdownDescription": "**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain section files. When you provide section file location references the sections will be made available in `{% section '' %}` tag completions and `cmd + click` will allow quick opening.\n\n",
-          "items": {
-            "uniqueItems": true,
-            "type": "string"
+        "liquid.files.11ty": {
+          "type": "object",
+          "additionalProperties": false,
+          "markdownDescription": "[11ty](https://11ty.dev) file references.",
+          "properties": {
+            "data": {
+              "type": "array",
+              "markdownDescription": "**Default** `[]`\n\nAccepts JSON file path locations to data files used by Eleventy. Use paths that are relative to the current project root directory.\n\n**IMPORTANT**\n\nOnly JSON data files are accepted, YAML files will be ignored.",
+              "items": {
+                "uniqueItems": true,
+                "type": "string"
+              }
+            },
+            "includes": {
+              "type": "array",
+              "markdownDescription": "**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain include files. When you provide include file path location references they will be provided in `{% include '' %}` and/or `{% render '' %}` completions.\n\n",
+              "items": {
+                "uniqueItems": true,
+                "type": "string"
+              }
+            },
+            "layouts": {
+              "type": "array",
+              "markdownDescription": "**NOT YET SUPPORTED**\n\nThis option will be available in future versions. References provided here will be ignored until the capability is ready.\n\n---\n\n**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain layout files. When you provide layout file location references they will be made available to YAML Frontmatter.\n\n",
+              "items": {
+                "uniqueItems": true,
+                "type": "string"
+              }
+            }
           }
         },
         "liquid.completion.tags": {
@@ -725,7 +761,7 @@
                   "markdownDescription": "Whether or not to apply indentation of HTML attributes within Liquid identified tag blocks contained in HTML Tags. This rule emulates the `liquid-prettier-plugin` structures with more refined controlling. This requires the `markup` rule `forceAttributes` be set to either `true` or have limit value (e.g: `2`) defined.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/indentAttribute/)\n"
                 },
                 "lineBreakSeparator": {
-                  "default": "default",
+                  "default": "after",
                   "type": "string",
                   "markdownDescription": "Controls the placement of Liquid separator type characters in new line structures. In situations where you write a multiline tag expression this rule can augment the order of leading operator characters such as the parameter comma `,` separator.\n\nThis rule will not break tag content on to new lines for you, it instead together with the inferred structure you've expressed. This means that you will need to manually new line the arguments.\n\n### Options\n\nThis is a Liquid specific formatting rule which will default to `after` when no option has been specified.\n\n- before\n- after\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/lineBreakSeparator/)\n",
                   "enum": [
@@ -806,8 +842,12 @@
                   "markdownDescription": "Inserts a new line above comment tags. When enabled the rule will add a newline even if `preserveLine` is set to `0`. The rule will not inject new lines when the previous expression is determined to already contain a new line.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/commentNewline/)\n\n"
                 },
                 "delimiterTerminus": {
-                  "type": "boolean",
-                  "default": false,
+                  "enum": [
+                    "inline",
+                    "force",
+                    "adapt"
+                  ],
+                  "default": "inline",
                   "markdownDescription": "Whether or not ending HTML tag delimiters should be forced onto a newline. This will emulate the style of Prettier's `singleAttributePerLine` formatting option, wherein the last `>` delimiter character breaks itself onto a new line. Though this output style was popularized by Prettier, the resulting structures produced are far from elegant (aesthetically).\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/delimiterTerminus/)\n\n"
                 },
                 "forceIndent": {
@@ -1203,15 +1243,15 @@
     "@liquify/prettier-config": "^1.2.1",
     "@vscode/vsce": "^2.19.0",
     "eslint": "^8.39.0",
+    "esthetic": "link:../liquify/packages/esthetic",
     "prettier": "^2.8.8",
     "tsup": "^6.7.0",
     "type-fest": "^3.9.0"
   },
   "dependencies": {
-    "@liquify/schema": "^0.4.1",
-    "@liquify/specs": "^0.1.8",
+    "@liquify/schema": "^0.5.1",
+    "@liquify/specs": "^0.2.1",
     "anymatch": "^3.1.3",
-    "esthetic": "link:../liquify/packages/esthetic",
     "parse-json": "^7.0.0",
     "rambdax": "9.1.1",
     "strip-json-comments": "^5.0.0",
