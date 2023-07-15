@@ -1,13 +1,11 @@
 {
   "engine": "shopify",
   "files": {
-    "settings": "./theme/config/settings_schema.json",
-    "locales": "./theme/locales/en.default.json",
-    "snippets": [
-      "/sections/*.liquid"
+    "data": [
+      "./theme/config/settings_schema.json"
     ],
-    "sections": [
-      "./completions/*.liquid"
+    "includes": [
+      "./sections/*.liquid"
     ]
   },
   "format": {
