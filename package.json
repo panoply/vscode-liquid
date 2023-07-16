@@ -1249,7 +1249,7 @@
     "type-fest": "^3.9.0"
   },
   "dependencies": {
-    "@liquify/schema": "^0.5.1",
+    "@liquify/schema": "^0.5.2",
     "@liquify/specs": "^0.2.1",
     "anymatch": "^3.1.3",
     "parse-json": "^7.0.0",
