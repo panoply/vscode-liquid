@@ -186,13 +186,13 @@ export class Events extends CommandPalette {
 
     if (this.engine === Engine.shopify) {
 
-      if (this.files.locales.fsPath === textDocument.uri.fsPath) {
+      if (this.files.locales?.fsPath === textDocument.uri.fsPath) {
 
         await this.getExternal([ 'locales' ]);
 
         this.info(`Updated: ${textDocument.uri.fsPath}`);
 
-      } else if (this.files.settings.fsPath === textDocument.uri.fsPath) {
+      } else if (this.files.settings?.fsPath === textDocument.uri.fsPath) {
 
         await this.getExternal([ 'settings' ]);
 
