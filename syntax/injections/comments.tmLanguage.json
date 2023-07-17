@@ -1,0 +1,117 @@
+{
+  "scopeName": "source.liquid.doc-comments.injection",
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "injectionSelector": "L:source.liquid -comment",
+  "information_for_contributors": [
+    "IMPORTANT",
+    "----------",
+    "This injection applies Liquid Doc highlighting to occurances in comment blocks.",
+    "Liquid Doc was made popular in the Dawn Shopify theme but is yet to be standardized.",
+    "This file and the containing grammars are likely to change in the future. As per all",
+    "grammar files, you cannot adapt the contents of this file without first asking for permission."
+  ],
+  "patterns": [
+    {
+      "name": "comment.block.liquid",
+      "begin": "{%-?\\s*\\bcomment\\b\\s*-?%}",
+      "end": "(?<={%-?\\s*\\bendcomment\\b\\s*-?%})",
+      "patterns": [
+        { "include": "#accepts" },
+        { "include": "#usage" }
+      ]
+    }
+  ],
+  "repository": {
+    "accepts": {
+      "patterns": [
+        {
+          "begin": "([Aa]ccepts\\:)",
+          "end": "(?=[uU]sage:|{%-?\\s*\\bendcomment\\b\\s*-?%})",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.comment-doc.liquid"
+            }
+          },
+          "patterns": [
+            {
+              "match": "(\\-)\\s",
+              "name": "punctuation.comment-doc.liquid"
+            },
+            {
+              "match": "(?<=\\-\\s)([\\w-]+)(:)\\s",
+              "captures": {
+                "1": {
+                  "name": "variable.parameter.comment-doc.liquid"
+                },
+                "2": {
+                  "name": "punctuation.comment-doc.liquid"
+                }
+              }
+            },
+            {
+              "match": "(\\{)(String|Number|Boolean|Object|Array|Float)(\\})\\s",
+              "captures": {
+                "1": {
+                  "name": "punctuation.comment-doc.liquid"
+                },
+                "2": {
+                  "name": "entity.name.tag.type.comment-doc.liquid"
+                },
+                "3": {
+                  "name": "punctuation.comment-doc.liquid"
+                }
+              }
+            },
+            {
+              "match": "([Dd]efault:)\\s([a-zA-Z0-9_]+)\\s",
+              "captures": {
+                "1": {
+                  "name": "entity.name.tag.type.comment-doc.liquid"
+                },
+                "2": {
+                  "name": "keyword.control.comment-doc.liquid"
+                }
+              }
+            },
+            {
+              "match": "(\\()([Oo]ptional)(\\))",
+              "captures": {
+                "1": {
+                  "name": "punctuation.comment-doc.liquid"
+                },
+                "2": {
+                  "name": "support.class.optional.comment-doc.liquid"
+                },
+                "3": {
+                  "name": "punctuation.comment-doc.liquid"
+                }
+              }
+            },
+            {
+              "match": "(\\-)\\s",
+              "name": "punctuation.comment-doc.liquid"
+            },
+            { "include": "source.liquid#strings" }
+          ]
+        }
+      ]
+    },
+    "usage": {
+      "patterns": [
+        {
+          "begin": "([uU]sage:)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.comment-doc.liquid"
+            }
+          },
+          "end": "(?={%-?\\s*\\bendcomment\\b\\s*-?%}|[Aa]ccepts:)",
+          "patterns": [
+            { "include": "source.liquid#tags" },
+            { "include": "source.liquid#output" }
+          ]
+        }
+      ]
+    }
+  }
+}
