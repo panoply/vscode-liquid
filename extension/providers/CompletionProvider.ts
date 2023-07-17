@@ -289,7 +289,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
         }
       }
 
-      return props;
+      return props as CompletionItem[];
 
     }
 
