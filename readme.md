@@ -12,7 +12,7 @@
 </a>
 &nbsp;
 <a href="https://github.com/panoply/esthetic">
-  <img src="https://img.shields.io/npm/v/@liquify/prettify?style=popout-square&color=hotpink&label=%F0%9F%8E%80%20Æsthetic%20%20">
+  <img src="https://img.shields.io/npm/v/esthetic?style=popout-square&color=hotpink&label=%F0%9F%8E%80%20Æsthetic%20%20">
 </a>
 &nbsp;
 </h2>
@@ -752,7 +752,7 @@ _Capabilities available in the future release (Liquify) support all current feat
 
 # Releases
 
-As of **v3.0.0** all version releases and changelogs including the distributed VSIX files can be found in [Releases](https://github.com/panoply/vscode-liquid/releases). Previous version changelogs can be found in the [v2.3.0](https://github.com/panoply/vscode-liquid/blob/v2.3.0/CHANGELOG.md) branch.
+As of **v4.0.0** all version releases and changelogs including the distributed VSIX files can be found in [Releases](https://github.com/panoply/vscode-liquid/releases). Previous version changelogs can be found in the [v2.3.0](https://github.com/panoply/vscode-liquid/blob/v2.3.0/CHANGELOG.md) branch.
 
 - [Releases](https://github.com/panoply/vscode-liquid/releases)
 - [Roadmap](https://github.com/panoply/vscode-liquid/projects/6)
@@ -795,7 +795,7 @@ Thanks to these talented folks who's work, ideas, feedback and contributions mak
 
 # Support
 
-No obligation but coffee is always appreciated.
+Follow me on [Twitter](https://twitter.com/niksavvidis) and say hello! No obligations here, but coffee is always appreciated.
 
 **PayPal**: [Donate](https://www.paypal.me/paynicos)<br>
 **BTC**: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
