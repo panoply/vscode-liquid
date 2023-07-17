@@ -13,9 +13,7 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Liquid",
   "scopeName": "source.liquid",
-  "fileTypes": [
-    "liquid"
-  ],
+  "fileTypes": ["liquid"],
   "injections": {
     "L:meta - (meta.embedded.block.liquid)": {
       "patterns": [
