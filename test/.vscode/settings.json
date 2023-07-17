@@ -1,18 +1,24 @@
 {
-  "highlight.regexes": {
-    "\\bfoo\\s+": [
-      {
-        "color": "#c55353"
-      }
-    ],
-    "\\s+[a-zA-Z]\\b100": {
-      "filterFileRegex": ".*\\.{js}",
-      "decorations": [
-        {
-          "borderColor": "#ff0000",
-          "color": "#ff0000"
-        }
-      ]
-    }
+  "[liquid]": {
+    "editor.formatOnSave": true
   }
+  // "liquid.files.shopify": {
+  //   "locales": "./theme/locales/en.default.json",
+  //   "settings": "./theme/config/settings_schema.json"
+  // },
+  // "liquid.config.method": "liquidrc",
+  // "liquid.format.ignore": [
+  //   "./completions/*",
+  //   "./ignores/ignore.liquid",
+  //   "./syntax/*"
+  // ],
+  // "liquid.format.rules": {
+  //   "liquid": {
+  //     "forceFilter": 3
+  //   }
+  // },
+  // "[liquid]": {
+  //   "editor.defaultFormatter": "sissel.shopify-liquid",
+  //   "editor.formatOnSave": true
+  // },
 }

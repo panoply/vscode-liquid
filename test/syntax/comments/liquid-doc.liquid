@@ -1,0 +1,115 @@
+{% comment %}
+
+  - media {Boolean} ONLY THE CORRECT STRUCTURES WILL HIGHLIGHT
+
+  Renders a product thumbnail with a modal-opener
+
+  Usage:
+  {% render 'product-variant-options',
+    product: product,
+    option: option,
+    block: block
+  %}
+
+  Accepts:
+  - media: {Object} Product Media object
+  - media_count: {Number} Number of media objects
+  - position: {String} Position of the media. Used for accessible label.
+  - desktop_layout: {String} Layout of the media for desktop.
+  - mobile_layout: {String} Layout of the media for mobile.
+  - loop: {Boolean} Enable video looping (optional)
+  - modal_id: {String} The product modal that will be shown by clicking the thumbnail
+  - xr_button: {Boolean} Renders the "View in your space" button (shopify-xr-button) if the media is a 3D Model
+  - constrain_to_viewport: {Boolean} Force media height to fit within viewport
+  - media_fit: {String} Method ("contain" or "cover") to fit image into container
+  - media_width: {Float} The width percentage that the media column occupies on desktop.
+  - lazy_load: {Boolean} Image should be lazy loaded. Default: true (optional)
+
+{% endcomment %}
+
+{% comment %}
+
+  ONLY THE CORRECT STRUCTURES WILL HIGHLIGHT
+
+{% endcomment %}
+
+{% # RENDER TAG %}
+
+{% render 'filename' %}
+
+{% render 'filename', param: article.author %}
+
+{% render 'filename' for array as item %}
+
+{% render 'filename' with product as name, param: collection.products %}
+
+{% render 'filename', param: 1, param2: foo.prop.foo.bar, param3: 'string', param5: false %}
+
+{% # ASSIGNMENT LOGICS %}
+
+{% assign false = false %}
+{% assign true = true %}
+{% assign foo = true %}
+{% assign bar = true %}
+
+{{ bar }}
+
+{% if true %}{% endif %}
+
+{% # FOR LOOP %}
+
+{% for product in collection.products limit: 2 %}
+
+  {{ product.title }}
+
+{% endfor %}
+
+
+{% # FOR LOOP INFERRED ARRAY ITERATION %}
+
+{% for variable in inferred %}{% endfor %}
+
+{% for variable in (1..200) %}{% endfor %}
+
+{% render 'filename'
+ , param: 1.20
+ , param2: foo.prop.foo.bar
+ , param3: 'string'
+ , param5: false
+ , param_foo: nil
+ , 123_param: product.available %}
+
+ {% render 'filename',
+   param: 1.20,
+   param2: foo.prop.foo.bar,
+   param3: 'string',
+   param5: false,
+   param_foo: nil,
+   123_param: product.available %}
+
+{% # CONDITION %}
+
+{% if condition == product.available %}{% elsif condition %}{% endif %}{% case variable %}
+{% when condition == product.available %}{% else %}{% endcase %}
+
+{% # FOR LOOP %}
+
+{% for product in collection.products limit: 2 %}
+
+{{ product.title }}{% endfor %}
+
+{% for variable in (1..200) %}
+
+  expression
+
+{% endfor %}
+
+{% for product in collection.products reversed %}
+
+{{ product.title }}
+
+{% endfor %}
+
+{% for item in collection %}
+
+{% endfor %}

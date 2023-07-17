@@ -1,12 +1,8 @@
 {
   "engine": "shopify",
   "files": {
-    "data": [
-      "./theme/config/settings_schema.json"
-    ],
-    "includes": [
-      "./sections/*.liquid"
-    ]
+    "locales": "./theme/locales/en.default.json",
+    "settings": "./theme/config/settings_schema.json"
   },
   "format": {
     "ignore": [
@@ -32,7 +28,11 @@
       "preserveComment": false,
       "quoteConvert": "single"
     },
-    "markup": {},
+    "markup": {
+      "ignoreJS": true,
+      "ignoreJSON": true,
+      "ignoreCSS": true
+    },
     "json": {
       "braceAllman": true
     }

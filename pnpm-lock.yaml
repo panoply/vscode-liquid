@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@liquify/schema':
-    specifier: ^0.5.1
-    version: 0.5.1
+    specifier: ^0.5.3
+    version: 0.5.3
   '@liquify/specs':
     specifier: ^0.2.1
     version: 0.2.1
@@ -392,8 +392,8 @@ packages:
     engines: {pnpm: '>=6'}
     dev: true
 
-  /@liquify/schema@0.5.1:
-    resolution: {integrity: sha512-Mp199ScfXeoCfjpWqqynB8mQnRtkeQgyZobvv8E5PAnJOSh6mI2yQAUobl+ITf2XkLPFmFUWJuJSkuuWyyfKFA==}
+  /@liquify/schema@0.5.3:
+    resolution: {integrity: sha512-AP2e2nQk+JgwzNv/b6MfLXcpMN/IpP4z5VT+uJ/sMrxXTXIpwlvYvC9kS0jjvHCHCuV2Z84nEKKvmt3FEDQcIw==}
     engines: {node: '>=12', pnpm: '>=4'}
     dev: false
 

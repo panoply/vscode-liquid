@@ -24,16 +24,29 @@
 
 <!-- TEST: Import Injection when Liquid tag expression is defined -->
 
-<!-- @prettify-ignore-next -->
+
+<!-- esthetic-ignore-start -->
 <script type="module">
 
-import {} from './'
-import * as x from '';
-import {{ 'file.js' | asset_url | json }};
-import {{ 'file.js' | asset_url | json }};
+  import {} from './'
+  import * as x from '';
+  import {{ 'file.js' | asset_url | json }};
+  import {{ 'file.js' | asset_url | json }};
 
 
-const foo = 'bar';
+  var sideArrows = {
+    left: {{ arrow_left | json }},
+    right: {{ arrow_right | json }},
+  }
+
+  {% comment %}
+    Some Comment
+  {% endcomment %}
+
+  /**
+  * @param
+  */
+  const foo = 'bar';
 
 
 </script>
