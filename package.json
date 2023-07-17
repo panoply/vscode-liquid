@@ -364,6 +364,13 @@
         "embeddedLanguages": {
           "meta.template.expression.ts": "typescript"
         }
+      },
+      {
+        "injectTo": [
+          "source.liquid"
+        ],
+        "scopeName": "source.liquid.doc-comments.injection",
+        "path": "./syntax/injections/comments.tmLanguage.json"
       }
     ],
     "snippets": [
@@ -931,16 +938,16 @@
                   ]
                 },
                 "delimiterTrims": {
-                  "deprecationMessage": "DEPRECATED\n\nYou can no longer define Liquid beautification rules within \"markup\". Move this rule to the new \"liquid\" specific property.\n\n\nNEW SETTINGS AS OF v3.4^\n\n{\n  \"liquid\": {\n    \"delimiterTrims\": \"preserve\",\n    \"lineBreakSeparator\": \"default\",\n    \"normalizeSpacing\": true,\n    \"valueForce\": \"intent\"\n  },\n  \"markup: {}\n}\n"
+                  "deprecationMessage": "DEPRECATED\n\nYou can no longer define Liquid beautification rules within \"markup\". Move this rule to the new \"liquid\" specific property.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid\": {\n    \"delimiterTrims\": \"preserve\",\n    \"lineBreakSeparator\": \"default\",\n    \"normalizeSpacing\": true,\n    \"valueForce\": \"intent\"\n  },\n  \"markup: {}\n}\n"
                 },
                 "lineBreakSeparator": {
-                  "deprecationMessage": "DEPRECATED\n\nYou can no longer define Liquid beautification rules within \"markup\". Move this rule to the new \"liquid\" specific property.\n\n\nNEW SETTINGS AS OF v3.4^\n\n{\n  \"liquid\": {\n    \"delimiterTrims\": \"preserve\",\n    \"lineBreakSeparator\": \"default\",\n    \"normalizeSpacing\": true,\n    \"valueForce\": \"intent\"\n  },\n  \"markup: {}\n}\n"
+                  "deprecationMessage": "DEPRECATED\n\nYou can no longer define Liquid beautification rules within \"markup\". Move this rule to the new \"liquid\" specific property.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid\": {\n    \"delimiterTrims\": \"preserve\",\n    \"lineBreakSeparator\": \"default\",\n    \"normalizeSpacing\": true,\n    \"valueForce\": \"intent\"\n  },\n  \"markup: {}\n}\n"
                 },
                 "normalizeSpacing": {
-                  "deprecationMessage": "DEPRECATED\n\nYou can no longer define Liquid beautification rules within \"markup\". Move this rule to the new \"liquid\" specific property.\n\n\nNEW SETTINGS AS OF v3.4^\n\n{\n  \"liquid\": {\n    \"delimiterTrims\": \"preserve\",\n    \"lineBreakSeparator\": \"default\",\n    \"normalizeSpacing\": true,\n    \"valueForce\": \"intent\"\n  },\n  \"markup: {}\n}\n"
+                  "deprecationMessage": "DEPRECATED\n\nYou can no longer define Liquid beautification rules within \"markup\". Move this rule to the new \"liquid\" specific property.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid\": {\n    \"delimiterTrims\": \"preserve\",\n    \"lineBreakSeparator\": \"default\",\n    \"normalizeSpacing\": true,\n    \"valueForce\": \"intent\"\n  },\n  \"markup: {}\n}\n"
                 },
                 "valueForce": {
-                  "deprecationMessage": "DEPRECATED\n\nYou can no longer define Liquid beautification rules within \"markup\". Move this rule to the new \"liquid\" specific property.\n\n\nNEW SETTINGS AS OF v3.4^\n\n{\n  \"liquid\": {\n    \"delimiterTrims\": \"preserve\",\n    \"lineBreakSeparator\": \"default\",\n    \"normalizeSpacing\": true,\n    \"valueForce\": \"intent\"\n  },\n  \"markup: {}\n}\n"
+                  "deprecationMessage": "DEPRECATED\n\nYou can no longer define Liquid beautification rules within \"markup\". Move this rule to the new \"liquid\" specific property.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid\": {\n    \"delimiterTrims\": \"preserve\",\n    \"lineBreakSeparator\": \"default\",\n    \"normalizeSpacing\": true,\n    \"valueForce\": \"intent\"\n  },\n  \"markup: {}\n}\n"
                 }
               }
             },
@@ -1249,7 +1256,7 @@
     "type-fest": "^3.9.0"
   },
   "dependencies": {
-    "@liquify/schema": "^0.5.2",
+    "@liquify/schema": "^0.5.3",
     "@liquify/specs": "^0.2.1",
     "anymatch": "^3.1.3",
     "parse-json": "^7.0.0",
