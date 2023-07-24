@@ -1,5 +1,6 @@
 import { Engines } from '@liquify/specs';
 import { Rules } from 'esthetic';
+import type { EleventyFiles, ShopifyFiles } from './files';
 
 export namespace Workspace {
 
@@ -20,7 +21,7 @@ export namespace Workspace {
      *
      * @default '.'
      */
-    baseUrl: 'workspace' | 'liquidrc';
+    baseUrl: string;
   }
 
   /**
@@ -198,29 +199,13 @@ export namespace Workspace {
    */
   export interface Files {
     /**
-     * The value of `liquid.files.locales`
-     *
-     * @default null
+     * 11ty Files
      */
-    locales?: string;
+    '11ty'?: EleventyFiles;
     /**
-     * The value of `liquid.files.settings`
-     *
-     * @default null
+     * Shopify Files
      */
-    settings?: string;
-    /**
-     * The value of `liquid.files.sections`
-     *
-     * @default []
-     */
-    sections?: string[];
-    /**
-     * The value of `liquid.files.snippets`
-     *
-     * @default []
-     */
-    snippets?: string[];
+    shopify?: ShopifyFiles;
   }
 
   /**
@@ -243,7 +228,7 @@ export namespace Workspace {
    *
    * The accepted format options
    */
-  export type Format = {
+  export interface Format {
     /**
      * The string list of paths to ignore
      *
