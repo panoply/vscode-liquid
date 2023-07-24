@@ -155,7 +155,6 @@ By default, it is assumed you are using vscode workspace/user settings.
   "liquid.completion.objects": true,
   "liquid.completion.filters": true,
   "liquid.completion.operators": true,
-  "liquid.completion.variables": true,
   "liquid.completion.schema": true,
 
   // Liquid Validations
@@ -179,20 +178,21 @@ By default, it is assumed you are using vscode workspace/user settings.
 
   // Uncomment if you are not using a .liquidrc file
   //
-  // "liquid.files.settings": "",
-  // "liquid.files.locales": "",
-  // "liquid.files.sections": [],
-  // "liquid.files.snippets": [],
+  // "liquid.files.shopify": {},
+  // "liquid.files.11ty": {},
 
   //  Uncomment these if you do not use a .liquidrc file
   //
-  // "liquid.format.ignore": [],
-  // "liquid.format.rules": {}
+  // "liquid.format.rules": {
+  //   "ignore":[],
+  //   "liquid": {},
+  //   "html": {}
+  // }
 
 }
 ```
 
-### Config Base URL
+### Config Base URL (optional)
 
 The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving a `.liquidrc` file. The option will only work in projects that use `.liquidrc` files. Consider the following directory layout:
 
@@ -481,7 +481,7 @@ The extension supports various file based completions. Depending on the specifie
 
 # Formatting
 
-Formatting can be enabled/disabled via the command palette and use the language specific `editor.formatOnSave` vscode preference setting. When Liquid formatting is **enabled** the extension will beautify Liquid and all suffixed `*.liquid` files. You can **disable** beautification by clicking the 💧 emoji icon in the status bar or exclude directories/files from handling using the `format.ignore` setting.
+Formatting can be enabled/disabled via the command palette and use the language specific `editor.formatOnSave` vscode preference setting. When Liquid formatting is **enabled** the extension will beautify Liquid and all suffixed `*.liquid` files. You can **disable** beautification by clicking the 💧 emoji icon in the status bar or exclude directories/files from handling using the `format.ignore[]` setting.
 
 ### Æsthetic
 
@@ -612,7 +612,7 @@ You can generate a `.liquidrc` file using the **Liquid: Generate .liquidrc (defa
 
 Below is the **default** rules. It is important to note that if the `liquid.format.rules` user/workspace setting contains rules it will be merged with these defaults when the file is generated.
 
-```jsonc
+```json
 {
   "engine": "shopify",
   "files": {
@@ -634,86 +634,82 @@ Below is the **default** rules. It is important to note that if the `liquid.form
     "liquid": {
       "commentIndent": false,
       "commentNewline": false,
-      "correct": true,
-      "delimiterPlacement": "preserve",
       "delimiterTrims": "preserve",
-      "forceFilerWrap": 0,
       "ignoreTagList": [],
-      "indentAttributes": false,
-      "lineBreakSeparator": "default",
+      "lineBreakSeparator": "before",
       "normalizeSpacing": true,
-      "preserveComment": true,
-      "quoteConvert": "double"
+      "preserveComment": false,
+      "preserveInternal": false,
+      "quoteConvert": "single",
+      "dedentTagList": [],
+      "delimiterPlacement": "preserve",
+      "forceArgument": 0,
+      "forceFilter": 0,
+      "indentAttribute": false
     },
     "markup": {
       "attributeCasing": "preserve",
       "attributeSort": false,
-      "attributeSortList": [],
       "commentIndent": false,
       "commentNewline": false,
-      "correct": true,
-      "delimiterTerminus": false,
       "forceAttribute": false,
-      "forceLeadAttribute": false,
       "forceIndent": false,
+      "preserveComment": false,
+      "preserveText": true,
+      "quoteConvert": "double",
+      "selfCloseSpace": false,
+      "delimiterTerminus": "inline",
       "ignoreCSS": false,
       "ignoreJS": false,
       "ignoreJSON": false,
-      "preserveAttributes": false,
-      "preserveComment": true,
-      "preserveText": true,
-      "selfCloseSpace": false,
-      "selfCloseSVG": true,
+      "lineBreakValue": "align",
+      "preserveAttribute": false,
+      "selfCloseSVG": false,
       "stripAttributeLines": false,
-      "quoteConvert": "double"
     },
     "style": {
-      "atRuleSpace": false,
-      "commentIndent": false,
+      "classPadding": false,
       "commentNewline": false,
       "correct": false,
-      "classPadding": false,
       "noLeadZero": false,
-      "preserveComment": true,
+      "quoteConvert": "none",
       "sortProperties": false,
       "sortSelectors": false,
-      "quoteConvert": "none"
+      "atRuleSpace": false,
+      "commentIndent": false,
+      "preserveComment": false
     },
     "json": {
-      "allowComments": false,
-      "arrayFormat": "default",
+      "arrayFormat": "indent",
       "braceAllman": true,
-      "bracePadding": false,
+      "bracePadding": true,
       "objectIndent": "indent",
-      "objectSort": false
+      "objectSort": false,
     },
     "script": {
-      "commentIndent": false,
-      "commentNewline": false,
-      "arrayFormat": "default",
+      "arrayFormat": "indent",
       "braceAllman": false,
+      "braceNewline": false,
       "bracePadding": false,
-      "braceStyle": "none",
-      "endComma": "never",
-      "braceNewline": true,
-      "correct": false,
       "caseSpace": false,
-      "elseNewline": true,
-      "functionNameSpace": true,
+      "correct": false,
+      "elseNewline": false,
+      "endComma": "never",
+      "functionNameSpace": false,
       "functionSpace": false,
-      "methodChain": 0,
+      "methodChain": 3,
       "neverFlatten": false,
       "noCaseIndent": false,
       "noSemicolon": false,
-      "objectIndent": "indent",
+      "objectIndent": "default",
       "objectSort": false,
-      "preserveComment": true,
-      "preserveText": true,
       "quoteConvert": "single",
       "ternaryLine": false,
-      "variableList": "none",
+      "variableList": false,
       "vertical": false,
-      "styleGuide": "none"
+      "commentIndent": false,
+      "commentNewline": false,
+      "preserveComment": false
     }
   }
 }
@@ -774,6 +770,7 @@ The project uses [tsup](https://tsup.egoist.sh) for producing the distributed bu
 ```bash
 pnpm dev         # Development in watch mode
 pnpm build       # Builds extension and packages VSIX
+pnpm schema      # Imports all JSON schema stores and updates package.json contributes
 pnpm grammar     # Generates object grammars and applies them to liquid.tmLanguage.json
 pnpm dry         # Prints list of files that are packages into VSIX
 ```
@@ -786,12 +783,11 @@ _PR's are welcome for test cases, but be aware that the Liquify supersede will m
 
 # Acknowledgements
 
-Thanks to these talented folks who's work, ideas, feedback and contributions make this extension possible.
+Thanks to these 3 talented folks who's work, ideas, feedback and contributions make this extension possible.
 
-- [Curtis](https://github.com/toklok)
 - [Mansedan](https://github.com/MattWIP)
 - [David Warrington](https://ellodave.dev/)
-- [Austin Cheney](https://github.com/prettydiff)
+- [Curtis](https://github.com/toklok)
 
 # Support
 
