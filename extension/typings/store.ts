@@ -12,7 +12,6 @@ import {
   TextEdit,
   Uri
 } from 'vscode';
-import { SettingsData } from './schema';
 
 export interface DeprecationIssues {
 
