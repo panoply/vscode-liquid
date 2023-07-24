@@ -2,6 +2,13 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "injectionSelector": "L:source.liquid",
   "scopeName": "source.liquid.embedded",
+  "information_for_contributors": [
+    "IMPORTANT",
+    "----------",
+    "This injection applies embedded code region highlighting of external languages in Liquid.",
+    "This file and the containing grammars are likely to change in the future. As per all",
+    "grammar files, you cannot adapt the contents of this file without first asking for permission."
+  ],
   "patterns": [
     {
       "include": "#schema"
