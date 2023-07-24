@@ -33,11 +33,15 @@
       "name": "support.function.filter log.keyword"
     },
     {
-      "match": "(?<=Using\\s)\\b(snippet|locale|section|setting)",
-      "name": "support.function.filter log.keyword"
+      "match": "(?<=Using\\s(?:workspace\\s|global\\s|\\.liquidrc\\s)?)\\b(snippets?|locales?(?:\\s\\→\\sschema)?|sections?|settings?)",
+      "name": "constant.language log.keyword"
     },
     {
-      "match": "(?<=\\:\\s)\\/[\\s\\S]*$",
+      "match": "(?<=[\\:\\)]\\s)(settings_schema|[a-z]{2}\\.default\\.schema|[a-z]{2}\\.default)\\.json",
+      "name": "support.class log.support"
+    },
+    {
+      "match": "(?<=[\\:\\)]\\s)\\/[\\s\\S]*$",
       "name": "string log.path"
     },
     {
@@ -69,7 +73,7 @@
       "name": "support.class log.boolean"
     },
     {
-      "match": "\\b([Cc]ompletions|[Vv]alidations|[Hh]overs|[Cc]ode[lL]ens|[Ff]ormatting)\\b",
+      "match": "\\b([Rr]ef|[Cc]ompletions|[Vv]alidations|[Hh]overs|[Cc]ode[lL]ens|[Ff]ormatting)\\b",
       "name": "keyword.control.filter log.function"
     },
     {
