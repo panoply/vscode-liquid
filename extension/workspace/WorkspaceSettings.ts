@@ -2,7 +2,7 @@
 
 import { workspace, ConfigurationTarget, Uri, RelativePattern } from 'vscode';
 import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, basename, relative } from 'node:path';
 import { has, isNil, difference, hasPath, isEmpty } from 'rambdax';
 import anymatch from 'anymatch';
 import { OutputChannel } from './OutputChannel';
@@ -198,7 +198,16 @@ export class WorkspaceSettings extends OutputChannel {
    */
   async getFiles (): Promise<void> {
 
-    if (this.engine === 'standard' || this.engine === 'jekyll') return;
+    if (this.engine === 'standard') return;
+    if (this.engine === 'jekyll') {
+      this.warn('Jekyll file paths are not yet supported');
+      return;
+    }
+
+    /**
+     * Configuration source
+     */
+    let configSource: '.liquidrc' | 'workspace' | 'global';
 
     const root = this.uri.root.fsPath;
     const settings = workspace.getConfiguration().inspect('liquid');
@@ -259,7 +268,7 @@ export class WorkspaceSettings extends OutputChannel {
 
             if (curr === 0) {
               const plural = added > 1 ? `${added} files` : `${added} file`;
-              this.info(`Using ${file.slice(0, -1)} file completions: ${plural}`);
+              this.info(`Using ${configSource} ${file.slice(0, -1)} file completions: ${plural}`);
             }
           }
 
@@ -319,20 +328,30 @@ export class WorkspaceSettings extends OutputChannel {
 
     }
 
+    type Files = { files?: Workspace.Files }
+
     for (const file of files) {
 
       let defined = false;
 
       if (rcfile && has(file, this.liquidrc.files)) {
+
         if (u.isString(this.liquidrc.files[file]) && this.liquidrc.files[file] !== '') {
 
-          this.files[file] = Uri.file(join(root, this.liquidrc.files[file]));
+          configSource = '.liquidrc';
+          const path = join(root, this.liquidrc.files[file]);
+          this.files[file] = Uri.file(path);
+          this.info(`Using ${configSource} ${file} completions: ${basename(path)}`);
 
           if (this.engine === 'shopify') {
             if (file === 'locales') {
               const name = this.liquidrc.files[file].replace(/\.json$/, '.schema.json');
-              const schema = Uri.file(join(root, name));
-              if (await u.pathExists(schema.fsPath)) this.files.localesSchema = schema;
+              const path = join(root, name);
+              const schema = Uri.file(path);
+              if (await u.pathExists(schema.fsPath)) {
+                this.files.localesSchema = schema;
+                this.info(`Using ${configSource} locale → schema ref: ${basename(path)}`);
+              }
             }
           }
 
@@ -340,36 +359,59 @@ export class WorkspaceSettings extends OutputChannel {
 
         } else if (u.isArray(this.liquidrc.files[file]) && this.liquidrc.files[file].length > 0) {
 
+          configSource = '.liquidrc';
           defined = await globs(file, this.liquidrc.files[file]);
 
         }
       }
 
+      // When the .liquidrc file has no files defined, we will inspect
+      // the workspace configuration and see if references exist
       if (defined === false) {
 
         let value: string | string[];
 
-        if (has(`files.${this.engine}`, settings.workspaceValue)) {
-          if (has(file, settings.workspaceValue[`files.${this.engine}`])) {
-            value = settings.workspaceValue[`files.${file}`];
-          } else if (has(`files.${this.engine}`, settings.globalValue)) {
-            if (has(file, settings.globalValue[`files.${this.engine}`])) {
-              value = settings.globalValue[`files.${file}`];
-            }
+        // First, we check workspace settings, eg: .vscode/settings.json
+        //
+        if (hasPath(`files.${this.engine}`, settings.workspaceValue as Files)) {
+
+          if (has(file, (settings.workspaceValue as Files).files[this.engine])) {
+
+            configSource = 'workspace';
+            value = (settings.workspaceValue as Files).files[this.engine][file];
+
+          } else if (hasPath(`files.${this.engine}`, settings.globalValue as Files)) {
+
+            this.warn(`Defined "${file}" file paths in user settings will be ignored`);
+
+          }
+
+        }
+
+        // Second, we check global user settings. This is discouraged and warnings will show.
+        //
+        if (value === undefined) {
+          if (hasPath(`files.${this.engine}`, settings.globalValue as Files)) {
+            this.warn(`Defined "${file}" file paths in user settings will be ignored`);
           }
         }
 
-        if (u.isString(value)) {
+        if (typeof value === 'string') {
 
-          if (this.liquidrc.files[file].length !== '') {
+          const path = u.refineURI(value);
 
-            this.files[file] = Uri.file(value as string);
+          this.files[file] = Uri.file(join(root, path));
+          this.info(`Using ${configSource} ${file.slice} completions: ${basename(path)}`);
 
-            if (this.engine === 'shopify') {
-              if (file === 'locales') {
-                const name = (value as string).replace(/\.json$/, '.schema.json');
-                const schema = Uri.file(join(root, name));
-                if (await u.pathExists(schema.fsPath)) this.files.localesSchema = schema;
+          if (this.engine === 'shopify') {
+
+            if (file === 'locales') {
+              const name = (value as string).replace(/\.json$/, '.schema.json');
+              const path = join(root, name);
+              const schema = Uri.file(path);
+              if (await u.pathExists(schema.fsPath)) {
+                this.files.localesSchema = schema;
+                this.info(`Using ${configSource} locale → schema ref: ${basename(path)}`);
               }
             }
 
