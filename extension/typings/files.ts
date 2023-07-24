@@ -3,10 +3,88 @@ import { Rules } from 'esthetic';
 import { Merge } from 'type-fest';
 
 /**
- * Liquidrc and Prettify package field
+ * 11ty File paths
+ */
+export interface EleventyFiles {
+  /**
+   * **11ty**
+   *
+   * Reference to the `data` files
+   */
+  data?: string[];
+  /**
+   * **11ty**
+   *
+   * Reference to the `includes` files
+   */
+  includes?: string[];
+  /**
+   * **11ty**
+   *
+   * Reference to layouts
+   */
+  layouts?: string[];
+}
+
+/**
+ * Jekyll File paths
+ */
+export interface JekyllFiles {
+  /**
+   * **Jekyll**
+   *
+   * Reference to the `posts` files
+   */
+  posts?: string[];
+  /**
+   * **11ty**
+   *
+   * Reference to the `collections` files
+   */
+  collections?: string[];
+  /**
+   * **11ty**
+   *
+   * Reference to the `includes` files
+   */
+  includes?: string[];
+}
+
+/**
+ * Shopify File paths
+ */
+export interface ShopifyFiles {
+  /**
+   * **Shopify**
+   *
+   * Reference to the `*.default.json` Shopify locale file.
+   */
+  locales?: string;
+  /**
+   * **Shopify**
+   *
+   * Reference to the `settings_data.json` Shopify file
+   */
+  settings?: string;
+  /**
+   * **Shopify**
+   *
+   * Reference to directory or files used as snippets.
+   */
+  snippets?: string[];
+  /**
+   * **Shopify**
+   *
+   * Reference to directory of files used as sections.
+   */
+  sections?: string[];
+}
+
+/**
+ * Liquidrc and Æsthetic package field
  *
  * The extended Prettify rules available to
- * the `.liquidrc` and `prettify` field.
+ * the `.liquidrc` and `esthetic`, `æsthetic` or `aesthetic` field.
  *
  * > **NOTE** Some rules are omitted from this
  */
@@ -18,50 +96,7 @@ export interface Liquidrc {
   /**
    * File references
    */
-  files?: {
-    /**
-     * **11ty**
-     *
-     * Reference to the `data` files
-     */
-    data?: string[];
-    /**
-     * **11ty**
-     *
-     * Reference to the `includes` files
-    */
-    includes?: string[];
-    /**
-     * **11ty**
-     *
-     * Reference to layouts
-     */
-    layouts?: string[];
-    /**
-     * **Shopify**
-     *
-     * Reference to the `*.default.json` Shopify locale file.
-     */
-    locales?: string;
-    /**
-     * **Shopify**
-     *
-     * Reference to the `settings_data.json` Shopify file
-     */
-    settings?: string;
-    /**
-     * **Shopify**
-     *
-     * Reference to directory or files used as snippets.
-     */
-    snippets?: string[];
-    /**
-     * **Shopify**
-     *
-     * Reference to directory of files used as sections.
-     */
-    sections?: string[];
-  };
+  files?: EleventyFiles | ShopifyFiles
 
   /**
    * Æsthetic formatting options
