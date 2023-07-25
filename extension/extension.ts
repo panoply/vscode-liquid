@@ -68,7 +68,7 @@ export class Extension extends Service {
   };
 
   /**
-   * The  Liquid engine
+   * The Liquid engine
    *
    * @default 'shopify'
    */
