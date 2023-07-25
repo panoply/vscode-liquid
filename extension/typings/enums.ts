@@ -81,6 +81,14 @@ export const enum Token {
    */
   Object,
   /**
+   * Liquid Echo, typically used for `{% liquid %}` tag references
+   */
+  Echo,
+  /**
+   * Liquid Comment, typically used for `{% liquid %}` tag references
+   */
+  Comment,
+  /**
    * Liquid argument, typically proceeding a colon `:`
    */
   Argument,
@@ -121,6 +129,14 @@ export const enum Token {
    */
   Import,
   /**
+   * Liquid render import type, like `{% render %}` etc
+   */
+  ImportRender,
+  /**
+   * Liquid section import type, `{% section %}` etc
+   */
+  ImportSection,
+  /**
    * Liquid assign tag, assignment variable
    */
   Assignment,
@@ -136,6 +152,22 @@ export const enum Token {
    * Schema Block Type
    */
   SchemaBlockType,
+  /**
+   * Liquid Tag Token Tag, i.e: a tag within the liquid tag
+   */
+  LiquidTagToken,
+  /**
+   * Liquid Tag Filter, i.e: a filter within the liquid tag
+   */
+  LiquidTagFilterTag,
+  /**
+   * Liquid Tag Filter, i.e: a filter within the liquid tag
+   */
+  LiquidTagFilterObject,
+  /**
+   * Liquid Tag Argument, i.e: an argument within the liquid tag
+   */
+  LiquidTagArgument,
 }
 
 /**
