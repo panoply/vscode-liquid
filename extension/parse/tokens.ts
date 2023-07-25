@@ -1,6 +1,7 @@
 import { Token, Char, Complete } from 'types';
 import { isString } from 'utils';
 import * as r from 'parse/helpers';
+import { $, q } from '@liquify/specs';
 
 export interface IToken {
   /**
@@ -43,6 +44,61 @@ export interface IToken {
   get object(): string;
 }
 
+/* -------------------------------------------- */
+/* PRIVATES                                     */
+/* -------------------------------------------- */
+
+function getTokenSpecificCursor (text: string, tagName: string, prev: string, offset: number) {
+
+  switch (tagName) {
+
+    case 'if':
+    case 'elsif':
+    case 'unless':
+
+      if (r.Tag(tagName).test(text)) return Token.Object;
+      if (r.EmptyEnder.test(text.slice(offset))) return Token.Logical;
+
+      break;
+
+    case 'case':
+    case 'when':
+
+      if (r.Tag(tagName).test(text)) return Token.Object;
+
+      break;
+
+    case 'render':
+    case 'include':
+    case 'section':
+
+      return Token.Import;
+
+    case 'assign':
+
+      if (prev.charCodeAt(prev.length - 1) === Char.EQL) return Token.Assignment;
+
+      break;
+
+    case 'echo':
+
+      return Token.Echo;
+
+    case 'for':
+
+      if (
+        prev[prev.length - 3].toLowerCase() === ' ' &&
+        prev[prev.length - 2].toLowerCase() === 'i' &&
+        prev[prev.length - 1].toLowerCase() === 'n') {
+
+        return Token.Array;
+
+      }
+
+  }
+
+}
+
 /**
  * Empty Object
  *
@@ -77,6 +133,104 @@ export function getTokenScope () {
 
 }
 
+export function getLiquidTokenCursor ({ text, offset }: IToken, vars: Complete.Vars): Token {
+
+  /**
+   * Obtain the text portion
+   */
+  const portion = text.slice(0, offset);
+
+  /**
+   * Retrives whether or not to show tag completion list
+   */
+  const showTag = portion.slice(portion.lastIndexOf('\n', offset));
+
+  /**
+   * Provide tag completions
+   */
+  if (/^\n\s+[a-z]+$/.test(showTag)) return Token.LiquidTagToken;
+
+  /**
+   * Split token by newline
+   */
+  const lines = portion.trim().split('\n').filter(Boolean).slice(1);
+
+  /**
+   * The last known token input
+   */
+  const prev = lines.pop().trim();
+
+  /**
+   * Tag Name
+   */
+  const tagName = prev.slice(0, prev.indexOf(' ') + 1).trim();
+
+  /**
+   * The character code of `prev`
+   */
+  const last = prev.charCodeAt(prev.length - 1);
+
+  // if not null, we have a match
+  if (last === Char.PIP) {
+    if (q.setTag(tagName)) {
+      if ($.liquid.tag.filters) return Token.LiquidTagFilterTag;
+    } else {
+      return Token.LiquidTagFilterObject;
+    }
+  } else if (last === Char.COL) {
+    return Token.LiquidTagArgument;
+  } else if (last === Char.DOT) {
+    return /["'][^'"]*?$/.test(text.slice(2, offset - 1)) ? Token.Locale : Token.Property;
+  }
+
+  let tagMatch: string;
+  let wsp: number;
+
+  // Last Character is quotation
+  if (last === Char.SQO || last === Char.DQO) {
+
+    wsp = text.slice(0, offset - 1).trimEnd().lastIndexOf(' ');
+
+    tagMatch = prev.slice(0, prev.length - 2).trim();
+
+    if (tagMatch === tagName) {
+
+      if (tagName === 'render' || tagName === 'include') {
+        return Token.ImportRender;
+      } else if (tagName === 'section') {
+        return Token.ImportSection;
+      }
+
+    }
+
+  } else {
+    tagMatch = prev.slice(0, prev.indexOf(' ') + 1).trim();
+    wsp = prev.lastIndexOf(' ');
+  }
+
+  if (wsp > -1) {
+
+    const logic = prev.slice(wsp).trim();
+
+    if (tagName === 'if' || tagName === 'elsif' || tagName === 'unless') {
+
+      if (r.Operators.test(logic)) return Token.Object;
+
+      return Token.Logical;
+
+    }
+
+  }
+
+  if (isString(tagName)) {
+
+    return getTokenSpecificCursor(text, tagName, prev, offset);
+  }
+
+  return null;
+
+}
+
 /**
  * Get Token Cursor
  *
@@ -96,9 +250,13 @@ export function getTokenCursor ({ text, offset, tagName }: IToken, vars: Complet
    */
   const last = prev.charCodeAt(prev.length - 1);
 
-  if (last === Char.PIP) return Token.Filter;
-  if (last === Char.COL) return Token.Argument;
-  if (last === Char.DOT) return /["'][^'"]*?$/.test(text.slice(2, offset - 1)) ? Token.Locale : Token.Property;
+  if (last === Char.PIP) {
+    return Token.Filter;
+  } else if (last === Char.COL) {
+    return Token.Argument;
+  } else if (last === Char.DOT) {
+    return /["'][^'"]*?$/.test(text.slice(2, offset - 1)) ? Token.Locale : Token.Property;
+  }
 
   /**
    * Object Properties expression, eg: `object['']`
@@ -158,48 +316,7 @@ export function getTokenCursor ({ text, offset, tagName }: IToken, vars: Complet
   }
 
   if (isString(tagName)) {
-
-    switch (tagName) {
-
-      case 'if':
-      case 'elsif':
-      case 'unless':
-
-        if (r.Tag(tagName).test(text)) return Token.Object;
-        if (r.EmptyEnder.test(text.slice(offset))) return Token.Logical;
-
-        break;
-
-      case 'case':
-      case 'when':
-
-        if (r.Tag(tagName).test(text)) return Token.Object;
-
-        break;
-
-      case 'render':
-      case 'include':
-      case 'section':
-
-        return Token.Import;
-
-      case 'assign':
-
-        if (prev.charCodeAt(prev.length - 1) === Char.EQL) return Token.Assignment;
-
-        break;
-
-      case 'for':
-
-        if (
-          prev[prev.length - 3].toLowerCase() === ' ' &&
-          prev[prev.length - 2].toLowerCase() === 'i' &&
-          prev[prev.length - 1].toLowerCase() === 'n') {
-
-          return Token.Array;
-
-        }
-    }
+    return getTokenSpecificCursor(text, tagName, prev, offset);
   }
 
   return null;
