@@ -37,7 +37,7 @@ export const CaseControlNames = /case|when/;
 /**
  * Operators, eg: `([!=]=|[<>]=?|(?:and|or|contains|in|with)\b)`
  */
-export const Operators = /([!=]=|[<>]=?|(?:and|or|contains)\b)/;
+export const Operators = /([!=]=|[<>]=?|(?:and|or|contains))/;
 
 /**
  * Empty Output, eg: `/{{-?\s*-?}}/`
