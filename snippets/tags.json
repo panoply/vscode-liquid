@@ -190,9 +190,12 @@
     "prefix": "schema",
     "body": [
       "{% schema %}",
-      "\t{",
-      "\t\t$1",
-      "\t}",
+      "{",
+      "\t\"name\": \"$1\",",
+      "\t\"settings\": [",
+      "\t\t$0",
+      "\t\t]",
+      "}",
       "{% endschema %}"
     ]
   },
@@ -216,12 +219,40 @@
       "{% endjavascript %}"
     ]
   },
-  "comment, inline": {
+  "comment, line": {
     "prefix": "#",
     "body": ["{% # $2 %}"]
   },
   "comment, block": {
     "prefix": "comment",
-    "body": ["{% comment %}", "\t$0", "{% endcomment %}"]
+    "body": [
+      "{% comment %}",
+      "\t${1|esthetic-ignore,esthetic-ignore-start,esthetic-ignore-end,esthetic-ignore-next|}",
+      "{% endcomment %}"
+    ]
+  },
+  "esthetic-ignore": {
+    "prefix": "esthetic-",
+    "body": [
+      "{% # esthetic-ignore %}"
+    ]
+  },
+  "esthetic-ignore-next": {
+    "prefix": "esthetic-",
+    "body": [
+      "{% # esthetic-ignore-next %}"
+    ]
+  },
+  "esthetic-ignore-start": {
+    "prefix": "esthetic-",
+    "body": [
+      "{% comment %}esthetic-ignore-start{% endcomment %}"
+    ]
+  },
+  "esthetic-ignore-end": {
+    "prefix": "esthetic-",
+    "body": [
+      "{% comment %}esthetic-ignore-end{% endcomment %}"
+    ]
   }
 }
