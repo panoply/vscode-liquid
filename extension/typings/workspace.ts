@@ -1,6 +1,7 @@
 import { Engines } from '@liquify/specs';
 import { Rules } from 'esthetic';
 import type { EleventyFiles, ShopifyFiles } from './files';
+import { Merge } from 'type-fest';
 
 export namespace Workspace {
 
@@ -230,15 +231,9 @@ export namespace Workspace {
    */
   export interface Format {
     /**
-     * The string list of paths to ignore
-     *
-     * @default []
+     * The formatting rules for Æsthetic
      */
-    ignore?: string[];
-    /**
-     * The formatting rules for Prettify
-     */
-    rules?: Rules
+    rules?: Merge<Rules,{ ignore?: string[] }>
   }
 
 }
