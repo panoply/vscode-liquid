@@ -182,21 +182,29 @@ export class Events extends CommandPalette {
    * of certain files to provide capabilities like (for example) locale
    * completions. It is here where we keep our store in sync.
    */
-  public async onDidSaveTextDocument (textDocument: TextDocument) {
+  public async onDidSaveTextDocument ({ uri }: TextDocument) {
+
+    if (isFunction(this.formatting.ignoreMatch) && this.formatting.ignoreMatch(uri.fsPath)) {
+
+      this.status.ignore();
+      this.formatting.ignored.add(uri.fsPath);
+      this.info(`Ignoring: ${uri.fsPath}`);
+
+    }
 
     if (this.engine === Engine.shopify) {
 
-      if (this.files.locales?.fsPath === textDocument.uri.fsPath) {
+      if (this.files.locales?.fsPath === uri.fsPath) {
 
         await this.getExternal([ 'locales' ]);
 
-        this.info(`Updated: ${textDocument.uri.fsPath}`);
+        this.info(`Updated: ${uri.fsPath}`);
 
-      } else if (this.files.settings?.fsPath === textDocument.uri.fsPath) {
+      } else if (this.files.settings?.fsPath === uri.fsPath) {
 
         await this.getExternal([ 'settings' ]);
 
-        this.info(`Updated: ${textDocument.uri.fsPath}`);
+        this.info(`Updated: ${uri.fsPath}`);
       }
     }
   }
