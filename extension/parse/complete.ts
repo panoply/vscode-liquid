@@ -1,4 +1,3 @@
-
 import { Complete, Tag, Token } from 'types';
 import { IToken } from 'parse/tokens';
 import { Properties, $, Type, q } from '@liquify/specs';
@@ -312,6 +311,51 @@ export function getSchemaCompletions (slice: number, position: Position, items: 
 
   });
 
+}
+
+export function getLiquidTagSnippets () {
+
+  return entries($.liquid.data.variation.tags)
+    .filter(([ label ]) => (
+      label !== 'liquid' &&
+      label !== 'schema' &&
+      label !== 'javascript' &&
+      label !== 'style' &&
+      label !== 'stylesheet'
+    ))
+    .map(([ label, spec ]) => {
+
+      let insertText: string;
+
+      if (label === 'if' || label === 'capture' || label === 'unless') {
+
+        insertText = [
+        `${label} $1`,
+        `${label === 'capture' ? 'echo $0' : '$0'}`,
+        `end${label}`
+        ].join('\n');
+
+      } else if (label === 'render' || label === 'section') {
+        insertText = `${label} $0`;
+      } else {
+
+        insertText = spec.singleton
+          ? `${label} ${spec.snippet ? spec.snippet : ''}`
+          : [
+          `${label} ${spec.snippet ? spec.snippet : ''}`,
+          `${'$0'}`,
+          `end${label}`
+          ].join('\n');
+
+      }
+
+      return {
+        label,
+        kind: CompletionItemKind.Interface,
+        insertText: new SnippetString(insertText),
+        documentation: mdString(spec.description)
+      };
+    });
 }
 
 export function setTemplateCompletions () {
