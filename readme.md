@@ -27,7 +27,6 @@
 </p>
   → <a href="https://github.com/panoply/liquify"><i>Track progress in the Liquify Repository</i></a>
   → <a href="https://github.com/panoply/vscode-liquid/issues/56"><i>Liquify and the future of this extension</i></a>
-  → <a href="https://github.com/panoply/vscode-liquid/projects/6"><i>Project Overview and what to expect</i></a>
   → <a href="https://discord.gg/eUNEsxMuWt"><i>Join the Discord and collaborate on the project</i></a>
 
 </code></pre>
@@ -294,6 +293,8 @@ Liquid template literals are supported for usage within JavaScript, JSX and Type
 liquid`{% if condition == true %} {{ object.prop }} {% endif %}`;
 ```
 
+Take a look at [Language Literals](https://github.com/panoply/language-literals) NPM module and the [VSCode Extension](https://marketplace.visualstudio.com/items?itemName=sissel.language-literals) for syntax highlighting and de-dentation logic of string input.
+
 ### Frontmatter
 
 The extension also provides additional syntax highlighting for language annotated frontmatter atop of YAML highlighting support. Language annotated frontmatter regions are typically implemented in [11ty](https://www.11ty.dev/) projects.
@@ -302,6 +303,7 @@ The extension also provides additional syntax highlighting for language annotate
 // Frontmatter YAML
 ---
 ---
+
 // Frontmatter JavaScript
 ---js
 ---
@@ -315,12 +317,10 @@ The extension also provides additional syntax highlighting for language annotate
 
 As of version **v3.2^** this extension supports schema tag intelliSense capabilities. The feature drastically improves productivity for developers working with the Shopify Liquid variation. Section `{% schema %}` provide users with common JSON features such as completions, validations, hovers and snippets. The contents of schema tags (ie: section settings and blocks) are made available to Liquid `{{ section.settings.* }}` and `{{ block.settings.* }}` objects.
 
-> **Note**&nbsp;
-> This is achieved on the client until the Liquify supersede and handling moves to the server using LSP.
 
 ### Liquid Completions
 
-Liquid `section.*` object completions are provided in accordance with the contents contained within `{% schema %}` embedded tags. Section completions are scope aware and respect `block.type` regions implemented with either control flow `{% if %}` or `{% case %}` tags. The tag completions do not _yet_ support re-assignment variable naming, which means you will need to use the default object names (`section.settings`, `section.blocks` and `block.settings`) for completions to work. You can disable/enable Liquid section object completions within your workspace settings configuration.
+Liquid `section.*` object completions are provided in accordance with the contents contained within `{% schema %}` embedded tags. Section completions are scope aware and respect `block.type` regions implemented with either control flow `{% if %}` or `{% case %}` tags. Tag completions support sensible re-assignment variable naming, which means you can assign to different names and completions will work. You can disable/enable Liquid section object completions within your workspace settings configuration.
 
 **Workspace Settings**
 
@@ -332,7 +332,7 @@ Liquid `section.*` object completions are provided in accordance with the conten
 
 ### JSON Completions
 
-Embedded JSON contained within `{% schema %}` tags support completions in accordance with trigger characters. The JSON completions are made possible through Schema Stores maintained at [@liquify/schema](https://github.com/panoply/liquify-schema). You can disable/enable JSON schema completions within your workspace settings configuration.
+Embedded JSON contained within `{% schema %}` tags support completions in accordance with trigger characters. The JSON completions are made possible through Schema Stores maintained at [@liquify/schema](https://github.com/panoply/liquify-schema). VSCode Liquid has full IETF Support and also provides snippet (<kbd>Ctrl</kbd> + <kbd>Space</kbd>) triggers completions for settings and blocks. You can disable/enable JSON schema completions within your workspace settings configuration.
 
 **Workspace Settings**
 
@@ -464,12 +464,13 @@ Liquid variable completions are supported and made available a per-document basi
 
 # Files
 
-The extension supports various file based completions. Depending on the specified Liquid `engine` variation defined, different types of file completions are made available. `locale`, `settings`, `snippets` and `section` file based completions but you will need to provide path references to enable this capability. You can provide path references in your `.liquidrc` file on `files` key. The paths must be relative to your projects root directory.
+The extension supports file completions. Depending on the specified Liquid `engine` variation defined, different types of file completions are made available. `locale`, `settings`, `snippets` and `section` file based completions but you will need to provide path references to enable this capability. You can provide path references in your `.liquidrc` file on `files` key. The paths must be relative to your projects root directory.
 
 **Using `.liquidrc` File**
 
 ```jsonc
 {
+  "engine": "shopify",
   "files": {
     "locales": "locales/en.default.json",
     "settings": "config/settings_data.json",
@@ -479,9 +480,42 @@ The extension supports various file based completions. Depending on the specifie
 }
 ```
 
+<details>
+<summary>
+<strong>Workspace Settings</strong>
+</summary>
+
+If you defining configuration via workspace settings, the extension only supports project level definition references but does not support global (User Preferences) definitions for this setting. This means you can provide these references within your `.vscode/settings.json` file on a per-project level but you cannot provide this within your global configuration.
+
+
+```jsonc
+{
+  // Shopify Liquid Variation
+  // Expects the "engine" option to be using "shopify"
+  //
+  "liquid.files.shopify": {
+    "locales": "",
+    "settings": "",
+    "snippets": [],
+    "sections": []
+  },
+
+  // Eleventy Liquid Variation
+  // Expects the "engine" option to be using "11ty"
+  //
+  "liquid.files.11ty": {
+    "data": [],
+    "includes": [],
+    "layouts": []
+  }
+}
+```
+
+</details>
+
 # Formatting
 
-Formatting can be enabled/disabled via the command palette and use the language specific `editor.formatOnSave` vscode preference setting. When Liquid formatting is **enabled** the extension will beautify Liquid and all suffixed `*.liquid` files. You can **disable** beautification by clicking the 💧 emoji icon in the status bar or exclude directories/files from handling using the `format.ignore[]` setting.
+Formatting can be enabled/disabled via the command palette and references the language specific `editor.formatOnSave` vscode preference setting to determine whether or not it should be used. When Liquid formatting is **enabled** the extension will beautify Liquid and all suffixed `*.liquid` files. You can **disable** beautification by clicking the 💧 emoji icon in the status bar or exclude directories/files from handling using the `format.ignore[]` setting.
 
 ### Æsthetic
 
@@ -541,11 +575,40 @@ In addition to the above defaults, you can also choose to have Æsthetic format 
 > **Note**&nbsp;
 > Æsthetic is still in its early stages and results may not be perfect. Extend with caution to languages other than Liquid/HTML
 
-### Ignoring Code and/or Files
+### Ignoring Files
 
 You can skip formatting on files, directories and code input a few different ways. If you are using workspace/user settings for configuration then you can pass a glob list of paths relative to the projects root using the `liquid.format.ignore[]` option. Folks leveraging the `.liquidrc` file for defining beautification rules can use the `format.ignore[]` setting.
 
-In addition to path ignores, users can also take advantage of Æsthetic [inline control](https://github.com/panoply/esthetic#inline-control) comments and skipping blocks of code or files from beautification.
+**Using `.liquidrc` File**
+
+```jsonc
+{
+  "format": {
+    "ignore": []
+  }
+}
+```
+
+<details>
+<summary>
+<strong>Using Workspace Settings</strong>
+</summary>
+
+If you are using a `.vscode/settings.json` file to define formatting options, you can use the following structure:
+
+```jsonc
+{
+  "liquid.format.rules": {
+    "ignore": []
+  }
+}
+```
+
+</details>
+
+### Ignore Comments
+
+In addition to file ignores, users can also take advantage of Æsthetic [inline control](https://github.com/panoply/esthetic#inline-control) comments. This will allow you to skip blocks of code or files from beautification.
 
 <strong>Ignoring Blocks</strong><br>
 
@@ -573,13 +636,13 @@ _You can also annotate HTML tags with `data-esthetic-ignore` attributes_
 
 When the extension is enabled and a supported `*.liquid` file has been opened in the editor you'll see an 💧 emoji appear in the bottom right hand side of the vscode status bar. This is the extensions **status bar item** and it will allow you to enable/disable formatting (programmatically), inform you when an ignored file is open and notifies you when the Æsthetic encounters any code errors during beautification.
 
-> The 💧 emoji will only show when `.liquid` file is opened.
+> The 💧 emoji will only show when a `.liquid` file is opened.
 
 <!-- prettier-ignore -->
 | Status  | Command | Action |
 |:--|:--|:--|
 | <img src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-enabled.png?raw=true"  width="50px"> | **Enabled** | _Clicking the status bar item in this state will disable formatting_ |
-| <img src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-disabled.png?raw=true"  width="50px"> | **Disabled** |  _Clicking the status bar item in this state will enable formatting_ |
+| <img src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-disabled.png?raw=true" width="50px"> | **Disabled** |  _Clicking the status bar item in this state will enable formatting_ |
 | <img src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-ignored.png?raw=true"  width="50px"> | **Ignoring**  | _Clicking the status bar item in this state opens the output panel_
 | <img src="https://github.com/panoply/vscode-liquid/blob/v3.0.0/images/status-error.png?raw=true"  width="50px"> | **Errors**  | _Clicking the status bar item in this state opens the output panel_
 
@@ -724,7 +787,7 @@ Liquid snippets are supported in this extension. The filter and tag snippets wer
 
 # Extension Conflicts
 
-If you are using alternative extensions such as the Shopify Liquid (Theme Check) or Liquid Languages Support extension then you may run into some issues. The conflicts incurred will be caused because these extensions also target Liquid grammars and offer similar capabilities.
+If you are using alternative extensions such as the Shopify Liquid (Theme Check) or Liquid Languages Support extension then you may run into some issues. The conflicts incurred will be caused because these extensions also target Liquid grammars and offers similar capabilities.
 
 The vscode marketplace has 3 different extensions for Liquid support:
 
@@ -732,7 +795,7 @@ The vscode marketplace has 3 different extensions for Liquid support:
 - Liquid Languages Support
 - Shopify Liquid (Theme Check)
 
-This extension uses the **Liquid** display name and is considered the official Liquid extension for vscode by developers.
+This extension uses the **Liquid** display name and is considered the official Liquid extension for vscode by developers. It is recommended that you either uninstall or disable the **Shopify Liquid (Theme Check)** extension and make the choice between **Liquid** and using the Shopify backed one, more on this below.
 
 ### Liquid Languages Support
 
@@ -740,11 +803,11 @@ If you are using or have installed the [Liquid Languages Support](https://market
 
 ### Shopify Liquid (Theme Check)
 
-If you are using or have installed [Shopify Liquid (Theme Check)](https://marketplace.visualstudio.com/items?itemName=Shopify.theme-check-vscode) then you _may_ need to choose (or alternate) between the Shopify Liquid (Theme Check) extension and this extension. The Shopify Liquid (Theme Check) extension is for Shopify projects (specifically themes) but tends to create a lot of noise.
+If you are using or have installed [Shopify Liquid (Theme Check)](https://marketplace.visualstudio.com/items?itemName=Shopify.theme-check-vscode) then you may need to choose (or alternate) between the Shopify Liquid (Theme Check) extension and this extension. The Shopify Liquid (Theme Check) extension is for Shopify projects (specifically themes) but tends to create a lot of noise.
 
-The capabilities made available by Shopify Liquid (Theme Check) are nice but they come with limitations as the extension does not support Windows and its LSP (Language Server) implementation requires Ruby to function making it rather resource heavy and exhaustive on your machine. Though the extra features like validations do indeed help in _some_ cases, they are specific to Shopify themes and not much use outside of that. If you require linting features maybe consider running their CLI solution.
+The capabilities made available by Shopify Liquid (Theme Check) are nice but they come with limitations as its LSP (Language Server) implementation requires Ruby to function making it rather resource heavy and exhaustive on your machine. Though the extra features like validations do indeed help in some cases, they are specific to Shopify themes and not much use outside of that environment. If you require linting features maybe consider running their CLI solution only when necessary.
 
-_Capabilities available in the future release (Liquify) support all current features of the Shopify Liquid extension._
+Currently, this extension offers far more features and capabilities than the Shopify backed extension. Though there is efforts being made by Shopify to improve their approach (currently) the only upside for choosing would be validation features. the Liquify supersede will provide linting and validations upon its release, so the value proposition for continuing to choose this extension over Shopify Theme Check is minimal and one should evaluate whether or not it's the right choice.
 
 # Releases
 
@@ -777,7 +840,7 @@ pnpm dry         # Prints list of files that are packages into VSIX
 
 ### Testing
 
-The extension has undergone E2E and capability tests, but it does not leverage the vscode test suite. The extension itself is simple enough where extensive tests are not a matter of necessity. The contained `test` directory is used when invoking the debugger and extension host. Contained within that directory are various sample files that can be used for validating capabilities, grammars and invocation.
+The extension has undergone E2E and capability tests internally, but it does not leverage the vscode test suite. The extension itself is simple enough where extensive tests are not a matter of necessity. The contained `test` directory is used when invoking the debugger and extension host. Contained within that directory are various sample files that can be used for validating capabilities, grammars and invocation.
 
 _PR's are welcome for test cases, but be aware that the Liquify supersede will make them obsolete in due time._
 
@@ -791,7 +854,7 @@ Thanks to these 3 talented folks who's work, ideas, feedback and contributions m
 
 # Support
 
-Follow me on [Twitter](https://twitter.com/niksavvidis) and say hello! No obligations here, but coffee is always appreciated.
+Follow me on [Twitter](https://twitter.com/niksavvidis) and say hello! There is no obligation, but coffee is always appreciated.
 
 **PayPal**: [Donate](https://www.paypal.me/paynicos)<br>
 **BTC**: `35wa8ChA5XvzfFAn5pMiWHWg251xDqxT51`
