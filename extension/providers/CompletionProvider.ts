@@ -1,14 +1,15 @@
 import { $, Type, q } from '@liquify/specs';
 import { Service } from 'services';
 import { Char, Token, Complete, Workspace } from 'types';
-import { getTokenCursor, getToken, isEmptyOutput, isEmptyTag } from 'parse/tokens';
+import { getTokenCursor, getToken, isEmptyOutput, isEmptyTag, getLiquidTokenCursor } from 'parse/tokens';
 import { getSectionCompletions, getSectionScope } from 'parse/schema';
 import { insertSpace, insertTag } from 'parse/edits';
 import {
   getObjectCompletions,
   getSchemaCompletions,
   getPropertyCompletions,
-  getLocaleCompletions
+  getLocaleCompletions,
+  getLiquidTagSnippets
 } from 'parse/complete';
 import {
   CancellationToken,
@@ -194,7 +195,9 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
     }
 
-    const cursor = getTokenCursor(token, this.vars);
+    const cursor = token.tagName === 'liquid'
+      ? getLiquidTokenCursor(token, this.vars)
+      : getTokenCursor(token, this.vars);
 
     /* -------------------------------------------- */
     /* ARGUMENTS                                    */
@@ -244,10 +247,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
       this.textEdits = insertSpace(position);
 
       if (token.type === Token.Tag) {
-
-        return q.setTag(token.tagName)
-          ? $.liquid.tag.filters ? this.items.get('filters') : null
-          : null;
+        return q.setTag(token.tagName) ? $.liquid.tag.filters ? this.items.get('filters') : null : null;
       }
 
       return this.items.get('filters');
@@ -294,6 +294,47 @@ export class CompletionProvider extends Service implements CompletionItemProvide
     }
 
     if (token.type === Token.Tag) {
+
+      /* -------------------------------------------- */
+      /* LIQUID TAG                                   */
+      /* -------------------------------------------- */
+
+      if (token.tagName === 'liquid') {
+
+        if (cursor === Token.Object) {
+
+          return this.enable.objects ? getObjectCompletions(
+            document,
+            this.items.get('objects'),
+            this.vars,
+            offset
+          ) : null;
+
+        }
+
+        if ((trigger === Char.DQO || trigger === Char.SQO)) {
+
+          q.setType(null);
+
+          if (cursor === Token.ImportRender) {
+            return this.items.get('snippets');
+          }
+
+          if (cursor === Token.ImportSection) {
+            return this.items.get('sections');
+          }
+
+        }
+
+        if (cursor === Token.LiquidTagFilterTag || cursor === Token.LiquidTagFilterObject) {
+          return this.items.get('filters');
+        }
+
+        if (cursor === Token.LiquidTagToken) {
+          return getLiquidTagSnippets();
+        }
+
+      }
 
       /* -------------------------------------------- */
       /* SCHEMA BLOCK TYPE                            */
@@ -380,6 +421,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
         }
 
       }
+
     }
 
     return null;
