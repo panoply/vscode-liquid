@@ -2,7 +2,7 @@
 
 import { workspace, ConfigurationTarget, Uri, RelativePattern } from 'vscode';
 import { existsSync } from 'node:fs';
-import { join, basename, relative } from 'node:path';
+import { join, basename } from 'node:path';
 import { has, isNil, difference, hasPath, isEmpty } from 'rambdax';
 import anymatch from 'anymatch';
 import { OutputChannel } from './OutputChannel';
@@ -467,6 +467,7 @@ export class WorkspaceSettings extends OutputChannel {
         this.formatting.ignoreMatch = anymatch(this.formatting.ignoreList);
       }
     }
+
   }
 
   /**
@@ -583,7 +584,8 @@ export class WorkspaceSettings extends OutputChannel {
         'logical',
         'objects',
         'section',
-        'schema'
+        'schema',
+        'variables'
       ]) {
 
         if (has(v, settings) && u.isBoolean(settings[v])) {
@@ -634,23 +636,32 @@ export class WorkspaceSettings extends OutputChannel {
       const settings = workspace.getConfiguration('liquid');
 
       if (settings.has('format.rules')) {
+
         const rules = settings.get<Workspace.Format['rules']>('format.rules');
+
         if (u.isObject(rules)) {
-          this.formatting.rules = rules;
+
+          this.formatting.rules = u.rulesNormalize(rules);
+
+          if(has('ignore', rules)) {
+
+            if (u.isArray(rules.ignore)) {
+              if(rules.ignore.length > 0) {
+                this.getIgnores(rules.ignore);
+              } else {
+                if (this.formatting.ignoreList.length > 0) {
+                  this.getIgnores([]);
+                }
+              }
+            } else if (this.formatting.ignoreList.length > 0) {
+              this.getIgnores([]);
+            }
+
+          }
+
         }
       }
 
-      if (settings.has('format.ignore')) {
-
-        const ignore = settings.get<Workspace.Format['ignore']>('format.ignore');
-
-        if (u.isArray(ignore)) {
-          this.getIgnores(ignore);
-        } else if (this.formatting.ignoreList.length > 0) {
-          this.getIgnores([]);
-        }
-
-      }
     }
   }
 
