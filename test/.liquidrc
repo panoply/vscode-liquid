@@ -2,7 +2,13 @@
   "engine": "shopify",
   "files": {
     "locales": "./theme/locales/en.default.json",
-    "settings": "./theme/config/settings_schema.json"
+    "settings": "./theme/config/settings_schema.json",
+    "sections": [
+      "./sections/*"
+    ],
+    "snippets": [
+      "./toggle/*.liquid"
+    ]
   },
   "format": {
     "ignore": [
@@ -18,7 +24,7 @@
     "liquid": {
       "commentIndent": true,
       "commentNewline": true,
-      "delimiterPlacement": "inline",
+      "delimiterPlacement": "force",
       "delimiterTrims": "preserve",
       "ignoreTagList": [
         "capture"

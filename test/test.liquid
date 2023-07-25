@@ -1,5 +1,10 @@
-<html>
-  {% comment %} esthetic-ignore-start {% endcomment %}
-    foo
-  {% comment %} esthetic-ignore-end {% endcomment %}
-</html>
+{% liquid
+
+  capture foo
+    echo 'hello world !'
+  endcapture
+
+  comment
+    something
+  endcomment
+%}

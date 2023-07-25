@@ -7,9 +7,9 @@
 {% assign foo = section %}
 {% assign bar = section.settings %}
 
-{{ foo.settings }}
+{{ foo.settings. }}
 
-{{ bar }}
+{{ bar.test_richtext }}
 
 {% # SECTION COMPLETIONS - TESTING BLOCK SCOPES %}
 
@@ -19,17 +19,14 @@
 
   {% # SECTION ASSIGN - TEST VARIABLE ASSIGNED BLOCK SETTINGS %}
 
-  {% if b.type == '' %}
+  {% if block.type == 'foo_block_type' %}
 
-    {{ block }}
+    {{ block.settings.placeholder }}
 
     {{ b | }}
 
-  {% elsif b.type == "testing_blocks" %}
+  {% elsif block.type == "testing_blocks" %}
 
-    {{ b.settings }}
-
-    {{ b.settings }}
 
   {% endif %}
 
@@ -48,6 +45,12 @@
         "type": "header",
         "content": "Skipped",
         "info": "This item will not be provided in completions"
+      },
+      {
+        "type": "text",
+        "id": "sample",
+        "label": "Sample",
+        "default": "Hello World"
       },
       {
         "type": "richtext",
@@ -124,6 +127,7 @@
         "type": "testing_blocks",
         "name": "Example Blocks",
         "settings": [
+
           {
             "type": "header",
             "content": "Textarea Input",

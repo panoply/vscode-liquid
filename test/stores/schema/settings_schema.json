@@ -10,9 +10,19 @@
   {
     "name": "",
     "settings": [
-      {
-        "type": "header"
-      }
+        {
+          "type": "radio",
+          "id": "foo",
+          "label": "Foo",
+          "default": "",
+          "info": "",
+          "options": [
+            {
+              "value": "one",
+              "label": "One"
+            }
+          ]
+        }
     ]
   }
 ]

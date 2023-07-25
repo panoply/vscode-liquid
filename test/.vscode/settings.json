@@ -1,22 +1,21 @@
 {
   "[liquid]": {
     "editor.formatOnSave": true
-  }
-  // "liquid.files.shopify": {
-  //   "locales": "./theme/locales/en.default.json",
-  //   "settings": "./theme/config/settings_schema.json"
-  // },
-  // "liquid.config.method": "liquidrc",
-  // "liquid.format.ignore": [
-  //   "./completions/*",
-  //   "./ignores/ignore.liquid",
-  //   "./syntax/*"
-  // ],
-  // "liquid.format.rules": {
-  //   "liquid": {
-  //     "forceFilter": 3
-  //   }
-  // },
+  },
+  "liquid.completion.filters": true,
+  "liquid.files.shopify": {},
+  "liquid.config.method": "liquidrc",
+  "liquid.format.rules": {
+    "ignore": [
+      "./completions/*",
+      "./ignores/ignore.liquid",
+      "./syntax/*"
+    ],
+    "liquid": {
+      "forceFilter": 3
+    }
+  },
+  "editor.foldingStrategy": "indentation"
   // "[liquid]": {
   //   "editor.defaultFormatter": "sissel.shopify-liquid",
   //   "editor.formatOnSave": true

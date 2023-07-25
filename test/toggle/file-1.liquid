@@ -17,21 +17,18 @@
 {{ pr }}
 {{ article.author | prepend | append: block }}
 
+{% render '' %}
 
 {% schema %}
 
   {"settings": [
-      {},
-
-      {
+      {}, {
         "type": "video_url"
-      },
-      {
+      }, {
         "type": "blog",
         "id": "some_label",
         "label": "Some Label"
-      },
-      {}
+      }, {}
 
 
     ]}

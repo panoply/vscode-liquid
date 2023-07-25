@@ -1,5 +1,9 @@
 {% # FILTER COMPLETES %}
 
+
+{{ foo  }}
+
+
 {{ foo | append: '' | upcase   }}
 
 {% # FILTER COMPLETES - ONLY SHOW TYPE STRING OBJECTS  %}
@@ -12,12 +16,11 @@
 
 {% # FILTER COMPLETES - ONLY SHOW IN ASSIGN %}
 
-{% render 'xxx'  %}
 
-{% assign bar = 1200 %}
+{% assign number = 1200 %}
 
 {% for item in product %}
 
-  {{ item.price | plus   }}
+  {{ item.price | plus:  }}  <!-- TYPE AWARENESS ONLY NUMBERS SHOW -->
 
 {% endfor %}
