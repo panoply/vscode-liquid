@@ -76,7 +76,7 @@ export class CommandPalette extends FSWatch {
 
       const input = type === 'default' ? rulesDefault() : rulesRecommend();
       const stringify = JSON.stringify(input, null, 2);
-      const rules = await esthetic.format(stringify, { ...input, language: 'json' });
+      const rules = esthetic.format(stringify, { ...input, language: 'json' });
 
       esthetic.rules({ language: 'liquid' });
 
@@ -166,7 +166,7 @@ export class CommandPalette extends FSWatch {
 
       try {
 
-        const output = await esthetic.format(input, { language: languageId });
+        const output = esthetic.format(input, { language: languageId });
 
         if (this.hasError) {
           this.errorCache = null;
