@@ -24,5 +24,18 @@
           ]
         }
     ]
+  },
+  {
+    "name": "",
+    "settings": [
+      {
+        "type": "color_scheme_group",
+        "id": "foo",
+        "label": "Foo",
+        "definition": [],
+        "role": {},
+        "info": "hello"
+      }
+    ]
   }
 ]
