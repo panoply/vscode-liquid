@@ -155,6 +155,16 @@ export const rulesOmitted = omit([
 /* FUNCTIONS                                    */
 /* -------------------------------------------- */
 
+export default function slash (path: string) {
+
+  const isExtendedLengthPath = path.startsWith('\\\\?\\');
+
+  if (isExtendedLengthPath) return path;
+
+  return path.replace(/\\/g, '/');
+
+}
+
 export function multiline (...input: string[]) {
 
   return input.join(' ');
@@ -457,9 +467,9 @@ export function hasLiquidrc (root: string) {
  *
  * Strips/removes leading `./` or `/` from uri paths
  */
-export function refineURI (path: string) {
+export function refineURI (filePath: string) {
 
-  return path.replace(/^\.?\//, '');
+  return slash(filePath).replace(/^\.?\//, '');
 
 }
 
@@ -471,8 +481,9 @@ export function refineURI (path: string) {
  * This is used by the file watcher to determine what
  * change occured in which file.
  */
-export function isFile (path: string, matchFile: string) {
+export function isFile (filePath: string, matchFile: string) {
 
+  const path = slash(filePath);
   const fileName = path.slice(path.lastIndexOf('/') + 1);
 
   return fileName.startsWith(matchFile);
@@ -540,10 +551,11 @@ export function getLanguage (language: LanguageIds): LanguageName {
 
 }
 
-export function getFileNameExtension (path: string) {
+export function getFileNameExtension (filePath: string) {
 
-  if (!isString(path)) return undefined;
+  if (!isString(filePath)) return undefined;
 
+  const path = slash(filePath);
   const nameidx = path.lastIndexOf('/');
   const lastdot = path.indexOf('.', nameidx);
 
@@ -558,9 +570,11 @@ export function getFileNameExtension (path: string) {
  * esthetic language name. This is used when trying to determine
  * the file being dealt with during a change.
  */
-export function getLanguageFromExtension (path: string) {
+export function getLanguageFromExtension (filePath: string) {
 
-  if (!isString(path)) return undefined;
+  if (!isString(filePath)) return undefined;
+
+  const path = slash(filePath);
 
   const nameidx = path.lastIndexOf('/');
   const lastdot = path.indexOf('.', nameidx);
