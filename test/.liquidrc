@@ -16,7 +16,7 @@
       "./ignores/ignore.liquid",
       "./syntax/*"
     ],
-    "wrap": 100,
+    "wrap": 0,
     "crlf": false,
     "indentSize": 2,
     "preserveLine": 2,
@@ -24,20 +24,25 @@
     "liquid": {
       "commentIndent": true,
       "commentNewline": true,
-      "delimiterPlacement": "force",
+      "forceArgument": 0,
+      "forceFilter": 3,
+      "delimiterPlacement": "consistent",
       "delimiterTrims": "preserve",
       "ignoreTagList": [
         "capture"
       ],
-      "lineBreakSeparator": "before",
+      "lineBreakSeparator": "after",
       "normalizeSpacing": true,
       "preserveComment": false,
       "quoteConvert": "single"
     },
     "markup": {
-      "ignoreJS": true,
-      "ignoreJSON": true,
-      "ignoreCSS": true
+      "forceAttribute": 3,
+      "ignoreJS": false,
+      "ignoreJSON": false,
+      "ignoreCSS": false,
+      "delimiterTerminus": "adapt",
+      "lineBreakValue": "align"
     },
     "json": {
       "braceAllman": true
