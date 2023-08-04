@@ -159,6 +159,8 @@ export class WorkspaceSettings extends OutputChannel {
 
             if (name === 'locales') {
 
+              this.completion.files.locales = this.files[name].fsPath;
+
               const locales = await u.parseJsonFile(this.files[name]);
               const schema = await u.parseJsonFile(this.files.localesSchema);
 
@@ -401,7 +403,7 @@ export class WorkspaceSettings extends OutputChannel {
           const path = u.refineURI(value);
 
           this.files[file] = Uri.file(join(root, path));
-          this.info(`Using ${configSource} ${file.slice} completions: ${basename(path)}`);
+          this.info(`Using ${configSource} ${file.slice(0, -1)} completions: ${basename(path)}`);
 
           if (this.engine === 'shopify') {
 
@@ -643,10 +645,10 @@ export class WorkspaceSettings extends OutputChannel {
 
           this.formatting.rules = u.rulesNormalize(rules);
 
-          if(has('ignore', rules)) {
+          if (has('ignore', rules)) {
 
             if (u.isArray(rules.ignore)) {
-              if(rules.ignore.length > 0) {
+              if (rules.ignore.length > 0) {
                 this.getIgnores(rules.ignore);
               } else {
                 if (this.formatting.ignoreList.length > 0) {
