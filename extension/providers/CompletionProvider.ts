@@ -3,13 +3,14 @@ import { Service } from 'services';
 import { Char, Token, Complete, Workspace } from 'types';
 import { getTokenCursor, getToken, isEmptyOutput, isEmptyTag, getLiquidTokenCursor } from 'parse/tokens';
 import { getSectionCompletions, getSectionScope } from 'parse/schema';
-import { insertSpace, insertTag } from 'parse/edits';
+import { insertSpace, insertTag, insertTranslate } from 'parse/edits';
 import {
   getObjectCompletions,
   getSchemaCompletions,
   getPropertyCompletions,
   getLocaleCompletions,
-  getLiquidTagSnippets
+  getLiquidTagSnippets,
+  getLocaleArguments
 } from 'parse/complete';
 import {
   CancellationToken,
@@ -219,6 +220,12 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
       } else {
 
+        if (token.filter === 't') {
+
+          return getLocaleArguments(token);
+
+        }
+
         q.setType(null);
 
         return getObjectCompletions(
@@ -260,7 +267,11 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
     if (token.type === Token.Object) {
       if (trigger === Char.SQO || trigger === Char.DQO || (cursor === Token.Locale && trigger === Char.DOT)) {
-        return getLocaleCompletions(document.uri.fsPath, token.object);
+        return getLocaleCompletions(
+          this.files.locales,
+          token.object,
+          insertTranslate(position, token.text)
+        );
       }
     }
 
