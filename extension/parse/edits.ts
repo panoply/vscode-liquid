@@ -49,7 +49,12 @@ export function insertSpace (position: Position) {
  */
 export function insertTranslate (position: Position, token: string) {
 
-  return (/(""|'')\s*(?=-?}})/).test(token) ? [
-    TextEdit.insert(new Position(position.line, position.character + 2), '| t ')
-  ] : [];
+  if (!/\s*\|\s*t:?/.test(token)) {
+    return [
+      TextEdit.insert(new Position(position.line, position.character + 2), '| t ')
+    ];
+  }
+
+  return [];
+
 }
