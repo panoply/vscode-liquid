@@ -1,5 +1,5 @@
-import { entries, keys } from 'utils';
-import { basename, join } from 'node:path';
+import slash, { entries, keys } from 'utils';
+import { join } from 'node:path';
 import { $ } from '@liquify/specs';
 import { mdLines } from 'parse/helpers';
 import { path } from 'rambdax';
@@ -31,8 +31,7 @@ export function getLocaleCompletions (
   additionalTextEdits: TextEdit[] = []
 ): CompletionItem[] {
 
-  const reference = `[${basename(uri)}](${uri})`;
-  const location = uri.split('/');
+  const location = slash(uri).split('/');
   const filename = location.pop();
   const dirname = location.pop();
   const detail = join(dirname, filename);
@@ -46,8 +45,8 @@ export function getLocaleCompletions (
         ? keys(props[label]).length : props;
 
     const documentation = object
-      ? mdLines(`**${label}**`, `${value} available fields`, reference)
-      : mdLines(`**${label}**`, `*\`${value}\`*`, reference);
+      ? mdLines(`**${label}**`, `${value} available fields`, uri)
+      : mdLines(`**${label}**`, `*\`${value}\`*`, uri);
 
     return {
       label,

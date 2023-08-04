@@ -1,7 +1,7 @@
-import { entries, keys } from 'utils';
+import slash, { entries, keys } from 'utils';
 import { basename, join, dirname } from 'node:path';
 import { Filter, Tags, IObject, Type, Types, liquid, IProperty, $, p } from '@liquify/specs';
-import { mdLines, mdString } from 'parse/helpers';
+import { mdString } from 'parse/helpers';
 import { has, path } from 'rambdax';
 import { Complete, SettingsData } from 'types';
 import {
@@ -12,6 +12,7 @@ import {
   Position,
   Range,
   TextEdit,
+  MarkdownString,
   Uri
 } from 'vscode';
 
@@ -118,9 +119,14 @@ export function getFileCompletions (files: Set<Uri>): CompletionItem[] {
 
     const { fsPath } = file;
     const label = basename(fsPath, '.liquid');
-    const location = fsPath.split('/');
+    const location = slash(fsPath).split('/');
     const filename = location.pop();
     const dirname = location.pop();
+
+    const documentation = new MarkdownString(`[${label}.liquid](./${label}.liquid)`);
+
+    documentation.baseUri = file;
+    documentation.supportHtml = true;
 
     return {
       label,
@@ -128,7 +134,7 @@ export function getFileCompletions (files: Set<Uri>): CompletionItem[] {
       insertText: new SnippetString(label),
       preselect: true,
       detail: join(dirname, filename),
-      documentation: mdString(`[${label}.liquid](${file.fsPath})`)
+      documentation
     };
 
   });
@@ -256,8 +262,7 @@ export function getLocaleCompletions (
   additionalTextEdits: TextEdit[] = []
 ): CompletionItem[] {
 
-  const reference = `[${basename(uri)}](${uri})`;
-  const location = uri.split('/');
+  const location = slash(uri).split('/');
   const filename = location.pop();
   const dirname = location.pop();
   const detail = join(dirname, filename);
@@ -270,9 +275,20 @@ export function getLocaleCompletions (
       : typeof props[label] === 'object'
         ? keys(props[label]).length : props;
 
-    const documentation = object
-      ? mdLines(`**${label}**`, `${value} available fields`, reference)
-      : mdLines(`**${label}**`, `*\`${value}\`*`, reference);
+    const documentation = new MarkdownString();
+
+    documentation.baseUri = Uri.file(uri);
+    documentation.supportThemeIcons = true;
+    documentation.supportHtml = true;
+    documentation.appendMarkdown(`**${label}**\n\n`);
+
+    if (object) {
+      documentation.appendMarkdown(`**${value}** available fields\n\n`);
+    } else {
+      documentation.appendMarkdown(`*\`${value}\`*\n\n`);
+    }
+
+    documentation.appendMarkdown(`[${filename}](./${filename})`);
 
     return {
       label,

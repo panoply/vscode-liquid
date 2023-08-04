@@ -1,9 +1,9 @@
 import { Complete, Tag, Token } from 'types';
 import { IToken } from 'parse/tokens';
 import { Properties, $, Type, q } from '@liquify/specs';
-import { entries, isNumber, isString, keys } from 'utils';
-import { basename, join } from 'node:path';
-import { mdLines, mdString, detail, kind, objectKind } from 'parse/helpers';
+import slash, { entries, isNumber, isString, keys } from 'utils';
+import { join } from 'node:path';
+import { mdString, detail, kind, objectKind } from 'parse/helpers';
 import {
   CompletionItemTag,
   CompletionItem,
@@ -13,8 +13,10 @@ import {
   MarkdownString,
   TextDocument,
   Position,
-  TextEdit
+  TextEdit,
+  Uri
 } from 'vscode';
+import { path } from 'rambdax';
 
 /* -------------------------------------------- */
 /* PRIVATES                                     */
@@ -58,6 +60,47 @@ function walkLocales (next: string[], objectProps: object) {
 /* PUBLIC                                       */
 /* -------------------------------------------- */
 
+export function getLocaleArguments (token: IToken) {
+
+  const match = token.text.match(/['"].*?['"]/);
+
+  if (match !== null) {
+
+    const locale = match[0].slice(1, -1);
+    const value = path<string>(locale, $.liquid.files.get('locales'));
+    const liquid = value.match(/{{.*?}}/g);
+
+    if (liquid === null) return null;
+
+    const arr = Array.from(liquid);
+    const size = arr.length - 1;
+
+    return arr.map((item, i) => {
+
+      const label = item.match(/\w+/)[0];
+      const snippet = `${i === 0 && size > 1 ? ',$0' : i > 0 && i !== size - 1 ? ',$0' : ''}`;
+
+      const documentation = new MarkdownString();
+
+      documentation.supportThemeIcons = true;
+      documentation.supportHtml = true;
+
+      documentation.appendCodeblock(`\n${value}\n`, 'liquid');
+
+      return {
+        label,
+        kind: CompletionItemKind.Property,
+        detail: locale,
+        preselect: true,
+        insertText: new SnippetString(` ${label}: $1${snippet}`),
+        documentation
+      };
+
+    });
+
+  }
+}
+
 /**
  * Get Locale Completions
  *
@@ -66,7 +109,7 @@ function walkLocales (next: string[], objectProps: object) {
  * the entires for traversal by exposing keys of the locale file.
  */
 export function getLocaleCompletions (
-  uri: string,
+  filePath: string,
   props?: string,
   additionalTextEdits: TextEdit[] = []
 ): CompletionItem[] {
@@ -76,8 +119,10 @@ export function getLocaleCompletions (
 
   if (isString(items)) return null;
 
-  const reference = `[${basename(uri)}](${uri})`;
-  const location = uri.split('/');
+  console.log(filePath);
+
+  const path = Uri.file(filePath);
+  const location = slash(path.fsPath).split('/');
   const filename = location.pop();
   const dirname = location.pop();
   const detail = join(dirname, filename);
@@ -89,12 +134,20 @@ export function getLocaleCompletions (
       ? keys(prop).length
       : isString(prop) ? prop : keys(prop).length;
 
-    const documentation = isNumber(value)
-      ? mdLines(`**${label}**`, `${value} available fields`, reference)
-      : mdString('```js\n"' + value + '"\n```', {
-        name: basename(uri),
-        url: uri
-      });
+    const documentation = new MarkdownString();
+
+    documentation.baseUri = path;
+    documentation.supportThemeIcons = true;
+    documentation.supportHtml = true;
+
+    if (isNumber(value)) {
+      documentation.appendMarkdown(`**${label}**\n\n`);
+      documentation.appendMarkdown(`${value} available fields\n\n`);
+    } else {
+      documentation.appendCodeblock(`${value}`, 'liquid');
+    }
+
+    documentation.appendMarkdown(`[${filename}](./${filename})`);
 
     return {
       label,

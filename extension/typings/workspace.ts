@@ -233,7 +233,7 @@ export namespace Workspace {
     /**
      * The formatting rules for Æsthetic
      */
-    rules?: Merge<Rules,{ ignore?: string[] }>
+    rules?: Merge<Rules, { ignore?: string[] }>
   }
 
 }

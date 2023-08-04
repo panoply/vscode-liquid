@@ -1,6 +1,7 @@
 import { has } from 'rambdax';
+import { basename } from 'node:path';
 import { SchemaSectionTag, SchemaSettings, SchemaSettingTypes } from 'types';
-import { MarkdownString, CompletionItemKind } from 'vscode';
+import { MarkdownString, CompletionItemKind, Uri } from 'vscode';
 import { Type, Types } from '@liquify/specs';
 
 export const Tag = (name: string) => new RegExp(`{%-?\\s*\\b${name}\\b\\s+-?%}`);
@@ -83,10 +84,10 @@ export function mdString (description: string, reference?: {
   md.supportHtml = true;
   md.appendMarkdown(description);
 
-  if (
-    reference &&
-    has('name', reference) &&
-    has('url', reference)) md.appendMarkdown(`\n\n[${reference.name}](${reference.url})`);
+  if (reference && has('name', reference) && has('url', reference)) {
+    md.baseUri = Uri.file(reference.url);
+    md.appendMarkdown(`\n\n[${reference.name}](./${reference.name})`);
+  }
 
   return md;
 
@@ -97,13 +98,16 @@ export function mdString (description: string, reference?: {
  *
  * Returns an instance of `Markdown` to be rendered.
  */
-export function mdLines (title: string, description: string, url: string) {
+export function mdLines (title: string, description: string, uri: string) {
 
-  const md = new MarkdownString();
+  const md = new MarkdownString(`${title}\n\n`);
+  const name = basename(uri);
 
+  md.baseUri = Uri.file(uri);
   md.supportThemeIcons = true;
   md.supportHtml = true;
-  md.appendMarkdown(title + '\n\n' + description + '\n\n' + url);
+  md.appendMarkdown(`${description}\n\n`);
+  md.appendMarkdown(`[${name}](./${name})`);
 
   return md;
 
