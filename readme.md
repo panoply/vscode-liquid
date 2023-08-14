@@ -317,7 +317,6 @@ The extension also provides additional syntax highlighting for language annotate
 
 As of version **v3.2^** this extension supports schema tag intelliSense capabilities. The feature drastically improves productivity for developers working with the Shopify Liquid variation. Section `{% schema %}` provide users with common JSON features such as completions, validations, hovers and snippets. The contents of schema tags (ie: section settings and blocks) are made available to Liquid `{{ section.settings.* }}` and `{{ block.settings.* }}` objects.
 
-
 ### Liquid Completions
 
 Liquid `section.*` object completions are provided in accordance with the contents contained within `{% schema %}` embedded tags. Section completions are scope aware and respect `block.type` regions implemented with either control flow `{% if %}` or `{% case %}` tags. Tag completions support sensible re-assignment variable naming, which means you can assign to different names and completions will work. You can disable/enable Liquid section object completions within your workspace settings configuration.
@@ -486,7 +485,6 @@ The extension supports file completions. Depending on the specified Liquid `engi
 </summary>
 
 If you defining configuration via workspace settings, the extension only supports project level definition references but does not support global (User Preferences) definitions for this setting. This means you can provide these references within your `.vscode/settings.json` file on a per-project level but you cannot provide this within your global configuration.
-
 
 ```jsonc
 {
@@ -687,7 +685,6 @@ Below is the **default** rules. It is important to note that if the `liquid.form
   "format": {
     "ignore": [],
     "preset": "none",
-    "language": "auto",
     "indentSize": 2,
     "indentChar": " ",
     "wrap": 0,
@@ -728,7 +725,7 @@ Below is the **default** rules. It is important to note that if the `liquid.form
       "lineBreakValue": "align",
       "preserveAttribute": false,
       "selfCloseSVG": false,
-      "stripAttributeLines": false,
+      "stripAttributeLines": false
     },
     "style": {
       "classPadding": false,
@@ -747,7 +744,7 @@ Below is the **default** rules. It is important to note that if the `liquid.form
       "braceAllman": true,
       "bracePadding": true,
       "objectIndent": "indent",
-      "objectSort": false,
+      "objectSort": false
     },
     "script": {
       "arrayFormat": "indent",
@@ -807,7 +804,7 @@ If you are using or have installed [Shopify Liquid (Theme Check)](https://market
 
 The capabilities made available by Shopify Liquid (Theme Check) are nice but they come with limitations as its LSP (Language Server) implementation requires Ruby to function making it rather resource heavy and exhaustive on your machine. Though the extra features like validations do indeed help in some cases, they are specific to Shopify themes and not much use outside of that environment. If you require linting features maybe consider running their CLI solution only when necessary.
 
-Currently, this extension offers far more features and capabilities than the Shopify backed extension. Though there is efforts being made by Shopify to improve their approach (currently) the only upside for choosing would be validation features. the Liquify supersede will provide linting and validations upon its release, so the value proposition for continuing to choose this extension over Shopify Theme Check is minimal and one should evaluate whether or not it's the right choice.
+Currently, this extension offers far more features and capabilities than the Shopify backed extension. Though there is efforts being made by Shopify to improve their approach but (currently) the only upside for choosing it would be the validation features. The Liquify supersede will provide linting and validations upon its release, so the value proposition for continuing to choose this extension over Shopify Theme Check is minimal and one should evaluate whether or not it's the right choice for their productivity.
 
 # Releases
 
