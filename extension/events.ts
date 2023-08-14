@@ -31,7 +31,9 @@ export class Events extends CommandPalette {
     if (data === FormatEventType.EnableStatus) {
       this.status.enable();
     } else if (data.type === FormatEventType.ThrowError) {
+
       this.error(data.message)(data.detail);
+
     }
 
   }
