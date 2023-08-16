@@ -1,5 +1,7 @@
 import {
   Position,
+  Range,
+  SnippetString,
   TextEdit
 } from 'vscode';
 
@@ -47,14 +49,35 @@ export function insertSpace (position: Position) {
  *
  * Inserts a translate filter to locale object tags
  */
-export function insertTranslate (position: Position, token: string) {
-
-  if (!/\s*\|\s*t:?/.test(token)) {
-    return [
-      TextEdit.insert(new Position(position.line, position.character + 2), '| t ')
-    ];
+export function insertTranslate (position: Position, token: string): (prop: string) => {
+  insertText: SnippetString,
+  range: {
+    inserting: Range;
+    replacing: Range;
   }
+} {
 
-  return [];
+  return (label: string) => {
+
+    if (!/\s*\|\s*t:?/.test(token)) {
+
+      const begin = token.search(/['"]/);
+      const quote = token[begin];
+
+      return {
+        insertText: new SnippetString(`${label}$1${quote} | t$0 `),
+        range: {
+          replacing: new Range(position, position),
+          inserting: new Range(position, new Position(position.line, position.character + 1))
+        }
+      };
+    }
+
+    return {
+      insertText: new SnippetString(`${label}`),
+      range: null
+    };
+
+  };
 
 }
