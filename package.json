@@ -27,7 +27,7 @@
     "url": "https://github.com/panoply/vscode-liquid/issues"
   },
   "engines": {
-    "vscode": "^1.7.0",
+    "vscode": "^1.81.0",
     "node": "v16.15.0"
   },
   "categories": [
@@ -419,7 +419,20 @@
             "11ty",
             "jekyll"
           ],
-          "markdownDescription": "**Default** `shopify`\n\nThe `liquid.engine` option is used to determine the Liquid template variation you are working with. This extension supports the following Liquid variations:\n\n- Standard\n- Shopify\n- 11ty\n- Jekyll\n\nFeatures and capabilities differ depending on the engine you define. For example, if you are working with the Shopify Liquid variation and you have set the engine to `Standard` then features like object and property completions will not work.\n\n**Tip**\n\nYou can optionally infer the engine with your `.liquidrc` file.\n"
+          "markdownDescription": "**Default** `shopify`\n\nThe `liquid.engine` option is used to determine the Liquid template variation you are working with. This extension supports the following Liquid variations:\n\n- [Standard](https://shopify.github.io/liquid/)\n- [Shopify](https://shopify.dev/docs/api/liquid)\n- [11ty](https://www.11ty.dev/docs/languages/liquid/)\n- [Jekyll](https://jekyllrb.com/docs/liquid/)\n\nFeatures and capabilities differ depending on the engine you define. For example, if you are working with the **Shopify** Liquid variation the engine is set to `Standard` it will result in features like object and property completions not being available.\n\n**Tip**\n\nYou can optionally infer the engine with your `.liquidrc` file.\n"
+        },
+        "liquid.config.baseUrl": {
+          "type": "string",
+          "markdownDescription": "**Default** `.`\n\nThe `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving `.liquidrc` or `.liquidrc.json` files. The option will only work in projects that use `.liquidrc` files and has no effect if `liquid.config.method` is set `workspace` Consider the following directory layout:\n\n```\n\n root\n ├─ .vscode\n │  └─ settings.json\n ├─ docs\n │  ├─ .liquidrc.json\n │  └─ index.liquid\n └─ src\n    ├─ includes\n    └─ views\n\n```\n\nBy default, when no `.liquidrc` exist in a projects root, then it is assumed beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace file then the default rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseUrl` to the directory containing one of the supported file types.\n\nTargeting the `.liquidrc.json` file located in `docs` directory:\n\n<!--prettier-ignore-->\n```jsonc\n{\n  \"liquid.config.baseUrl\": \"./docs\"\n}\n```\n\n_The `baseUrl` must point to a relative directory not a file. If the directory provided cannot be resolved, root is used._\n"
+        },
+        "liquid.config.method": {
+          "type": "string",
+          "default": "liquidrc",
+          "markdownDescription": "**Default** `liquidrc`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `liquidrc`\n\nThe configuration method to use. This option defaults to `liquidrc` which means it will look for a `.liquidrc` or `.liquidrc.json` file contained in your projects root directory (or relative to the `liquid.config.baseUrl` if provided).\n\nIf you set this to `workspace` then the extension will expect settings to be defined within your `.vscode/settings.json` workspace file or if you are not using a project based workspace setting (`.vscode/settings.json`) file then it will look at global workspace (User Preference) settings.\n\n",
+          "enum": [
+            "liquidrc",
+            "workspace"
+          ]
         },
         "liquid.files.shopify": {
           "type": "object",
@@ -545,58 +558,6 @@
           "type": "boolean",
           "default": true,
           "markdownDescription": "**Default** `true`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `true`\n\nWhether or not to enable schema JSON hover descriptions within `{% schema %}` tag regions of Shopify section files. This option requires the Liquid `engine` to be set to `shopify`. When enabled (ie: `true`) the hover tooltips will shown in the text editor when placing the cursor on different properties and values in the JSON structure.\n\n"
-        },
-        "liquid.config.baseUrl": {
-          "type": "string",
-          "markdownDescription": "**Default** `.`\n\nThe `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving `.liquidrc` or `.liquidrc.json` files. The option will only work in projects that use `.liquidrc` files and has no effect if `liquid.config.method` is set `workspace` Consider the following directory layout:\n\n```\n\n root\n ├─ .vscode\n │  └─ settings.json\n ├─ docs\n │  ├─ .liquidrc.json\n │  └─ index.liquid\n └─ src\n    ├─ includes\n    └─ views\n\n```\n\nBy default, when no `.liquidrc` exist in a projects root, then it is assumed beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace file then the default rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseUrl` to the directory containing one of the supported file types.\n\nTargeting the `.liquidrc.json` file located in `docs` directory:\n\n<!--prettier-ignore-->\n```jsonc\n{\n  \"liquid.config.baseUrl\": \"./docs\"\n}\n```\n\n_The `baseUrl` must point to a relative directory not a file. If the directory provided cannot be resolved, root is used._\n"
-        },
-        "liquid.config.method": {
-          "type": "string",
-          "default": "liquidrc",
-          "markdownDescription": "**Default** `liquidrc`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `liquidrc`\n\nThe configuration method to use. This option defaults to `liquidrc` which means it will look for a `.liquidrc` or `.liquidrc.json` file contained in your projects root directory (or relative to the `liquid.config.baseUrl` if provided).\n\nIf you set this to `workspace` then the extension will expect settings to be defined within your `.vscode/settings.json` workspace file or if you are not using a project based workspace setting (`.vscode/settings.json`) file then it will look at global workspace (User Preference) settings.\n\n",
-          "enum": [
-            "liquidrc",
-            "workspace"
-          ]
-        },
-        "liquid.settings.target": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.settings.target\" workspace setting is deprecated. Workspace setting target will be automatically detected and this option no longer has any effect.\n\n\n"
-        },
-        "liquid.format.enable": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.enable\" workspace setting is deprecated. Use language specific settings for formatting capabilities, provide the following vscode workspace configuration to enable formatting of Liquid files:\n\nSETTINGS AS OF v4^\n\n{\n  \"[liquid]\": {\n    \"editor.formatOnSave\": true,\n    \"editor.defaultFormatter\": \"sissel.shopify-liquid\"\n  }\n}\n"
-        },
-        "liquid.format.markup": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.markup\" workspace setting is deprecated. Define \"markup\" formatting rules within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"markup\": {}\n  }\n}\n\n"
-        },
-        "liquid.format.style": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.style\" workspace setting is deprecated. Define \"style\" formatting rules within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"style\": {},\n    \"markup\": {},\n    \"json\": {},\n    \"script\": {}\n  }\n}\n\n"
-        },
-        "liquid.format.script": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.script\" workspace setting is deprecated. Define \"script\" formatting rules within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"script\": {}\n  }\n}\n\n"
-        },
-        "liquid.format.json": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.json\" workspace setting is deprecated. Define \"json\" formatting rules within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"json\": {}\n  }\n}\n\n"
-        },
-        "liquid.format.wrap": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.wrap\" workspace setting is deprecated. Define \"wrap\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"wrap\": 0\n  }\n}\n\n"
-        },
-        "liquid.format.indentSize": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.indentSize\" workspace setting is deprecated. Define \"indentSize\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"indentSize\": 2\n  }\n}\n\n"
-        },
-        "liquid.format.endNewLine": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.endNewLine\" workspace setting is deprecated. Define \"endNewline\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"endNewline\": false\n  }\n}\n\n"
-        },
-        "liquid.format.crlf": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.crlf\" workspace setting is deprecated. Define \"crlf\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"crlf\": 0,\n    \"wrap\": 0,\n    \"indentSize\": 3\n  }\n}\n\n"
-        },
-        "liquid.format.commentIndent": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.commentIndent\" workspace setting is deprecated. This formatting rule is no longer considered global and can now be defined on a per language level within the \"liquid.format.rules\" object setting.\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"wrap\": 0,\n    \"liquid\": {\n      \"commentIndent\": true,\n    },\n    \"markup\": {\n      \"commentIndent\": true,\n    }\n  }\n}\n"
-        },
-        "liquid.format.preserveLine": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.preserveLine\" workspace setting is deprecated. Define \"preserveLine\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"preserveLine\": false\n  }\n}\n\n"
-        },
-        "liquid.format.preserveComment": {
-          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.preserveComment\" workspace setting is deprecated. This formatting rule is no longer considered global and can now be defined on a per language level within the \"liquid.format.rules\" object setting.\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"wrap\": 0,\n    \"liquid\": {\n      \"preserveComment\": true,\n    },\n    \"markup\": {\n      \"preserveComment\": true,\n    },\n    \"style\": {\n      \"preserveComment\": false,\n    },\n    \"script\": {\n      \"preserveComment\": false,\n    }\n  }\n}\n"
         },
         "liquid.format.rules": {
           "type": "object",
@@ -851,6 +812,17 @@
                   "type": "boolean",
                   "default": false,
                   "markdownDescription": "Applies single indentation to containing content of HTML comments.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/commentIndent/)\n\n"
+                },
+                "commentDelimiters": {
+                  "enum": [
+                    "preserve",
+                    "inline",
+                    "inline-align",
+                    "force",
+                    "consistent"
+                  ],
+                  "default": "preserve",
+                  "markdownDescription": "Controls the placement of HTML and XML (i.e: markup) type comment delimiters. This is a markup specific formatting rule that defaults to using preserve and applied to languages using `<!--` and `-->` delimiter tokens.\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/commentDelimiters/)"
                 },
                 "commentNewline": {
                   "type": "boolean",
@@ -1216,6 +1188,45 @@
               }
             }
           }
+        },
+        "liquid.settings.target": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.settings.target\" workspace setting is deprecated. Workspace setting target will be automatically detected and this option no longer has any effect.\n\n\n"
+        },
+        "liquid.format.enable": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.enable\" workspace setting is deprecated. Use language specific settings for formatting capabilities, provide the following vscode workspace configuration to enable formatting of Liquid files:\n\nSETTINGS AS OF v4^\n\n{\n  \"[liquid]\": {\n    \"editor.formatOnSave\": true,\n    \"editor.defaultFormatter\": \"sissel.shopify-liquid\"\n  }\n}\n"
+        },
+        "liquid.format.markup": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.markup\" workspace setting is deprecated. Define \"markup\" formatting rules within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"markup\": {}\n  }\n}\n\n"
+        },
+        "liquid.format.style": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.style\" workspace setting is deprecated. Define \"style\" formatting rules within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"style\": {},\n    \"markup\": {},\n    \"json\": {},\n    \"script\": {}\n  }\n}\n\n"
+        },
+        "liquid.format.script": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.script\" workspace setting is deprecated. Define \"script\" formatting rules within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"script\": {}\n  }\n}\n\n"
+        },
+        "liquid.format.json": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.json\" workspace setting is deprecated. Define \"json\" formatting rules within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"json\": {}\n  }\n}\n\n"
+        },
+        "liquid.format.wrap": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.wrap\" workspace setting is deprecated. Define \"wrap\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"wrap\": 0\n  }\n}\n\n"
+        },
+        "liquid.format.indentSize": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.indentSize\" workspace setting is deprecated. Define \"indentSize\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"indentSize\": 2\n  }\n}\n\n"
+        },
+        "liquid.format.endNewLine": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.endNewLine\" workspace setting is deprecated. Define \"endNewline\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"endNewline\": false\n  }\n}\n\n"
+        },
+        "liquid.format.crlf": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.crlf\" workspace setting is deprecated. Define \"crlf\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"crlf\": 0,\n    \"wrap\": 0,\n    \"indentSize\": 3\n  }\n}\n\n"
+        },
+        "liquid.format.commentIndent": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.commentIndent\" workspace setting is deprecated. This formatting rule is no longer considered global and can now be defined on a per language level within the \"liquid.format.rules\" object setting.\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"wrap\": 0,\n    \"liquid\": {\n      \"commentIndent\": true,\n    },\n    \"markup\": {\n      \"commentIndent\": true,\n    }\n  }\n}\n"
+        },
+        "liquid.format.preserveLine": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.preserveLine\" workspace setting is deprecated. Define \"preserveLine\" configuration within the \"liquid.format.rules\" workspace setting option or use a .liquidrc file.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"preserveLine\": false\n  }\n}\n\n"
+        },
+        "liquid.format.preserveComment": {
+          "deprecationMessage": "DEPRECATED\n\nThe \"liquid.format.preserveComment\" workspace setting is deprecated. This formatting rule is no longer considered global and can now be defined on a per language level within the \"liquid.format.rules\" object setting.\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid.format.rules\": {\n    \"wrap\": 0,\n    \"liquid\": {\n      \"preserveComment\": true,\n    },\n    \"markup\": {\n      \"preserveComment\": true,\n    },\n    \"style\": {\n      \"preserveComment\": false,\n    },\n    \"script\": {\n      \"preserveComment\": false,\n    }\n  }\n}\n"
         }
       }
     }
@@ -1257,16 +1268,17 @@
   "devDependencies": {
     "@liquify/eslint-config": "^1.2.0",
     "@liquify/prettier-config": "^1.2.1",
-    "@vscode/vsce": "^2.19.0",
-    "eslint": "^8.45.0",
+    "@types/vscode": "^1.70.0",
+    "@vscode/vsce": "^2.20.1",
+    "eslint": "^8.47.0",
     "esthetic": "link:../liquify/packages/esthetic",
-    "prettier": "^3.0.0",
-    "tsup": "^7.1.0",
-    "type-fest": "^4.0.0"
+    "prettier": "^3.0.2",
+    "tsup": "^7.2.0",
+    "type-fest": "^4.2.0"
   },
   "dependencies": {
-    "@liquify/schema": "^0.5.6",
-    "@liquify/specs": "^0.2.2",
+    "@liquify/schema": "^0.6.2",
+    "@liquify/specs": "^0.2.3",
     "anymatch": "^3.1.3",
     "parse-json": "^7.0.0",
     "rambdax": "10.0.0",
