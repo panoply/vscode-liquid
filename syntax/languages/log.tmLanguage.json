@@ -57,6 +57,10 @@
       }
     },
     {
+      "match": "(\\d+ \\|)",
+      "name": "punctuation.definition.tag log.control"
+    },
+    {
       "match": "\\b(RESTARTING\\sEXTENSION|EXTENSION\\sRESTARTED)\\b",
       "name": "support.class log.support"
     },
