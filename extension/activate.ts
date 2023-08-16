@@ -27,13 +27,13 @@ class VSCodeLiquid extends Events {
 
       if (this.config.method === ConfigMethod.Workspace) {
 
-        esthetic.rules(this.formatting.rules);
+        esthetic.settings({ logColors: false }).rules(this.formatting.rules);
 
         this.info('Using workspace settings for configuration');
 
       } else if (this.config.method === ConfigMethod.Liquidrc) {
 
-        esthetic.rules(this.formatting.rules);
+        esthetic.settings({ logColors: false }).rules(this.formatting.rules);
 
         this.info(`Using .liquidrc file for settings: ${this.uri.liquidrc.path}`);
 
