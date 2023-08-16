@@ -1,6 +1,9 @@
 
 {
   "general": {
+    "testing": {
+       "some_text": "Hello {{ dave }}, Enjoy the {{ feature }} brother!, Love {{ sissel }}"
+    },
     "password_page": {
       "login_form_heading": "Enter store using password:",
       "login_password_button": "Enter using password",

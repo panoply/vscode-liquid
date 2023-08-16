@@ -1,18 +1,26 @@
 {% # SNIPPET FILE COMPLETIONS %}
 
-{% render   %}
+{% render '' %}
 
 {% # SECTION FILE COMPLETIONS %}
 
-{% section  %}
+{% section '' %}
 
 
 {% # SETTINGS DATA FILE COMPLETIONS %}
 
-{{ settings }}
+{{ settings.blog_card_image_padding }}
 
 
 {% # LOCALE FILE COMPLETIONS %}
 
-{{  | t }}
+{{ 'general.cart.view' | t: count: 10 }}
+
+<div>
+
+  <h1>
+  {{ 'general.testing.some_text' | t: dave: '', feature: '', sissel: '',  }}
+  </h1>
+
+</div>
 

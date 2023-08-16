@@ -1,19 +1,36 @@
 {
-  "[liquid]": {
-    "editor.formatOnSave": true
+  "[liquid-css]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "sissel.shopify-liquid"
   },
+  "[liquid]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "sissel.shopify-liquid"
+  },
+  "liquid.config.method": "workspace",
+  "liquid.completion.tags": true,
+  "liquid.completion.objects": true,
   "liquid.completion.filters": true,
-  "liquid.files.shopify": {},
-  "liquid.config.method": "liquidrc",
-  "liquid.format.rules": {
-    "ignore": [
-      "./completions/*",
-      "./ignores/ignore.liquid",
-      "./syntax/*"
+  "liquid.completion.operators": true,
+  "liquid.completion.properties": true,
+  "liquid.completion.sections": true,
+  "liquid.completion.variables": true,
+  "liquid.completion.schema": true,
+  "liquid.validate.schema": true,
+  "liquid.hover.tags": true,
+  "liquid.hover.filters": true,
+  "liquid.hover.objects": true,
+  "liquid.hover.schema": true,
+  "liquid.engine": "shopify",
+  "liquid.files.shopify": {
+    "settings": "./theme/config/settings_schema.json",
+    "locales": "./theme/locales/en.default.json",
+    "sections": [
+      "./sections/*.liquid"
     ],
-    "liquid": {
-      "forceFilter": 3
-    }
+    "snippets": [
+      "./completions/*.liquid"
+    ],
   },
   "editor.foldingStrategy": "indentation"
   // "[liquid]": {
