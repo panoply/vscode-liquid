@@ -1,4 +1,4 @@
-import { Complete, Tag, Token } from 'types';
+import { Char, Complete, Tag, Token } from 'types';
 import { IToken } from 'parse/tokens';
 import { Properties, $, Type, q } from '@liquify/specs';
 import slash, { entries, isNumber, isString, keys } from 'utils';
@@ -13,7 +13,6 @@ import {
   MarkdownString,
   TextDocument,
   Position,
-  TextEdit,
   Uri
 } from 'vscode';
 import { path } from 'rambdax';
@@ -60,45 +59,54 @@ function walkLocales (next: string[], objectProps: object) {
 /* PUBLIC                                       */
 /* -------------------------------------------- */
 
-export function getLocaleArguments (token: IToken) {
+export function getLocaleArguments (token: IToken, trigger: Char) {
 
   const match = token.text.match(/['"].*?['"]/);
 
-  if (match !== null) {
+  if (match === null) return null;
 
-    const locale = match[0].slice(1, -1);
-    const value = path<string>(locale, $.liquid.files.get('locales'));
-    const liquid = value.match(/{{.*?}}/g);
+  const locale = match[0].slice(1, -1);
+  const value = path<string>(locale, $.liquid.files.get('locales'));
+  const liquid = value.match(/{{.*?}}/g);
 
-    if (liquid === null) return null;
+  if (liquid === null) return null;
 
-    const arr = Array.from(liquid);
-    const size = arr.length - 1;
+  const completion = Array.from(liquid).map((item) => {
 
-    return arr.map((item, i) => {
+    const label = item.match(/(?<={{-?\s*)\w+/)[0];
+    const documentation = new MarkdownString();
 
-      const label = item.match(/\w+/)[0];
-      const snippet = `${i === 0 && size > 1 ? ',$0' : i > 0 && i !== size - 1 ? ',$0' : ''}`;
+    documentation.supportThemeIcons = true;
+    documentation.supportHtml = true;
 
-      const documentation = new MarkdownString();
+    documentation.appendCodeblock(`\n${value}\n`, 'liquid');
 
-      documentation.supportThemeIcons = true;
-      documentation.supportHtml = true;
+    return {
+      label,
+      kind: CompletionItemKind.Property,
+      detail: locale,
+      preselect: true,
+      insertText: new SnippetString(` ${label}: $1`),
+      documentation
+    };
 
-      documentation.appendCodeblock(`\n${value}\n`, 'liquid');
+  });
 
-      return {
-        label,
-        kind: CompletionItemKind.Property,
-        detail: locale,
-        preselect: true,
-        insertText: new SnippetString(` ${label}: $1${snippet}`),
-        documentation
-      };
+  if (trigger === Char.COM) {
 
-    });
+    const prop = token.text.slice(token.text.lastIndexOf('t:', token.offset) + 2);
+    const args = prop.match(/[a-zA-Z0-9_]+(?=:)/g);
+
+    if (args === null) return completion;
+
+    const active = Array.from(args);
+
+    return completion.filter(({ label }) => active.includes(label) === false);
 
   }
+
+  return completion;
+
 }
 
 /**
@@ -110,16 +118,22 @@ export function getLocaleArguments (token: IToken) {
  */
 export function getLocaleCompletions (
   filePath: string,
-  props?: string,
-  additionalTextEdits: TextEdit[] = []
+  props: string,
+  translateFilter: (label: string) => {
+    insertText: SnippetString,
+    range: {
+      inserting: Range;
+      replacing: Range;
+    }
+  }
 ): CompletionItem[] {
 
   const locales = $.liquid.files.get('locales');
   const items = walkLocales(props.split('.').filter(Boolean), locales);
 
-  if (isString(items)) return null;
+  console.log(props);
 
-  console.log(filePath);
+  if (isString(items)) return null;
 
   const path = Uri.file(filePath);
   const location = slash(path.fsPath).split('/');
@@ -149,15 +163,19 @@ export function getLocaleCompletions (
 
     documentation.appendMarkdown(`[${filename}](./${filename})`);
 
-    return {
+    const translate = translateFilter(label);
+    const completion: CompletionItem = {
       label,
       kind: CompletionItemKind.Module,
       detail,
       preselect: true,
-      insertText: new SnippetString(label),
-      additionalTextEdits,
+      insertText: translate.insertText,
       documentation
     };
+
+    if (translate.range !== null) completion.range = translate.range;
+
+    return completion;
 
   });
 };
