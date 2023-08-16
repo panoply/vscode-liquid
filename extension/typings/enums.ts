@@ -117,6 +117,10 @@ export const enum Token {
    */
   Locale,
   /**
+   * Liquid Locale Argument, eg: `t: prop: 'foo',`
+   */
+  LocaleArgument,
+  /**
    * Liquid Logical operators
    */
   Logical,
@@ -239,7 +243,11 @@ export const enum Char {
   /**
    * `\`
    */
-  BWS = 92
+  BWS = 92,
+  /**
+   * `,`
+   */
+  COM = 44
 }
 
 /* -------------------------------------------- */
