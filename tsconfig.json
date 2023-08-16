@@ -4,9 +4,6 @@
     "include": [
       "node"
     ],
-    "exclude": [
-      "node_modules"
-    ]
   },
   "compilerOptions": {
     "types": [
