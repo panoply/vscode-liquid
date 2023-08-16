@@ -37,6 +37,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
     '.',
     '"',
     "'",
+    ',',
     ' '
   ];
 
@@ -220,10 +221,8 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
       } else {
 
-        if (token.filter === 't') {
-
-          return getLocaleArguments(token);
-
+        if (token.filter === 't' && trigger === Char.COL) {
+          return getLocaleArguments(token, trigger);
         }
 
         q.setType(null);
@@ -235,6 +234,14 @@ export class CompletionProvider extends Service implements CompletionItemProvide
         );
 
       }
+    }
+
+    /* -------------------------------------------- */
+    /* LOCALE ARGUMENT                              */
+    /* -------------------------------------------- */
+
+    if (cursor === Token.LocaleArgument && trigger === Char.COM) {
+      return getLocaleArguments(token, trigger);
     }
 
     /* -------------------------------------------- */
@@ -269,7 +276,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
       if (trigger === Char.SQO || trigger === Char.DQO || (cursor === Token.Locale && trigger === Char.DOT)) {
         return getLocaleCompletions(
           this.files.locales,
-          token.object,
+          token.locale,
           insertTranslate(position, token.text)
         );
       }
