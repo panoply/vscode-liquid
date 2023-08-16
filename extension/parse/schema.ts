@@ -82,11 +82,7 @@ export function getSchemaBlockSettingsCompletions (schema: SchemaSectionTag, typ
  *
  * Generates completion items to provided on Liquid tokens
  */
-export function getSectionCompletions (
-  schema: Complete.ISchema,
-  prop: Token,
-  type?: string
-) {
+export function getSectionCompletions (schema: Complete.ISchema, prop: Token, type?: string): CompletionItem[] {
 
   if (!schema) return null;
 
