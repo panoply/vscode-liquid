@@ -55,12 +55,6 @@
     ],
     "jsonValidation": [
       {
-        "url": "./schema/prettify.json",
-        "fileMatch": [
-          "package.json"
-        ]
-      },
-      {
         "url": "./schema/liquidrc.json",
         "fileMatch": [
           ".liquidrc",
@@ -236,11 +230,11 @@
           "source.liquid"
         ],
         "embeddedLanguages": {
-          "meta.embedded.block.schema.liquid": "json",
-          "meta.embedded.block.javascript.liquid": "javascript",
-          "meta.embedded.block.stylesheet.liquid": "css",
-          "meta.embedded.block.stylesheet.scss.liquid": "scss",
-          "meta.embedded.block.style.liquid": "liquid-css"
+          "source.json": "json",
+          "source.js": "javascript",
+          "source.css": "css",
+          "source.css.liquid": "liquid-css",
+          "source.scss": "scss"
         }
       },
       {
@@ -261,10 +255,10 @@
           "keyword.other.array-item.liquid"
         ],
         "embeddedLanguages": {
-          "meta.embedded.block.frontmatter-yaml.liquid": "yaml",
-          "meta.embedded.block.frontmatter-json.liquid": "json",
-          "meta.embedded.block.frontmatter-js.liquid": "javascript",
-          "meta.embedded.block.frontmatter-toml.liquid": "toml"
+          "source.yaml": "yaml",
+          "source.json": "json",
+          "source.js": "javascript",
+          "source.toml": "toml"
         }
       },
       {
@@ -293,6 +287,8 @@
         "scopeName": "source.css.liquid",
         "path": "./syntax/languages/css.tmLanguage.json",
         "unbalancedBracketScopes": [
+          "punctuation.section.property-list.begin.bracket.curly.css",
+          "punctuation.section.property-list.end.bracket.curly.css",
           "punctuation.definition.tag.begin.liquid",
           "punctuation.definition.tag.end.liquid",
           "punctuation.definition.tag.range.liquid",
@@ -407,7 +403,7 @@
     },
     "configuration": {
       "title": "Liquid Language Settings",
-      "markdownDescription": "The Liquid extension will look for a `.liquidrc` or `.liquidrc.json` in the root of your project. When no such files exists it will check for the presence of a `esthetic` field in `package.json` files. When neither are detected the extension will use the `.vscode/settings.json` file or alternatively your global user settings.",
+      "markdownDescription": "The Liquid extension will look for a `.liquidrc` or `.liquidrc.json` in the root of your project. When no such files exists it will check for the presence of an `esthetic` field in `package.json` files. When neither are detected the extension will use the `.vscode/settings.json` file or alternatively your global user settings.",
       "type": "object",
       "properties": {
         "liquid.engine": {
@@ -421,14 +417,14 @@
           ],
           "markdownDescription": "**Default** `shopify`\n\nThe `liquid.engine` option is used to determine the Liquid template variation you are working with. This extension supports the following Liquid variations:\n\n- [Standard](https://shopify.github.io/liquid/)\n- [Shopify](https://shopify.dev/docs/api/liquid)\n- [11ty](https://www.11ty.dev/docs/languages/liquid/)\n- [Jekyll](https://jekyllrb.com/docs/liquid/)\n\nFeatures and capabilities differ depending on the engine you define. For example, if you are working with the **Shopify** Liquid variation the engine is set to `Standard` it will result in features like object and property completions not being available.\n\n**Tip**\n\nYou can optionally infer the engine with your `.liquidrc` file.\n"
         },
-        "liquid.config.baseUrl": {
+        "liquid.config.baseDir": {
           "type": "string",
-          "markdownDescription": "**Default** `.`\n\nThe `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving `.liquidrc` or `.liquidrc.json` files. The option will only work in projects that use `.liquidrc` files and has no effect if `liquid.config.method` is set `workspace` Consider the following directory layout:\n\n```\n\n root\n ├─ .vscode\n │  └─ settings.json\n ├─ docs\n │  ├─ .liquidrc.json\n │  └─ index.liquid\n └─ src\n    ├─ includes\n    └─ views\n\n```\n\nBy default, when no `.liquidrc` exist in a projects root, then it is assumed beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace file then the default rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseUrl` to the directory containing one of the supported file types.\n\nTargeting the `.liquidrc.json` file located in `docs` directory:\n\n<!--prettier-ignore-->\n```jsonc\n{\n  \"liquid.config.baseUrl\": \"./docs\"\n}\n```\n\n_The `baseUrl` must point to a relative directory not a file. If the directory provided cannot be resolved, root is used._\n"
+          "markdownDescription": "**Default** `.`\n\nThe `liquid.config.baseDir` option can be used to define a **relative** directory path for resolving `.liquidrc` or `.liquidrc.json` files. The option will only work in projects that use `.liquidrc` files and has no effect if `liquid.config.method` is set `workspace`\n\nConsider the following directory layout:\n\n```\n\n root\n ├─ .vscode\n │  └─ settings.json\n ├─ docs\n │  ├─ .liquidrc.json\n │  └─ index.liquid\n └─ src\n    ├─ includes\n    └─ views\n\n```\n\nBy default, when no `.liquidrc` exist in a projects root, then it is assumed beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace file then the default rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseDir` to the directory containing one of the supported file types.\n\nTargeting the `.liquidrc.json` file located in `docs` directory:\n\n<!--prettier-ignore-->\n```jsonc\n{\n  \"liquid.config.baseDir\": \"./docs\"\n}\n```\n\n_The `baseDir` must point to a relative directory not a file. If the directory provided cannot be resolved, root is used._\n"
         },
         "liquid.config.method": {
           "type": "string",
           "default": "liquidrc",
-          "markdownDescription": "**Default** `liquidrc`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `liquidrc`\n\nThe configuration method to use. This option defaults to `liquidrc` which means it will look for a `.liquidrc` or `.liquidrc.json` file contained in your projects root directory (or relative to the `liquid.config.baseUrl` if provided).\n\nIf you set this to `workspace` then the extension will expect settings to be defined within your `.vscode/settings.json` workspace file or if you are not using a project based workspace setting (`.vscode/settings.json`) file then it will look at global workspace (User Preference) settings.\n\n",
+          "markdownDescription": "**Default** `liquidrc`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `liquidrc`\n\nThe configuration method to use. This option defaults to `liquidrc` which means the extension will look for a `.liquidrc` or `.liquidrc.json` file contained in your projects root directory (or relative to the `liquid.config.baseDir` path if provided).\n\nIf you set this to `workspace` then the extension will expect settings to be defined within a `.vscode/settings.json` workspace file or if you are not using a project based workspace setting (`.vscode/settings.json`) file then it will look at global workspace (User Preference) settings.\n\n> **NOTE**\n>\n> When set `workspace` and no configuration settings are defined but a `.liquidrc` file is detected then the extension will use the `.liquidrc` file.\n\n",
           "enum": [
             "liquidrc",
             "workspace"
@@ -559,12 +555,17 @@
           "default": true,
           "markdownDescription": "**Default** `true`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `true`\n\nWhether or not to enable schema JSON hover descriptions within `{% schema %}` tag regions of Shopify section files. This option requires the Liquid `engine` to be set to `shopify`. When enabled (ie: `true`) the hover tooltips will shown in the text editor when placing the cursor on different properties and values in the JSON structure.\n\n"
         },
+        "liquid.format.validate": {
+          "type": "boolean",
+          "markdownDescription": "**Default** `true`\n\nÆsthetic will perform parse validations and throw when invalid syntax structures are detected. You can disable this behavior if you are writing shitty code or using the Shopify Dawn theme (which is both chaotic and riddled in bad practices). Disabling validations is required in some cases in order to have Æsthetic allows bad syntactical structures to pass through, but please be aware that this may result in untended output and break your code.\n\nWhen **enabled** (i.e: `true`) Æsthetic will return hints and parse error locations to help you debug the issue.",
+          "default": true
+        },
         "liquid.format.rules": {
           "type": "object",
           "properties": {
             "ignore": {
               "type": "array",
-              "markdownDescription": "\n**Default** `[]`\n\nA glob pattern list of file's and/or directories to be ignored from formatting. Use relative paths to exclude or ignore beautification running on certain files or uri path locations within your workspace.\n\n**Tip**\n\nYou can also leverage inline ignore comments. Place a Æsthetic ignore comment at the top of files you wish to exclude from beautification, for example:\n\n```html\n\n<!-- esthetic-ignore -->\n\n```\n\n**Ignoring Regions**\n\nÆsthetic also supports inline ignore comment regions. Wrap the code you wish to exclude from formatting as follows:\n\n```html\n\n<!-- esthetic-ignore-start -->\n\n  CODE TO EXCLUDE\n\n<!-- esthetic-ignore-end -->\n\n```",
+              "markdownDescription": "\n**Default** `[]`\n\nA glob pattern list of file's and/or directories to be ignored from formatting. Use relative paths to exclude or ignore beautification running on certain files or uri path locations within your workspace.\n\n**Tip**\n\nYou can also leverage inline ignore comments. Place a Æsthetic ignore comment at the top of files you wish to exclude from beautification, for example:\n\n```liquid\n\n{% # esthetic-ignore %}\n\n```\n\n**Ignoring Next**\n\nÆsthetic support tag level ignored. Annotate tokens that are full formed with ignore next comments to exclude them from formatting:\n\n```liquid\n\n{% # esthetic-ignore %}\n<div>\n  ALL CODE IN THIS TAG IS EXCLUDED\n</div>\n\n```\n\n**Ignoring Regions**\n\nÆsthetic also supports inline ignore comment regions. Wrap the code you wish to exclude from formatting as follows:\n\n```liquid\n\n{% # esthetic-ignore-start %}\n\n  CODE TO EXCLUDE\n\n{% # esthetic-ignore-end %}\n\n```",
               "items": {
                 "type": "string"
               }
@@ -591,11 +592,6 @@
               "type": "number",
               "default": 2,
               "markdownDescription": "The number of `indentChar` values to comprise a single indentation. By default this is set to `2` meaning a single indentation will be 2 whitespace characters.\n\n**How to use Tabs?**\n\nIf you're heathen who prefers Tabs. You will need to set the `indentChar` to `\\t` and infer the size limit here.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/global/indentSize/)\n"
-            },
-            "indentChar": {
-              "type": "string",
-              "default": " ",
-              "markdownDescription": "The string characters to comprise a single indentation. Any string combination is accepted. Generally speaking, you should leave this alone unless you know what you are doing.\n\nThe `indentSize` rule will use this character. For example, if you were to set `indentSize` to `4` then this character will be repeated 4 times, ie: `    ` - by default the `indentSize` is set to `2`.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/global/indentChar/)\n"
             },
             "preserveLine": {
               "type": "number",
@@ -934,7 +930,7 @@
             },
             "script": {
               "type": "object",
-              "markdownDescription": "Beautification rules for the following _script_ languages:\n\n- **JavaScript**\n- **TypeScript**\n\n Options provided here will also be applied to following markup embedded language blocks.",
+              "markdownDescription": "**!! USE WITH CAUTION !!**\n\n_Æsthetic script language formatting is not yet stable, use with caution_\n\n---\n\nBeautification rules for the following _script_ languages:\n\n- **JavaScript**\n- **TypeScript**\n\n Options provided here will also be applied to following markup embedded language blocks.",
               "properties": {
                 "braceAllman": {
                   "type": "boolean",
@@ -1277,7 +1273,7 @@
     "type-fest": "^4.2.0"
   },
   "dependencies": {
-    "@liquify/schema": "^0.6.2",
+    "@liquify/schema": "^0.6.3",
     "@liquify/specs": "^0.2.3",
     "anymatch": "^3.1.3",
     "parse-json": "^7.0.0",
