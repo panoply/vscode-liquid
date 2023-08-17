@@ -6,24 +6,18 @@
 
 {% for comment in article.comments %}{% endfor %}
 
-  {% # COMMENT KEYWORD %}
+{% # COMMENT KEYWORD %}
 
 {% assign comment = endcomment %}
 
-<div
-  id="xxx"
-  {% # COMMENT %}
-  class="some-class"
-  data-{{ additional_checkout_buttons }}></div>
-
-<div
-  id="xxx"
-  {% comment %}
-  class="some-class"
-  {% endcomment %}
-  data-attribute="xxx"></div>
+{% # COMMENT WITHIN LIQUID TAG  %}
 
 {% liquid
+
   comment
     foo
-  endcomment %}
+  endcomment
+
+  # COMMENT
+
+%}

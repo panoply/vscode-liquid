@@ -1,14 +1,14 @@
 {% # UNBALANCED SCOPE DELIMITERS %}
 
 {% tag %}
-{%- tag -%}
+{%- tag  -%}
 
 {{ object.prop }}
 {{- object.prop -}}
 
 {% # UNBALANCED BRACKET NOTATIONS %}
 
-{{- object.prop['foo']['bar'] -}}
+{{- object.prop['foo'][0]['bar'] -}}
 {{- object.prop[100] -}}
 
 {% # UNBALANCED RANGE NOTATION %}

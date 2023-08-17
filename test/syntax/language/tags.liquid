@@ -36,21 +36,37 @@
 
 {% for variable in (1..200) %}{% endfor %}
 
-{% render 'filename'
- , param: 1.20
+{%- render 'filename', param: 1.20
  , param2: foo.prop.foo.bar
  , param3: 'string'
  , param5: false
  , param_foo: nil
  , 123_param: product.available %}
 
- {% render 'filename',
+ {%
+  render 'filename',
    param: 1.20,
    param2: foo.prop.foo.bar,
    param3: 'string',
    param5: false,
    param_foo: nil,
    123_param: product.available %}
+
+
+{%- tag %}
+
+{%-
+  tag  -%}
+
+{%
+  unknown
+  param: 1.20,
+  param2: foo.prop.foo.bar,
+  param3: 'string',
+  param5: false,
+  param_foo: nil,
+  123_param: product.available %}
+
 
 {% # CONDITION %}
 
@@ -62,6 +78,11 @@
 {% for product in collection.products limit: 2 %}
 
 {{ product.title }}{% endfor %}
+
+
+{% for variable in (collection.products..200) %}
+
+{% endfor %}
 
 {% for variable in (1..200) %}
 

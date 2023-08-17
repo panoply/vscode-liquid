@@ -1,0 +1,42 @@
+
+{% # LIQUID SYNTAX WITHIN TAG ATTRIBUTES %}
+
+<div
+
+  id="value"
+
+  {% if condition == product.available  %}
+  data-attribute="value"
+  {% endif %}
+
+  class="value"
+
+  {{ product.available }}
+
+></div>
+
+
+{% # LIQUID SYNTAX WITHIN TAG ATTRIBUTE VALUE %}
+
+<div
+
+  id="value"
+
+  data-attribute="{{ product.available }}"
+
+  data-condition="
+  {% if condition == product.available %}
+    lorem-ipsum
+  {% endif %}"
+
+  class="value"
+
+></div>
+
+{% # LINE COMMENT WITHIN MARKUP TAG  %}
+
+<div
+  id="xxx"
+  {% # COMMENT %}
+  class="some-class"></div>
+
