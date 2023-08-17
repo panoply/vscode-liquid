@@ -4,7 +4,7 @@ import { Engines } from '@liquify/specs';
 import { Config, URI, Meta, Files } from './typings/store';
 import { Liquidrc, PackageJSON } from './typings/files';
 import { Selectors, LanguageIds } from './typings/document';
-import { ConfigurationTarget, Extension as IExtension, Uri, workspace, Disposable } from 'vscode';
+import { ConfigurationTarget, Extension as IExtension, Uri, workspace, Disposable, EventEmitter } from 'vscode';
 import { ConfigMethod } from './typings/enums';
 import { Service } from './services';
 
@@ -19,6 +19,7 @@ export class Extension extends Service {
 
     this.isActive = isActive;
     this.uri.root = workspace.workspaceFolders[0].uri;
+    this.uri.base = this.uri.root;
     this.uri.workspace = Uri.joinPath(this.uri.root, '.vscode', 'settings.json');
     this.meta.version = packageJSON.version;
     this.meta.displayName = packageJSON.displayName;
@@ -41,6 +42,11 @@ export class Extension extends Service {
     return this.uri.files[this.engine];
 
   }
+
+  /**
+   * Error event
+   */
+  public reactivate: EventEmitter<any> = new EventEmitter();
 
   /**
    * Meta Information
@@ -124,13 +130,6 @@ export class Extension extends Service {
   };
 
   /**
-   * Whether or not the extension can activate
-   *
-   * @default true
-   */
-  canActivate: boolean = true;
-
-  /**
    * Whether or not formatting is enabled
    *
    * @default false
@@ -172,6 +171,14 @@ export class Extension extends Service {
    * @default false
    */
   isLoading: boolean = false;
+
+  /**
+   * Whether or the extension has already activated - This is used to
+   * determine when configuration changes take place after initialisation.
+   *
+   * @default false
+   */
+  hasActivated: boolean = false;
 
   /**
    * Whether or not an error has occured
