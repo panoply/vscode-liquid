@@ -4,11 +4,15 @@
   "patterns": [
     {
       "name": "invalid log.error",
-      "match": "\\b(ERROR|Error)\\b.*"
+      "match": "\\b(ERROR|Error|ISSUE)\\b.*"
     },
     {
       "name": "string log.string",
       "match": "\\b(WARNING|Warning|Warn|WARN)\\b"
+    },
+    {
+      "name": "punctuation.definition.tag log.control",
+      "match": "─+"
     },
     {
       "name": "string log.string",
@@ -25,23 +29,35 @@
       "match": "(?<=[A-Za-z]):"
     },
     {
+      "match": "\\s*✓ (?:\\/?\\.)?\\/[\\s\\S]*$",
+      "name": "punctuation.definition.tag log.control"
+    },
+    {
+      "name": "invalid log.error",
+      "match": "\\s*𐄂 (?:\\/?\\.)?\\/[\\s\\S]*$"
+    },
+    {
       "match": "\\.liquidrc(?:\\.json)?|[wW]orkspace|[Gg]lobal|[uU]ser",
       "name": "support.function.filter log.keyword"
     },
     {
-      "match": "(?<=(?:[wW]orkspace|[Gg]lobal|[uU]ser)\\s)[Ss]ettings",
+      "match": "(?<=(?:[wW]orkspace|[Gg]lobal|[uU]ser)\\s)[Ss]ettings\\b",
       "name": "support.function.filter log.keyword"
     },
     {
-      "match": "(?<=Using\\s(?:workspace\\s|global\\s|\\.liquidrc\\s)?)\\b(snippets?|locales?(?:\\s\\→\\sschema)?|sections?|settings?)",
+      "match": "(?<=\\s(?:workspace\\s|global\\s|\\.liquidrc\\s)?)\\b(snippets?|locales?(?:\\s\\→\\sschema)?|sections?|settings?)\\b",
       "name": "constant.language log.keyword"
     },
     {
-      "match": "(?<=[\\:\\)]\\s)(settings_schema|[a-z]{2}\\.default\\.schema|[a-z]{2}\\.default)\\.json",
+      "match": "(?<=[\\:\\)]\\s)([a-z]{2}\\.default\\.schema\\.json|[a-z]{2}\\.default\\.json)\\b",
       "name": "support.class log.support"
     },
     {
-      "match": "(?<=[\\:\\)]\\s)\\/[\\s\\S]*$",
+      "match": "(?<=[\\:\\)]\\s)\\b(settings_schema\\.json)\\b",
+      "name": "support.class log.support"
+    },
+    {
+      "match": "(?<=[\\:\\)]\\s)(?:\\/?\\.)?\\/[\\s\\S]*$",
       "name": "string log.path"
     },
     {
