@@ -15,36 +15,57 @@
   "scopeName": "source.liquid",
   "fileTypes": ["liquid"],
   "injections": {
-    "L:meta - (meta.embedded.block.liquid, meta.attribute.*.html)": {
+    "R:meta - (meta.embedded.*.html, meta.embedded.*.*.liquid)": {
+      "comment": [
+        "R: Injection ~ Embedded Languages allow for Liquid infusion.",
+        "See the embedded.tmLanguage.json file for applied injections."
+      ],
       "patterns": [
         {
-          "include": "source.liquid#comment-line"
+          "include": "#comment-line"
         },
         {
-          "include": "source.liquid#tags"
+          "include": "#tags"
         },
         {
-          "include": "source.liquid#output"
+          "include": "#output"
+        }
+      ]
+    },
+    "L:meta - (meta.attribute.*.html, source.css, source.js, source.json)": {
+      "comment": [
+        "L: Injection ~ Applied Liquid Syntax Highlighting within Markup tokens",
+        "Our R: injection above ensures ejections, whereas this ensures injection."
+      ],
+      "patterns": [
+        {
+          "include": "#comment-line"
+        },
+        {
+          "include": "#output"
+        },
+        {
+          "include": "#tags"
         }
       ]
     },
     "L:entity.other.attribute-name.class.css": {
       "patterns": [
         {
-          "include": "source.liquid#tags"
+          "include": "#tags"
         },
         {
-          "include": "source.liquid#output"
+          "include": "#output"
         }
       ]
     },
     "L:string - (string.quoted.*.html)": {
       "patterns": [
         {
-          "include": "source.liquid#tags"
+          "include": "#tags"
         },
         {
-          "include": "source.liquid#output"
+          "include": "#output"
         }
       ]
     },
@@ -190,9 +211,6 @@
           "include": "#parameters"
         },
         {
-          "include": "#invalid"
-        },
-        {
           "include": "#operators"
         },
         {
@@ -291,6 +309,14 @@
         {
           "name": "constant.numeric.natural.liquid",
           "match": "(?<=\\d+\\.\\.)\\d+(?=\\s*\\))"
+        },
+        {
+          "name": "constant.numeric.natural.liquid",
+          "match": "(?<=(?:\\!=|\\=\\=|\\<|\\>|\\>\\=|\\<\\=)\\s*)\\d?[\\d.]+?\\d"
+        },
+        {
+          "name": "constant.numeric.natural.liquid",
+          "match": "\\s+\\d?[\\d.]+?\\d\\s*(?=(?:\\!=|\\=\\=|\\<|\\>|\\>\\=|\\<\\=))"
         }
       ]
     },
