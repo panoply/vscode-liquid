@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@liquify/schema':
-    specifier: ^0.6.2
-    version: 0.6.2
+    specifier: ^0.6.3
+    version: 0.6.3
   '@liquify/specs':
     specifier: ^0.2.3
     version: 0.2.3
@@ -397,8 +397,8 @@ packages:
     engines: {pnpm: '>=6'}
     dev: true
 
-  /@liquify/schema@0.6.2:
-    resolution: {integrity: sha512-HlhQMW6UOgcQ/AuZq8R5wLLZpKK5Stnq7lMDJWdAWzUe/0P9oVkxj29v1u9V2lVl8qymWSj6/dyDcFnLqah8YA==}
+  /@liquify/schema@0.6.3:
+    resolution: {integrity: sha512-vG0DixnoiIEFy7OIYMhoXwVsbmLRvTGD4h+hDcnT0b11DRPx6nZpAv23Zkp6Lm0BDvUAa7UScjNlkaCjrkKnuw==}
     engines: {node: '>=12', pnpm: '>=4'}
     dev: false
 
@@ -2152,8 +2152,8 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
-  /node-abi@3.46.0:
-    resolution: {integrity: sha512-LXvP3AqTIrtvH/jllXjkNVbYifpRbt9ThTtymSMSuHmhugQLAWr99QQFTm+ZRht9ziUvdGOgB+esme1C6iE6Lg==}
+  /node-abi@3.47.0:
+    resolution: {integrity: sha512-2s6B2CWZM//kPgwnuI0KrYwNjfdByE25zvAaEpq9IH4zcNsarH8Ihu/UuX6XMPEogDAxkuUFeZn60pXNHAqn3A==}
     engines: {node: '>=10'}
     dependencies:
       semver: 7.5.4
@@ -2373,7 +2373,7 @@ packages:
       minimist: 1.2.8
       mkdirp-classic: 0.5.3
       napi-build-utils: 1.0.2
-      node-abi: 3.46.0
+      node-abi: 3.47.0
       pump: 3.0.0
       rc: 1.2.8
       simple-get: 4.0.1
