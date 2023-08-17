@@ -26,7 +26,7 @@ function generate () {
   const patterns = [
     {
       name: 'support.class.object.liquid',
-      match: '(?<=[\\s,:=<>\\[])\\s*(?!\\.)\\b([a-zA-Z_][a-zA-Z0-9_-]*)\\b\\s*(?=\\.)'
+      match: '(?<=[\\s,:=<>\\[\\(])\\s*(?!\\.)\\b([a-zA-Z_][a-zA-Z0-9_-]*)\\b\\s*(?=\\.[a-zA-Z_])'
     }
   ];
 
