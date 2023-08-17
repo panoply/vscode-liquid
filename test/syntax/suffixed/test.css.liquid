@@ -3,8 +3,8 @@
   .class-name {
     background: #FFF;
     font-size: {{ object.prop | append: 'px' }};
-    {% if some_condition %}
-      margin: {{ x }};
+    {% if object.property %}
+    margin: {{ x }};
     {% endif %}
   }
 
