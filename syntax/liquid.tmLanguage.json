@@ -13,11 +13,9 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Liquid",
   "scopeName": "source.liquid",
-  "fileTypes": [
-    "liquid"
-  ],
+  "fileTypes": ["liquid"],
   "injections": {
-    "L:meta - (meta.embedded.block.liquid)": {
+    "L:meta - (meta.attribute.*.html)": {
       "patterns": [
         {
           "include": "source.liquid#comment-line"
@@ -127,9 +125,6 @@
           "include": "#numeric"
         },
         {
-          "include": "#range"
-        },
-        {
           "include": "#constants"
         },
         {
@@ -146,6 +141,9 @@
         },
         {
           "include": "#inferred"
+        },
+        {
+          "include": "#invalid"
         }
       ]
     },
@@ -160,9 +158,21 @@
           "name": "keyword.other.whitespace.liquid"
         }
       },
+      "end": "(-)?(%})",
+      "endCaptures": {
+        "1": {
+          "name": "keyword.other.whitespace.liquid"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.end.liquid"
+        }
+      },
       "patterns": [
         {
           "include": "#entities"
+        },
+        {
+          "include": "#liquid"
         },
         {
           "include": "#objects"
@@ -194,16 +204,7 @@
         {
           "include": "#inferred"
         }
-      ],
-      "end": "(-)?(%})",
-      "endCaptures": {
-        "1": {
-          "name": "keyword.other.whitespace.liquid"
-        },
-        "2": {
-          "name": "punctuation.definition.tag.end.liquid"
-        }
-      }
+      ]
     },
     "output": {
       "name": "punctuation.output.liquid",
@@ -256,7 +257,7 @@
       "patterns": [
         {
           "name": "variable.parameter.liquid",
-          "match": "(?![\\|\\S])\\s+\\b([a-zA-Z0-9_-]+)\\b\\s*(?=:)"
+          "match": "(?![\\|\\S]),?\\s*\\b([a-zA-Z0-9_-]+)\\b\\s*(?=:)"
         }
       ]
     },
@@ -264,34 +265,32 @@
       "patterns": [
         {
           "name": "constant.numeric.index.liquid",
-          "match": "(?<=[\\[(]\\s*)(\\d+)(?=\\s*[\\]\\)])"
+          "match": "(?<=\\[)\\s*\\d+\\s*(?=\\])"
         },
         {
           "name": "constant.numeric.integer.liquid",
-          "match": "\\s([\\+\\-]|\\.)?\\d+[\\d.]+?(?!\\.)\\s",
+          "match": "(?![a-zA-Z_])([.+-])?\\d+\\.\\d+[\\d.]+?(?![\\.\\)])",
           "captures": {
             "1": {
-              "name": "keyword.operator.arithmetic.liquid"
+              "name": "keyword.other.arithmetic.liquid"
             }
           }
         },
         {
-          "name": "constant.numeric.natural.liquid",
-          "match": "\\s(\\d+)\\s"
-        }
-      ]
-    },
-    "range": {
-      "name": "punctuation.definition.tag.range.liquid",
-      "begin": "\\(",
-      "end": "\\)",
-      "patterns": [
-        {
-          "name": "keyword.operator.spread.liquid",
-          "match": "\\.\\."
+          "name": "constant.numeric.float.liquid",
+          "match": "\\s(?:[.+-])?\\d+[\\d.]+?(?![\\.\\w])"
         },
         {
-          "include": "#objects"
+          "name": "constant.numeric.natural.liquid",
+          "match": "\\s\\d+\\s"
+        },
+        {
+          "name": "constant.numeric.natural.liquid",
+          "match": "(?<=\\s*\\()\\d+(?=\\.\\.)"
+        },
+        {
+          "name": "constant.numeric.natural.liquid",
+          "match": "(?<=\\d+\\.\\.)\\d+(?=\\s*\\))"
         }
       ]
     },
@@ -349,12 +348,21 @@
     "operators": {
       "patterns": [
         {
+          "name": "punctuation.definition.tag.range.liquid",
+          "begin": "(?:in\\s*)\\(",
+          "end": "\\)"
+        },
+        {
           "match": "\\=",
           "name": "keyword.operator.assignment.augmented.liquid"
         },
         {
-          "match": "\\.",
+          "match": "(?<=[a-zA-Z_])\\.(?!\\.)",
           "name": "keyword.other.dot.liquid"
+        },
+        {
+          "name": "keyword.operator.spread.liquid",
+          "match": "(?<=[a-zA-Z0-9_])\\.\\.(?=[a-zA-Z0-9_])"
         },
         {
           "name": "keyword.operator.logical.liquid",
@@ -449,36 +457,36 @@
     "entities": {
       "patterns": [
         {
+          "name": "entity.name.tag.other.liquid",
+          "match": "(?<=(?:{%-?\\s*|^))\\s*\\b(\\w+)\\b(?!\\S)"
+        },
+        {
           "name": "entity.name.tag.iteration.liquid",
-          "match": "(?:(?<={%-?)|^)\\s*\\b(?:end)?(for|tablerow|paginate)\\b"
+          "match": "\\b(?:end)?(for|tablerow|paginate)\\b[\\W\\s]"
         },
         {
           "name": "entity.name.tag.control.liquid",
-          "match": "(?:(?<={%-?)|^)\\s*\\b(break|continue|cycle|else|elsif|when)\\b"
+          "match": "\\b(break|continue|cycle|else|elsif|when)\\b[\\W\\s]"
         },
         {
           "name": "entity.name.tag.conditional.liquid",
-          "match": "(?:(?<={%-?)|^)\\s*\\b(?:end)?(if|unless|case)\\b"
+          "match": "\\b(?:end)?(if|unless|case)\\b[\\W\\s]"
         },
         {
           "name": "entity.name.tag.embedded.liquid",
-          "match": "(?:(?<={%-?)|^)\\s*\\b(?:end)?(form|style|stylesheet|schema|javascript)\\b"
+          "match": "\\b(?:end)?(form|style|stylesheet|schema|javascript)\\b[\\W\\s]"
         },
         {
           "name": "entity.name.tag.syntax.liquid",
-          "match": "(?:(?<={%-?)|^)\\s*\\b(raw|endraw|echo)\\b"
+          "match": "\\b(raw|endraw|echo)\\b[\\W\\s]"
         },
         {
           "name": "entity.name.tag.import.liquid",
-          "match": "(?:(?<={%-?)|^)\\s*\\b(layout|include|render|section)\\b"
+          "match": "\\b(layout|include|render|section)\\b[\\W\\s]"
         },
         {
           "name": "entity.name.tag.variable.liquid",
-          "match": "(?:(?<={%-?)|^)\\s*\\b(assign|capture|endcapture|decrement|increment)\\b"
-        },
-        {
-          "name": "entity.name.tag.other.liquid",
-          "match": "(?:(?<={%-?)|^)\\s*\\b(\\w+)\\b"
+          "match": "\\b(assign|capture|endcapture|decrement|increment)\\b[\\W\\s]"
         }
       ]
     },
@@ -486,7 +494,7 @@
       "patterns": [
         {
           "name": "support.class.object.liquid",
-          "match": "(?<=[\\s,:=<>\\[])\\s*(?!\\.)\\b([a-zA-Z_][a-zA-Z0-9_-]*)\\b\\s*(?=\\.)"
+          "match": "(?<=[\\s,:=<>\\[\\(])\\s*(?!\\.)\\b([a-zA-Z_][a-zA-Z0-9_-]*)\\b\\s*(?=\\.[a-zA-Z_])"
         },
         {
           "name": "entity.name.tag.object.liquid",
