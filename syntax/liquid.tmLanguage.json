@@ -1,7 +1,6 @@
 {
   "information_for_contributors": [
-    "IMPORTANT",
-    "----------",
+    "!! PLEASE READ !!",
     "These text mate grammars provide Liquid syntax highlighting support. This is NOT a forked",
     "grammar file not does it borrow implied patterns. If you wish to use, borrow or apply its logic",
     "you must first ask for permission. The grammars are written for usage within vscode and support all",
