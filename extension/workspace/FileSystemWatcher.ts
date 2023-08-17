@@ -35,13 +35,13 @@ export class FSWatch extends NotificationMessage {
   ];
 
   /**
-   * File System Watch Instances
+   * File System Watch watchings
    *
    * Keeps track of glob paths being observed. The `Map` key
    * will hold the path provided to `addWatchers` and the value
    * is the `watchers` index.
    */
-  private instance: Map<GlobPattern, number> = new Map();
+  private watching: Map<GlobPattern, number> = new Map();
 
   /**
    * Watched change was config
@@ -62,7 +62,7 @@ export class FSWatch extends NotificationMessage {
     const paths = isArray(glob) ? glob : [ glob ];
 
     for (const path of paths as GlobPattern[]) {
-      if (this.instance.has(path)) {
+      if (this.watching.has(path)) {
         this.info(`Path "${path}" is already being observed`);
       } else {
 
@@ -73,7 +73,7 @@ export class FSWatch extends NotificationMessage {
         watch.onDidDelete(this.onDidDelete, this);
 
         this.watchers.push(watch);
-        this.instance.set(path, this.watchers.length - 1);
+        this.watching.set(path, this.watchers.length - 1);
 
       }
     }
@@ -88,13 +88,13 @@ export class FSWatch extends NotificationMessage {
    */
   public removeWatcher (glob: GlobPattern) {
 
-    if (this.instance.has(glob)) {
+    if (this.watching.has(glob)) {
 
-      const index = this.instance.get(glob);
+      const index = this.watching.get(glob);
 
       this.watchers[index].dispose();
       this.watchers.splice(index, 1);
-      this.instance.delete(glob);
+      this.watching.delete(glob);
 
       this.info(`Stopped watching and disposed "${glob}" entry.`);
 
