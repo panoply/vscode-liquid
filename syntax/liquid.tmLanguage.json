@@ -15,7 +15,7 @@
   "scopeName": "source.liquid",
   "fileTypes": ["liquid"],
   "injections": {
-    "L:meta - (meta.attribute.*.html)": {
+    "L:meta - (meta.embedded.block.liquid, meta.attribute.*.html)": {
       "patterns": [
         {
           "include": "source.liquid#comment-line"
