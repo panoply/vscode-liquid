@@ -5,7 +5,7 @@
   "patterns": [
     {
       "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.frontmatter-yaml.liquid",
+      "contentName": "source.yaml",
       "begin": "\\A-{3}\\s*$",
       "end": "(^|\\G)-{3}|\\.{3}\\s*$",
       "patterns": [
@@ -16,7 +16,7 @@
     },
     {
       "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.frontmatter-json.liquid",
+      "contentName": "source.json",
       "begin": "\\A-{3}json\\s*$",
       "end": "(^|\\G)-{3}|\\.{3}\\s*$",
       "patterns": [
@@ -27,7 +27,7 @@
     },
     {
       "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.frontmatter-javascript.liquid",
+      "contentName": "source.js",
       "begin": "\\A-{3}js\\s*$",
       "end": "(^|\\G)-{3}|\\.{3}\\s*$",
       "patterns": [
@@ -38,7 +38,7 @@
     },
     {
       "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.frontmatter-javascript.liquid",
+      "contentName": "source.toml",
       "begin": "\\A-{3}toml\\s*$",
       "end": "(^|\\G)-{3}|\\.{3}\\s*$",
       "patterns": [
