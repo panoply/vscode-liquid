@@ -29,23 +29,29 @@ class VSCodeLiquid extends Events {
 
         esthetic.settings({ logColors: false }).rules(this.formatting.rules);
 
-        this.info('Using workspace settings for configuration');
+        this.nl();
+        this.info('workspace settings used for configuration');
 
       } else if (this.config.method === ConfigMethod.Liquidrc) {
 
         esthetic.settings({ logColors: false }).rules(this.formatting.rules);
 
-        this.info(`Using .liquidrc file for settings: ${this.uri.liquidrc.path}`);
+        this.nl();
+        this.info(`.liquidrc file used for settings: ${this.uri.liquidrc.path}`);
 
       }
 
+      console.log(subscriptions);
+
       await this.onDidChangeActiveTextEditor(window.activeTextEditor);
+
+      if (!this.hasActivated) this.hasActivated = true;
 
     } catch (e) {
 
-      this.status.error('Extension failed to activate');
+      this.status.error('Extension could not be initialized');
 
-      this.catch('Failed to activate extension.', e);
+      this.catch('Extension could not be initialized', e);
 
     }
 
@@ -106,6 +112,7 @@ class VSCodeLiquid extends Events {
     workspace.onDidCloseTextDocument(this.onDidCloseTextDocument, this, subscriptions);
     workspace.onDidChangeTextDocument(this.onDidChangeTextDocument, this, subscriptions);
     workspace.onDidSaveTextDocument(this.onDidSaveTextDocument, this, subscriptions);
+
   }
 
   /**
