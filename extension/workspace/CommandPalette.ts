@@ -122,8 +122,8 @@ export class CommandPalette extends FSWatch {
     if (!this.isDefaultFormatter(languageId)) {
 
       const answer = await this.notifyError([ 'Yes', 'No' ], [
-        'The vscode-liquid extension is not defined as the default formatter',
-        'Do you want to use vscode-liquid to format your Liquid files?'
+        'VSCode Liquid supports formatting but is not defined as the default formatter',
+        'Do you want to use VSCode Liquid (Æsthetic) to format your Liquid files?'
       ]);
 
       if (answer === 'YES') {
