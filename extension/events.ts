@@ -28,8 +28,12 @@ export class Events extends CommandPalette {
    */
   public onFormattingEvent (data: FormatEvent) {
 
+    if (!this.isActive) return;
+
     if (data === FormatEventType.EnableStatus) {
+
       this.status.enable();
+
     } else if (data.type === FormatEventType.ThrowError) {
 
       this.error(data.message)(data.detail);
@@ -45,6 +49,8 @@ export class Events extends CommandPalette {
    */
   public onDidCloseTextDocument ({ uri }: TextDocument) {
 
+    if (!this.isActive) return;
+
     if (this.formatting.register.has(uri.fsPath)) this.formatting.register.delete(uri.fsPath);
 
   }
@@ -57,6 +63,8 @@ export class Events extends CommandPalette {
    * patch for the time being.
    */
   public async onDidChangeTextDocument ({ document, contentChanges }: TextDocumentChangeEvent) {
+
+    if (!this.isActive) return;
 
     if (!this.languages.get(document.languageId)) return;
 
@@ -101,6 +109,8 @@ export class Events extends CommandPalette {
    * has changed (ie: new tab or file).
    */
   async onDidChangeActiveTextEditor (textDocument: TextEditor | undefined) {
+
+    if (!this.isActive) return;
 
     if (!textDocument?.document) {
 
@@ -185,6 +195,8 @@ export class Events extends CommandPalette {
    * completions. It is here where we keep our store in sync.
    */
   public async onDidSaveTextDocument ({ uri }: TextDocument) {
+
+    if (!this.isActive) return;
 
     if (isFunction(this.formatting.ignoreMatch) && this.formatting.ignoreMatch(uri.fsPath)) {
 
