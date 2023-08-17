@@ -4,9 +4,9 @@ import { omit, isType, has, hasPath } from 'rambdax';
 import stripJsonComments from 'strip-json-comments';
 import { InLanguageIds, LanguageIds, Liquidrc, StatusItem } from './types';
 import parseJSON from 'parse-json';
-import { existsSync } from 'node:fs';
+import { existsSync, closeSync, openSync, utimesSync } from 'node:fs';
 import { access } from 'node:fs/promises';
-import { join, basename } from 'node:path';
+import { basename, join } from 'node:path';
 import os from 'node:os';
 
 /* -------------------------------------------- */
@@ -445,17 +445,17 @@ export function forInspect (fn:(value: 'workspaceValue' | 'globalValue') => void
  * current workspace contains a `.liquidrc` or `.liquidrc.json`
  * file. When undefined is returned no file exists.
  */
-export function hasLiquidrc (root: string) {
+export function hasLiquidrc (root: string): string {
 
   if (!isString(root)) return undefined;
 
-  const rcfile = join(root, '.liquidrc');
+  const rcfile = join(slash(root), '.liquidrc');
+
   const exists = existsSync(rcfile);
 
   if (!exists) {
     const rcjson = join(root, '.liquidrc.json');
     const exists = existsSync(rcjson);
-
     return exists ? rcjson : undefined;
   }
 
@@ -590,6 +590,18 @@ export function getLanguageFromExtension (filePath: string) {
   return undefined;
 
 }
+
+export async function touch (path: string) {
+
+  const time = new Date();
+
+  try {
+    utimesSync(path, time, time);
+  } catch (err) {
+    closeSync(openSync(path, 'w'));
+  }
+
+};
 
 /**
  * Dirty Document
@@ -864,8 +876,7 @@ export function rulesDefault (): Rules {
       dedentTagList: rules.liquid.dedentTagList,
       delimiterPlacement: rules.liquid.delimiterPlacement,
       forceArgument: rules.liquid.forceArgument,
-      forceFilter: rules.liquid.forceFilter,
-      preserveInternal: rules.liquid.preserveInternal
+      forceFilter: rules.liquid.forceFilter
     },
     markup: {
       quoteConvert: rules.markup.quoteConvert,
