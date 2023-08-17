@@ -3,16 +3,20 @@
   "scopeName": "source.css.liquid",
   "injectionSelector": "L:source.css",
   "injections": {
-    "L:meta": {
+    "L:string": {
       "patterns": [
         { "include": "source.liquid#tags" },
         { "include": "source.liquid#output" }
       ]
     },
-    "L:string": {
+    "L:entity.other.attribute-name.class.css": {
       "patterns": [
-        { "include": "source.liquid#tags" },
-        { "include": "source.liquid#output" }
+        {
+          "include": "source.liquid#tags"
+        },
+        {
+          "include": "source.liquid#output"
+        }
       ]
     }
   },
