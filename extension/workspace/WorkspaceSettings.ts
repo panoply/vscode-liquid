@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import { workspace, ConfigurationTarget, Uri, RelativePattern } from 'vscode';
+import { workspace, ConfigurationTarget, Uri, RelativePattern, window } from 'vscode';
 import { existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { has, isNil, difference, hasPath, isEmpty } from 'rambdax';
@@ -35,7 +35,7 @@ export class WorkspaceSettings extends OutputChannel {
 
       await config.update('defaultFormatter', this.meta.id, this.config.target, true);
 
-      this.info(`Using ${this.meta.id} as the editor.defaultFormatter for ${languageId}`);
+      this.info(`${this.meta.id} is the editor.defaultFormatter for ${languageId}`);
 
       return true;
 
@@ -270,7 +270,7 @@ export class WorkspaceSettings extends OutputChannel {
 
             if (curr === 0) {
               const plural = added > 1 ? `${added} files` : `${added} file`;
-              this.info(`Using ${configSource} ${file.slice(0, -1)} file completions: ${plural}`);
+              this.info(`${configSource} ${file.slice(0, -1)} file completions: ${plural}`);
             }
           }
 
@@ -343,16 +343,17 @@ export class WorkspaceSettings extends OutputChannel {
           configSource = '.liquidrc';
           const path = join(root, this.liquidrc.files[file]);
           this.files[file] = Uri.file(path);
-          this.info(`Using ${configSource} ${file} completions: ${basename(path)}`);
+          this.info(`${configSource} ${file} completions: ${basename(path)}`);
 
           if (this.engine === 'shopify') {
             if (file === 'locales') {
               const name = this.liquidrc.files[file].replace(/\.json$/, '.schema.json');
               const path = join(root, name);
               const schema = Uri.file(path);
+
               if (await u.pathExists(schema.fsPath)) {
                 this.files.localesSchema = schema;
-                this.info(`Using ${configSource} locale → schema ref: ${basename(path)}`);
+                this.info(`${configSource} locale → schema ref: ${basename(path)}`);
               }
             }
           }
@@ -403,7 +404,7 @@ export class WorkspaceSettings extends OutputChannel {
           const path = u.refineURI(value);
 
           this.files[file] = Uri.file(join(root, path));
-          this.info(`Using ${configSource} ${file.slice(0, -1)} completions: ${basename(path)}`);
+          this.info(`${configSource} ${file.slice(0, -1)} completions: ${basename(path)}`);
 
           if (this.engine === 'shopify') {
 
@@ -413,7 +414,7 @@ export class WorkspaceSettings extends OutputChannel {
               const schema = Uri.file(path);
               if (await u.pathExists(schema.fsPath)) {
                 this.files.localesSchema = schema;
-                this.info(`Using ${configSource} locale → schema ref: ${basename(path)}`);
+                this.info(`${configSource} locale → schema ref: ${basename(path)}`);
               }
             }
 
@@ -674,44 +675,108 @@ export class WorkspaceSettings extends OutputChannel {
    */
   getBaseUrl () {
 
-    const config = workspace.getConfiguration().inspect('liquid');
+    const { workspaceValue, globalValue } = workspace.getConfiguration().inspect<Workspace.Config>('liquid.config');
 
-    for (const v of [ 'workspaceValue', 'globalValue' ]) {
+    let base: string = null;
+    let uri: Uri = null;
 
-      if (has('config.baseUrl', config[v])) {
-        if (u.isString(config[v]['config.baseUrl'])) {
+    if (u.isUndefined(workspaceValue) && u.isUndefined(globalValue)) {
+      base = null;
+    } else if (u.isUndefined(workspaceValue)) {
 
-          if (config[v]['config.baseUrl'][0] === '.' && config[v]['config.baseUrl'][0] === '.') {
+      // Skip if baseURL is undefined
+      if (u.isUndefined(globalValue.baseDir) || globalValue.baseDir === '') {
+        base = null;
+      } else {
 
-            this.error('Invalid "liquid.config.baseUrl" path')(
-              'The "liquid.config.baseUrl" option only accepts paths relative to your',
-              'projects root directory. Reverse paths are not support at:\n',
-              `Provided: ${config[v]['config.baseUrl']}`,
-              `Settings: ${v === 'workspaceValue' ? '.vscode/settings.json' : 'Global Workspace Settings'}`
-            );
-
-            break;
-
-          }
-
-          const base = join(this.uri.root.fsPath, config.workspaceValue['config.baseUrl']);
-
-          if (base !== this.uri.root.fsPath && existsSync(base)) {
-            this.uri.root = Uri.file(base);
-            this.info(`Using "config.baseUrl" sub-path mapping: ${base}`);
-          }
-        } else {
-
-          this.error('Invalid type provided for "liquid.config.baseUrl" setting')(
-            'The "liquid.config.baseUrl" option only accepts string type values',
-            `You provided ${typeof config[v]['config.baseUrl']} which is invalid`
-          );
-
-        }
+        base = workspace.asRelativePath(workspaceValue.baseDir);
+        this.warn('The "config.baseDir" is defined in global workspace configuration (not recommended)');
       }
+    } else {
+
+      // Skip if baseURL is undefined
+      if (u.isUndefined(workspaceValue.baseDir) || workspaceValue.baseDir === '') {
+        base = null;
+      } else {
+        base = workspace.asRelativePath(workspaceValue.baseDir);
+      }
+
     }
 
-    if (this.uri.base === null) this.uri.base = this.uri.root;
+    if (base === null) {
+
+      uri = this.uri.root;
+
+    } else {
+
+      if (/\.liquidrc(?:\.json)?$/.test(base)) {
+        this.warn(`config.baseDir should be a directory path, excluding: ${base.slice(base.lastIndexOf('/'))}`);
+        base = base.slice(0, base.lastIndexOf('/'));
+      }
+
+      uri = Uri.joinPath(this.uri.root, base);
+
+      if (uri.fsPath !== this.uri.root.fsPath) {
+
+        if (existsSync(uri.fsPath)) {
+
+          this.info(`workspace config.baseDir .liquidrc path: ${uri.path}`);
+          this.nl();
+
+        } else {
+
+          this.isActive = false;
+
+          this.error('Invalid "config.baseDir" path provided', '')(
+            '\nThe "liquid.config.baseDir" directory cannot be resolved.',
+            `  ✓ ${this.uri.root.fsPath}`,
+            `  𐄂 ${uri.path}`
+          );
+
+          return;
+        }
+      }
+
+    }
+
+    if (uri.fsPath !== this.uri.base.fsPath) {
+
+      if (this.hasActivated) {
+
+        const path = u.hasLiquidrc(uri.fsPath);
+
+        if (!path) {
+          const method = this.config.method === ConfigMethod.Liquidrc
+            ? this.uri.liquidrc.fsPath
+            : this.uri.workspace.fsPath;
+
+          this.error('Cannot resolve .liquidrc file', '')(
+            `\nThe directory provided to config.baseDir (${base}) does not contain a .liquidrc file.`,
+            `  ✓ ${method}`,
+            `  𐄂 ${uri.fsPath}\n`
+          );
+
+        } else {
+
+          this.uri.base = uri;
+          this.uri.liquidrc = Uri.file(path);
+          this.nl();
+          this.info(`.liquidrc resolution path: ${uri.path}`);
+          this.nl();
+
+          return Setting.LiquidrcTouch;
+
+        }
+
+        return;
+
+      } else {
+        this.uri.base = uri;
+      }
+
+    }
+
+    this.isActive = true;
 
   }
 
@@ -725,7 +790,7 @@ export class WorkspaceSettings extends OutputChannel {
    *
    * Returns a number based value which indicated what occured in the parse:
    */
-  async getLiquidrc () {
+  async getLiquidrc (touch?: Setting) {
 
     if (isNil(this.uri.liquidrc)) {
 
@@ -768,7 +833,7 @@ export class WorkspaceSettings extends OutputChannel {
 
       if (!u.isObject(this.liquidrc)) {
 
-        this.error('Invalid configuration type provided in .liquidrc')(
+        this.error(`Invalid configuration type provided in ${basename(this.uri.liquidrc.fsPath)}`)(
           'The .liquirc file expects an {} (object) type to be provided but',
           `instead recieved an ${typeof this.liquidrc} type which is invalid.`,
           'You can generate a .liquidrc file via the command palette (CMD+SHIFT+P)'
@@ -808,7 +873,7 @@ export class WorkspaceSettings extends OutputChannel {
             Buffer.from(JSON.stringify(update, null, 2))
           ));
 
-          this.info('Updated the .liquidrc file, you are now using the v4.0.0 structure');
+          this.info('Updated the .liquidrc file, you are now the v4.0.0 structure');
 
           this.liquidrc = update;
           this.deprecation.liquidrc = null;
@@ -816,15 +881,22 @@ export class WorkspaceSettings extends OutputChannel {
         }
 
       }
+      if (touch !== Setting.LiquidrcTouch) {
 
-      if (this.deprecation.liquidrc === null) {
+        if (this.deprecation.liquidrc === null) {
 
-        await this.getFiles();
+          await this.getFiles();
 
-        this.getFormatRules();
-        this.getEngine();
+          this.getFormatRules();
+          this.getEngine();
 
-        await this.getExternal([ 'locales', 'settings' ]);
+          await this.getExternal([ 'locales', 'settings' ]);
+
+        }
+
+      } else {
+
+        u.touch(this.uri.liquidrc.fsPath);
 
       }
 
@@ -983,7 +1055,9 @@ export class WorkspaceSettings extends OutputChannel {
     const exists = await u.pathExists(this.uri.workspace.fsPath);
 
     if (exists) {
-      this.info(`Using workspace file: ${this.uri.workspace.path}`);
+
+      if (!this.hasActivated) this.info(`workspace file: ${this.uri.workspace.path}`);
+
       this.config.target = ConfigurationTarget.Workspace;
       this.config.inspect = 'workspaceValue';
     } else {
@@ -991,9 +1065,11 @@ export class WorkspaceSettings extends OutputChannel {
       this.config.inspect = 'globalValue';
     }
 
-    this.getBaseUrl();
+    const touch = this.getBaseUrl();
 
-    await this.getLiquidrc();
+    if (!this.isActive) return;
+
+    await this.getLiquidrc(touch);
 
     if (this.isReady === false) {
       this.deprecation.workspace = u.hasDeprecatedSettings();
@@ -1006,7 +1082,6 @@ export class WorkspaceSettings extends OutputChannel {
     }
 
     if (this.config.method === ConfigMethod.Workspace) {
-
       await this.getFiles();
       this.getFormatRules();
       this.getEngine();
@@ -1016,7 +1091,10 @@ export class WorkspaceSettings extends OutputChannel {
     this.getValidations();
     this.getHovers();
 
-    await this.getExternal([ 'locales', 'settings' ]);
+    await this.getExternal([
+      'locales',
+      'settings'
+    ]);
 
   };
 
