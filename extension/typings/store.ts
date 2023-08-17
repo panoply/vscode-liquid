@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Rules } from 'esthetic';
 import { Tester } from 'anymatch';
-import { ConfigMethod } from './enums';
+import { ConfigMethod, Setting } from './enums';
 import {
   CompletionItem,
   ConfigurationTarget,
@@ -285,7 +285,7 @@ export namespace Files {
 
 export interface URI {
   /**
-   * Returns the base path url reference according to `liquid.config.baseUrl`
+   * Returns the base path directory Uri reference according to `liquid.config.baseDir`
    */
   base?: Uri;
   /**
