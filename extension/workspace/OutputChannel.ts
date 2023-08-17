@@ -36,6 +36,23 @@ export class OutputChannel extends StatusLanguageItem {
   }
 
   /**
+   * Write a blank newline to output
+   */
+  public nl () {
+
+    this.output.appendLine('────────────────────');
+
+  }
+
+  /**
+   * Clear output
+   */
+  public clear () {
+
+    return this.output.clear();
+  }
+
+  /**
    * Info Output
    *
    * General info messages with timestamp.
@@ -104,7 +121,7 @@ export class OutputChannel extends StatusLanguageItem {
    * General error handling, typically used for known errors.
    * Returns a function which accepts a spread for multilines.
    */
-  public error (message: string) {
+  public error (message: string, indent = '  ') {
 
     this.status.error();
     this.output.appendLine(`\nERROR: ${message}`);
@@ -113,7 +130,7 @@ export class OutputChannel extends StatusLanguageItem {
 
       for (const line of context) {
 
-        this.output.appendLine('  ' + line); // indent 2 spaces for every line
+        this.output.appendLine(indent + line); // indent 2 spaces for every line
 
       }
 
