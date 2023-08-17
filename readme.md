@@ -59,7 +59,7 @@ The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (
 - [Command Palette](#command-palette)
 - [Workspace Settings](#workspace-settings)
   - [Working Directories](#working-directories)
-  - [Config Base URL](#config-base-url)
+  - [Config Base Directory](#config-base-url)
   - [Settings Target](#settings-target)
   - [Controlling Capabilities](#controlling-capabilities)
 - [Syntax Support](#syntax-support)
@@ -143,7 +143,7 @@ By default, it is assumed you are using vscode workspace/user settings.
   // If you are not using a .liquidrc file you can set the
   // "liquid.config.method" setting to "workspace"
   //
-  "liquid.config.baseUrl": ".",
+  "liquid.config.baseDir": ".",
   "liquid.config.method": "liquidrc",
 
   // Liquid Completion Settings
@@ -180,7 +180,7 @@ By default, it is assumed you are using vscode workspace/user settings.
   // "liquid.files.shopify": {},
   // "liquid.files.11ty": {},
 
-  //  Uncomment these if you do not use a .liquidrc file
+  //  Uncomment if you are not using a .liquidrc file
   //
   // "liquid.format.rules": {
   //   "ignore":[],
@@ -191,9 +191,9 @@ By default, it is assumed you are using vscode workspace/user settings.
 }
 ```
 
-### Config Base URL (optional)
+### Config Base Directory (optional)
 
-The `liquid.config.baseUrl` option can be used to define a **relative** directory path for resolving a `.liquidrc` file. The option will only work in projects that use `.liquidrc` files. Consider the following directory layout:
+The `liquid.config.baseDir` option can be used to define a **relative** directory path for resolving a `.liquidrc` (or `.liquidrc.json`) file. The option will only work in projects that use `.liquidrc` files. Consider the following directory layout:
 
 ```bash
  root
@@ -207,18 +207,18 @@ The `liquid.config.baseUrl` option can be used to define a **relative** director
     └─ views
 ```
 
-By default, when no `.liquidrc` exists in the root of the opened project, then it is assumed beautification rules have been defined in the `.vscode/settings.json` workspace file. If no settings are defined in the workspace file then the defaults will be used. In situations where you need the extension to use a config file that is located outside of the root of your project you can leverage the `baseUrl` setting.
+By default, when no `.liquidrc` exists in the root of the opened project, then it is assumed settings have been defined in the `.vscode/settings.json` workspace file. If no settings are defined in the workspace file then the defaults will be used. In situations where you need the extension to use a config file that is located outside of the root of your project you can leverage the `baseDir` setting.
 
 Targeting the `.liquidrc.json` file located in `docs` directory:
 
 <!--prettier-ignore-->
 ```jsonc
 {
-  "liquid.config.baseUrl": "./docs"
+  "liquid.config.baseDir": "./docs"
 }
 ```
 
-_The `baseUrl` must point to a relative directory not a file. If the directory provided cannot be resolved, root is used._
+_The `baseDir` must point to a relative directory not a file. If the directory provided cannot be resolved, root is used._
 
 # Syntax Support
 
@@ -310,6 +310,10 @@ The extension also provides additional syntax highlighting for language annotate
 
 // Frontmatter JSON
 ---json
+---
+
+// Frontmatter TOML
+---toml
 ---
 ```
 
