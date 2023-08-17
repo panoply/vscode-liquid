@@ -349,7 +349,7 @@ export const enum LanguageParticipant {
  */
 export const enum ConfigMethod {
   /**
-   * The initial value, when no method one will be determined.
+   * The initial value, when there no method one will be determined.
    * based on the project structure, ie: if `.liquidrc` exists
    * then the method will be Liquidrc else it will be Workspace.
    */
@@ -446,6 +446,10 @@ export const enum Setting {
    * Liquidrc file is present
    */
   LiquidrcDefined,
+  /**
+   * Liquidrc file should be touched
+   */
+  LiquidrcTouch,
   /**
    * No configuration is defined
    */
