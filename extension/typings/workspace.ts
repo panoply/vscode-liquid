@@ -18,11 +18,11 @@ export namespace Workspace {
      */
     method: 'workspace' | 'liquidrc';
     /**
-     * The base URL location of the `.liquidrc` file
+     * The base Directory location of the `.liquidrc` file
      *
      * @default '.'
      */
-    baseUrl: string;
+    baseDir: string;
   }
 
   /**
