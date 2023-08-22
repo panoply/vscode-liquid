@@ -22,11 +22,18 @@ export type FormatEvent = FormatEventType.EnableStatus | {
   detail: string
 }
 
-export class FormattingProvider implements DocumentFormattingEditProvider {
+export class FormattingProvider<T extends FormatEvent> implements DocumentFormattingEditProvider {
+
+  constructor (listener: EventEmitter<T>) { this.listen = listener; }
 
   /* -------------------------------------------- */
   /* STATE                                        */
   /* -------------------------------------------- */
+
+  /**
+   * Error event
+   */
+  public listen: EventEmitter<FormatEvent>;
 
   /**
    * Whether or not to enable
@@ -60,10 +67,6 @@ export class FormattingProvider implements DocumentFormattingEditProvider {
    * The current formatting rules
    */
   public error: Error = null;
-  /**
-   * Error event
-   */
-  public listen: EventEmitter<FormatEvent> = new EventEmitter();
 
   reset () {
 
