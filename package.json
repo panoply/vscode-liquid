@@ -128,14 +128,8 @@
         "category": "Liquid"
       },
       {
-        "command": "liquid.liquidrcDefaults",
-        "title": "Generate .liquidrc (defaults)",
-        "icon": "$(file-add)",
-        "category": "Liquid"
-      },
-      {
-        "command": "liquid.liquidrcRecommend",
-        "title": "Generate .liquidrc (recommended)",
+        "command": "liquid.generateLiquidrc",
+        "title": "Generate .liquidrc file",
         "icon": "$(file-add)",
         "category": "Liquid"
       },
@@ -383,6 +377,9 @@
         "*.js.liquid": "liquid-javascript",
         "*.css.liquid": "liquid-css",
         "*.scss.liquid": "liquid-scss"
+      },
+      "[liquid]": {
+        "editor.foldingStrategy": "indentation"
       },
       "emmet.includeLanguages": {
         "liquid": "html",
