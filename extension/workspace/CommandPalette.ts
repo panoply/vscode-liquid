@@ -1,9 +1,9 @@
 import { env, Uri, window, workspace } from 'vscode';
 import { join } from 'node:path';
-import esthetic from 'esthetic';
-import { getRange, isString, pathExists, rulesDefault, rulesRecommend } from '../utils';
+import esthetic, { LanguageName } from 'esthetic';
+import { getLanguage, getRange, isString, pathExists, rulesDefault, rulesRecommend } from '../utils';
 import { FSWatch } from './FileSystemWatcher';
-import { has } from 'rambdax';
+import { FormatEventType } from 'providers/FormattingProvider';
 
 /**
  * Commands
@@ -106,12 +106,6 @@ export class CommandPalette extends FSWatch {
     return this.generateLiquidrc('default');
   }
 
-  public liquidrcRecommend () {
-
-    return this.generateLiquidrc('recommended');
-
-  }
-
   /**
    * Enabled formatting (command)
    */
@@ -159,34 +153,51 @@ export class CommandPalette extends FSWatch {
     const { document } = window.activeTextEditor;
     const { languageId } = document;
 
-    if (has(languageId, this.languages)) {
+    let language: LanguageName;
+
+    if (/\.liquidrc(?:\.json)?/.test(document.fileName)) {
+      language = 'json';
+    } else {
+      language = getLanguage(document.languageId);
+    }
+
+    if (this.languages.has(languageId)) {
 
       const range = getRange(document);
-      const input = document.getText(range);
+      const source = document.getText(range);
+
+      if (this.hasError) {
+        this.hasError = false;
+        this.error = null;
+        this.listen.fire(FormatEventType.EnableStatus);
+      }
 
       try {
 
-        const output = esthetic.format(input, { language: languageId });
-
-        if (this.hasError) {
-          this.errorCache = null;
-          this.status.enable();
-        }
+        const output = esthetic.format(source, { language });
 
         await window.activeTextEditor.edit(code => code.replace(range, output));
 
       } catch (e) {
 
-        if (this.hasError === false || this.errorCache !== e) {
-          this.errorCache = e;
-          this.error('Formatting parse error occured in document')(e);
+        if (this.hasError === false || this.error !== e.message) {
+          this.error = e.message;
+          this.hasError = true;
+          this.listen.fire({
+            type: FormatEventType.ThrowError,
+            message: 'Parse error occured when formatting document\n',
+            detail: e.message
+          });
         }
       }
 
     } else {
 
-      this.warn('Language id ' + languageId.toUpperCase() + ' is not enabled');
-
+      if (languageId === 'liquid') {
+        this.warn('Language id "Liquid" is not enabled');
+      } else {
+        this.warn('Language id "' + languageId.toUpperCase() + '" is not enabled');
+      }
     }
 
   }
