@@ -21,9 +21,6 @@
       ],
       "patterns": [
         {
-          "include": "#comment-line"
-        },
-        {
           "include": "#tags"
         },
         {
@@ -37,9 +34,6 @@
         "Our R: injection above ensures ejections, whereas this ensures injection."
       ],
       "patterns": [
-        {
-          "include": "#comment-line"
-        },
         {
           "include": "#output"
         },
@@ -106,7 +100,22 @@
     "comment-line": {
       "name": "comment.line.liquid",
       "begin": "{%-?\\s*#\\s*",
-      "end": "-?%}"
+      "end": "-?%}",
+      "patterns": [
+        {
+          "name": "comment.hash.liquid",
+          "match": "\\s*#\\s*"
+        },
+        {
+          "name": "comment.delimiters.liquid",
+          "match": "{%-?|-?%}"
+        },
+        {
+          "name": "comment.hash.liquid",
+          "begin": "^\\s*\\#\\s*",
+          "end": "\\Z"
+        }
+      ]
     },
     "liquid-tag": {
       "name": "punctuation.output.liquid",
@@ -169,7 +178,7 @@
     },
     "tags": {
       "name": "punctuation.output.liquid",
-      "begin": "({%)(-)?",
+      "begin": "({%)(-)?(?!\\s*\\#)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.liquid"
@@ -188,6 +197,9 @@
         }
       },
       "patterns": [
+        {
+          "include": "#comments"
+        },
         {
           "include": "#entities"
         },
