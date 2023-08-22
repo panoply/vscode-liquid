@@ -1,5 +1,5 @@
 <div class="col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{
-     block.settings.xl }}">
+block.settings.xl }}">
   <div class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
 
     <input
@@ -13,12 +13,15 @@
       name="{{ block.settings.name }}"
       placeholder="{{ block.settings.placeholder }}"
       required="{{ block.settings.required }}"
-      type="{{ block.type }}" />
+      type="{{ block.type }}" 
+    />
 
     {% render 'brackets' %}
 
-    <label class="fm-label"
-      for="{{ block.settings.name }}">
+    <label
+      class="fm-label"
+      for="{{ block.settings.name }}"
+    >
       {{ block.settings.placeholder }}
     </label>
 

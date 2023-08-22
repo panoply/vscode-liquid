@@ -4,12 +4,12 @@
 
 {% # SECTION FILE COMPLETIONS %}
 
-{% section '' %}
+{% section  %}
 
 
 {% # SETTINGS DATA FILE COMPLETIONS %}
 
-{{ settings.blog_card_image_padding }}
+{{ settings.blog_card_border_thickness }}
 
 
 {% # LOCALE FILE COMPLETIONS %}
@@ -19,7 +19,7 @@
 <div>
 
   <h1>
-  {{ 'general.testing.some_text' | t: dave: '', feature: '', sissel: '',  }}
+    {{ 'general.testing.some_text' | t: dave: 'foo', feature: 'bar', sissel: 'baz'  }}
   </h1>
 
 </div>

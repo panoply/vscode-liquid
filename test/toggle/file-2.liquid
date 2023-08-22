@@ -1,64 +1,122 @@
-{% if condition %}
+<div
+  data-controller="cart"
+  data-cart-continue-shopping-value="{{ section.settings.continue_shopping_url }}"
+  data-cart-empty-message-value="{{ 'cart.empty_message' | t }}"
+  data-cart-route-enabled-value="{{ section.settings.enable_route_protection }}"
+  data-cart-route-disclaimer-value="{{ section.settings.route_disclaimer }}"
+  data-cart-terms-url-value="{{ section.settings.terms_and_conditions_url }}"
+  {% if section.settings.enable_calculated_meter %}
+  data-cart-meter-enabled-value="true"
+  data-cart-meter-threshold-value="{{ section.settings.meter_threshold | times: 100 }}"
+  data-cart-meter-message-value="{{ section.settings.meter_message }}"
+  data-cart-meter-qualified-message-value="{{ section.settings.meter_qualified_message }}"
+  {% endif %}
+  class="pt-2.5 px-3 pb-20 w-full flex flex-col h-full  color-{{ section.settings.color_scheme.id }} bg-background text-standard">
 
-  {% assign s = settings.badges %}
+{% comment %} esthetic-ignore-start {% endcomment %}
+  <script data-cart-target="emptyDataMenu">
+    [
+      {% for link in section.settings.empty_menu.links %}
+        {
+          "url": {{ link.url | json }},
+          "title": {{ link.title | json }}
+        }
+        {% unless forloop.last %},{% endunless %}{% endfor %}
+    ]
+  </script>
+{% comment %} esthetic-ignore-end {% endcomment %}
 
-  {{ s.badge_corner_radius }}
-
-  {% assign b = product.collections %}
-
-
-  {{ s..badge_corner_radius | file_url: b.sale_badge_color_scheme }}
-  <div class="col-{{ block.settings.xs }} col-md-{{ block.settings.md }} col-xl-{{ block.settings.xl }}">
-    <div class="fm-float mt-{{ block.settings.mt }} mb-{{ block.settings.mb }}">
-
-      {{ b }}
-
-
-      <input
-        autocomplete="{{ block.settings.autocomplete }}"
-        class="fm-input"
-        data-action="form#onInput"
-        data-form-target="field"
-        id="{{ block.settings.name }}"
-        maxlength="{{ block.settings.maxlength }}"
-        minlength="{{ block.settings.minlength }}"
-        name="{{ block.settings.name }}"
-        placeholder="{{ block.settings.placeholder }}"
-        required="{{ block.settings.required }}"
-        type="{{ block.type }}" /> {{ 'products' | t }}
-
-
-      <label class="fm-label" for="{{ block.settings.name }}">
-        {{ block.settings.placeholder }}
-      </label>
-
-      {% assign items = block.settings.items | newline_to_br | newline_to_br | split: '<br />' %}
-
-    </div>
+  <div class="drawer-header flex justify-between items-center w-full mb-2.5 pb-2.5">
+    <h2 class="text-3xl text-left">Your Cart
+    </h2>
   </div>
 
-{% endif %}
+  <form
+    action="/checkout"
+    class="h-full flex"
+    id="cart-drawer-form"
+    method="post"
+    novalidate>
 
+    {% comment %} Mithril JS Cart Drawer {% endcomment %}
+    <div
+      class="flex-grow flex flex-col"
+      data-cart-target="mount"></div>
+  </form>
+
+</div>
 
 {% schema %}
   {
-    "blocks": [],
+    "name": "Cart Drawer",
+    "class": "cart-drawer w-full",
     "settings": [
       {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "color_scheme",
+        "id": "color_scheme",
+        "label": "Color Scheme",
+        "default": "background-1"
+      },
+      {
+        "type": "header",
+        "content": "Empty State"
+      },
+      {
+        "type": "link_list",
+        "id": "empty_menu",
+        "label": "Empty Menu"
+      },
+      {
+        "type": "url",
+        "id": "continue_shopping_url",
+        "label": "Continue Shopping Link"
+      },
+      {
+        "type": "url",
+        "id": "terms_and_conditions_url",
+        "label": "Terms and Conditions Link"
+      },
+      {
+        "type": "header",
+        "content": "Extensions"
+      },
+      {
         "type": "checkbox",
-        "id": "some_check",
-        "label": "Some Check",
-        "default": true,
-        "info": "Hellow some check"
-      }, {
-        "type": "range",
-        "id": "some",
-        "label": "Some",
-        "min": 10,
-        "max": 100,
-        "step": 1,
-        "unit": "px",
-        "default": 1
+        "id": "enable_calculated_meter",
+        "label": "Enable Calculated Meter"
+      },
+      {
+        "type": "number",
+        "id": "meter_threshold",
+        "label": "Meter Threshold ($ Dollars)"
+      },
+      {
+        "type": "textarea",
+        "id": "meter_message",
+        "label": "Meter Message",
+        "info": "Use {{ amount }} for where you want the remaining amount to display"
+      },
+      {
+        "type": "textarea",
+        "id": "meter_qualified_message",
+        "label": "Meter Qualified Message",
+        "info": "Message to display once a user reaches the threshold or above."
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_route_protection",
+        "label": "Enable Route Protection",
+        "default": true
+      },
+      {
+        "type": "textarea",
+        "id": "route_disclaimer",
+        "label": "Route Disclaimer",
+        "default": "Route Insurance MUST be added before your order is placed.  Insurance cannot be added on after placing your order."
       }
     ]
   }
