@@ -7,6 +7,7 @@ import { Selectors, LanguageIds } from './typings/document';
 import { ConfigurationTarget, Extension as IExtension, Uri, workspace, Disposable, EventEmitter } from 'vscode';
 import { ConfigMethod } from './typings/enums';
 import { Service } from './services';
+import { FormatEvent } from 'providers/FormattingProvider';
 
 /**
  * Extension State - Localized store for the extension
@@ -46,7 +47,7 @@ export class Extension extends Service {
   /**
    * Error event
    */
-  public reactivate: EventEmitter<any> = new EventEmitter();
+  listen: EventEmitter<FormatEvent> = new EventEmitter();
 
   /**
    * Meta Information
