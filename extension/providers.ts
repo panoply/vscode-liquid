@@ -1,4 +1,4 @@
-import { FormattingProvider } from './providers/FormattingProvider';
+import { FormatEvent, FormattingProvider } from './providers/FormattingProvider';
 import { CompletionProvider } from './providers/CompletionProvider';
 import { DocumentLinkProvider } from './providers/DocumentLinkProvider';
 import { HoverProvider } from 'providers/HoverProvider';
@@ -26,7 +26,7 @@ export class Providers extends Extension {
    *
    * The formatting edit provider instance
    */
-  public formatting = new FormattingProvider();
+  public formatting = new FormattingProvider<FormatEvent>(this.listen);
 
   /**
    * Completion Item Provider
