@@ -412,7 +412,7 @@ The extension supports file completions. Depending on the specified Liquid `engi
   "engine": "shopify",
   "files": {
     "locales": "locales/en.default.json",
-    "settings": "config/settings_data.json",
+    "settings": "config/settings_schema.json",
     "snippets": ["snippets/*.liquid"],
     "sections": ["sections/*.liquid"]
   }
