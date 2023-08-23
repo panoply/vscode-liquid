@@ -416,6 +416,7 @@
         },
         "liquid.config.baseDir": {
           "type": "string",
+          "default": ".",
           "markdownDescription": "**Default** `.`\n\nThe `liquid.config.baseDir` option can be used to define a **relative** directory path for resolving `.liquidrc` or `.liquidrc.json` files. The option will only work in projects that use `.liquidrc` files and has no effect if `liquid.config.method` is set `workspace`\n\nConsider the following directory layout:\n\n```\n\n root\n ├─ .vscode\n │  └─ settings.json\n ├─ docs\n │  ├─ .liquidrc.json\n │  └─ index.liquid\n └─ src\n    ├─ includes\n    └─ views\n\n```\n\nBy default, when no `.liquidrc` exist in a projects root, then it is assumed beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace file then the default rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseDir` to the directory containing one of the supported file types.\n\nTargeting the `.liquidrc.json` file located in `docs` directory:\n\n<!--prettier-ignore-->\n```jsonc\n{\n  \"liquid.config.baseDir\": \"./docs\"\n}\n```\n\n_The `baseDir` must point to a relative directory not a file. If the directory provided cannot be resolved, root is used._\n"
         },
         "liquid.config.method": {
@@ -1226,7 +1227,7 @@
   },
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup --minify --onSuccess \"vsce package --no-dependencies\"",
+    "build": "tsup  --onSuccess \"vsce package --no-dependencies\"",
     "dry": "vsce ls package --no-dependencies",
     "schema": "node ./scripts/schemas.cjs",
     "grammar": "node ./scripts/grammars.cjs"
