@@ -61,6 +61,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
     sections: false,
     settings: false,
     snippets: false,
+    schemas: true,
     data: false,
     frontmatter: false,
     includes: false
@@ -102,12 +103,10 @@ export class CompletionProvider extends Service implements CompletionItemProvide
    * The completion item provider interface defines the contract between extensions and
    * [IntelliSense](https://code.visualstudio.com/docs/editor/intellisense).
    */
-  async provideCompletionItems (
-    document: TextDocument,
-    position: Position,
-    _token: CancellationToken,
-    { triggerCharacter, triggerKind }: CompletionContext
-  ): Promise<CompletionItem[]> {
+  async provideCompletionItems (document: TextDocument, position: Position, _token: CancellationToken, {
+    triggerCharacter,
+    triggerKind
+  }: CompletionContext): Promise<CompletionItem[]> {
 
     if (document.languageId !== 'liquid') return null;
 
@@ -115,7 +114,9 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
     const content = document.getText();
     const offset = document.offsetAt(position);
-    const trigger = CompletionTriggerKind.TriggerCharacter === triggerKind ? triggerCharacter.charCodeAt(0) : false;
+    const trigger = CompletionTriggerKind.TriggerCharacter === triggerKind
+      ? triggerCharacter.charCodeAt(0)
+      : false;
 
     /* -------------------------------------------- */
     /* SCHEMA PROPERTY                              */
@@ -125,11 +126,11 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
       if (!this.enable.schema) return null;
 
-      if (this.json.schema.has(document.uri.fsPath)) {
+      if (this.json.sections.has(document.uri.fsPath)) {
 
         q.setType(null);
 
-        const schema = this.json.schema.get(document.uri.fsPath);
+        const schema = this.json.sections.get(document.uri.fsPath);
 
         if (offset > schema.begin && offset < schema.ender) {
 
@@ -273,12 +274,20 @@ export class CompletionProvider extends Service implements CompletionItemProvide
     /* -------------------------------------------- */
 
     if (token.type === Token.Object) {
-      if (trigger === Char.SQO || trigger === Char.DQO || (cursor === Token.Locale && trigger === Char.DOT)) {
+      if (
+        trigger === Char.SQO ||
+        trigger === Char.DQO || (
+          cursor === Token.Locale &&
+          trigger === Char.DOT
+        )
+      ) {
+
         return getLocaleCompletions(
           this.files.locales,
           token.locale,
           insertTranslate(position, token.text)
         );
+
       }
     }
 
@@ -294,16 +303,17 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
       if (props !== null && this.enable.schema) {
 
-        const schema = this.json.schema.get(document.uri.fsPath);
+        const schema = this.json.sections.get(document.uri.fsPath);
 
-        if (props === Token.SchemaSettings) return getSectionCompletions(schema, props);
+        if (props === Token.SchemaSettings) {
+          return getSectionCompletions(schema, props);
+        }
 
         if (props === Token.SchemaBlock) {
-
           const type = getSectionScope(schema, content, offset);
-
-          if (type !== null) return getSectionCompletions(schema, props, type);
-
+          if (type !== null) {
+            return getSectionCompletions(schema, props, type);
+          }
         }
       }
 
@@ -362,7 +372,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
         if (!this.enable.schema) return null;
 
-        const schema = this.json.schema.get(document.uri.fsPath);
+        const schema = this.json.sections.get(document.uri.fsPath);
 
         return getSectionCompletions(schema, cursor);
 
