@@ -78,6 +78,13 @@ export interface ShopifyFiles {
    * Reference to directory of files used as sections.
    */
   sections?: string[];
+  /**
+   * **Shopify X Syncify**
+   *
+   * Reference to directory of Shared Schema files for projects
+   * leveraging Syncify.
+   */
+  schema?: string[];
 }
 
 /**
