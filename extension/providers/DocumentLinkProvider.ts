@@ -1,4 +1,5 @@
 import { basename } from 'node:path';
+import { SettingsFile, SnippetFile } from 'parse/helpers';
 import {
   CancellationToken,
   DocumentLinkProvider as IDocumentLinkProvider,
@@ -25,6 +26,11 @@ export class DocumentLinkProvider implements IDocumentLinkProvider {
   snippets: Uri[];
 
   /**
+   *The `settings_schema.json` URI
+   */
+  settings: Uri;
+
+  /**
    * Render Tag URI's
    */
   sections: Uri[];
@@ -35,30 +41,66 @@ export class DocumentLinkProvider implements IDocumentLinkProvider {
 
   async provideDocumentLinks (document: TextDocument, _token: CancellationToken): Promise<DocumentLink[]> {
 
-    const text = document.getText();
-    const regex = /(?<={%-?\s*(?:include|render)\s*)['"].*?['"]/g;
-    const items: DocumentLink[] = [];
+    const content = document.getText();
+    const links: DocumentLink[] = [];
+
+    this.getSnippetLinks(document, content, links);
+    this.getSettingsLinks(document, content, links);
+
+    return links;
+
+  }
+
+  private getSnippetLinks (document: TextDocument, content: string, links: DocumentLink[]) {
 
     let m: RegExpExecArray;
 
-    while ((m = regex.exec(text)) !== null) {
+    while ((m = SnippetFile.exec(content)) !== null) {
 
-      if (m.index === regex.lastIndex) regex.lastIndex++;
+      if (m.index === SnippetFile.lastIndex) SnippetFile.lastIndex++;
 
-      const name = m[0];
-      const find = this.files.find(uri => basename(uri.fsPath, '.liquid') === name.slice(1, -1));
+      const uri = this.snippets.find(uri => basename(uri.fsPath, '.liquid') === m[0].slice(1, -1));
+      const range = new Range(document.positionAt(m.index + 1), document.positionAt(m.index + m[0].length - 1));
+      const link = new DocumentLink(range, uri);
 
-      items.push(
-        new DocumentLink(
-          new Range(document.positionAt(m.index + 1), document.positionAt(m.index + name.length - 1)),
-          find
-        )
-      );
+      link.tooltip = 'Open File';
+
+      links.push(link);
 
     }
 
-    return items;
+    return links;
 
   }
+
+  private getSettingsLinks (document: TextDocument, content: string, links: DocumentLink[]) {
+
+    let m: RegExpExecArray;
+
+    while ((m = SettingsFile.exec(content)) !== null) {
+
+      if (m.index === SettingsFile.lastIndex) SettingsFile.lastIndex++;
+
+      const prop = m[0].split('.').filter(Boolean);
+
+      if (prop.length > 0) {
+
+        const range = new Range(document.positionAt(m.index), document.positionAt(m.index + 8));
+        const link = new DocumentLink(range, this.settings);
+
+        link.tooltip = 'Open File';
+
+        links.push(link);
+      }
+
+    }
+
+    return links;
+
+  }
+
+  // TODO
+  //
+  // private getLocalesLinks () { }
 
 }
