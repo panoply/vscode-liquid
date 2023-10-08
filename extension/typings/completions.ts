@@ -4,6 +4,7 @@ import { Type } from '@liquify/specs';
 import { CompletionItem } from 'vscode';
 import { Tag } from './enums';
 import { SchemaSectionTag } from './schema';
+import { LanguageSettings } from 'vscode-json-languageservice';
 
 export namespace Complete {
 
@@ -104,6 +105,13 @@ export namespace Complete {
      * The type which the variable holds
      */
     type: Type,
+  }
+
+  export interface JSONSchema {
+    /**
+     * Shared Schema Files
+     */
+    shared: LanguageSettings;
   }
 
   /**
