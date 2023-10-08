@@ -49,6 +49,7 @@ export namespace Workspace {
      * @default true
      */
     tags: boolean;
+    schemas: boolean;
     /**
      * Whether or not operator completions are enabled
      *
@@ -98,7 +99,7 @@ export namespace Workspace {
      */
     locales: boolean;
     /**
-     * Whether or not `settings_data.json` file completions are enabled
+     * Whether or not `settings_schema.json` file completions are enabled
      *
      * - Shopify
      *
