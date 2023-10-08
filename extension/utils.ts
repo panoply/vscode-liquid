@@ -1,11 +1,12 @@
 import { Range, workspace, TextDocument, MarkdownString, WorkspaceEdit, Position, Uri } from 'vscode';
 import esthetic, { LanguageName, Rules } from 'esthetic';
-import { omit, isType, has, hasPath } from 'rambdax';
+import { omit, has, hasPath } from 'rambdax';
 import stripJsonComments from 'strip-json-comments';
 import { InLanguageIds, LanguageIds, Liquidrc, StatusItem } from './types';
 import parseJSON from 'parse-json';
 import { existsSync, closeSync, openSync, utimesSync } from 'node:fs';
 import { access } from 'node:fs/promises';
+import { TextDecoder } from 'node:util';
 import { basename, join } from 'node:path';
 import os from 'node:os';
 
@@ -14,45 +15,6 @@ import os from 'node:os';
 /* -------------------------------------------- */
 
 const HOMEDIR = typeof os.homedir === 'undefined' ? '' : os.homedir().replace(/\\/g, '/');
-
-/* -------------------------------------------- */
-/* TYPEOF CHECKS                                */
-/* -------------------------------------------- */
-
-/**
- * Whether type is object or not
- */
-export const isObject = isType('Object');
-
-/**
- * Whether type is number or not
- */
-export const isNumber = isType('Number');
-
-/**
- * Whether type is function or not
- */
-export const isFunction = isType('Function');
-
-/**
- * Whether type is undefined
- */
-export const isUndefined = isType('Undefined');
-
-/**
- * Whether type is array or not
- */
-export const isArray = isType('Array');
-
-/**
- * Whether type is string or not
- */
-export const isString = isType('String');
-
-/**
- * Whether type is boolean or not
- */
-export const isBoolean = isType('Boolean');
 
 /* -------------------------------------------- */
 /* NATIVES                                      */
@@ -77,6 +39,123 @@ export const keys = Object.keys;
  * Cache reference of `Object.keys`
  */
 export const assign = Object.assign;
+
+/**
+ * Native prototype `toString` for type checks
+ */
+export const { toString } = Object.prototype;
+
+/**
+ * Text Decoder instance
+ */
+export const { decode } = new TextDecoder();
+
+/**
+ * Check if param is an array type
+ */
+export function isArray <T extends any[]> (param: any): param is T {
+
+  return toString.call(param).slice(8, -1) === 'Array';
+
+}
+
+/**
+ * Check if param is an object type
+ */
+export function isObject <T extends object> (param: any): param is T {
+
+  return toString.call(param).slice(8, -1) === 'Object';
+
+}
+
+/**
+ * Check if param is a string type
+ */
+export function isString <T extends string> (param: any): param is T {
+
+  return toString.call(param).slice(8, -1) === 'String';
+
+}
+
+/**
+ * Check if param is a date type
+ */
+export function isDate <T extends Date> (param: any): param is T {
+
+  return toString.call(param).slice(8, -1) === 'Date';
+
+}
+
+/**
+ * Check if param is an regular expression type
+ */
+export function isRegex <T extends RegExp> (param: any): param is T {
+
+  return toString.call(param).slice(8, -1) === 'RegExp';
+
+}
+
+/**
+ * Check if param is a function type
+ */
+export function isFunction <T extends Function> (param: any): param is T {
+
+  return toString.call(param).slice(8, -1) === 'Function';
+
+}
+
+/**
+ * Check if param is a boolean type
+ */
+export function isBoolean <T extends boolean> (param: any): param is T {
+
+  return toString.call(param).slice(8, -1) === 'Boolean';
+
+}
+
+/**
+ * Check if param is a number type
+ */
+export function isNumber <T extends number> (param: any): param is T {
+
+  return toString.call(param).slice(8, -1) === 'Number';
+
+}
+
+/**
+ * Check if param is a number type
+ */
+export function isNaN <T extends number> (param: any): param is T {
+
+  return Number.isNaN(param);
+
+}
+
+/**
+ * Check if param is null type
+ */
+export function isNull <T extends null> (param: any): param is T {
+
+  return toString.call(param).slice(8, -1) === 'Null';
+
+}
+
+/**
+ * Check if param is a undefined type
+ */
+export function isUndefined <T extends undefined> (param: any): param is T {
+
+  return toString.call(param).slice(8, -1) === 'Undefined';
+}
+
+/**
+ * Check if param is Asynchronous type
+ */
+export function isAsync<T extends Promise<unknown>> (param: any): param is T {
+
+  return toString.call(param).slice(8, -1) === 'AsyncFunction';
+
+}
 
 /* -------------------------------------------- */
 /* COMMON                                       */
@@ -244,6 +323,40 @@ export function jsonc (input: string): Liquidrc {
 }
 
 /**
+ * Get Range in File
+ *
+ * Reads and extracts a range from a regular expression. The URI
+ * will be read with workspace fs and the regular expression will
+ * be used to parse and capture the portion within the document.
+ */
+export async function getRangeInFile (uri: Uri, find: string) {
+
+  if (uri === null || !uri.fsPath) return null;
+
+  const fsPath = uri.fsPath;
+  const exists = await pathExists(fsPath);
+
+  if (exists) {
+
+    const file = await workspace.fs.readFile(uri);
+    const content = file.toString();
+
+    if (content.trim().length === 0) return null;
+
+    const offset = content.indexOf(find);
+    const lines = content.slice(0, offset).split(/\n/);
+
+    return lines.length + 1;
+
+  } else {
+
+    return null;
+
+  }
+
+}
+
+/**
  * Parse JSON File
  *
  * Parses and returns the value of a JSON file from
@@ -261,7 +374,11 @@ export async function parseJsonFile (uri: Uri) {
   if (exists) {
 
     const file = await workspace.fs.readFile(uri);
-    const parsed = parseJSON(file.toString(), basename(fsPath));
+    const json = file.toString();
+
+    if (json.trim().length === 0) return null;
+
+    const parsed = parseJSON(json, basename(fsPath));
 
     return parsed;
 
