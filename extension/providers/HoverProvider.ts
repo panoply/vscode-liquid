@@ -127,16 +127,21 @@ export class HoverProvider extends Service implements IHoverProvider {
    */
   async provideHover (document: TextDocument, position: Position, _token: CancellationToken): Promise<Hover> {
 
-    if (this.enable.schema === true && this.json.schema.has(document.uri.fsPath)) {
+    if (this.enable.schema === true && this.json.sections.has(document.uri.fsPath)) {
 
       const offset = document.offsetAt(position);
-      const schema = this.json.schema.get(document.uri.fsPath);
+      const schema = this.json.sections.get(document.uri.fsPath);
 
       if (offset > schema.begin && offset < schema.ender) {
         const parse = this.json.doParse(document, position, schema);
         const hover = await this.json.doHover(parse);
-        return new Hover(hover as any);
+        if (hover !== null) {
+          return new Hover(hover as any);
+        } else {
+          return null;
+        }
       }
+
     }
 
     if (this.enable.tags === true) {
