@@ -72,6 +72,7 @@ The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (
 - [Completions](#completions)
   - [Files](#files)
   - [Shopify Schema](#shopify-schema)
+  - [Shared Section Schema](#shared-section-schema)
   - [JSON Files](#json-files)
 - [Formatting](#formatting)
   - [Æsthetic](#esthetic)
@@ -495,6 +496,20 @@ In addition to JSON and Liquid completion support, schema JSON diagnostic valida
 ```
 
 </details>
+
+# Shared Section Schema
+
+Shopify developers who leverage [Syncify](https://github.com/panoply/syncify) for theme development can take advantage of Shared Section Schema JSON IntelliSense capabilities. By default, all files using a `.schema` extension will be identified as **Shared Section Schema** and completions will be made available within `{% schema %}` tags via `$ref` occurrences.
+
+### Syncify
+
+[Syncify](https://github.com/panoply/syncify) is a theme development tool which exists as superior alternative to the Shopify CLI. It introduces a refined approach to Shopify theme development and offers essential features. One of the core capabilities of Syncify is shared section schema which allows developers to have isolated schemas from which you can inject into different sections.
+
+I actively maintain Syncify and created it to solve what I considered to be a fundamentally flawed approach to Theme Development introduced by Shopify and the Shopify CLI. If you are using the Shopify CLI then this capability is not available to you.
+
+### Leveraging Shared Schemas
+
+All files in your workspace using a `.schema` extension will be treated as JSON by the extension. At runtime, your workspace is traversed and all `.schema` files are gathered and parsed automatically.
 
 ### JSON Files
 
