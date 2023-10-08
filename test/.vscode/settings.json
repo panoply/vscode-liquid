@@ -7,32 +7,33 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "sissel.shopify-liquid"
   },
+  "liquid.config.baseDir": ".",
   // "liquid.config.baseDir": "./base/subdir",
-  "liquid.config.method": "workspace",
-  "liquid.completion.tags": true,
-  "liquid.completion.objects": true,
-  "liquid.completion.filters": true,
-  "liquid.completion.operators": true,
-  "liquid.completion.properties": true,
-  "liquid.completion.sections": true,
-  "liquid.completion.variables": true,
-  "liquid.completion.schema": true,
-  "liquid.validate.schema": true,
-  "liquid.hover.tags": true,
-  "liquid.hover.filters": true,
-  "liquid.hover.schema": true,
-  "liquid.engine": "shopify",
-  "liquid.files.shopify": {
-    "settings": "./theme/config/settings_schema.json",
-    "locales": "./theme/locales/en.default.json",
-    "sections": [
-      "./sections/*.liquid"
-    ],
-    "snippets": [
-      "./completions/*.liquid"
-    ],
-  },
-  "editor.foldingStrategy": "indentation"
+  // "liquid.config.method": "workspace",
+  // "liquid.completion.tags": true,
+  // "liquid.completion.objects": true,
+  // "liquid.completion.filters": true,
+  // "liquid.completion.operators": true,
+  // "liquid.completion.properties": true,
+  // "liquid.completion.sections": true,
+  // "liquid.completion.variables": true,
+  // "liquid.completion.schema": true,
+  // "liquid.validate.schema": true,
+  // "liquid.hover.tags": true,
+  // "liquid.hover.filters": true,
+  // "liquid.hover.schema": true,
+  // "liquid.engine": "shopify",
+  // "liquid.files.shopify": {
+  //   "settings": "./theme/config/settings_schema.json",
+  //   "locales": "./theme/locales/en.default.json",
+  //   "sections": [
+  //     "./sections/*.liquid"
+  //   ],
+  //   "snippets": [
+  //     "./completions/*.liquid"
+  //   ],
+  // },
+  // "editor.foldingStrategy": "indentation"
   // "[liquid]": {
   //   "editor.defaultFormatter": "sissel.shopify-liquid",
   //   "editor.formatOnSave": true

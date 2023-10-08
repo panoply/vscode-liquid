@@ -6,44 +6,6 @@
   endif
 %}
 
-
-{{ 'accessibility' }}
-
-{% render '' %}
-
-{% render '' %}
-
-{{ article. }}
-
-<div class="row jc-center py-{{ section.settings.gutter }}">
-  {% for b in section.blocks %}
-
-    {{ b }}
-
-    {{ b.id }}
-
-    {% liquid
-
-      # comment
-
-      capture gutter
-        if forloop.first
-          echo section.settings.gutter | prepend: "pr-"
-        elsif forloop.last
-          echo section.settings.gutter | prepend: "pl-"
-        else
-          echo section.settings.gutter | prepend: "px-"
-        endif
-      endcapture
-    %}
-
-
-    {{  }}
-
-  {% endfor %}
-</div>
-
-
 {% schema %}
   {
     "name": "foo",
@@ -52,17 +14,14 @@
     },
     "settings": [
       {
-        "type": "article",
-        "id": "",
-        "label": ""
-      }
+        "$ref": "images.some_key"
+      },
       {
-        "type": "color_scheme",
-        "id": "foo_bar_bar",
-        "label": "Foo Bar Bar",
-        "default": "#ccc"
+        "$ref": "images.qux"
+      },
+      {
+        "$ref": "images.foo"
       }
-
     ]
   }
 {% endschema %}

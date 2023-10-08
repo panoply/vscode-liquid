@@ -1,0 +1,507 @@
+{
+  "$description": {
+    "textarea": [
+      "Markdown descriptions, in **bold** and also with code snippets",
+      "",
+      "```liquid",
+      "",
+      "{% render 'example' %}",
+      "",
+      "```",
+      "",
+      "---",
+      "",
+      "_Some italic text_"
+    ]
+  },
+  "textarea": [
+    {
+      "type": "header",
+      "content": "Textarea Input",
+      "info": "Renders a Textarea container"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "info": "Defines the label of the textarea"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Placeholder",
+      "info": "Describes an expected value for the textarea"
+    },
+    {
+      "type": "checkbox",
+      "id": "require",
+      "label": "Require",
+      "default": true,
+      "info": "Whether or input is required"
+    },
+    {
+      "type": "checkbox",
+      "id": "required",
+      "info": "The form requires this input to be filled",
+      "label": "Required"
+    },
+    {
+      "type": "header",
+      "content": "Layout",
+      "info": "Control layout and alignment of the grid system."
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "label": "Height",
+      "info": "The height of the textarea input",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Gutter",
+      "info": "Control gutter spacing"
+    },
+    {
+      "type": "range",
+      "id": "mt",
+      "label": "Top",
+      "info": "The margin to apply from top",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mb",
+      "label": "Bottom",
+      "info": "The margin to apply from bottom",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    }
+  ],
+  "text": [
+    {
+      "type": "header",
+      "content": "Input Field",
+      "info": "A text input field to render in the form."
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Placeholder",
+      "info": "Describes an expected value of the input"
+    },
+    {
+      "type": "text",
+      "id": "name",
+      "label": "Name",
+      "info": "Defines the name of the input field"
+    },
+    {
+      "type": "select",
+      "id": "autocomplete",
+      "label": "Autocomplete",
+      "info": "See [Values](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete#values) for reference.",
+      "default": "off",
+      "options": [
+        {
+          "value": "off",
+          "label": "Disabled"
+        },
+        {
+          "value": "on",
+          "label": "Enabled"
+        },
+        {
+          "value": "name",
+          "label": "Name"
+        },
+        {
+          "value": "given-name",
+          "label": "First Name"
+        },
+        {
+          "value": "additional-name",
+          "label": "Middle name"
+        },
+        {
+          "value": "family-name",
+          "label": "Last Name"
+        },
+        {
+          "value": "nickname",
+          "label": "Nickname or Handle"
+        },
+        {
+          "value": "organization",
+          "label": "Company or Oganization name"
+        },
+        {
+          "value": "street-address",
+          "label": "Street Address"
+        },
+        {
+          "value": "postal-code",
+          "label": "Postal Code"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "required",
+      "label": "Required",
+      "default": false,
+      "info": "Whether or not the value is required"
+    },
+    {
+      "type": "header",
+      "content": "Validation",
+      "info": "Validation control for expected input text value"
+    },
+    {
+      "type": "range",
+      "id": "minlength",
+      "label": "Minimum Length",
+      "info": "The minimum number of characters required",
+      "min": 1,
+      "max": 75,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "maxlength",
+      "label": "Maximum Length",
+      "info": "The maximum number of characters required",
+      "min": 1,
+      "max": 75,
+      "step": 1,
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Gutter",
+      "info": "Control gutter spacing"
+    },
+    {
+      "type": "range",
+      "id": "mt",
+      "label": "Top",
+      "info": "The margin to apply from top",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mb",
+      "label": "Bottom",
+      "info": "The margin to apply from bottom",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Layout",
+      "info": "Control layout and alignment of the grid system"
+    },
+    {
+      "type": "range",
+      "id": "xl",
+      "label": "Desktop Columns",
+      "info": "The amount of columns in desktop",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "md",
+      "label": "Tablet Columns",
+      "info": "The amount of columns in tablet",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "xs",
+      "label": "Mobile Columns",
+      "info": "The amount of columns in mobile",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 12
+    }
+  ],
+  "telephone": [
+    {
+      "type": "header",
+      "content": "Phone Number Field",
+      "info": "A telephone number input field to render in the form."
+    },
+    {
+      "type": "text",
+      "id": "name",
+      "label": "Name",
+      "info": "Defines the name of the telephone field",
+      "default": "telephone"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Placeholder",
+      "info": "Describes an expected value of the input"
+    },
+    {
+      "type": "checkbox",
+      "id": "autocomplete",
+      "label": "Autocomplete",
+      "default": false,
+      "info": "Whether or not to allow autocompletion"
+    },
+    {
+      "type": "checkbox",
+      "id": "code",
+      "label": "Country Code",
+      "default": false,
+      "info": "Whether or not to provide a country calling code"
+    },
+    {
+      "type": "checkbox",
+      "id": "require",
+      "label": "Require",
+      "default": false,
+      "info": "Whether or not the value is required"
+    },
+    {
+      "type": "header",
+      "content": "Gutter",
+      "info": "Control gutter spacing"
+    },
+    {
+      "type": "range",
+      "id": "mt",
+      "label": "Top",
+      "info": "The margin to apply from top",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mb",
+      "label": "Bottom",
+      "info": "The margin to apply from bottom",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Layout",
+      "info": "Control layout and alignment of the grid system"
+    },
+    {
+      "type": "range",
+      "id": "xl",
+      "label": "Desktop Columns",
+      "info": "The amount of columns in desktop",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "md",
+      "label": "Tablet Columns",
+      "info": "The amount of columns in tablet",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "xs",
+      "label": "Mobile Columns",
+      "info": "The amount of columns in mobile",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 12
+    }
+  ],
+  "number": [
+    {
+      "type": "header",
+      "content": "Number Input",
+      "info": "Renders a Numeric input field"
+    },
+    {
+      "type": "text",
+      "id": "name",
+      "label": "Name",
+      "info": "Defines the name of the number field"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Placeholder",
+      "info": "The placeholder to render"
+    },
+    {
+      "type": "checkbox",
+      "id": "required",
+      "info": "The form requires this input to be filled",
+      "label": "Required"
+    },
+    {
+      "type": "header",
+      "content": "Gutter",
+      "info": "Control gutter spacing"
+    },
+    {
+      "type": "range",
+      "id": "mt",
+      "label": "Top",
+      "info": "The margin to apply from top",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mb",
+      "label": "Bottom",
+      "info": "The margin to apply from bottom",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    }
+  ],
+  "switch": [
+    {
+      "type": "header",
+      "content": "Switch Input",
+      "info": "A toggle switch (checkbox) input field"
+    },
+    {
+      "type": "text",
+      "id": "name",
+      "label": "Name",
+      "info": "Defines the name of the switch field"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "info": "The label which describes the switch"
+    },
+    {
+      "type": "checkbox",
+      "id": "consent",
+      "info": "Whether or not the switch is a consent",
+      "label": "Consent (GDRP)",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "default",
+      "info": "The default state to use",
+      "label": "on/off",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Layout and Sizing",
+      "info": "Control layout, style and/or alignment of the switch"
+    },
+    {
+      "type": "select",
+      "id": "row",
+      "label": "Position",
+      "default": "jc-between",
+      "options": [
+        {
+          "value": "jc-between",
+          "label": "Between"
+        },
+        {
+          "value": "jc-start",
+          "label": "Left"
+        },
+        {
+          "value": "jc-center",
+          "label": "Center"
+        },
+        {
+          "value": "jc-end",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Sizing",
+      "default": "fm-switch",
+      "options": [
+        {
+          "value": "fm-switch-sm",
+          "label": "Between"
+        },
+        {
+          "value": "fm-switch",
+          "label": "Medium"
+        },
+        {
+          "value": "fm-switch-lg",
+          "label": "Large"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Gutter",
+      "info": "Control gutter spacing"
+    },
+    {
+      "type": "range",
+      "id": "mt",
+      "label": "Top",
+      "info": "The margin to apply from top",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mb",
+      "label": "Bottom",
+      "info": "The margin to apply from bottom",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    }
+  ]
+}
