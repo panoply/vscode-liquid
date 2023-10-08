@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import { LiteralUnion } from 'type-fest';
+import { LiteralUnion, Merge } from 'type-fest';
 import { Position, TextDocument } from 'vscode';
 
 export interface SchemaRegion {
@@ -56,6 +56,10 @@ export namespace Schema {
 
   export interface Common<T extends SchemaSettingTypes> {
     /**
+     * Description - Only Shared Schema applies
+     */
+    $description?: string | string[];
+    /**
      * The setting type, which can be any of the basic or specialized input setting types.
      */
     type: T;
@@ -71,6 +75,10 @@ export namespace Schema {
      * An option for informational text about the setting.
      */
     info?: string;
+    /**
+     * Reference to shared schema
+     */
+    $ref?: string
   }
 
   export interface Number extends Common<'number'> {
@@ -407,6 +415,10 @@ export interface SettingsData {
 
 export interface SchemaBlocks {
   /**
+   * Description - Only Shared Schema applies
+   */
+  $description?: string | string[];
+  /**
    * The block type. This is a free-form string that you can use
    * as an identifier. You can access this value through the type
    * attribute of the block object.
@@ -424,7 +436,12 @@ export interface SchemaBlocks {
    * Any input or sidebar settings that you want for the block. Certain
    * settings might be used as the title of the block in the theme editor.
    */
-  settings?: SchemaSettings[]
+  settings?: SchemaSettings[];
+
+  /**
+   * Reference to shared schema
+   */
+  $ref?: string
 }
 
 export interface EnabledOn {
@@ -528,4 +545,21 @@ export interface SchemaSectionTag {
    * of strings that represent the page type.
    */
   templates?: string[];
+}
+
+export type SharedSchemaDescription = string | string[] | {
+  [ref: string]: string | string[];
+}
+
+export interface SharedSchema {
+  /**
+   * References
+   */
+  [ref: string]: (
+    | SchemaSettings[]
+    | SchemaBlocks[]
+    | SchemaSettings
+    | SchemaBlocks
+    | { $description?: SharedSchemaDescription; settings: SchemaSettings[] }
+  );
 }
