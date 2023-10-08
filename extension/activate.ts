@@ -41,7 +41,7 @@ class VSCodeLiquid extends Events {
 
       }
 
-      console.log(subscriptions);
+      // console.log(subscriptions);
 
       await this.onDidChangeActiveTextEditor(window.activeTextEditor);
 
@@ -123,6 +123,7 @@ class VSCodeLiquid extends Events {
   private register (subscriptions: { dispose(): void; }[]) {
 
     subscriptions.push(
+      languages.registerDocumentLinkProvider(this.selector, this.links),
       languages.registerHoverProvider(this.selector, this.hovers),
       languages.registerCompletionItemProvider(this.selector, this.completion, ...this.completion.triggers),
       languages.registerDocumentFormattingEditProvider(this.selector, this.formatting)
