@@ -8,11 +8,14 @@ import { ConfigurationTarget, Extension as IExtension, Uri, workspace, Disposabl
 import { ConfigMethod } from './typings/enums';
 import { Service } from './services';
 import { FormatEvent } from 'providers/FormattingProvider';
+import { SharedSchema } from 'types';
 
 /**
  * Extension State - Localized store for the extension
  */
 export class Extension extends Service {
+
+  static shared: Map<string, SharedSchema> = new Map();
 
   constructor ({ packageJSON, isActive }: IExtension<PackageJSON>) {
 
@@ -26,6 +29,14 @@ export class Extension extends Service {
     this.meta.displayName = packageJSON.displayName;
     this.meta.estheticVersion = packageJSON.dependencies.esthetic;
     this.meta.releaseNotes = Uri.parse(`${this.meta.repository}/releases/tag/v${this.meta.version}`);
+
+  }
+
+  /**
+   */
+  get sharedSchema (): Map<string, SharedSchema> {
+
+    return Extension.shared;
 
   }
 
@@ -113,6 +124,7 @@ export class Extension extends Service {
         locales: null,
         localesSchema: null,
         settings: null,
+        schema: new Set(),
         snippets: new Set(),
         sections: new Set()
       }
