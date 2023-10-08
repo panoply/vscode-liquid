@@ -81,12 +81,12 @@ export class Events extends CommandPalette {
 
       if (schema !== false) {
 
-        this.json.schema.set(document.uri.fsPath, schema);
+        this.json.sections.set(document.uri.fsPath, schema);
 
         const diagnostics = await this.json.doValidation(document.uri);
 
         this.formatting.enable = this.json.canFormat;
-        this.json.diagnostics.set(document.uri, diagnostics);
+        this.json.diagnostics.set(document.uri, diagnostics as any);
 
       } else {
 
@@ -95,8 +95,8 @@ export class Events extends CommandPalette {
           this.json.diagnostics.clear();
         }
 
-        if (this.json.schema.has(document.uri.fsPath)) {
-          this.json.schema.delete(document.uri.fsPath);
+        if (this.json.sections.has(document.uri.fsPath)) {
+          this.json.sections.delete(document.uri.fsPath);
         }
       }
     }
@@ -121,6 +121,10 @@ export class Events extends CommandPalette {
 
       const { uri, languageId } = textDocument.document;
 
+      if (uri.fsPath.endsWith('.schema')) {
+        await this.getSharedSchema(uri);
+      }
+
       if (!this.languages.get(languageId)) {
 
         this.json.diagnostics.clear();
@@ -135,12 +139,12 @@ export class Events extends CommandPalette {
 
         if (schema !== false) {
 
-          this.json.schema.set(uri.fsPath, schema);
+          this.json.sections.set(uri.fsPath, schema);
 
           const diagnostics = await this.json.doValidation(uri);
 
           this.formatting.enable = this.json.canFormat;
-          this.json.diagnostics.set(uri, diagnostics);
+          this.json.diagnostics.set(uri, diagnostics as any);
 
         }
 
@@ -219,7 +223,13 @@ export class Events extends CommandPalette {
         await this.getExternal([ 'settings' ]);
 
         this.info(`Updated: ${uri.fsPath}`);
+
+      } else if (uri.fsPath.endsWith('.schema')) {
+
+        await this.getSharedSchema(uri);
+
       }
+
     }
   }
 
