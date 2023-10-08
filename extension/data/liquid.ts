@@ -155,7 +155,7 @@ export function getLocaleSchemaSetting (key: string) {
 /**
  * Get Settings Completions
  *
- * Generates the `settings_data.json` completions following the
+ * Generates the `settings_schema.json` completions following the
  * `settings.*` object.
  */
 export function getSettingsCompletions (uri: string, data: SettingsData[]) {
