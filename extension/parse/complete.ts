@@ -1,7 +1,7 @@
 import { Char, Complete, Tag, Token } from 'types';
 import { IToken } from 'parse/tokens';
 import { Properties, $, Type, q } from '@liquify/specs';
-import slash, { entries, isNumber, isString, keys } from 'utils';
+import slash, { entries, isNumber, isObject, isString, keys } from 'utils';
 import { join } from 'node:path';
 import { mdString, detail, kind, objectKind } from 'parse/helpers';
 import {
@@ -130,8 +130,6 @@ export function getLocaleCompletions (
 
   const locales = $.liquid.files.get('locales');
   const items = walkLocales(props.split('.').filter(Boolean), locales);
-
-  console.log(props);
 
   if (isString(items)) return null;
 
@@ -359,10 +357,10 @@ export function getSchemaCompletions (slice: number, position: Position, items: 
 
   return items.map(({
     label,
-    documentation,
+    documentation = null,
     textEdit,
     kind
-  }: CompletionItem & { documentation: { value: string } }) => {
+  }: CompletionItem & { documentation: { value?: string } }) => {
 
     const range = new Range(
       new Position(position.line, position.character),
@@ -373,7 +371,13 @@ export function getSchemaCompletions (slice: number, position: Position, items: 
       label,
       kind,
       insertText: new SnippetString(textEdit.newText.slice(slice)),
-      documentation: mdString(documentation.value),
+      documentation: documentation === null
+        ? mdString(label as string)
+        : isObject(documentation)
+          ? mdString(documentation.value)
+          : isString(documentation)
+            ? mdString(documentation)
+            : documentation || '',
       range: {
         inserting: range,
         replacing: range
