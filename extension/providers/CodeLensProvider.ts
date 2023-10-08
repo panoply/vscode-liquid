@@ -29,6 +29,7 @@ export class CodeLensProvider implements ICodeLensProvider {
     let matches;
 
     while ((matches = regex.exec(text)) !== null) {
+
       const line = document.lineAt(document.positionAt(matches.index).line);
       const indexOf = line.text.indexOf(matches[0]);
       const position = new Position(line.lineNumber, indexOf);
@@ -42,12 +43,16 @@ export class CodeLensProvider implements ICodeLensProvider {
 
   }
 
+  public command () {
+
+  }
+
   public resolveCodeLens (codeLens: CodeLens, token: CancellationToken) {
     if (workspace.getConfiguration('codelens-sample').get('enableCodeLens', true)) {
       codeLens.command = {
         title: 'Codelens provided by sample extension',
         tooltip: 'Tooltip provided by sample extension',
-        command: 'codelens-sample.codelensAction',
+        command: 'liquid.codelensAction',
         arguments: [ 'Argument 1', false ]
       };
       return codeLens;
