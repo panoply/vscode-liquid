@@ -94,6 +94,32 @@
           "product.json",
           "product.*.json"
         ]
+      },
+      {
+        "url": "./schema/syncify-env.json",
+        "fileMatch": [
+          ".env.syncify",
+          ".env.syncify.json"
+        ]
+      },
+      {
+        "url": "./schema/syncify-schema.json",
+        "fileMatch": [
+          "*.schema"
+        ]
+      },
+      {
+        "url": "./schema/syncify-pkg.json",
+        "fileMatch": [
+          "package.json"
+        ]
+      },
+      {
+        "url": "./schema/syncify.json",
+        "fileMatch": [
+          "syncify.config.json",
+          "syconfig.json"
+        ]
       }
     ],
     "commands": [
@@ -159,7 +185,11 @@
         ],
         "aliases": [
           "Liquid"
-        ]
+        ],
+        "icon": {
+          "light": "/icons/liquid.svg",
+          "dark": "/icons/liquid.svg"
+        }
       },
       {
         "id": "liquid-css",
@@ -189,13 +219,34 @@
         ],
         "aliases": [
           "Liquid JavaScript"
-        ]
+        ],
+        "icon": {
+          "light": "/icons/liquid-javascript.svg",
+          "dark": "/icons/liquid-javascript.svg"
+        }
       },
       {
         "id": "jsonc",
         "filenames": [
           ".liquidrc",
           ".liquidrc.json"
+        ],
+        "icon": {
+          "light": "/icons/liquidrc.svg",
+          "dark": "/icons/liquidrc.svg"
+        }
+      },
+      {
+        "id": "json",
+        "filenamePatterns": [
+          "*.schema"
+        ]
+      },
+      {
+        "id": "json",
+        "filenames": [
+          ".env.syncify",
+          ".env.syncify.json"
         ]
       }
     ],
@@ -400,7 +451,7 @@
     },
     "configuration": {
       "title": "Liquid Language Settings",
-      "markdownDescription": "The Liquid extension will look for a `.liquidrc` or `.liquidrc.json` in the root of your project. When no such files exists it will check for the presence of an `esthetic` field in `package.json` files. When neither are detected the extension will use the `.vscode/settings.json` file or alternatively your global user settings.",
+      "markdownDescription": "The Liquid extension will look for a `.liquidrc` or `.liquidrc.json` in the root of your project. When no such files exists it will use the `.vscode/settings.json` file or alternatively your global user settings.",
       "type": "object",
       "properties": {
         "liquid.engine": {
@@ -416,7 +467,6 @@
         },
         "liquid.config.baseDir": {
           "type": "string",
-          "default": ".",
           "markdownDescription": "**Default** `.`\n\nThe `liquid.config.baseDir` option can be used to define a **relative** directory path for resolving `.liquidrc` or `.liquidrc.json` files. The option will only work in projects that use `.liquidrc` files and has no effect if `liquid.config.method` is set `workspace`\n\nConsider the following directory layout:\n\n```\n\n root\n ├─ .vscode\n │  └─ settings.json\n ├─ docs\n │  ├─ .liquidrc.json\n │  └─ index.liquid\n └─ src\n    ├─ includes\n    └─ views\n\n```\n\nBy default, when no `.liquidrc` exist in a projects root, then it is assumed beautification rules have been defined in the `.vscode/settings.json` workspace file. When no formatting rules are defined in the workspace file then the default rules will be used. In situations where you need the extension to use a config file that is located outside of the root you can provide a `baseDir` to the directory containing one of the supported file types.\n\nTargeting the `.liquidrc.json` file located in `docs` directory:\n\n<!--prettier-ignore-->\n```jsonc\n{\n  \"liquid.config.baseDir\": \"./docs\"\n}\n```\n\n_The `baseDir` must point to a relative directory not a file. If the directory provided cannot be resolved, root is used._\n"
         },
         "liquid.config.method": {
@@ -431,7 +481,7 @@
         "liquid.files.shopify": {
           "type": "object",
           "additionalProperties": false,
-          "markdownDescription": "[11ty](https://shopify.dev) file references.",
+          "markdownDescription": "[Shopify](https://shopify.dev) file references.",
           "properties": {
             "locales": {
               "type": "string",
@@ -455,6 +505,17 @@
                 "string"
               ],
               "markdownDescription": "**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain section files. When you provide section file location references the sections will be made available in `{% section '' %}` tag completions and `cmd + click` will allow quick opening.\n\n",
+              "items": {
+                "uniqueItems": true,
+                "type": "string"
+              }
+            },
+            "schema": {
+              "type": [
+                "array",
+                "string"
+              ],
+              "markdownDescription": "> **This reference is for developers leveraging [Syncify](https://github.com/panoply/syncify). If you are not using Syncify then please consider adopting it as an alternative to Shopify CLI. Break free from the Shopify CLI by using Syncify and leveraging Shared Section Schema.**\n\n---\n\n**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain shared schema files, this will _typically_ be identical to globs you've defined in your `syncify.config.ts` file on the `paths > schema[]` config option. When you provide schema file mapping, shared section scheme `$ref` entires within `{% schema %}` tags will provide auto-completions and in addition any `$description` key values will be rendered in tooltips.\n",
               "items": {
                 "uniqueItems": true,
                 "type": "string"
@@ -1227,7 +1288,7 @@
   },
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup  --onSuccess \"vsce package --no-dependencies\"",
+    "build": "tsup --onSuccess \"vsce package --no-dependencies\"",
     "dry": "vsce ls package --no-dependencies",
     "schema": "node ./scripts/schemas.cjs",
     "grammar": "node ./scripts/grammars.cjs"
@@ -1263,21 +1324,21 @@
     "@liquify/eslint-config": "^1.2.0",
     "@liquify/prettier-config": "^1.2.1",
     "@types/vscode": "^1.70.0",
-    "@vscode/vsce": "^2.20.1",
-    "eslint": "^8.47.0",
+    "@vscode/vsce": "^2.21.1",
+    "eslint": "^8.51.0",
     "esthetic": "link:../liquify/packages/esthetic",
-    "prettier": "^3.0.2",
+    "prettier": "^3.0.3",
     "tsup": "^7.2.0",
-    "type-fest": "^4.2.0"
+    "type-fest": "^4.4.0"
   },
   "dependencies": {
-    "@liquify/schema": "^0.6.3",
-    "@liquify/specs": "^0.2.3",
+    "@liquify/schema": "^0.8.3",
+    "@liquify/specs": "^0.2.4",
     "anymatch": "^3.1.3",
-    "parse-json": "^7.0.0",
+    "parse-json": "^7.1.0",
     "rambdax": "10.0.0",
     "strip-json-comments": "^5.0.1",
-    "vscode-css-languageservice": "^6.2.6",
-    "vscode-json-languageservice": "^5.3.5"
+    "vscode-css-languageservice": "^6.2.9",
+    "vscode-json-languageservice": "^5.3.6"
   }
 }
