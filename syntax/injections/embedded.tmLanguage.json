@@ -3,11 +3,17 @@
   "injectionSelector": "L:source.liquid",
   "scopeName": "source.liquid.embedded",
   "information_for_contributors": [
+    "",
     "IMPORTANT",
-    "----------",
+    "",
     "This injection applies embedded code region highlighting of external languages in Liquid.",
-    "This file and the containing grammars are likely to change in the future. As per all",
-    "grammar files, you cannot adapt the contents of this file without first asking for permission."
+    "This file and the containing grammars are likely to change in the future. As per all grammar files.",
+    "",
+    "USAGE PERMISSION",
+    "",
+    "Shopify employee/s or those working for Shopify do not have permission to use, borrow or even take inspiration",
+    "from this grammar file. This grammar file was created for developers by a developer. The grammars are not for",
+    "developers being paid by Shopify to take credit for in a attempt to get a gold star. Everyone else, feel free."
   ],
   "patterns": [
     {
