@@ -3,6 +3,8 @@ import { basename } from 'node:path';
 import { SchemaSectionTag, SchemaSettings, SchemaSettingTypes } from 'types';
 import { MarkdownString, CompletionItemKind, Uri } from 'vscode';
 import { Type, Types } from '@liquify/specs';
+import { getSharedSchemaRef } from './schema';
+import { isArray } from 'utils';
 
 export const Tag = (name: string) => new RegExp(`{%-?\\s*\\b${name}\\b\\s+-?%}`);
 
@@ -19,6 +21,21 @@ export const SchemaStart = /{%-?\s*\bschema\b\s*-?%}/;
  * Schema End
  */
 export const SchemaEnd = /{%-?\s*\bschema\b\s*-?%}/;
+
+/**
+ * Snippet File Link
+ */
+export const SnippetFile = /(?<={%-?\s*(?:include|render)\s*)['"].*?['"]/g;
+
+/**
+ * Section File Link
+ */
+export const SectionFile = /(?<={%-?\s*section\s*)['"].*?['"]/g;
+
+/**
+ * Section File Link
+ */
+export const SettingsFile = /(?<=\s)settings[.['"][\w.'"[\]]*/g;
 
 /**
  * Control Names, eg: `if|elsif|case|when|unless`
@@ -59,7 +76,25 @@ export function schemaType (schema: SchemaSectionTag) {
 
   if (has('blocks', schema) && schema.blocks.length > 0) {
 
-    const types = schema.blocks.map(block => block.type).join('|');
+    const types = schema.blocks.flatMap(block => {
+
+      if ('$ref' in block) {
+
+        const ref = getSharedSchemaRef(block.$ref);
+
+        if (ref === null) return [];
+
+        if (isArray(ref.schema)) {
+          return ref.schema.map(b => b.type);
+        } else {
+          return ref.schema.type;
+        }
+
+      } else {
+        return block.type;
+      }
+
+    }).join('|');
 
     return new RegExp(`(?:\\bwhen\\s+|==\\s*)["']\\b(${types})['"]`, 'g');
 
@@ -86,7 +121,7 @@ export function mdString (description: string, reference?: {
 
   if (reference && has('name', reference) && has('url', reference)) {
     md.baseUri = Uri.file(reference.url);
-    md.appendMarkdown(`\n\n[${reference.name}](./${reference.name})`);
+    md.appendMarkdown(`\n\n[${reference.name}](${reference.url})`);
   }
 
   return md;
