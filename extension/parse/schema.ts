@@ -1,6 +1,145 @@
-import { Complete, SchemaSectionTag, Token } from 'types';
+import { Complete, SchemaBlocks, SchemaSectionTag, SchemaSettings, Token } from 'types';
 import { CompletionItem, CompletionItemKind } from 'vscode';
 import { kind, mdSchema, schemaType } from 'parse/helpers';
+import { Extension } from '../extension';
+import { isArray, isObject } from 'utils';
+
+export function getSharedSchemaRef <T = any> (reference: string): {
+  file: string;
+  prop: string;
+  schema: T
+} {
+
+  const [ key, prop ] = reference.split('.');
+
+  if (!Extension.shared.has(key)) return null;
+
+  const file = Extension.shared.get(key);
+
+  if (!(prop in file)) return null;
+
+  return {
+    schema: <T>file[prop],
+    file: `${key}.schema`,
+    prop
+  };
+
+}
+
+type GetShared = ReturnType<typeof getSharedSchemaRef>
+
+function getSharedSchemaSettings ({ file, schema }: GetShared, items: CompletionItem[]) {
+
+  if (isArray(schema)) {
+
+    for (const ref of schema) {
+
+      if (ref.id === undefined) continue;
+
+      items.push({
+        label: ref.id,
+        insertText: ref.id,
+        detail: `${ref.type} (${file})`,
+        preselect: true,
+        documentation: mdSchema(ref as any),
+        kind: kind(ref.type)
+      });
+
+    }
+
+  } else if (isObject(schema)) {
+
+    if ('settings' in schema && isArray<SchemaSettings[]>(schema.settings)) {
+
+      for (const ref of schema.settings) {
+
+        if (ref.id === undefined) continue;
+
+        items.push({
+          label: ref.id,
+          insertText: ref.id,
+          detail: `${ref.type} (${file})`,
+          preselect: true,
+          documentation: mdSchema(ref as any),
+          kind: kind(ref.type)
+        });
+      }
+
+    } else {
+
+      const ref: any = schema;
+
+      if (ref.id === undefined) return;
+
+      items.push({
+        label: ref.id,
+        insertText: ref.id,
+        detail: `${ref.type} (${file})`,
+        preselect: true,
+        documentation: mdSchema(ref as any),
+        kind: kind(ref.type)
+      });
+
+    }
+
+  }
+}
+
+function getSharedSchemaBlockType ({ file, schema }: GetShared, items: CompletionItem[], type: string) {
+
+  if (isArray<SchemaBlocks[]>(schema)) {
+
+    for (const ref of schema) {
+      items.push({
+        label: ref.type,
+        documentation: ref.name,
+        detail: `${ref.type} (${file})`,
+        kind: CompletionItemKind.TypeParameter,
+        preselect: true,
+        insertText: type === 'string' ? `"${ref.type}"` : ref.type
+      });
+    }
+  } else if (isObject<SchemaBlocks>(schema)) {
+
+    items.push({
+      label: schema.type,
+      documentation: schema.name,
+      detail: `${schema.type} (${file})`,
+      kind: CompletionItemKind.TypeParameter,
+      preselect: true,
+      insertText: type === 'string' ? `"${schema.type}"` : schema.type
+    });
+  }
+
+}
+
+function getSharedBlockSchema (blocks: SchemaBlocks[], type: string) {
+
+  for (const block of blocks) {
+
+    if ('$ref' in block) {
+
+      const ref = getSharedSchemaRef(block.$ref);
+
+      if (ref === null) return false;
+
+      if (isArray<SchemaBlocks[]>(ref.schema)) {
+
+        const setting = ref.schema.find((b) => b.type === type);
+
+        if (setting) return setting;
+
+      } else if (isObject<SchemaBlocks>(ref.schema)) {
+
+        if (ref.schema.type === type) return ref.schema;
+
+      }
+    }
+
+  }
+
+  return false;
+}
 
 /**
  * Get Schema Block Types
@@ -9,13 +148,32 @@ import { kind, mdSchema, schemaType } from 'parse/helpers';
  */
 export function getSchemaBlockTypeCompletions (schema: SchemaSectionTag, type?: string) {
 
-  return schema.blocks.map(block => ({
-    label: block.type,
-    documentation: block.name,
-    kind: CompletionItemKind.TypeParameter,
-    preselect: true,
-    insertText: type === 'string' ? `"${block.type}"` : block.type
-  }));
+  const items: CompletionItem[] = [];
+
+  for (const block of schema.blocks) {
+
+    if ('$ref' in block) {
+
+      const ref = getSharedSchemaRef(block.$ref);
+
+      if (ref === null) continue;
+
+      getSharedSchemaBlockType(ref, items, type);
+
+    } else {
+
+      items.push({
+        label: block.type,
+        documentation: block.name,
+        kind: CompletionItemKind.TypeParameter,
+        preselect: true,
+        insertText: type === 'string' ? `"${block.type}"` : block.type
+      });
+
+    }
+  }
+
+  return items;
 
 }
 
@@ -30,16 +188,28 @@ export function getSchemaSettingsCompletions (schema: SchemaSectionTag) {
 
   for (const setting of schema.settings) {
 
-    if (setting.id === undefined) continue;
+    if ('$ref' in setting) {
 
-    items.push({
-      label: setting.id,
-      insertText: setting.id,
-      detail: `${setting.type} (settings)`,
-      preselect: true,
-      documentation: mdSchema(setting as any),
-      kind: kind(setting.type)
-    });
+      const ref = getSharedSchemaRef(setting.$ref);
+
+      if (ref === null) continue;
+
+      getSharedSchemaSettings(ref, items);
+
+    } else {
+
+      if (setting.id === undefined) continue;
+
+      items.push({
+        label: setting.id,
+        insertText: setting.id,
+        detail: `${setting.type} (settings)`,
+        preselect: true,
+        documentation: mdSchema(setting as any),
+        kind: kind(setting.type)
+      });
+
+    }
 
   }
 
@@ -53,27 +223,38 @@ export function getSchemaSettingsCompletions (schema: SchemaSectionTag) {
  */
 export function getSchemaBlockSettingsCompletions (schema: SchemaSectionTag, type: string) {
 
-  const block = schema.blocks.find(block => block.type === type);
-  const item: CompletionItem[] = [];
+  const shared = getSharedBlockSchema(schema.blocks, type);
+  const block = shared || schema.blocks.find(block => block.type === type);
+  const items: CompletionItem[] = [];
 
-  if (!('settings' in block)) return item;
+  if (!('settings' in block)) return items;
 
   for (const setting of block.settings) {
 
-    if (setting.id === undefined) continue;
+    if (shared === false && '$ref' in setting) {
 
-    item.push({
-      label: setting.id,
-      insertText: setting.id,
-      detail: `${setting.type} (${type})`,
-      preselect: true,
-      documentation: mdSchema(setting as any),
-      kind: kind(setting.type)
-    });
+      const ref = getSharedSchemaRef(setting.$ref);
 
+      if (ref === null) continue;
+
+      getSharedSchemaSettings(ref, items);
+
+    } else {
+
+      if (setting.id === undefined) continue;
+
+      items.push({
+        label: setting.id,
+        insertText: setting.id,
+        detail: `${setting.type} (${type})`,
+        preselect: true,
+        documentation: mdSchema(setting as any),
+        kind: kind(setting.type)
+      });
+    }
   }
 
-  return item;
+  return items;
 
 }
 
