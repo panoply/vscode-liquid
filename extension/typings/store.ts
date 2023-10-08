@@ -228,6 +228,10 @@ export namespace Files {
      */
     localesSchema: Uri;
     /**
+     * Syncify Schema file URIs
+     */
+    schema: Set<string>;
+    /**
     * Settings (`settings_data.json`) file path
     */
     settings: Uri;
