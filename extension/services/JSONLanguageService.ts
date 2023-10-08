@@ -1,4 +1,4 @@
-import { Complete, SchemaRegion } from 'types';
+import { Complete, SchemaRegion, SharedSchema } from 'types';
 import { languages, Position, Range, TextDocument as ITextDocument, Uri, CompletionItem } from 'vscode';
 import { schema } from 'data/store';
 import {
@@ -7,22 +7,40 @@ import {
   LanguageService,
   Diagnostic,
   TextDocument,
-  MarkupKind
+  MarkupKind,
+  SchemaDraft,
+  JSONSchema,
+  DocumentLanguageSettings
 } from 'vscode-json-languageservice';
+import { getSharedSchema } from 'data/shared';
 
 export class JSONLanguageProvider {
+
+  /**
+   * JSON Schema
+   *
+   * The Schema store specification
+   */
+  public schema: JSONSchema = schema;
 
   /**
    * Schema Regions
    *
    * The schema tag regions
    */
-  static schema: Complete.Schema = new Map();
+  static sections: Complete.Schema = new Map();
 
   /**
    * Configuration
    */
-  public config: { validate: boolean } = { validate: true };
+  public config: { validate?: boolean; } = { validate: true };
+
+  /**
+   * Shared Schema
+   *
+   * Schema store for shared sections
+   */
+  public shared: Map<string, string[]> = new Map();
 
   /**
    * Can Format
@@ -37,6 +55,19 @@ export class JSONLanguageProvider {
    * Persisted and maintained diagnostics collection
    */
   public diagnostics = languages.createDiagnosticCollection('Liquid Section Schema');
+
+  /**
+   * JSON Document Language Settings
+   *
+   * The language service settings
+   */
+  private settings: DocumentLanguageSettings = {
+    trailingCommas: 'error',
+    comments: 'error',
+    schemaDraft: SchemaDraft.v7,
+    schemaRequest: 'warning',
+    schemaValidation: 'error'
+  };
 
   /**
    * JSON Language Service
@@ -63,20 +94,25 @@ export class JSONLanguageProvider {
     }
   });
 
+  constructor () {
+
+    this.configure();
+  }
+
   /* -------------------------------------------- */
   /* METHODS                                      */
   /* -------------------------------------------- */
 
-  constructor () {
+  configure () {
 
     this.service.configure({
       validate: true,
       allowComments: false,
       schemas: [
         {
-          uri: 'http://json-schema.org/draft-07/schema',
+          uri: 'section',
           fileMatch: [ '*.json' ],
-          schema
+          schema: this.schema
         }
       ]
     });
@@ -84,11 +120,20 @@ export class JSONLanguageProvider {
   }
 
   /**
-   * Schema Getter
+   * Extend JSON Schema
+   */
+  extend (uri: Uri, shared: SharedSchema) {
+
+    this.schema = getSharedSchema(uri, shared, this.schema);
+
+  }
+
+  /**
+   * Schema Sections Getter
    *
    * Returns the static `schema` Map reference
    */
-  get schema () { return JSONLanguageProvider.schema; }
+  get sections () { return JSONLanguageProvider.sections; }
 
   /**
    * Parse JSON
@@ -97,7 +142,7 @@ export class JSONLanguageProvider {
    */
   public doParse (document: ITextDocument, position: Position, schema: Complete.ISchema) {
 
-    const uri = document.fileName + '.json';
+    const uri = `${document.fileName}.json`;
     const { line } = document.positionAt(schema.begin);
 
     return {
@@ -121,7 +166,7 @@ export class JSONLanguageProvider {
     const JSONDocument = this.service.parseJSONDocument(textDocument);
     const hover = await this.service.doHover(textDocument, position, JSONDocument);
 
-    return hover.contents;
+    return hover === null ? null : hover.contents;
 
   }
 
@@ -133,7 +178,11 @@ export class JSONLanguageProvider {
   async doCompletions ({ textDocument, position }: SchemaRegion): Promise<CompletionItem[]> {
 
     const JSONDocument = this.service.parseJSONDocument(textDocument);
-    const competion = await this.service.doComplete(textDocument, position, JSONDocument);
+    const competion = await this.service.doComplete(
+      textDocument,
+      position,
+      JSONDocument
+    );
 
     return competion.items;
   }
@@ -143,16 +192,17 @@ export class JSONLanguageProvider {
    *
    * Applies JSON validation to the Schema code region.
    */
-  async doValidation (uri: Uri): Promise< Diagnostic[]> {
+  async doValidation (uri: Uri): Promise<readonly Diagnostic[]> {
 
-    const { content, offset } = this.schema.get(uri.fsPath);
+    const { content, offset } = this.sections.get(uri.fsPath);
     const textDocument = TextDocument.create(uri, 'json', 1, content);
     const JSONDocument = this.service.parseJSONDocument(textDocument);
-    const diagnostics = await this.service.doValidation(textDocument, JSONDocument, {
-      trailingCommas: 'warning',
-      comments: 'error',
-      schemaValidation: 'warning'
-    });
+    const diagnostics = await this.service.doValidation(
+      textDocument,
+      JSONDocument,
+      this.settings,
+      this.schema
+    );
 
     if (!diagnostics) return diagnostics;
 
@@ -165,7 +215,9 @@ export class JSONLanguageProvider {
         new Position(diagnostic.range.end.line + offset, diagnostic.range.end.character)
       );
 
-      if (diagnostic.severity === DiagnosticSeverity.Error) this.canFormat = false;
+      if (diagnostic.severity === DiagnosticSeverity.Error) {
+        this.canFormat = false;
+      }
 
     }
 
