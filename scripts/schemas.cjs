@@ -29,6 +29,22 @@ const section_groups = require('../node_modules/@liquify/schema/shopify/section-
 writeFileSync(join(schema, 'section-groups.json'), JSON.stringify(section_groups));
 log('schema/section-groups.json');
 
+const syncify = require('../node_modules/@liquify/schema/syncify.json');
+writeFileSync(join(schema, 'syncify.json'), JSON.stringify(syncify));
+log('schema/syncify.json');
+
+const syncify_pkg = require('../node_modules/@liquify/schema/syncify/package-json.json');
+writeFileSync(join(schema, 'syncify-pkg.json'), JSON.stringify(syncify_pkg));
+log('schema/syncify-pkg.json');
+
+const syncify_sections = require('../node_modules/@liquify/schema/syncify/shared-schema.json');
+writeFileSync(join(schema, 'syncify-schema.json'), JSON.stringify(syncify_sections));
+log('schema/shared-schema.json');
+
+const syncify_env = require('../node_modules/@liquify/schema/syncify/env.json');
+writeFileSync(join(schema, 'syncify-env.json'), JSON.stringify(syncify_env));
+log('schema/syncify-env.json');
+
 const pkg = require('../package.json');
 const config = require('../node_modules/@liquify/schema/vscode/configuration.json');
 
@@ -52,7 +68,7 @@ const store = [
   '*',
   '*/',
   '/* eslint-disable */',
-  `export const schema = ${JSON.stringify(require('../node_modules/@liquify/schema/shopify/sections.json'))}`
+  `export const schema = ${JSON.stringify(require('../node_modules/@liquify/schema/shopify/sections.json'), null, 2)}`
 ].join('\n');
 
 writeFileSync(join(cwd, 'extension/data/store.ts'), store);
