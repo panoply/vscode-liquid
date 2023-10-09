@@ -1,0 +1,88 @@
+{
+  "foo": {
+    "$description": "THIS IS A BLOCK SINGLETON",
+    "name": "block_singleton",
+    "type": "xxx",
+    "settings": [
+      {
+        "type": "article",
+        "id": "xxx",
+        "label": "fooo"
+      },
+      {
+        "type": "text",
+        "id": "foo",
+        "label": "Foo",
+        "default": "bar"
+      }
+    ]
+  },
+  "bar": [
+    {
+      "name": "block_spread",
+      "type": "spread",
+      "settings": []
+    },
+    {
+      "$description": "SPREAD JUST MEANS MULTIPLE BLOCKS",
+      "name": "another_block",
+      "type": "another",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "cb",
+          "label": "xxxx"
+        }
+      ]
+    }
+  ],
+  "baz": [
+    {
+      "$description": "THIS IS A SETTINGS SPREAD",
+      "type": "checkbox",
+      "id": "XXX",
+      "label": ""
+    },
+    {
+      "type": "text",
+      "id": "one",
+      "label": "xxx"
+    },
+    {
+      "type": "radio",
+      "id": "something",
+      "label": "Something",
+      "default": "",
+      "info": "",
+      "options": [
+        {
+          "value": "foo",
+          "label": "Foo"
+        }
+      ]
+    }
+  ],
+  "qux": {
+    "$description": [
+      "THIS IS A SETTING GROUP - THIS JUST MEANS AN IDENTIFIABLE SETTING"
+    ],
+    "settings": [
+      {
+        "type": "blog",
+        "id": "xxx",
+        "label": "xxxx"
+      }
+    ]
+  },
+  "xxx": {
+    "name": "doo",
+    "type": "doo",
+    "settings": []
+  },
+  "fux": {
+    "$description": "THIS IS A SETTINGS SINGLETON - JUST A SINGLE SETTING",
+    "type": "text",
+    "id": "one",
+    "label": "xxx"
+  }
+}

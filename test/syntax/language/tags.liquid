@@ -1,0 +1,102 @@
+{% # RENDER TAG %}
+
+{% render 'filename' %}
+
+{% render 'filename', param: article.author %}
+
+{% render 'filename' for array as item %}
+
+{% render 'filename' with product as name, param: collection.products %}
+
+{% render 'filename', param: 1, param2: foo.prop.foo.bar, param3: 'string', param5: false %}
+
+{% # ASSIGNMENT LOGICS %}
+
+{% assign false = false %}
+{% assign true = true %}
+{% assign foo = true %}
+{% assign bar = true %}
+{% assign qux = 'lorem ipsum in back in stock' %}
+
+{{ bar }}
+
+{% if true %}{% endif %}
+
+{% # FOR LOOP %}
+
+{% for product in collection.products limit: 2 %}
+
+  {{ product.title }}
+
+{% endfor %}
+
+
+{% # FOR LOOP INFERRED ARRAY ITERATION %}
+
+{% for variable in inferred %}{% endfor %}
+
+{% for variable in (1..200) %}{% endfor %}
+
+{%- render 'filename', param: 1.20
+ , param2: foo.prop.foo.bar
+ , param3: 'string'
+ , param5: false
+ , param_foo: nil
+ , 123_param: product.available %}
+
+ {%
+  render 'filename',
+   param: 1.20,
+   param2: foo.prop.foo.bar,
+   param3: 'string',
+   param5: false,
+   param_foo: nil,
+   123_param: product.available %}
+
+
+{%- tag %}
+
+{%-
+  tag  -%}
+
+{%
+  unknown
+  param: 1.20,
+  param2: foo.prop.foo.bar,
+  param3: 'string',
+  param5: false,
+  param_foo: nil,
+  123_param: product.available %}
+
+
+{% # CONDITION %}
+
+{% if condition == product.available %}{% elsif condition %}{% endif %}{% case variable %}
+{% when condition == product.available %}{% else %}{% endcase %}
+
+{% # FOR LOOP %}
+
+{% for product in collection.products limit: 2 %}
+
+{{ product.title }}{% endfor %}
+
+
+{% for variable in (collection.products..200) %}
+
+{% endfor %}
+
+{% for variable in (1..200) %}
+
+  expression
+
+{% endfor %}
+
+{% for product in collection.products reversed %}
+
+{{ product.title }}
+
+{% endfor %}
+
+{% for item in collection %}
+
+{% endfor %}

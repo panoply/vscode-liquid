@@ -1,0 +1,11 @@
+{% liquid
+  capture gutter
+    if forloop.first
+      echo section.settings.gutter | prepend: "pr-"
+    elsif forloop.last
+      echo section.settings.gutter | prepend: "pl-"
+    else
+      echo section.settings.gutter | prepend: "px-"
+    endif
+  endcapture
+%}

@@ -1,0 +1,16 @@
+{% #  TEST: Shopify style Tag Block %}
+
+{% style %}
+
+  {{ object.prop[1200] | form: 'string' }}
+
+  .class {
+    background: #fff;
+  }
+
+{% endstyle %}
+
+
+<script
+src="{{ 'product-info.js' | asset_url }}"
+defer="defer"></script>

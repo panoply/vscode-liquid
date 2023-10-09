@@ -1,98 +1,277 @@
-<div class="container-fluid as-center">
-  <form {{ section.settings.id }}>
+<div>
 
-    {%- for block in section.blocks -%}
+  {%- render 'filters' -%}
 
-      {%- if block.type == "text" -%}
+  {{- section.settings.x | abs | append: 'fff' | asset_url | abs | base64_encode | abs -}}
 
-        <div class="col-12 mt-{{ block.mt }} mb-4">
+  {%- for b in section.blocks -%}
 
-          <h4 class="mb-3">
-            {{ block.settings.some_textarea }}
-          </h4>
 
-        </div>
+    {%- if b.type == 'xxx' -%}
 
-      {% elsif block.type == 'text_2' %}
+      {{- b.settings -}}
 
-        <div class="fs-sm">
-          {{ block.settings.xxx_textarea }}
-        </div>
+    {%- endif -%}
 
-      {% endif %}
+  {%- endfor -%}
 
-    {% endfor %}
-  </form>
 </div>
 
 
-{% schema %}
+{%- render 'file-3' -%}
 
+{% schema %}
   {
-    "name": "sections",
+    "name": "ss",
+    "tag": "section",
+    "class": "section-header",
+    "max_blocks": 3,
     "settings": [
       {
-        "type": "text",
-        "id": "id",
-        "info": "Some information",
-        "label": "Some Labels"
+        "$ref": "images.baz"
       },
       {
         "type": "select",
-        "id": "select",
-        "label": "Select Labels",
+        "id": "logo_position",
         "options": [
           {
-            "label": "Some Label",
-            "value": "value"
+            "value": "top-left",
+            "label": "t:sections.header.settings.logo_position.options__2.label"
+          },
+          {
+            "value": "top-center",
+            "label": "t:sections.header.settings.logo_position.options__3.label"
+          },
+          {
+            "value": "middle-left",
+            "label": "t:sections.header.settings.logo_position.options__1.label"
+          },
+          {
+            "value": "middle-center",
+            "label": "t:sections.header.settings.logo_position.options__4.label"
           }
-        ]
+        ],
+        "default": "middle-left",
+        "label": "t:sections.header.settings.logo_position.label",
+        "info": "t:sections.header.settings.logo_help.content"
+      },
+      {
+        "type": "link_list",
+        "id": "menu",
+        "default": "main-menu",
+        "label": "t:sections.header.settings.menu.label"
+
+      },
+      {
+        "type": "select",
+        "id": "menu_type_desktop",
+        "options": [
+          {
+            "value": "dropdown",
+            "label": "t:sections.header.settings.menu_type_desktop.options__1.label"
+          },
+          {
+            "value": "mega",
+            "label": "t:sections.header.settings.menu_type_desktop.options__2.label"
+          },
+          {
+            "value": "drawer",
+            "label": "t:sections.header.settings.menu_type_desktop.options__3.label"
+          }
+        ],
+        "default": "dropdown",
+        "label": "t:sections.header.settings.menu_type_desktop.label",
+        "info": "t:sections.header.settings.menu_type_desktop.info"
+      },
+      {
+        "type": "select",
+        "id": "sticky_header_type",
+        "options": [
+          {
+            "value": "none",
+            "label": "t:sections.header.settings.sticky_header_type.options__1.label"
+          },
+          {
+            "value": "on-scroll-up",
+            "label": "t:sections.header.settings.sticky_header_type.options__2.label"
+          },
+          {
+            "value": "always",
+            "label": "t:sections.header.settings.sticky_header_type.options__3.label"
+          },
+          {
+            "value": "reduce-logo-size",
+            "label": "t:sections.header.settings.sticky_header_type.options__4.label"
+          }
+        ],
+        "default": "on-scroll-up",
+        "label": "t:sections.header.settings.sticky_header_type.label"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_line_separator",
+        "default": true,
+        "label": "t:sections.header.settings.show_line_separator.label"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.header.settings.header__1.content"
+      },
+      {
+        "type": "color_scheme",
+        "id": "color_scheme",
+        "label": "t:sections.all.colors.label",
+        "default": "background-1"
+      },
+      {
+        "type": "color_scheme",
+        "id": "menu_color_scheme",
+        "label": "t:sections.header.settings.menu_color_scheme.label",
+        "default": "background-1"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.header.settings.header__3.content",
+        "info": "t:sections.header.settings.header__4.info"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_country_selector",
+        "default": true,
+        "label": "t:sections.header.settings.enable_country_selector.label"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.header.settings.header__5.content",
+        "info": "t:sections.header.settings.header__6.info"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_language_selector",
+        "default": true,
+        "label": "t:sections.header.settings.enable_language_selector.label"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.header.settings.mobile_layout.content"
+      },
+      {
+        "type": "select",
+        "id": "mobile_logo_position",
+        "options": [
+          {
+            "value": "center",
+            "label": "t:sections.header.settings.mobile_logo_position.options__1.label"
+          },
+          {
+            "value": "left",
+            "label": "t:sections.header.settings.mobile_logo_position.options__2.label"
+          }
+        ],
+        "default": "center",
+        "label": "t:sections.header.settings.mobile_logo_position.label"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.all.spacing"
+      },
+      {
+        "type": "range",
+        "id": "margin_bottom",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "t:sections.header.settings.margin_bottom.label",
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "t:sections.all.padding.section_padding_heading"
+      },
+      {
+        "type": "range",
+        "id": "padding_top",
+        "min": 0,
+        "max": 36,
+        "step": 4,
+        "unit": "px",
+        "label": "t:sections.all.padding.padding_top",
+        "default": 20
+      },
+      {
+        "type": "range",
+        "id": "padding_bottom",
+        "min": 0,
+        "max": 36,
+        "step": 4,
+        "unit": "px",
+        "label": "t:sections.all.padding.padding_bottom",
+        "default": 20
+      },
+      {
+        "type": "paragraph",
+        "content": {
+          "cy": ""
+        }
+      },
+      {
+        "type": "header",
+        "content": "",
+        "info": ""
       }
     ],
     "blocks": [
       {
-        "type": "text",
-        "name": "Some Block",
-        "settings": [
-          {
-            "type": "textarea",
-            "id": "some_textarea",
-            "label": "Some Textarea Label"
-          },
-          {
-            "type": "text",
-            "id": "some_text",
-            "label": "Some Text Label"
-          },
-          {
-            "type": "article",
-            "id": "some_article",
-            "label": "Some Article Label"
-          }
-        ]
+        "$ref": "testing.foo"
       },
       {
-        "type": "text_2",
-        "name": "Another Block",
+        "name": "s",
+        "type": "",
+        "limit": 2,
+        "settings": []
+      },
+      {
+        "name": "foo",
+        "type": "bar",
         "settings": [
           {
-            "type": "textarea",
-            "id": "xxx_textarea",
-            "label": "Some Textarea Label"
+            "$ref": "forms.number"
           },
           {
-            "type": "text",
-            "id": "one_text",
-            "label": "Some Text Label"
+            "type": "select",
+            "id": "logo_position",
+
+            "options": [
+              {
+                "value": "top-left",
+                "label": "t:sections.header.settings.logo_position.options__2.label"
+              },
+              {
+                "value": "top-center",
+                "label": "t:sections.header.settings.logo_position.options__3.label"
+              },
+              {
+                "value": "middle-left",
+                "label": "t:sections.header.settings.logo_position.options__1.label"
+              },
+              {
+                "value": "middle-center",
+                "label": "t:sections.header.settings.logo_position.options__4.label"
+              }
+            ],
+            "default": "middle-left",
+            "label": "t:sections.header.settings.logo_position.label",
+            "info": "t:sections.header.settings.logo_help.content"
           },
           {
-            "type": "article",
-            "id": "two_article",
-            "label": "Some Article Label"
+            "type": "link_list",
+            "id": "menu",
+            "default": "main-menu",
+            "label": "t:sections.header.settings.menu.label"
           }
         ]
       }
     ]
-
   }
-{% endschema %}
+{%- endschema -%}

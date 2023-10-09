@@ -5,12 +5,45 @@
   "patterns": [
     {
       "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.frontmatter.liquid",
+      "contentName": "source.yaml",
       "begin": "\\A-{3}\\s*$",
       "end": "(^|\\G)-{3}|\\.{3}\\s*$",
       "patterns": [
         {
           "include": "source.yaml"
+        }
+      ]
+    },
+    {
+      "name": "meta.embedded.block.liquid",
+      "contentName": "source.json",
+      "begin": "\\A-{3}json\\s*$",
+      "end": "(^|\\G)-{3}|\\.{3}\\s*$",
+      "patterns": [
+        {
+          "include": "source.json"
+        }
+      ]
+    },
+    {
+      "name": "meta.embedded.block.liquid",
+      "contentName": "source.js",
+      "begin": "\\A-{3}js\\s*$",
+      "end": "(^|\\G)-{3}|\\.{3}\\s*$",
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    {
+      "name": "meta.embedded.block.liquid",
+      "contentName": "source.toml",
+      "begin": "\\A-{3}toml\\s*$",
+      "end": "(^|\\G)-{3}|\\.{3}\\s*$",
+      "patterns": [
+        {
+          "include": "source.toml"
         }
       ]
     }

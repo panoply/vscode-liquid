@@ -1,0 +1,16 @@
+{% if condition %}
+
+  .class-name {
+    background: #FFF;
+    font-size: {{ object.prop | append: 'px' }};
+    {% if object.property %}
+    margin: {{ x }};
+    {% endif %}
+  }
+
+
+{% endif %}
+
+.class {
+
+}

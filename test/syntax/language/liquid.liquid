@@ -1,0 +1,62 @@
+{%- liquid
+
+  comment
+  BLOCK COMMENT
+  endcomment
+
+  if foo == bar
+    object.property['foo'][0]
+  endif
+
+  # INLINE COMMENT
+
+  assign bar = '' | filter: 'string' | ceil: 10
+
+  for x in inferred
+
+  endfor
+
+  for i in (1..10)
+
+    capture name
+      100.20
+    endcapture
+
+    section 'section'
+    render 'snippet' with collection.products as product, param: object[product.id]
+
+  endfor
+
+-%}
+
+
+{% liquid
+
+  comment
+  BLOCK COMMENT
+  endcomment
+
+  if foo == bar
+    object.property['foo'][0]
+  endif
+
+  # INLINE COMMENT
+
+  assign bar = '' | filter: 'string' | ceil: 10
+
+  for x in inferred
+
+  endfor
+
+  for i in (1..10)
+
+    capture name
+      100.20
+    endcapture
+
+    section 'section'
+    render 'snippet' with collection.products as product, param: object[product.id]
+
+  endfor
+
+%}

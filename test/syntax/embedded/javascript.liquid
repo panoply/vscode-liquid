@@ -1,0 +1,52 @@
+<!-- TEST: Shopify Stylesheet Tag Block -->
+
+{% javascript %}
+
+  const foo = 'bar'
+
+
+  const x = function(param) {
+
+    true
+
+    const x = 100
+
+    window.prop()
+
+    param['string'][20]
+
+    const c = new Class()
+
+  }
+
+{% endjavascript %}
+
+
+<!-- TEST: Import Injection when Liquid tag expression is defined -->
+
+
+<!-- esthetic-ignore-start -->
+<script type="module">
+
+  import {} from './'
+  import * as x from '';
+  import {{ 'file.js' | asset_url | json }};
+  import {{ 'file.js' | asset_url | json }};
+
+
+  var sideArrows = {
+    left: {{ arrow_left | json }},
+    right: {{ arrow_right | json }},
+  }
+
+  {% comment %}
+    Some Comment
+  {% endcomment %}
+
+  /**
+  * @param
+  */
+  const foo = 'bar';
+
+
+</script>

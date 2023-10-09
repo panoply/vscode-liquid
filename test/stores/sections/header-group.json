@@ -1,0 +1,15 @@
+{
+  "type": "header",
+  "name": "something",
+  "sections": {
+    "xxxxx": {
+      "type": "xxxxx",
+      "settings": {
+        "": ""
+      }
+    }
+  },
+  "order": [
+    "xxxxx"
+  ]
+}

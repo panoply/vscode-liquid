@@ -1,21 +1,46 @@
-{% for block in section.blocks %}
+{% # SECTION COMPLETIONS - TESTING SECTION SETTINGS %}
 
-  {% if block.type == "foo_block_type" %}
+{{ section.settings }}
 
-    {{ block.settings.xs }}
+{% # SECTION COMPLETIONS - TESTING ASSIGN VARIABLES %}
+
+{% assign foo = section %}
+{% assign bar = section.settings %}
+
+{{ foo.settings }}
+
+
+{{ bar.test_richtext }}
+
+{% # SECTION COMPLETIONS - TESTING BLOCK SCOPES %}
+
+{% for b in section.blocks %}
+
+  {% if b.type == %}{% endif %}
+
+  {% # SECTION ASSIGN - TEST VARIABLE ASSIGNED BLOCK SETTINGS %}
+
+  {% if block.type == 'foo_block_type' %}
+
+    {{ block.settings.placeholder }}
+
+    {{ b | }}
 
   {% elsif block.type == "testing_blocks" %}
 
-    {{ block.settings }}
-
+      {{  }}
 
   {% endif %}
 
 {% endfor %}
 
+{% section '' %}
+
 
 {% schema %}
   {
+    "class": "",
+    "tag": "article",
     "name": "Example",
     "settings": [
       {
@@ -24,10 +49,25 @@
         "info": "This item will not be provided in completions"
       },
       {
+        "type": "text",
+        "id": "sample",
+        "label": "Sample",
+        "default": "Hello World"
+      },
+      {
         "type": "richtext",
         "id": "test_richtext",
         "label": "Richtext",
         "info": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      },
+      {
+        "type": "range",
+        "id": "foo_bar",
+        "label": "Foo Bar",
+        "min": 20,
+        "max": 20,
+        "step": 1,
+        "unit": ""
       },
       {
         "type": "text",
@@ -39,7 +79,6 @@
       {
         "type": "url",
         "id": "foo_url",
-        "label": "CTA Link",
         "info": "CTA Link in the response"
       },
       {
@@ -81,7 +120,7 @@
       {
         "type": "header",
         "content": "Skipped",
-        "info": "This item will not be provided in completions"
+        "info":"foo"
       }
     ],
     "blocks": [
@@ -89,6 +128,7 @@
         "type": "testing_blocks",
         "name": "Example Blocks",
         "settings": [
+
           {
             "type": "header",
             "content": "Textarea Input",
@@ -156,6 +196,8 @@
           }
         ]
       },
+
+
       {
         "type": "foo_block_type",
         "name": "Foo Block Type",

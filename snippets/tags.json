@@ -2,23 +2,33 @@
   "frontmatter": {
     "prefix": "frontmatter",
     "description": "Frontmatter",
-    "body": ["---", "$2", "---"]
+    "body": [
+      "---",
+      "$2",
+      "---"
+    ]
   },
   "if": {
     "prefix": "if",
     "body": [
       "{% if ${1:condition} %}",
-      "\t$3",
+      "\t$2",
       "{% endif %}"
     ]
   },
   "else": {
     "prefix": "else",
-    "body": ["{% else %}", "\t"]
+    "body": [
+      "{% else %}",
+      "\t"
+    ]
   },
   "elsif": {
     "prefix": "elsif",
-    "body": ["{% elsif ${1:condition} %}", "\t"]
+    "body": [
+      "{% elsif ${1:condition} %}",
+      "\t"
+    ]
   },
   "if, elsif": {
     "prefix": "if elsif",
@@ -72,12 +82,17 @@
   "when": {
     "prefix": "when",
     "description": "Control flow tag: when",
-    "body": ["{% when ${1:condition} %}", "$0"]
+    "body": [
+      "{% when ${1:condition} %}",
+      "$0"
+    ]
   },
   "cycle": {
     "prefix": "cycle",
     "description": "Iteration tag: cycle",
-    "body": ["{% cycle '${1:odd}', '${2:even}' %}"]
+    "body": [
+      "{% cycle '${1:odd}', '${2:even}' %}"
+    ]
   },
   "cycle, group": {
     "prefix": "cycle group",
@@ -96,31 +111,41 @@
   },
   "break": {
     "prefix": "break",
-    "body": ["{% break %}"]
+    "body": [
+      "{% break %}"
+    ]
   },
   "continue": {
     "prefix": "continue",
-    "body": ["{% continue %}"]
+    "body": [
+      "{% continue %}"
+    ]
   },
   "tablerow": {
     "prefix": "tablerow",
     "body": [
       "{% tablerow ${1:item} in ${2:collection} cols: ${3:2} %}",
-      "\t$5",
+      "\t$4",
       "{% endtablerow %}"
     ]
   },
   "assign": {
     "prefix": "assign",
-    "body": ["{% assign ${1:variable} = ${2:value} %}"]
+    "body": [
+      "{% assign ${1:variable} = ${2:value} %}"
+    ]
   },
   "increment": {
     "prefix": "increment",
-    "body": ["{% increment ${1:variable} %}"]
+    "body": [
+      "{% increment ${1:variable} %}"
+    ]
   },
   "decrement": {
     "prefix": "decrement",
-    "body": ["{% decrement ${1:variable} %}"]
+    "body": [
+      "{% decrement ${1:variable} %}"
+    ]
   },
   "capture": {
     "prefix": "capture",
@@ -132,46 +157,69 @@
   },
   "liquid": {
     "prefix": "liquid",
-    "body": ["{% liquid", "\t$1", "%}"]
+    "body": [
+      "{% liquid",
+      "\t$1",
+      "%}"
+    ]
   },
   "render": {
     "prefix": "render",
-    "body": ["{% render '${1:snippet}' %}"]
+    "body": [
+      "{% render $1 %}"
+    ]
   },
   "render, parameters": {
     "prefix": "render",
     "body": [
-      "{% render '${1:snippet}', ${2:param}: ${3:value}"
+      "{% render $1, ${2:param}: ${3:value}"
     ]
   },
   "include": {
     "prefix": "include",
-    "body": ["{% include '${1:snippet}' %}"]
+    "body": [
+      "{% include $1 %}"
+    ]
   },
   "include, parameters": {
     "prefix": "includewith",
     "body": [
-      "{% include '${1:snippet}', ${2:param}: ${3:value} %}"
+      "{% include 1, ${2:param}: ${3:value} %}"
     ]
   },
   "section": {
     "prefix": "section",
-    "body": ["{% section '${1:section}' %}"]
+    "body": [
+      "{% section $1 %}"
+    ]
+  },
+  "sections": {
+    "prefix": "sections",
+    "description": "Section Group",
+    "body": [
+      "{% sections '${1:group}' %}"
+    ]
   },
   "raw": {
     "prefix": "raw",
     "description": "Theme tag: raw",
-    "body": ["{% raw %}", "\t$1", "{% endraw %}"]
+    "body": [
+      "{% raw %}",
+      "\t$1",
+      "{% endraw %}"
+    ]
   },
   "layout": {
     "prefix": "layout",
-    "body": ["{% layout '${1:layout}' %}"]
+    "body": [
+      "{% layout '${1:layout}' %}"
+    ]
   },
   "form": {
     "prefix": "form",
     "body": [
-      "{% form '${1:product}', ${2:product} %}",
-      "\t$4",
+      "{% form '${1:name}', ${2:product} %}",
+      "\t$3",
       "{% endform %}"
     ]
   },
@@ -189,15 +237,22 @@
     "prefix": "schema",
     "body": [
       "{% schema %}",
-      "\t{",
-      "\t\t$1",
-      "\t}",
+      "{",
+      "\t\"name\": \"$1\",",
+      "\t\"settings\": [",
+      "\t\t$0",
+      "\t\t]",
+      "}",
       "{% endschema %}"
     ]
   },
   "style": {
     "prefix": "style",
-    "body": ["{% style %}", "\t$1", "{% endstyle %}"]
+    "body": [
+      "{% style %}",
+      "\t$1",
+      "{% endstyle %}"
+    ]
   },
   "stylesheet": {
     "prefix": "stylesheet",
@@ -215,12 +270,42 @@
       "{% endjavascript %}"
     ]
   },
-  "comment, inline": {
+  "comment, line": {
     "prefix": "#",
-    "body": ["{% # $2 %}"]
+    "body": [
+      "{% # $2 %}"
+    ]
   },
   "comment, block": {
     "prefix": "comment",
-    "body": ["{% comment %}", "\t$0", "{% endcomment %}"]
+    "body": [
+      "{% comment %}",
+      "\t${1|esthetic-ignore,esthetic-ignore-start,esthetic-ignore-end,esthetic-ignore-next|}",
+      "{% endcomment %}"
+    ]
+  },
+  "esthetic-ignore": {
+    "prefix": "esthetic-",
+    "body": [
+      "{% # esthetic-ignore %}"
+    ]
+  },
+  "esthetic-ignore-next": {
+    "prefix": "esthetic-",
+    "body": [
+      "{% # esthetic-ignore-next %}"
+    ]
+  },
+  "esthetic-ignore-start": {
+    "prefix": "esthetic-",
+    "body": [
+      "{% comment %}esthetic-ignore-start{% endcomment %}"
+    ]
+  },
+  "esthetic-ignore-end": {
+    "prefix": "esthetic-",
+    "body": [
+      "{% comment %}esthetic-ignore-end{% endcomment %}"
+    ]
   }
 }

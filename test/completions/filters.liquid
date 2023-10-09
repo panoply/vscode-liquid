@@ -1,2 +1,26 @@
-{{ foo |append: '' |prepend}
-}
+{% # FILTER COMPLETES %}
+
+
+{{ foo  }}
+
+
+{{ foo | append: '' | upcase   }}
+
+{% # FILTER COMPLETES - ONLY SHOW TYPE STRING OBJECTS  %}
+
+{{ foo | append:  | prepend:  }}
+
+{% # FILTER COMPLETES - ONLY SHOW TYPE NUMBER OBJECTS  %}
+
+{{ produc    | plus:  | minus:  }}
+
+{% # FILTER COMPLETES - ONLY SHOW IN ASSIGN %}
+
+
+{% assign number = 1200 %}
+
+{% for item in product %}
+
+  {{ item.price | plus:  }}  <!-- TYPE AWARENESS ONLY NUMBERS SHOW -->
+
+{% endfor %}

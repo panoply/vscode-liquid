@@ -4,9 +4,6 @@
     "include": [
       "node"
     ],
-    "exclude": [
-      "node_modules"
-    ]
   },
   "compilerOptions": {
     "types": [
@@ -34,13 +31,22 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "pretty": true,
-    "baseUrl": "./src",
+    "baseUrl": "extension",
     "paths": {
+      "completions/*": [
+        "completions/*.ts"
+      ],
       "providers/*": [
         "providers/*.ts"
       ],
       "service/*": [
         "service/*.ts"
+      ],
+      "data/*": [
+        "data/*.ts"
+      ],
+      "parse/*": [
+        "parse/*.ts"
       ],
       "utils": [
         "utils.ts"

@@ -1,0 +1,21 @@
+{% for i in product.variants %}
+
+  {{ i.store_availabilities. }}
+
+  {{ i.available }}
+
+{% endfor %}
+{{  }}
+
+{% assign foo = block | append: '' %}
+{% assign bar = block %}
+
+{{ address.address1 | color_lighten }}
+
+{{ foo }}
+{{ bar | append }}
+{{ product.compare_at_price }}
+
+{{ 'accessibility.link_messages.new_window' }}
+{% render 'example' %}
+{% section 'filters' %}

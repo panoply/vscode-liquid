@@ -2,9 +2,25 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "injectionSelector": "L:source.liquid",
   "scopeName": "source.liquid.embedded",
+  "information_for_contributors": [
+    "",
+    "IMPORTANT",
+    "",
+    "This injection applies embedded code region highlighting of external languages in Liquid.",
+    "This file and the containing grammars are likely to change in the future. As per all grammar files.",
+    "",
+    "USAGE PERMISSION",
+    "",
+    "Shopify employee/s or those working for Shopify do not have permission to use, borrow or even take inspiration",
+    "from this grammar file. This grammar file was created for developers by a developer. The grammars are not for",
+    "developers being paid by Shopify to take credit for in a attempt to get a gold star. Everyone else, feel free."
+  ],
   "patterns": [
     {
       "include": "#schema"
+    },
+    {
+      "include": "#json"
     },
     {
       "include": "#javascript"
@@ -22,8 +38,8 @@
   "repository": {
     "schema": {
       "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.schema.liquid",
-      "begin": "({%)(-)?\\s*(schema)\\s*(-)?(%})",
+      "contentName": "source.json",
+      "begin": "({%)(-)?\\s*(schema)\\s*(-)?(%})\\s*",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.begin.liquid"
@@ -67,7 +83,7 @@
     },
     "style": {
       "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.style.liquid",
+      "contentName": "source.css.liquid",
       "begin": "({%)(-)?\\s*\\b(style)\\b\\s*(-)?(%})",
       "beginCaptures": {
         "1": {
@@ -106,13 +122,13 @@
       },
       "patterns": [
         {
-          "include": "source.css"
+          "include": "source.css.liquid"
         }
       ]
     },
     "stylesheet": {
       "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.stylesheet.liquid",
+      "contentName": "source.css",
       "begin": "({%)(-)?\\s*(stylesheet)\\s*(-)?(%})",
       "beginCaptures": {
         "0": {
@@ -163,8 +179,8 @@
     },
     "stylesheet-scss": {
       "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.stylesheet-scss.liquid",
-      "begin": "({%)(-)?\\s*(stylesheet)\\s*('(scss)')\\s*(-)?(%})",
+      "contentName": "source.css.scss",
+      "begin": "({%)(-)?\\s*(stylesheet)\\s*('(scss)')\\s*(-)?(%})\\s*",
       "beginCaptures": {
         "0": {
           "name": "meta.tag.metadata.stylesheet-scss.start.liquid"
@@ -220,8 +236,8 @@
     },
     "javascript": {
       "name": "meta.embedded.block.liquid",
-      "contentName": "meta.embedded.block.javascript.liquid",
-      "begin": "({%)(-)?\\s*(javascript)\\s*(-)?(%})",
+      "contentName": "source.js",
+      "begin": "({%)(-)?\\s*(javascript)\\s*(-)?(%})\\s*",
       "beginCaptures": {
         "0": {
           "name": "meta.tag.metadata.javascript.start.liquid"
@@ -236,10 +252,10 @@
           "name": "entity.name.tag.liquid"
         },
         "4": {
-          "name": "punctuation.definition.tag.end.liquid"
+          "name": "keyword.other.whitespace.liquid"
         },
         "5": {
-          "name": "keyword.other.whitespace.liquid"
+          "name": "punctuation.definition.tag.end.liquid"
         }
       },
       "end": "({%)(-)?\\s*(endjavascript)\\s*(-)?(%})",
@@ -257,7 +273,7 @@
           "name": "entity.name.tag.liquid"
         },
         "4": {
-          "name": "punctuation.definition.tag.end.liquid"
+          "name": "keyword.other.whitespace.liquid"
         },
         "5": {
           "name": "punctuation.definition.tag.end.liquid"
@@ -269,5 +285,62 @@
         }
       ]
     }
+  },
+  "json": {
+    "name": "meta.embedded.block.html",
+    "contentName": "source.json",
+    "begin": "(<)(script)\\b(?=[^>]*type=('application/(ld\\+)?json'|\"application/(ld\\+)?json\"))(?![^/>]*/>\\s*$)",
+    "beginCaptures": {
+      "1": {
+        "name": "punctuation.definition.tag.begin.html"
+      },
+      "2": {
+        "name": "entity.name.tag.html"
+      }
+    },
+    "end": "(</)(script)(>)",
+    "endCaptures": {
+      "1": {
+        "name": "punctuation.definition.tag.begin.html"
+      },
+      "2": {
+        "name": "entity.name.tag.html"
+      },
+      "3": {
+        "name": "punctuation.definition.tag.end.html"
+      }
+    },
+    "patterns": [
+      {
+        "name": "entity.other.attribute-name.html",
+        "match": "\\b([a-zA-Z\\-:_]+)"
+      },
+      {
+        "name": "string.quoted.double.html",
+        "match": "(\"|').*?(\"|')"
+      },
+      {
+        "begin": "(>)",
+        "beginCaptures": {
+          "0": {
+            "name": "meta.tag.metadata.json.start.html"
+          },
+          "1": {
+            "name": "punctuation.definition.tag.end.html"
+          }
+        },
+        "end": "(?=</script>)",
+        "endCaptures": {
+          "0": {
+            "name": "meta.tag.metadata.json.end.html"
+          }
+        },
+        "patterns": [
+          {
+            "include": "source.json"
+          }
+        ]
+      }
+    ]
   }
 }

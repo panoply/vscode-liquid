@@ -1,0 +1,52 @@
+{% liquid
+
+  assign fit = product.metafields.specification.fit_reference | default:
+  product.metafields.product.fit_reference
+  assign fabric = product.metafields.specification.fabric.value | default:
+  product.metafields.product.fabric assign gender = "men"
+
+  # MODEL SIZES - GET METAFIELD
+  if product.tags contains "Women"
+    assign gender = "women"
+    assign model = shop.metafields.product.model.value["woman"]
+    assign measurement = shop.metafields.product.measurements.value["woman"]
+  else
+    assign model = shop.metafields.product.model.value["man"]
+    assign measurement = shop.metafields.product.measurements.value["man"]
+  endif
+
+  # MATERIAL PROPERTIES AND COUNT REFERENCE
+  assign mp = "shell,lining,padding,piping,webbing" | split: "," assign mc = 0
+
+  # MODEL SIZES - REQUIRED DATA
+  capture height_cm
+    echo model.height.cm | append: "cm"
+  endcapture
+  capture height_in
+    echo model.height.in | append: "in"
+  endcapture
+  capture weight_kg
+    echo model.weight.kg | append: "kg"
+  endcapture
+  capture weight_lbs
+    echo model.weight.lbs | append: "lbs"
+  endcapture
+  capture model_size
+    if product.vendor == 'Spring / Summer 23'
+      if gender == 'men'
+        echo "product_page.model_size" | t: size: model.wearing, height: '183cm', weight: weight_kg
+      else
+        echo "product_page.model_size" | t: size: model.wearing, height: '173cm', weight: weight_kg
+      endif
+    else
+      echo "product_page.model_size" | t: size: model.wearing, height: height_cm, weight: weight_kg
+    endif
+  endcapture
+%}
+
+<div class="xx">
+
+  <ul></ul>
+
+
+</div>

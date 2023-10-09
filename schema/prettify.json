@@ -4,7 +4,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "properties": {
     "prettify": {
-      "$ref": "./liquidrc.json"
+      "deprecationMessage": "The `prettify` field is no longer supported by the vscode-liquid extension."
     }
   }
 }

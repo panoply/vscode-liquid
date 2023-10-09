@@ -1,0 +1,41 @@
+[
+  {
+    "name": "",
+    "theme_author": "",
+    "theme_documentation_url": "",
+    "theme_name": "",
+    "theme_support_email": "",
+    "theme_version": ""
+  },
+  {
+    "name": "",
+    "settings": [
+        {
+          "type": "radio",
+          "id": "foo",
+          "label": "Foo",
+          "default": "",
+          "info": "",
+          "options": [
+            {
+              "value": "one",
+              "label": "One"
+            }
+          ]
+        }
+    ]
+  },
+  {
+    "name": "",
+    "settings": [
+      {
+        "type": "color_scheme_group",
+        "id": "foo",
+        "label": "Foo",
+        "definition": [],
+        "role": {},
+        "info": "hello"
+      }
+    ]
+  }
+]

@@ -4,7 +4,6 @@ node_modules
 yarn.lock
 test/components/*.html
 versions
-releases
 docs
 dist
 example

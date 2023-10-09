@@ -1,0 +1,24 @@
+{% # SNIPPET FILE COMPLETIONS %}
+
+{% render 'file-5' %}
+
+{% # SECTION FILE COMPLETIONS %}
+
+{% section 'example' %}
+
+{% # SETTINGS DATA FILE COMPLETIONS %}
+
+{{ settings.colors_accent_2. }}
+
+
+{% # LOCALE FILE COMPLETIONS %}
+
+{{ 'general.cart.view' | t: count: 10 }}
+
+<div>
+
+  <h1>
+    {{ 'general.cart.item_added' | t: dave: 'foo', feature: 'bar', sissel: 'baz' }}
+  </h1>
+
+</div>

@@ -1,0 +1,33 @@
+{% # UNBALANCED SCOPE DELIMITERS %}
+
+{% tag %}
+{%- tag  -%}
+
+{{ object.prop }}
+{{- object.prop -}}
+
+{% # UNBALANCED BRACKET NOTATIONS %}
+
+{{- object.prop['foo'][0]['bar'] -}}
+{{- object.prop[100] -}}
+
+{% # UNBALANCED RANGE NOTATION %}
+
+{% for x in (100..200) %}{% endfor %}
+
+{% # SCHEMA BLOCK BRACKETS %}
+
+{% schema %}
+  {
+    "settings": [
+      {
+        "id": "one",
+        "name": "xx"
+      },
+      {
+        "id": "one",
+        "name": "xx"
+      }
+    ]
+  }
+{% endschema %}

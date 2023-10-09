@@ -1,8 +1,10 @@
 {
   "cSpell.words": [
     "Allman",
+    "esbenp",
     "Mansedan",
     "packagejson",
+    "TLDR",
     "VSIX"
   ],
   "files.associations": {
@@ -13,7 +15,15 @@
     "*.css.liquid": "liquid-css",
     "*.scss.liquid": "liquid-scss"
   },
-  "liquid.format.json": {
-    "braceAllman": true
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "package.json"
+      ],
+      "url": "https://unpkg.com/tsup/schema.json"
+    }
+  ],
+  "liquid.format.rules": {
+    "json": {}
   }
 }

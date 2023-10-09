@@ -1,0 +1,23 @@
+{% # COMMENT KEYWORD %}
+
+{% if blog.comments_enabled? %}{% endif %}
+
+{% # COMMENT KEYWORD %}
+
+{% for comment in article.comments %}{% endfor %}
+
+{% # COMMENT KEYWORD %}
+
+{% assign comment = endcomment %}
+
+{% # COMMENT WITHIN LIQUID TAG  %}
+
+{% liquid
+
+  comment
+    foo
+  endcomment
+
+  # COMMENT
+
+%}
