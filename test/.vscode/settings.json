@@ -33,6 +33,10 @@
       "./completions/*.liquid"
     ],
   },
+  "[liquid]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid",
+    "editor.formatOnSave": true
+  },
   // "editor.foldingStrategy": "indentation"
   // "[liquid]": {
   //   "editor.defaultFormatter": "sissel.shopify-liquid",

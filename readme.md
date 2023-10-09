@@ -843,7 +843,6 @@ _The **recommended** preset will produce an expected beautification style that m
   },
   "format": {
     "ignore": [],
-    "preset": "recommended",
     "indentSize": 2,
     "preserveLine": 3,
     "wrap": 0,

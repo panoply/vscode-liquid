@@ -12,7 +12,6 @@ import { CompletionItemKind, CompletionItem, SnippetString, TextEdit } from 'vsc
  */
 export function LocaleSchema (key: string) {
 
-  console.log(key);
   return $.liquid.files.has('locales_schema')
     ? path(key.slice(2), $.liquid.files.get('locales_schema'))
     : key;
