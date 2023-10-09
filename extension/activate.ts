@@ -142,7 +142,7 @@ class VSCodeLiquid extends Events {
   private commands (subscriptions: { dispose(): void; }[]) {
 
     subscriptions.push(
-      commands.registerCommand('liquid.generateLiquidrc', this.liquidrcDefaults, this),
+      commands.registerCommand('liquid.generateLiquidrc', this.generateLiquidrc, this),
       commands.registerCommand('liquid.openOutput', this.toggleOutput, this),
       commands.registerCommand('liquid.formatDocument', this.formatDocument, this),
       commands.registerCommand('liquid.enableFormatting', this.enableFormatting, this),

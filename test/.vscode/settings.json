@@ -3,10 +3,10 @@
     "editor.formatOnSave": false,
     "editor.defaultFormatter": "sissel.shopify-liquid"
   },
-  "[liquid]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "sissel.shopify-liquid"
-  },
+  // "[liquid]": {
+  //   "editor.formatOnSave": true,
+  //   "editor.defaultFormatter": "sissel.shopify-liquid"
+  // },
   "liquid.config.baseDir": ".",
   // "liquid.config.baseDir": "./base/subdir",
   // "liquid.config.method": "workspace",

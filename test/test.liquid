@@ -1,29 +1,23 @@
 <div>
 
-  {% render 'filters' %}
+  {%- render 'filters' -%}
 
-  {{ section.settings.x
-    | abs
-    | append: 'fff'
-    | asset_url
-    | abs
-    | base64_encode
-    | abs }}
+  {{- section.settings.x | abs | append: 'fff' | asset_url | abs | base64_encode | abs -}}
 
-  {% for b in section.blocks %}
+  {%- for b in section.blocks -%}
 
-    {% if b.type == 'xxx' %}
+    {%- if b.type == 'xxx' -%}
 
-      {{ b.settings }}
+      {{- b.settings -}}
 
-    {% endif %}
+    {%- endif -%}
 
-  {% endfor %}
+  {%- endfor -%}
 
 </div>
 
 
-{% render 'file-3' %}
+{%- render 'file-3' -%}
 
 {% schema %}
   {
@@ -279,4 +273,5 @@
       }
     ]
   }
-{% endschema %}
+{%- endschema -%}
+

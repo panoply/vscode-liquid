@@ -1,7 +1,7 @@
 import { env, Uri, window, workspace } from 'vscode';
 import { join } from 'node:path';
 import esthetic, { LanguageName } from 'esthetic';
-import { getLanguage, getRange, isString, pathExists, rulesDefault, rulesRecommend } from '../utils';
+import { GenerateLiquidRC, getLanguage, getRange, pathExists } from '../utils';
 import { FSWatch } from './FileSystemWatcher';
 import { FormatEventType } from 'providers/FormattingProvider';
 
@@ -37,73 +37,54 @@ export class CommandPalette extends FSWatch {
 
   }
 
-  private async generateLiquidrc (type: 'default' | 'recommended') {
+  public async generateLiquidrc () {
 
-    const exists = await pathExists(this.uri.liquidrc.fsPath);
+    const exists = this.uri.liquidrc !== null ? await pathExists(this.uri.liquidrc.fsPath) : false;
 
     let action: string;
 
     if (exists) {
 
-      action = await this.notifyInfo([
-        'Open',
-        'Overwrite'
-      ], [
-        'Your workspace already contains a .liquidrc file. You can overwrite the existing',
-        `config with ${type} rules or open the file and inspect the formatting options.`
-      ]);
+      const action = await window.showInformationMessage('Existing .liquidrc File', {
+        modal: true,
+        detail: [
+          'Your workspace already contains a .liquidrc file. You can overwrite the existing',
+          'config or open the file and inspect the formatting options.'
+        ].join(' ')
+      }, 'Open', 'Overwrite');
 
-      if (action === 'OPEN') return this.openDocument(this.uri.liquidrc.fsPath);
-
-    } else {
-
-      action = await this.notifyInfo([
-        '.liquidrc',
-        '.liquidrc.json'
-      ], [
-        'Choose a .liquidrc file type to be created. It does not matter which you select,',
-        'both will be interpreted as JSONC (JSON with Comments) language types.'
-      ]);
-
-      if (action === '.LIQUIDRC.JSON' || action === '.LIQUIDRC') {
-
-        this.uri.liquidrc = Uri.file(join(this.uri.root.fsPath, action.toLowerCase()));
-
-      }
-    }
-
-    if (isString(action)) {
-
-      const input = type === 'default' ? rulesDefault() : rulesRecommend();
-      const stringify = JSON.stringify(input, null, 2);
-      const rules = esthetic.format(stringify, { ...input, language: 'json' });
-
-      esthetic.rules({ language: 'liquid' });
-
-      try {
-
-        const content = Buffer.from(rules);
-
-        await workspace.fs.writeFile(this.uri.liquidrc, new Uint8Array(content));
-
-        this.info('Generated .liquidrc file: ' + this.uri.liquidrc.path);
-
+      if (action === 'Open') {
         return this.openDocument(this.uri.liquidrc.fsPath);
-
-      } catch (e) {
-        this.catch('Failed to write .liquidrc file to workspace root', e);
       }
 
     } else {
 
-      this.info('Cancelled .liquidrc file generation');
+      action = await window.showInformationMessage('Choose a .liquidrc file type.', {
+        modal: true
+      }, '.liquidrc', '.liquidrc.json');
+
+      this.uri.liquidrc = Uri.file(join(this.uri.base.fsPath, action));
+    }
+
+    const input = GenerateLiquidRC();
+    const file = JSON.stringify(input, null, 2);
+
+    try {
+
+      const content = Buffer.from(file);
+
+      await workspace.fs.writeFile(this.uri.liquidrc, new Uint8Array(content));
+
+      this.info('Generated .liquidrc file: ' + this.uri.liquidrc.path);
+
+      return this.openDocument(this.uri.liquidrc.fsPath);
+
+    } catch (e) {
+
+      this.catch('Failed to write .liquidrc file to workspace root', e);
 
     }
-  }
 
-  public liquidrcDefaults () {
-
-    return this.generateLiquidrc('default');
   }
 
   /**

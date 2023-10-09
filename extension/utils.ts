@@ -1063,19 +1063,25 @@ export function rulesDefault (): Rules {
  *
  * Applies the recommended beautification rules
  */
-export function rulesRecommend (): Liquidrc {
+export function GenerateLiquidRC (): Liquidrc {
+
+  const editor = workspace.getConfiguration('editor');
 
   return {
+    engine: 'shopify',
+    files: {
+      settings: '',
+      locales: '',
+      sections: [],
+      snippets: []
+    },
     format: {
-      wrap: 0,
-      crlf: false,
-      indentSize: 2,
+      ignore: [],
+      wrap: editor.get<number>('wordWrapColumn') || 100,
+      indentSize: editor.get<number>('tabSize') || 2,
       preserveLine: 2,
       endNewline: true,
       liquid: {
-        commentIndent: true,
-        commentNewline: true,
-        delimiterTrims: 'tags',
         indentAttribute: true,
         lineBreakSeparator: 'before',
         normalizeSpacing: true,
@@ -1086,7 +1092,8 @@ export function rulesRecommend (): Liquidrc {
         quoteConvert: 'double',
         selfCloseSpace: true,
         delimiterTerminus: 'inline',
-        commentNewline: true,
+        stripAttributeLines: true,
+        commentNewline: false,
         forceIndent: true,
         commentIndent: true,
         ignoreJS: true,
@@ -1105,26 +1112,6 @@ export function rulesRecommend (): Liquidrc {
         noLeadZero: true,
         quoteConvert: 'single',
         atRuleSpace: true
-      },
-      script: {
-        arrayFormat: 'indent',
-        objectIndent: 'indent',
-        braceAllman: false,
-        methodChain: 3,
-        caseSpace: true,
-        endComma: 'never',
-        quoteConvert: 'single',
-        elseNewline: true,
-        functionNameSpace: true,
-        functionSpace: true,
-        braceNewline: false,
-        braceStyle: 'none',
-        commentNewline: true,
-        neverFlatten: false,
-        noCaseIndent: true,
-        noSemicolon: false,
-        objectSort: false,
-        vertical: false
       }
     }
   };

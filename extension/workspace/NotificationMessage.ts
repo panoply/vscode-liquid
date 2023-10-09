@@ -58,7 +58,7 @@ export class NotificationMessage extends WorkspaceSettings {
     const message = isArray(text) ? (text as string[]).join(' ') : text as string;
 
     try {
-      const action = await window.showInformationMessage(message, ...choices);
+      const action = await window.showInformationMessage(message, { modal }, ...choices);
       return action ? action.toUpperCase().replace(/ /g, '_') : null;
     } catch (e) {
       this.catch('Failed to show information message', e);
