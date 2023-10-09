@@ -108,6 +108,9 @@ class VSCodeLiquid extends Events {
    */
   private workspace (subscriptions: { dispose(): void; }[]) {
 
+    workspace.onDidRenameFiles(this.onDidRenameFiles, this, subscriptions);
+    workspace.onDidDeleteFiles(this.onDidDeleteFiles, this, subscriptions);
+    workspace.onDidCreateFiles(this.onDidCreateFiles, this, subscriptions);
     workspace.onDidChangeConfiguration(this.onDidChangeConfiguration, this, subscriptions);
     workspace.onDidCloseTextDocument(this.onDidCloseTextDocument, this, subscriptions);
     workspace.onDidChangeTextDocument(this.onDidChangeTextDocument, this, subscriptions);

@@ -6,13 +6,14 @@ import {
   InLanguageIds,
   LanguageIds,
   Liquidrc,
-  SettingsData,
-  SharedSchema
+  SharedSchema,
+  FileKeys,
+  SettingsSchema
 } from '../types';
 import { workspace, ConfigurationTarget, Uri, RelativePattern } from 'vscode';
 import { existsSync } from 'node:fs';
-import { join, basename } from 'node:path';
-import { has, isNil, difference, hasPath, isEmpty } from 'rambdax';
+import { join, basename, relative } from 'node:path';
+import { has, isNil, difference, hasPath, isEmpty, equals, T } from 'rambdax';
 import anymatch from 'anymatch';
 import { OutputChannel } from './OutputChannel';
 import * as u from '../utils';
@@ -48,7 +49,9 @@ export class WorkspaceSettings extends OutputChannel {
       return true;
 
     } catch (e) {
+
       this.catch('Failed to set the editor.defaultFormatter', e.message);
+
     }
 
   }
@@ -92,7 +95,7 @@ export class WorkspaceSettings extends OutputChannel {
    * settings for the given language id. Returns a boolean value indicating whether or not
    * a default formatter is defined.
    */
-  isDefaultFormatter (languageId: LanguageIds) {
+  public isDefaultFormatter (languageId: LanguageIds) {
 
     const setting = workspace.getConfiguration().inspect(`[${languageId}]`);
     const prop = 'editor.defaultFormatter';
@@ -120,7 +123,7 @@ export class WorkspaceSettings extends OutputChannel {
    *
    * Assigns and returns the known Liquid engine being used.
    */
-  getEngine () {
+  public getEngine () {
 
     if (this.config.method === ConfigMethod.Liquidrc) {
 
@@ -147,82 +150,165 @@ export class WorkspaceSettings extends OutputChannel {
   }
 
   /**
-   * Get External
+   * Get Shared Schema
    *
-   * Generates the URI paths defined either via workspace settings on
-   * `liquid.file.*` configurations or from the `.liquidrc` file.
+   * Function method for maintaining active shared schema Shopify references
    */
-  async getExternal (files: string[]) {
+  async getSharedSchema (uri?: Uri, { remove = false, rename = false } = {}) {
 
-    for (const name of files) {
+    if (u.isUndefined(uri)) {
 
-      if (name in this.files && this.files[name] !== null) {
+      const paths = await workspace.findFiles('**/*.schema', '**/node_modules/**');
 
-        const { fsPath } = this.files[name];
-        const exists = await u.pathExists(fsPath);
+      for (const schema of paths) {
+        if (!this.files.sharedSchema.has(schema.fsPath)) {
 
-        if (exists) {
+          const data = await u.parseJsonFile<SharedSchema>(schema);
+          const base = basename(schema.fsPath);
+          const file = base.slice(0, base.lastIndexOf('.'));
 
-          try {
+          if (data) {
 
-            if (name === 'locales') {
+            this.files.sharedSchema.add(schema.fsPath);
+            this.json.extend(schema, data);
+            this.info(`syncify shared~schema file: ${base}`);
 
-              this.completion.files.locales = this.files[name].fsPath;
+            $.liquid.files.set(file, data);
 
-              const locales = await u.parseJsonFile(this.files[name]);
-              const schema = await u.parseJsonFile(this.files.localesSchema);
+          } else {
 
-              $.liquid.files.set('locales', locales);
-              $.liquid.files.set('locales_schema', schema);
-
-            } else if (name === 'settings') {
-
-              const data = await u.parseJsonFile(this.files[name]) as unknown as SettingsData[];
-
-              getSettingsCompletions(fsPath, data);
-
+            if (this.hasActivated) {
+              this.warn(`Invalid or Empty shared schema at: /${relative(this.uri.root.fsPath, schema.fsPath)}`);
             }
-
-          } catch (e) {
-
-            this.catch('JSON Error', e);
-
           }
-        } else {
-
-          this.error(`${fsPath}`)(
-            'Unable to resolve a file at the path that was provided.',
-            `Completion ${name} require you reference a file relative to your root.\n`
-          );
-
         }
       }
 
+    } else if (uri) {
+
+      const base = basename(uri.fsPath);
+      const file = base.slice(0, base.lastIndexOf('.'));
+
+      if (remove === true || rename === true) {
+
+        if (this.files.sharedSchema.has(uri.fsPath)) {
+
+          $.liquid.files.delete(file);
+
+          this.files.sharedSchema.delete(uri.fsPath);
+          this.json.extend(uri, null);
+
+          if (remove) {
+            this.info(`removed shared~schema file: ${base}`);
+          }
+        }
+
+      } else {
+
+        const data = await u.parseJsonFile<SharedSchema>(uri);
+
+        if (data && isEmpty(data) === false) {
+
+          if (!this.files.sharedSchema.has(uri.fsPath)) {
+
+            this.info(`syncify shared~schema file: ${base}`);
+            this.files.sharedSchema.add(uri.fsPath);
+            this.json.extend(uri, data);
+
+            $.liquid.files.set(file, data);
+
+          } else {
+
+            const current = $.liquid.files.get(file);
+
+            for (const $ref in current) {
+              if ($ref in data) {
+                if (!equals(data[$ref], current[$ref])) {
+                  this.info(`updated "${$ref}" in shared~schema file: ${base}`);
+                }
+              } else {
+                this.info(`deleted "${$ref}" in shared~schema file: ${base}`);
+              }
+            }
+
+            for (const $ref in data) {
+              if (!($ref in current)) {
+                this.info(`created "${$ref}" in shared~schema file: ${base}`);
+              }
+            }
+
+            $.liquid.files.set(file, data);
+            this.json.extend(uri, data);
+
+          }
+
+        } else {
+
+          if (this.files.sharedSchema.has(uri.fsPath)) {
+
+            $.liquid.files.delete(file);
+
+            this.files.sharedSchema.delete(uri.fsPath);
+            this.json.extend(uri, null);
+            this.info(`removed shared~schema file: ${base}`);
+
+          }
+
+        }
+
+      }
+
     }
+
+    this.json.configure();
+
   }
 
   /**
-   * Globs
+   * Get File Completions
    *
-   * Adds globals to the completions store
+   * Function method for obtaining and maintaining import files such as snippets
    */
-  private async setFileGlobs (file: string, array: string[], config: '.liquidrc' | 'workspace' | 'global') {
+  async getFileCompletions (types: FileKeys[]) {
 
-    if (this.files[file] === null) return false;
+    const type = types.shift();
 
-    const root = this.uri.root.fsPath;
-    const curr = this.files[file].size;
-    const ends = array.length;
+    if (this.config.sources.files[type] === ConfigMethod.Undefined) {
+      if (types.length !== 0) return this.getFileCompletions(types);
+      return null;
+    }
 
-    if (curr > 0) this.files[file].clear();
+    const source = this.config.sources.files[type];
 
+    let config: 'workspace' | '.liquidrc';
+    let input: string[];
     let added: number = 0;
     let skips: number = 0;
+    let size: number = 0;
 
-    for (let i = 0; i < ends; i++) {
+    if (source === ConfigMethod.Workspace) {
+      config = 'workspace';
+      input = workspace.getConfiguration().get<string[]>(`liquid.files.${this.engine}.${type}`);
+    } else {
+      config = '.liquidrc';
+      input = this.liquidrc.files[type];
+    }
 
-      const path = array[i];
-      const relative = new RelativePattern(root, u.refineURI(path));
+    if (this.files[type].size > 0) {
+      if (type === 'sections') {
+        size = this.files.sections.size + this.files.sectionGroups.size;
+        this.files[type].clear();
+        this.files.sectionGroups.clear();
+      } else {
+        size = this.files[type].size;
+        this.files[type].clear();
+      }
+    }
+
+    for (let i = 0; i < input.length; i++) {
+
+      const path = input[i];
+      const relative = new RelativePattern(this.uri.root, u.refineURI(path));
       const paths = await workspace.findFiles(relative);
 
       if (paths.length > 0) {
@@ -231,230 +317,312 @@ export class WorkspaceSettings extends OutputChannel {
 
           if (entry.fsPath.endsWith('.liquid')) {
 
-            this.files[file].add(entry);
+            if (type === 'sections') {
+              if (entry.fsPath.endsWith('-group.liquid')) {
+                this.files.sectionGroups.add(entry);
+              } else {
+                this.files.sections.add(entry);
+              }
+            } else {
+              this.files[type].add(entry);
+            }
+
             added = added + 1;
-
-          } else if (file === 'schema') {
-
-            this.files[file].add(entry.fsPath);
-            added = added + 1;
-
           } else {
             skips = skips + 1;
           }
         }
 
-        if (i === ends - 1) {
-          if (added > 0 && curr > 0 && curr !== added) {
+        if (i === input.length - 1) {
 
-            const amount = added - curr;
+          if (added > 0 && size > 0 && size !== added) {
+
+            const amount = added - size;
 
             if (amount > 0) {
               const plural = amount > 1 ? `${amount} files` : `${amount} file`;
-              this.info(`${plural} added to the ${file} completion list`);
+              this.info(`${plural} added to the ${type} completion list`);
             } else {
               const abs = Math.abs(amount);
               const plural = abs > 1 ? `${abs} files` : `${abs} file`;
-              this.info(`${plural} removed from the ${file} completion list`);
+              this.info(`${plural} removed from the ${type} completion list`);
             }
           }
 
-          if (skips > 0 && curr > 0 && curr !== skips) {
+          if (skips > 0 && size > 0 && size !== skips) {
             const plural = skips > 1 ? `${skips} files` : `${skips} file`;
-            this.info(`${plural} non Liquid files excluded from ${file} completions list`);
+            this.info(`${plural} non Liquid files excluded from ${type} completions list`);
           }
 
-          if (curr === 0) {
+          if (size === 0) {
             const plural = added > 1 ? `${added} files` : `${added} file`;
-            this.info(`${config} ${file} file completions: ${plural}`);
+            this.info(`${config} ${type} file completions: ${plural}`);
           }
         }
 
       } else {
 
-        this.warn(`Unable to resolve any ${file} liquid files at: ${path}`);
+        this.warn(`Unable to resolve any ${type} liquid files at: ${path}`);
 
       }
     }
 
-    if (this.files[file].size > 0) {
-      this.completion.enable[file] = true;
-    } else {
-      this.completion.enable[file] = false;
-    }
+    if (types.length !== 0) return this.getFileCompletions(types);
 
-    return this.completion.enable[file];
-
-  };
+  }
 
   /**
-   * Get Files
+   * Set Locale File
    *
-   * Generates the URI paths defined either via workspace settings on
-   * `liquid.file.*` configurations or from the `.liquidrc` file.
+   * Function method for setting Shopify Locales completions
    */
-  async getFiles (): Promise<void> {
+  async setLocaleFile () {
 
-    if (this.engine === 'standard') return;
-    if (this.engine === 'jekyll') {
-      this.warn('Jekyll file paths are not yet supported');
-      return;
+    if (this.config.sources.files.locales === ConfigMethod.Undefined) return null;
+
+    let config: 'workspace' | '.liquidrc';
+    let input: string;
+
+    if (this.config.sources.files.locales === ConfigMethod.Workspace) {
+      config = 'workspace';
+      input = workspace.getConfiguration().get<string>('liquid.files.shopify.locales');
+    } else {
+      config = '.liquidrc';
+      input = (this.liquidrc.files as { locales: string }).locales;
     }
 
-    /**
-     * Configuration source
-     */
-    let config: '.liquidrc' | 'workspace' | 'global';
+    const path = join(this.uri.root.fsPath, input);
+    const file = Uri.file(path);
+
+    if (await u.pathExists(file.fsPath)) {
+
+      this.files.locales = file;
+      this.completion.files.locales = this.files.locales.fsPath;
+      this.info(`${config} locale completions: ${basename(path)}`);
+
+      const schema = Uri.file(file.fsPath.replace(/\.json$/, '.schema.json'));
+
+      if (await u.pathExists(schema.fsPath)) {
+        this.files.localeSchema = schema;
+        this.info(`${config} locale → schema ref: ${basename(schema.fsPath)}`);
+      }
+
+    } else {
+
+      this.warn(`Unable to resolve locale JSON file at: ${path}`);
+    }
+
+    return this.getLocaleFile();
+
+  }
+
+  /**
+   * Get Locale File
+   *
+   * Function method for re-parsing and keep an upto date locales references
+   */
+  async getLocaleFile () {
+
+    if (this.files.locales === null) return this;
+
+    const { fsPath } = this.files.locales;
+    const exists = await u.pathExists(fsPath);
+
+    if (exists) {
+
+      try {
+
+        const locales = await u.parseJsonFile(this.files.locales);
+        const schema = await u.parseJsonFile(this.files.localeSchema);
+
+        $.liquid.files.set('locales', locales);
+        $.liquid.files.set('locales_schema', schema);
+
+      } catch (e) {
+
+        this.catch('JSON Error', e);
+
+      }
+
+    } else {
+
+      this.error(`${fsPath}`)(
+        'Unable to resolve a file at the path that was provided.',
+        'Completion locales require you reference a file relative to your root.\n'
+      );
+
+    }
+
+    return this;
+  }
+
+  /**
+   * Set Settings File
+   *
+   * Function method for setting Shopify settings schema completions
+   */
+  async setSettingsFile () {
+
+    if (this.config.sources.files.settings === ConfigMethod.Undefined) return null;
+
+    let config: 'workspace' | '.liquidrc';
+    let input: string;
+
+    if (this.config.sources.files.settings === ConfigMethod.Workspace) {
+      config = 'workspace';
+      input = workspace.getConfiguration().get<string>('liquid.files.shopify.settings');
+    } else {
+      config = '.liquidrc';
+      input = (this.liquidrc.files as { settings: string }).settings;
+    }
+
+    const path = join(this.uri.root.fsPath, input);
+    const file = Uri.file(path);
+
+    if (await u.pathExists(file.fsPath)) {
+
+      this.files.settings = file;
+      this.completion.files.settings = this.files.settings.fsPath;
+      this.info(`${config} settings completions: ${basename(path)}`);
+
+    } else {
+
+      this.warn(`Unable to resolve settings JSON file at: ${path}`);
+    }
+
+    return this.getSettingsFile();
+
+  }
+
+  /**
+   * Get Settings File
+   *
+   * Function method for re-parsing and keep an upto settings_schema reference
+   */
+  async getSettingsFile () {
+
+    if (this.files.settings === null) return this;
+
+    const { fsPath } = this.files.settings;
+    const exists = await u.pathExists(fsPath);
+
+    if (exists) {
+
+      try {
+        const settings = await u.parseJsonFile<SettingsSchema[]>(this.files.settings);
+        getSettingsCompletions(fsPath, settings);
+
+      } catch (e) {
+
+        this.catch('JSON Error', e);
+
+      }
+
+    } else {
+
+      this.error(`${fsPath}`)(
+        'Unable to resolve a file at the path that was provided.',
+        'Completion settings require you reference a file relative to your root.\n'
+      );
+
+    }
+
+    return this;
+
+  }
+
+  /**
+   * Get File Source
+   *
+   * Function method for obtain configuration sources for file completions.
+   * The extension allows both workspace and liquidrc configs to be used.
+   */
+  async getFileSource () {
+
+    if (this.engine === 'standard') {
+      return null;
+    }
+
+    if (this.engine === 'jekyll') {
+      this.warn('Jekyll file paths are not yet supported');
+      return null;
+    }
 
     /**
      * Whether or not rcfile exists
      */
     let rcfile = false;
 
-    const root = this.uri.root.fsPath;
-    const settings = workspace.getConfiguration().inspect('liquid');
+    /**
+     * File keys - Differs based on engine definition
+     */
+    const files: string[] = this.engine === 'shopify' ? [
+      'locales',
+      'settings',
+      'snippets',
+      'sections'
+    ] : this.engine === '11ty' || this.engine === 'eleventy' ? [
+      'data',
+      'layouts',
+      'includes'
+    ] : [];
+
+    /**
+     * Workspace Configuration
+     */
+    const config = workspace.getConfiguration();
+
+    /**
+     * Workspace Liquid settings
+     */
+    const settings = config.inspect<{
+      files: Workspace.Files;
+      format: Workspace.Format;
+    }>('liquid');
 
     if (this.config.method === ConfigMethod.Liquidrc) {
-
       if (has('files', this.liquidrc)) {
-        if (u.isObject(this.liquidrc.files) === false) {
-
-          this.error('Invalid type provided on "files" in .liquidrc')(
-            'The "files" setting expects a type object be provided but recieved type',
-            `${typeof this.liquidrc.files}. You will need to correct this or`,
-            'alternatively you can define files in your workspace file via the',
-            `"liquid.files.${this.liquidrc.engine}" option.`
-          );
-
-        } else {
+        if (u.isObject(this.liquidrc.files)) {
           rcfile = true;
+        } else if (this.liquidrc.files !== null) {
+          this.error(
+            'Invalid type provided on "files" in .liquidrc'
+          )(
+            `The "files" option expects a type object but recieved type: ${typeof this.liquidrc.files}`,
+            `Optionally define files in your workspace using "liquid.files.${this.liquidrc.engine}" option.`
+          );
         }
       }
     }
-
-    let files: string[] = [];
-
-    if (this.engine === 'shopify') {
-
-      files = [
-        'locales',
-        'settings',
-        'snippets',
-        'sections',
-        'schema'
-      ];
-
-    } else if (this.engine === 'eleventy' || this.engine === '11ty') {
-
-      files = [
-        'data',
-        'layouts',
-        'includes'
-      ];
-
-    }
-
-    type Files = { files?: Workspace.Files }
 
     for (const file of files) {
 
-      let defined = false;
+      if (!has(file, this.config.sources.files)) {
+        this.config.sources.files[file] = ConfigMethod.Undefined;
+      }
 
       if (rcfile && has(file, this.liquidrc.files)) {
-
         if (u.isString(this.liquidrc.files[file]) && this.liquidrc.files[file] !== '') {
-
-          config = '.liquidrc';
-
-          const path = join(root, this.liquidrc.files[file]);
-
-          this.files[file] = Uri.file(path);
-          this.info(`${config} ${file} completions: ${basename(path)}`);
-
-          if (this.engine === 'shopify') {
-
-            if (file === 'locales') {
-
-              const name = this.liquidrc.files[file].replace(/\.json$/, '.schema.json');
-              const path = join(root, name);
-              const schema = Uri.file(path);
-
-              if (await u.pathExists(schema.fsPath)) {
-
-                this.files.localesSchema = schema;
-                this.info(`${config} locale → schema ref: ${basename(path)}`);
-
-              }
-            }
-
-          }
-
-          defined = true;
-
+          this.config.sources.files[file] = ConfigMethod.Liquidrc;
         } else if (u.isArray(this.liquidrc.files[file]) && this.liquidrc.files[file].length > 0) {
-
-          config = '.liquidrc';
-          defined = await this.setFileGlobs(file, this.liquidrc.files[file], config);
-
+          this.config.sources.files[file] = ConfigMethod.Liquidrc;
         }
       }
 
-      // When the .liquidrc file has no files defined, we will inspect
-      // the workspace configuration and see if references exist
-      if (defined === false) {
+      if (this.config.sources.files[file] === ConfigMethod.Undefined) {
+        if (hasPath(`files.${this.engine}`, settings.workspaceValue)) {
 
-        let value: string | string[];
+          const option = settings.workspaceValue.files[this.engine][file];
 
-        // First, we check workspace settings, eg: .vscode/settings.json
-        //
-        if (hasPath(`files.${this.engine}`, settings.workspaceValue as Files)) {
-
-          if (has(file, (settings.workspaceValue as Files).files[this.engine])) {
-
-            config = 'workspace';
-            value = (settings.workspaceValue as Files).files[this.engine][file];
-
-          } else if (hasPath(`files.${this.engine}`, settings.globalValue as Files)) {
-
-            this.warn(`Defined "${file}" file paths in user settings will be ignored`);
+          if (u.isString(option) && option !== '') {
+            this.config.sources.files[file] = ConfigMethod.Workspace;
+          } else if (u.isArray(option) && option.length > 0) {
+            this.config.sources.files[file] = ConfigMethod.Workspace;
           }
 
-        }
+        } else if (hasPath(`files.${this.engine}`, settings.globalValue)) {
 
-        // Second, we check global user settings. This is discouraged and warnings will show.
-        //
-        if (value === undefined) {
-          if (hasPath(`files.${this.engine}`, settings.globalValue as Files)) {
-            this.warn(`Defined "${file}" file paths in user settings will be ignored`);
-          }
-        }
-
-        if (typeof value === 'string') {
-
-          const path = u.refineURI(value);
-
-          this.files[file] = Uri.file(join(root, path));
-          this.info(`${config} ${file.slice(0, -1)} completions: ${basename(path)}`);
-
-          if (this.engine === 'shopify') {
-
-            if (file === 'locales') {
-
-              const name = value.replace(/\.json$/, '.schema.json');
-              const path = join(root, name);
-              const schema = Uri.file(path);
-
-              if (await u.pathExists(schema.fsPath)) {
-                this.files.localesSchema = schema;
-                this.info(`${config} locale → schema ref: ${basename(path)}`);
-              }
-            }
-
-          }
-
-        } else if (u.isArray(value) && value.length > 0) {
-
-          await this.setFileGlobs(file, value, config);
+          this.warn(`Defined "${file}" file paths in user settings will be ignored`);
 
         }
       }
@@ -620,6 +788,8 @@ export class WorkspaceSettings extends OutputChannel {
         'objects',
         'section',
         'schema',
+        'snippets',
+        'sections',
         'settings',
         'variables'
       ]) {
@@ -630,19 +800,18 @@ export class WorkspaceSettings extends OutputChannel {
             if (this.engine !== 'shopify' && settings[v] === true) {
               this.warn(`Completion for ${v} will not work in Liquid ${u.upcase(this.engine)}`);
             }
-          } else {
-
-            if (settings[v] !== this.completion.enable[v]) {
-              if (settings[v]) {
-                this.info(`Enabled ${settings[v]} completions`);
-              } else {
-                this.info(`Disable ${settings[v]} completions`);
-              }
-            }
-
-            this.completion.enable[v] = settings[v];
-
           }
+
+          if (settings[v] !== this.completion.enable[v]) {
+            if (settings[v]) {
+              this.info(`enabled ${v} completions`);
+            } else {
+              this.info(`disabled ${v} completions`);
+            }
+          }
+
+          this.completion.enable[v] = settings[v];
+
         } else {
 
           this.completion.enable[v] = true;
@@ -699,7 +868,16 @@ export class WorkspaceSettings extends OutputChannel {
 
           }
 
+        } else {
+
+          this.formatting.rules = u.rulesDefault();
+
         }
+
+      } else {
+
+        this.formatting.rules = u.rulesDefault();
+
       }
 
     }
@@ -712,9 +890,8 @@ export class WorkspaceSettings extends OutputChannel {
    */
   public getBaseUrl () {
 
-    const { workspaceValue, globalValue } = workspace
-      .getConfiguration()
-      .inspect<Workspace.Config>('liquid.config');
+    const config = workspace.getConfiguration();
+    const { workspaceValue, globalValue } = config.inspect<Workspace.Config>('liquid.config');
 
     let base: string = null;
     let uri: Uri = null;
@@ -750,8 +927,11 @@ export class WorkspaceSettings extends OutputChannel {
     } else {
 
       if (/\.liquidrc(?:\.json)?$/.test(base)) {
-        this.warn(`config.baseDir should be a directory path, excluding: ${base.slice(base.lastIndexOf('/'))}`);
+
+        const excluding = base.slice(base.lastIndexOf('/'));
+        this.warn(`config.baseDir should be a directory path, excluding: ${excluding}`);
         base = base.slice(0, base.lastIndexOf('/'));
+
       }
 
       uri = Uri.joinPath(this.uri.root, base);
@@ -786,6 +966,7 @@ export class WorkspaceSettings extends OutputChannel {
         const path = u.hasLiquidrc(uri.fsPath);
 
         if (!path) {
+
           const method = this.config.method === ConfigMethod.Liquidrc
             ? this.uri.liquidrc.fsPath
             : this.uri.workspace.fsPath;
@@ -800,9 +981,7 @@ export class WorkspaceSettings extends OutputChannel {
 
           this.uri.base = uri;
           this.uri.liquidrc = Uri.file(path);
-          this.nl();
-          this.info(`.liquidrc resolution path: ${uri.path}`);
-          this.nl();
+          this.nl().info(`.liquidrc resolution path: ${uri.path}`).nl();
 
           return Setting.LiquidrcTouch;
 
@@ -817,63 +996,6 @@ export class WorkspaceSettings extends OutputChannel {
     }
 
     this.isActive = true;
-
-  }
-
-  async getSharedSchema (uri?: Uri) {
-
-    if (u.isUndefined(uri)) {
-
-      const paths = await workspace.findFiles('**/*.schema', '**/node_modules/**');
-
-      for (const schema of paths) {
-        if (!this.files.schema.has(schema.fsPath)) {
-
-          const data = await u.parseJsonFile(schema) as unknown as SharedSchema;
-
-          if (data) {
-
-            this.sharedSchema.set(basename(schema.fsPath, '.schema'), data);
-
-            this.files.schema.add(schema.fsPath);
-            this.json.extend(schema, data);
-
-          } else {
-            this.warn(`Invalid or empty shared schema at: ${basename(schema.fsPath)}`);
-          }
-        }
-      }
-
-    } else if (uri) {
-
-      const data = await u.parseJsonFile(uri) as unknown as SharedSchema;
-
-      if (data && isEmpty(data) === false) {
-
-        if (!this.files.schema.has(uri.fsPath)) {
-          this.info(`created new shared schema file: ${basename(uri.fsPath)}`);
-          this.files.schema.add(uri.fsPath);
-        } else {
-          this.info(`updated shared schema file: ${basename(uri.fsPath)}`);
-        }
-
-        this.json.extend(uri, data);
-        this.sharedSchema.set(basename(uri.fsPath, '.schema'), data);
-
-      } else {
-
-        if (this.files.schema.has(uri.fsPath)) {
-          this.files.schema.delete(uri.fsPath);
-          this.sharedSchema.delete(basename(uri.fsPath, '.schema'));
-          this.json.extend(uri, null);
-          this.info(`removed shared schema file: ${basename(uri.fsPath)}`);
-        }
-
-      }
-
-    }
-
-    this.json.configure();
 
   }
 
@@ -958,8 +1080,7 @@ export class WorkspaceSettings extends OutputChannel {
               locales: '',
               settings: '',
               sections: [],
-              snippets: [],
-              schema: []
+              snippets: []
             },
             format: <Liquidrc['format']>{
               ignore: has('ignore', this.liquidrc) ? (this.liquidrc as any).ignore : [],
@@ -983,13 +1104,14 @@ export class WorkspaceSettings extends OutputChannel {
 
         if (this.deprecation.liquidrc === null) {
 
-          await this.getFiles();
-
-          this.getFormatRules();
           this.getEngine();
+          this.getFormatRules();
 
-          await this.getExternal([ 'locales', 'settings' ]);
+          await this.getFileCompletions([ 'sections', 'snippets' ]);
+          await this.setLocaleFile();
+          await this.setSettingsFile();
           await this.getSharedSchema();
+
         }
 
       } else {
@@ -1181,18 +1303,27 @@ export class WorkspaceSettings extends OutputChannel {
       }
     }
 
-    if (this.config.method === ConfigMethod.Workspace) {
-      await this.getFiles();
-      this.getFormatRules();
-      this.getEngine();
+    await this.getFileSource();
+
+    if (this.engine === 'shopify') {
+
+      if (this.config.method === ConfigMethod.Workspace) {
+        await this.getFileCompletions([ 'sections', 'snippets' ]);
+        await this.setLocaleFile();
+        await this.setSettingsFile();
+        await this.getSharedSchema();
+      }
+
+    } else if (this.engine === '11ty' || this.engine === 'eleventy') {
+
+      await this.getFileCompletions([ 'data', 'includes', 'layouts' ]);
+
     }
 
     this.getCompletions();
     this.getValidations();
     this.getHovers();
-
-    await this.getExternal([ 'locales', 'settings' ]);
-    await this.getSharedSchema();
+    this.getFormatRules();
 
   };
 

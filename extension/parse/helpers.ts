@@ -247,6 +247,47 @@ export function detail (type: Types.Basic | Type) {
 }
 
 /**
+ * Get Schema Completion Kind
+ *
+ * Returns the `CompletionItemKind` enum reference that
+ * should be applied to the generated completion item.
+ */
+export function settingsType (type: SchemaSettingTypes) {
+
+  switch (type) {
+    case 'color':
+    case 'color_background':
+    case 'text':
+    case 'textarea':
+    case 'richtext':
+    case 'inline_richtext':
+    case 'html':
+    case 'liquid':
+    case 'url':
+    case 'select':
+    case 'radio':
+      return Type.string;
+    case 'article':
+    case 'blog':
+    case 'product':
+    case 'page':
+    case 'image_picker':
+    case 'font_picker':
+      return Type.any;
+    case 'product_list':
+      return Type.array;
+    case 'checkbox':
+      return Type.boolean;
+    case 'range':
+    case 'number':
+      return Type.number;
+    default:
+      return Type.any;
+  }
+
+}
+
+/**
  * Get Completion Type
  *
  * Returns the reversed enum reference

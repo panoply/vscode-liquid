@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Rules } from 'esthetic';
 import { Tester } from 'anymatch';
-import { ConfigMethod, Setting } from './enums';
+import { ConfigMethod, ConfigSource, Setting } from './enums';
 import {
   CompletionItem,
   ConfigurationTarget,
@@ -12,6 +12,7 @@ import {
   TextEdit,
   Uri
 } from 'vscode';
+import { LiteralUnion } from 'type-fest';
 
 export interface DeprecationIssues {
 
@@ -131,7 +132,20 @@ export interface Config {
    *
    * @default ConfigMethod.Undefined
    */
-  method: ConfigMethod
+  method: ConfigMethod;
+  /**
+   * The configuration sources
+   */
+  sources: {
+    /**
+     * File Sources
+     */
+    files: { [file: string]: ConfigMethod; }
+    /**
+     * Setting Sources
+     */
+    setting: { [setting: string]: ConfigSource; }
+  }
 }
 
 /* -------------------------------------------- */
@@ -215,6 +229,16 @@ export interface Completions {
 
 export namespace Files {
 
+  export type Keys = LiteralUnion<
+  | 'locales'
+  | 'locales_schema'
+  | 'shared_schema'
+  | 'settings_schema'
+  | 'snippets'
+  | 'sections'
+  | 'section_groups'
+  , string>
+
   /**
    * Shopify specific file URI records
    */
@@ -226,19 +250,23 @@ export namespace Files {
     /**
      * An automated resolve of a locales schema file.
      */
-    localesSchema: Uri;
+    localeSchema: Uri;
+    /**
+     * Settings (`settings_schema.json`) file path
+     */
+    settings: Uri;
     /**
      * Syncify Schema file URIs
      */
-    schema: Set<string>;
-    /**
-    * Settings (`settings_data.json`) file path
-    */
-    settings: Uri;
+    sharedSchema: Set<string>;
     /**
     * Sections directories
     */
     sections: Set<Uri>;
+    /**
+    * Sections directories
+    */
+    sectionGroups: Set<Uri>;
     /**
      * Snippets directories
      */

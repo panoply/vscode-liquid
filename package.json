@@ -432,6 +432,11 @@
       "[liquid]": {
         "editor.foldingStrategy": "indentation"
       },
+      "liquid.format.rules": {
+        "json": {
+          "braceAllman": true
+        }
+      },
       "emmet.includeLanguages": {
         "liquid": "html",
         "liquid-css": "css",
@@ -1333,7 +1338,7 @@
   },
   "dependencies": {
     "@liquify/schema": "^0.8.3",
-    "@liquify/specs": "^0.2.4",
+    "@liquify/specs": "^0.2.5",
     "anymatch": "^3.1.3",
     "parse-json": "^7.1.0",
     "rambdax": "10.0.0",

@@ -7,8 +7,8 @@
       "match": "\\b(ERROR|Error|ISSUE)\\b.*"
     },
     {
-      "name": "string log.string",
-      "match": "\\b(WARNING|Warning|Warn|WARN)\\b"
+      "name": "string log.warning",
+      "match": "\\s*⚠\\s*\\b(WARNING|Warning|Warn|WARN)\\b"
     },
     {
       "name": "punctuation.definition.tag log.control",
@@ -37,7 +37,11 @@
       "match": "\\s*𐄂 (?:\\/?\\.)?\\/[\\s\\S]*$"
     },
     {
-      "match": "\\.liquidrc(?:\\.json)?|[wW]orkspace|[Gg]lobal|[uU]ser",
+      "name": "string log.warning",
+      "match": "(?<=(?:WARNING|Warning|Warn|WARN):).*?(?=:)"
+    },
+    {
+      "match": "\\.liquidrc(?:\\.json)?|[wW]orkspace|[Gg]lobal|[uU]ser|[sS]yncify",
       "name": "support.function.filter log.keyword"
     },
     {
@@ -49,11 +53,19 @@
       "name": "constant.language log.keyword"
     },
     {
+      "match": "(?<=\\s(?:syncify\\s)?)\\b(shared\\~schema)\\b",
+      "name": "keyword.control.filter log.function"
+    },
+    {
       "match": "(?<=[\\:\\)]\\s)([a-z]{2}\\.default\\.schema\\.json|[a-z]{2}\\.default\\.json)\\b",
       "name": "support.class log.support"
     },
     {
       "match": "(?<=[\\:\\)]\\s)\\b(settings_schema\\.json)\\b",
+      "name": "support.class log.support"
+    },
+    {
+      "match": "(?<=[\\:\\)]\\s)\\b([\\w:._-]*\\.schema)\\b",
       "name": "support.class log.support"
     },
     {
@@ -119,6 +131,10 @@
     {
       "match": "v[0-9]\\.?[0-9]?\\.?[0-9]?",
       "name": "comment log.constant"
+    },
+    {
+      "name": "invalid log.error",
+      "match": "^\\> "
     },
     {
       "include": "text.log"

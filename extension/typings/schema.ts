@@ -401,13 +401,13 @@ export type SchemaSettingsData = (
   | Schema.Textarea
 );
 
-export interface SettingsData {
+export interface SettingsSchema {
   /**
    * The `name` which will show as the name title in the settings editor.
    */
   name: string;
   /**
-   * The `settings_data.json` settings array.
+   * The `settings_schema.json` settings array.
    */
   settings: SchemaSettingsData[];
 

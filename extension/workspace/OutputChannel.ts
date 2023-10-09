@@ -2,6 +2,7 @@ import { window } from 'vscode';
 import * as u from '../utils';
 import { StatusBarItem } from './StatusBarItem';
 import { has } from 'rambdax';
+import { JSONError } from 'parse-json';
 import { StatusLanguageItem } from './StatusLanguageItem';
 
 /**
@@ -16,15 +17,23 @@ import { StatusLanguageItem } from './StatusLanguageItem';
  */
 export class OutputChannel extends StatusLanguageItem {
 
-  /**
-   * Status Bar Item - instance
-   */
-  public status = new StatusBarItem();
+  /* -------------------------------------------- */
+  /* PRIVATE REFERENCES                           */
+  /* -------------------------------------------- */
 
   /**
    * Liquid Output Channel
    */
   private output = window.createOutputChannel(this.meta.displayName, 'log-liquid');
+
+  /* -------------------------------------------- */
+  /* PUBLIC EXPORTS                               */
+  /* -------------------------------------------- */
+
+  /**
+   * Status Bar Item - instance
+   */
+  public status = new StatusBarItem();
 
   /**
    * Toggle Output Channel
@@ -41,6 +50,8 @@ export class OutputChannel extends StatusLanguageItem {
   public nl () {
 
     this.output.appendLine('────────────────────');
+
+    return this;
 
   }
 
@@ -64,6 +75,9 @@ export class OutputChannel extends StatusLanguageItem {
       this.output.appendLine(`${u.getTime()} ${line}`);
 
     }
+
+    return this;
+
   }
 
   /**
@@ -73,7 +87,9 @@ export class OutputChannel extends StatusLanguageItem {
    */
   public warn (message: string) {
 
-    this.output.appendLine(`${u.getTime()} WARNING: ${message}`);
+    this.output.appendLine(`${u.getTime()} ⚠ WARNING: ${message}`);
+
+    return this;
 
   }
 
@@ -84,7 +100,23 @@ export class OutputChannel extends StatusLanguageItem {
    */
   public catch (message: string, error: Error) {
 
-    if (error instanceof Error) {
+    if (error instanceof JSONError) {
+
+      this.output.appendLine(`\nERROR: ${message}\n`);
+
+      if (has('message', error)) {
+        const json = error.message.indexOf(' while parsing');
+        if (json > -1) error.message = error.message.slice(0, json);
+        this.output.appendLine(error.message);
+      }
+
+      const lines = error.rawCodeFrame.split('\n');
+
+      for (const line of lines) {
+        this.output.appendLine(line);
+      }
+
+    } else if (error instanceof Error) {
 
       this.output.appendLine(`\nERROR: ${message}\n`);
 
@@ -92,7 +124,7 @@ export class OutputChannel extends StatusLanguageItem {
 
         const json = error.message.indexOf(' while parsing near');
 
-        if (json > -1) error.message = error.message.slice(0, json) + ':';
+        if (json > -1) error.message = error.message.slice(0, json);
 
         this.output.appendLine(error.message);
 
@@ -121,7 +153,7 @@ export class OutputChannel extends StatusLanguageItem {
    * General error handling, typically used for known errors.
    * Returns a function which accepts a spread for multilines.
    */
-  public error (message: string, indent = '  ') {
+  public error (message: string, indent = '> ') {
 
     this.status.error();
     this.output.appendLine(`\nERROR: ${message}`);
@@ -134,6 +166,7 @@ export class OutputChannel extends StatusLanguageItem {
 
       }
 
+      this.output.appendLine('');
     };
 
   };

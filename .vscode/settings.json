@@ -1,6 +1,7 @@
 {
   "cSpell.words": [
     "Allman",
+    "esbenp",
     "Mansedan",
     "packagejson",
     "TLDR",
@@ -16,7 +17,9 @@
   },
   "json.schemas": [
     {
-      "fileMatch": ["package.json"],
+      "fileMatch": [
+        "package.json"
+      ],
       "url": "https://unpkg.com/tsup/schema.json"
     }
   ],

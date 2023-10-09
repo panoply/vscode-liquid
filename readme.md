@@ -72,13 +72,16 @@ The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (
 - [Completions](#completions)
   - [Files](#files)
   - [Shopify Schema](#shopify-schema)
-  - [Shared Section Schema](#shared-section-schema)
   - [JSON Files](#json-files)
+- [Syncify](#syncify)
+  - [Shared Section Schema](#shared-section-schema)
+  - [Leveraging Shared Schema Files](#leveraging-shared-schemas)
 - [Formatting](#formatting)
   - [Æsthetic](#esthetic)
   - [Setting Default Formatter](#setting-default-formatter)
   - [Ignoring Files](#ignoring-files)
   - [Ignoring Code](#ignoring-code)
+  - [Using Prettier](#using-prettier)
 - [Snippets](#snippets)
 - [Status Bar](#status-bar)
 - [Configuration](#configuration)
@@ -454,7 +457,7 @@ If you defining configuration via workspace settings, the extension only support
 
 ### Shopify Schema
 
-As of version **v3.2^** this extension supports schema tag intelliSense capabilities. The feature drastically improves productivity for developers working with the Shopify Liquid variation. Section `{% schema %}` provide users with common JSON features such as completions, validations, hovers and snippets. The contents of schema tags (ie: section settings and blocks) are made available to Liquid `{{ section.settings.* }}` and `{{ block.settings.* }}` objects.
+As of version **v3.2^** this extension supports schema tag intelliSense capabilities. The feature drastically improves productivity for developers working with the Shopify Liquid variation. Section `{% schema %}` supports JSON features such as completions, validations, hovers and snippets. The contents of schema tags (ie: section settings and blocks) are made available to Liquid `{{ section.settings.* }}` and `{{ block.settings.* }}` objects.
 
 ```jsonc
 {
@@ -497,23 +500,61 @@ In addition to JSON and Liquid completion support, schema JSON diagnostic valida
 
 </details>
 
-# Shared Section Schema
+# Syncify
 
-Shopify developers who leverage [Syncify](https://github.com/panoply/syncify) for theme development can take advantage of Shared Section Schema JSON IntelliSense capabilities. By default, all files using a `.schema` extension will be identified as **Shared Section Schema** and completions will be made available within `{% schema %}` tags via `$ref` occurrences.
+The extension supports [Syncify](https://github.com/panoply/syncify) related Shopify theme development architecture. Syncify is a theme development tool which exists as superior alternative to the Shopify CLI. It introduces a refined approach to Shopify theme development and offers essential features for building brilliant themes.
 
-### Syncify
+I proactively oversee the development of Syncify, having conceived it as a solution to address what I consider a fundamentally flawed approach to Theme Development which has emerged with the Shopify CLI and Dawn.
 
-[Syncify](https://github.com/panoply/syncify) is a theme development tool which exists as superior alternative to the Shopify CLI. It introduces a refined approach to Shopify theme development and offers essential features. One of the core capabilities of Syncify is shared section schema which allows developers to have isolated schemas from which you can inject into different sections.
+### Shared Section Schema
 
-I actively maintain Syncify and created it to solve what I considered to be a fundamentally flawed approach to Theme Development introduced by Shopify and the Shopify CLI. If you are using the Shopify CLI then this capability is not available to you.
+Shopify developers who leverage [Syncify](https://github.com/panoply/syncify) for theme development can take advantage of Shared Section Schema JSON IntelliSense capabilities. By default, all files using a `.schema` extension will be identified as **Shared Section Schema** and completions will be made available within `{% schema %}` tags using `$ref` occurrences. Whenever a `.schema` file is detected within your workspace, shared schema features will be activated
 
-### Leveraging Shared Schemas
+> If you are currently utilizing the Shopify CLI, please be aware that this capability is unavailable to you.
 
-All files in your workspace using a `.schema` extension will be treated as JSON by the extension. At runtime, your workspace is traversed and all `.schema` files are gathered and parsed automatically.
+### Leveraging Shared Schema Files
 
-### JSON Files
+All files in your workspace using a `.schema` extension will be treated as JSON by the extension. At runtime, your workspace is traversed and all `.schema` files are gathered and parsed automatically. Take a look at the Syncify [Documentation](https://github.com/panoply/syncify#shared-schema) for configuration and setup for shared schemas to ensure transforms are handled and injected correctly.
 
-TODO
+**Schema Example**
+
+Take the follow shared schema. Below we define a what is known as a Settings Spread in a shared schema file named `example.schema`.
+
+```jsonc
+{
+  "foo": [
+      {
+      "type": "checkbox",
+      "id": "test",
+      "label": "Some Example",
+      "default": true
+    }
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "info": "Lorem Ipsum"
+    }
+  ]
+}
+```
+
+**Reference Example**
+
+We can reference the above shared schema in any section `{% schema %}` tag by importing it using a `$ref` key property. We can target the `foo` settings spread using a `<filename>.<schema>` dot notation structure. The extension will automatically make `$ref` values available to schema in sections.
+
+```liquid
+{% schema %}
+{
+  "name": "something",
+  "settings": [
+    {
+      "$ref": "example.foo"
+    }
+  ]
+}
+{% endschema %}
+```
 
 # Formatting
 
@@ -725,6 +766,21 @@ Example
 
 </details>
 
+### Using Prettier
+
+Developers may prefer to use the [Liquid Prettier Plugin](https://github.com/Shopify/prettier-plugin-liquid) for beautification instead of Æsthetic. Developers who prefer the Prettier solution. You will need to install the Liquid Prettier plugin as development dependencies in your project and also have the [VSCode Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) extension installed.
+
+**Setting Default Formatter**
+
+```json
+{
+  "[liquid]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false // change to true to enable formatting on save
+  }
+}
+```
+
 # Snippets
 
 Liquid snippets are supported in this extension. The filter and tag snippets were originally forked from [vscode-liquid-snippets](https://github.com/killalau/vscode-liquid-snippets). The snippets provided do not expose trim (`{%-`) delimiters and you can instead leverage the liquid formatting rule of [`delimiterTrims`](https://æsthetic.dev/rules/liquid/delimiterTrims) for controlling this.
@@ -850,9 +906,9 @@ If you are using or have installed the [Liquid Languages Support](https://market
 
 If you are using or have installed [Shopify Liquid (Theme Check)](https://marketplace.visualstudio.com/items?itemName=Shopify.theme-check-vscode) then you may need to choose (or alternate) between the Shopify Liquid (Theme Check) extension and this extension. The Shopify Liquid (Theme Check) extension is for Shopify projects (specifically themes) but tends to create a lot of noise.
 
-The capabilities made available by Shopify Liquid (Theme Check) are nice but they come with limitations as its LSP (Language Server) implementation requires Ruby to function making it rather resource heavy and exhaustive on your machine. Though the extra features like validations do indeed help in some cases, they are specific to Shopify themes and not much use outside of that environment. If you require linting features maybe consider running their CLI solution only when necessary.
+Currently, this extension offers far more features and capabilities than the Shopify backed extension. Though there is efforts being made by Shopify to improve their approach (currently) the only upside for choosing it would be the validation features. The Liquify supersede will provide linting and validations upon its release, so the value proposition for continuing to choose this extension over Shopify Theme Check is minimal and one should evaluate whether or not it's the right choice for their productivity.
 
-Currently, this extension offers far more features and capabilities than the Shopify backed extension. Though there is efforts being made by Shopify to improve their approach but (currently) the only upside for choosing it would be the validation features. The Liquify supersede will provide linting and validations upon its release, so the value proposition for continuing to choose this extension over Shopify Theme Check is minimal and one should evaluate whether or not it's the right choice for their productivity.
+**It is highly recommended that you uninstall or disable Shopify Theme Check if you are using this extension**
 
 # Releases
 

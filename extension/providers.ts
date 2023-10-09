@@ -2,7 +2,6 @@ import { FormatEvent, FormattingProvider } from './providers/FormattingProvider'
 import { CompletionProvider } from './providers/CompletionProvider';
 import { DocumentLinkProvider } from './providers/DocumentLinkProvider';
 import { HoverProvider } from 'providers/HoverProvider';
-// import { CodeLensProvider } from 'providers/CodeLensProvider';
 import { Engine, liquid, q } from '@liquify/specs';
 import { ShopifyOperators, StandardOperators } from 'data/operators';
 import { getFilterCompletions, getFileCompletions, getTagCompletions } from 'data/liquid';
@@ -55,6 +54,23 @@ export class Providers extends Extension {
    * The codelens provider instance
    */
   //  public codelens = new CodeLensProvider();
+
+  resetFeatures () {
+
+    if (this.engine === 'shopify') {
+
+      if (this.completion.enable.snippets) {
+        this.completion.items.set('snippets', getFileCompletions(this.files.snippets));
+        this.links.snippets = Array.from(this.files.snippets);
+      }
+
+      if (this.completion.enable.sections) {
+        this.completion.items.set('sections', getFileCompletions(this.files.sections));
+        this.links.sections = Array.from(this.files.sections);
+      }
+
+    }
+  }
 
   /**
    * Get Features

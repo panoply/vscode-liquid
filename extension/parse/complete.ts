@@ -1,6 +1,6 @@
 import { Char, Complete, Tag, Token } from 'types';
 import { IToken } from 'parse/tokens';
-import { Properties, $, Type, q } from '@liquify/specs';
+import { Properties, $, Type, q, Value } from '@liquify/specs';
 import slash, { entries, isNumber, isObject, isString, keys } from 'utils';
 import { join } from 'node:path';
 import { mdString, detail, kind, objectKind } from 'parse/helpers';
@@ -15,7 +15,7 @@ import {
   Position,
   Uri
 } from 'vscode';
-import { path } from 'rambdax';
+import { has, path } from 'rambdax';
 
 /* -------------------------------------------- */
 /* PRIVATES                                     */
@@ -30,9 +30,13 @@ import { path } from 'rambdax';
 function walkProps (next: string[], objectProps: Properties) {
 
   if (next.length > 0 && q.isProperty(next.shift())) {
+
     return walkProps(next, $.liquid.object.properties);
+
   } else {
+
     if (!objectProps) return null;
+
     return $.liquid.type
       ? entries(objectProps).filter(x => x[1]?.type === $.liquid.type).map(getObjectProperties)
       : entries(objectProps).map(getObjectProperties);
@@ -52,6 +56,21 @@ function walkLocales (next: string[], objectProps: object) {
   } else {
     return objectProps;
   }
+
+};
+
+/**
+ * Setting Walks
+ *
+ * Walks over locale entries
+ */
+function walkSettings (props: string[]) {
+
+  if (props.length === 2) return null;
+
+  q.setObject(props.shift());
+
+  return entries($.liquid.object.properties).map(getObjectProperties);
 
 };
 
@@ -193,15 +212,9 @@ function getObjectProperties ([ label, spec ]): CompletionItem {
     insertText: label,
     documentation: mdString(spec.description),
     preselect: true,
-    kind: settings
-      ? kind(spec.type)
-      : objectKind(spec.type),
-    tags: spec.deprecated
-      ? [ CompletionItemTag.Deprecated ]
-      : [],
-    detail: settings
-      ? spec.summary
-      : detail(spec.type)
+    kind: settings ? kind(spec.type) : objectKind(spec.type),
+    tags: spec.deprecated ? [ CompletionItemTag.Deprecated ] : [],
+    detail: settings ? spec.summary : detail(spec.type)
 
   };
 }
@@ -269,18 +282,32 @@ export function getPropertyCompletions (token: IToken, vars: Complete.Vars) {
   }
 
   if (props.length === 2) {
+
     if (props[1] === 'settings') {
       if (props[0] === 'section') return Token.SchemaSettings;
       if (props[0] === 'block') return Token.SchemaBlock;
     }
+
   } else if (props.length === 3) {
-    if (props[0] === 'section' && props[1] === 'blocks' && props[2] === 'settings') {
+
+    if (
+      props[0] === 'section' &&
+      props[1] === 'blocks' &&
+      props[2] === 'settings') {
       return Token.SchemaBlock;
     }
+
   }
 
-  if (q.setObject(props.shift())) return walkProps(props, $.liquid.object.properties);
+  if (props[0] === 'settings') {
 
+    return walkSettings(props);
+
+  } else {
+
+    if (q.setObject(props.shift())) return walkProps(props, $.liquid.object.properties);
+
+  }
   return null;
 }
 
@@ -433,6 +460,34 @@ export function getLiquidTagSnippets () {
     });
 }
 
-export function setTemplateCompletions () {
+export function getTagFormArguments (fileName: string) {
+
+  const args = $.liquid.data.variation.tags.form.arguments[0];
+  const items: CompletionItem[] = [];
+  const templateItems: CompletionItem[] = [];
+
+  for (const item of (args.value as Value[])) {
+    if (has('template', item)) {
+      if (item.template === fileName) {
+        templateItems.push({
+          label: item.value as string,
+          kind: CompletionItemKind.Reference,
+          preselect: true,
+          insertText: new SnippetString(item.value as string),
+          documentation: mdString(item.description)
+        });
+      }
+    } else {
+      items.push({
+        label: item.value as string,
+        kind: CompletionItemKind.Reference,
+        preselect: true,
+        insertText: new SnippetString(item.value as string),
+        documentation: mdString(item.description)
+      });
+    }
+  }
+
+  return templateItems.length > 0 ? templateItems : items;
 
 }

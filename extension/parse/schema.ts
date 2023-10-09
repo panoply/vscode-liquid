@@ -1,7 +1,7 @@
 import { Complete, SchemaBlocks, SchemaSectionTag, SchemaSettings, Token } from 'types';
 import { CompletionItem, CompletionItemKind } from 'vscode';
+import { $ } from '@liquify/specs';
 import { kind, mdSchema, schemaType } from 'parse/helpers';
-import { Extension } from '../extension';
 import { isArray, isObject } from 'utils';
 
 export function getSharedSchemaRef <T = any> (reference: string): {
@@ -12,9 +12,9 @@ export function getSharedSchemaRef <T = any> (reference: string): {
 
   const [ key, prop ] = reference.split('.');
 
-  if (!Extension.shared.has(key)) return null;
+  if (!$.liquid.files.has(key)) return null;
 
-  const file = Extension.shared.get(key);
+  const file = $.liquid.files.get(key);
 
   if (!(prop in file)) return null;
 

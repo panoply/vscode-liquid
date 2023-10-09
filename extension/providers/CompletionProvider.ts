@@ -198,6 +198,13 @@ export class CompletionProvider extends Service implements CompletionItemProvide
 
     }
 
+    // if (token.type === Token.TagForm && (trigger === Char.DQO || trigger === Char.SQO)) {
+    //   if (Tag(token.tagName).test(token.text)) {
+    //     const template = document.fileName.match(/([a-z]+\/[a-z_]+)\.liquid$/)[1];
+    //     return getTagFormArguments(template);
+    //   }
+    // }
+
     const cursor = token.tagName === 'liquid'
       ? getLiquidTokenCursor(token, this.vars)
       : getTokenCursor(token, this.vars);

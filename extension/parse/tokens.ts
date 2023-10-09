@@ -78,6 +78,10 @@ function getTokenSpecificCursor (text: string, tagName: string, prev: string, of
 
       return Token.Import;
 
+    case 'form':
+
+      return Token.TagForm;
+
     case 'assign':
 
       if (prev.charCodeAt(prev.length - 1) === Char.EQL) return Token.Assignment;
@@ -214,6 +218,8 @@ export function getLiquidTokenCursor ({ text, offset, filter }: IToken, vars: Co
         return Token.ImportRender;
       } else if (tagName === 'section') {
         return Token.ImportSection;
+      } else if (tagName === 'form') {
+        return Token.TagForm;
       }
 
     }

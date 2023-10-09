@@ -24,6 +24,13 @@ export class JSONLanguageProvider {
   public schema: JSONSchema = schema;
 
   /**
+   * Shared Schema
+   *
+   * Schema store for shared sections
+   */
+  public shared: Map<string, string[]> = new Map();
+
+  /**
    * Schema Regions
    *
    * The schema tag regions
@@ -34,13 +41,6 @@ export class JSONLanguageProvider {
    * Configuration
    */
   public config: { validate?: boolean; } = { validate: true };
-
-  /**
-   * Shared Schema
-   *
-   * Schema store for shared sections
-   */
-  public shared: Map<string, string[]> = new Map();
 
   /**
    * Can Format

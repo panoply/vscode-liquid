@@ -9,8 +9,8 @@ dependencies:
     specifier: ^0.8.3
     version: 0.8.3
   '@liquify/specs':
-    specifier: ^0.2.4
-    version: 0.2.4
+    specifier: ^0.2.5
+    version: 0.2.5
   anymatch:
     specifier: ^3.1.3
     version: 3.1.3
@@ -402,8 +402,8 @@ packages:
     engines: {node: '>=12', pnpm: '>=4'}
     dev: false
 
-  /@liquify/specs@0.2.4:
-    resolution: {integrity: sha512-4dvfXjtpafUZoywVl//PgznN+aLeayYwimjc0FTuHQm8b/QkLbfan3evcj+2Qbl0i9msSBVZXUZNo0Hf8OePAw==}
+  /@liquify/specs@0.2.5:
+    resolution: {integrity: sha512-57xGXstxB+gtv0c1h31MyR8m/H2PsGrsDd8PI3E8zwtMWZG0v7MPZGm6qax66bg+FLcSeBtzOqDSA9BeU/HIkg==}
     engines: {node: '>=12', pnpm: '>=4'}
     dev: false
 

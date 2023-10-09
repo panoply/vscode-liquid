@@ -1,4 +1,12 @@
-import { ConfigurationChangeEvent, TextDocument, TextDocumentChangeEvent, TextEditor } from 'vscode';
+import {
+  ConfigurationChangeEvent,
+  FileCreateEvent,
+  FileDeleteEvent,
+  FileRenameEvent,
+  TextDocument,
+  TextDocumentChangeEvent,
+  TextEditor
+} from 'vscode';
 import { ConfigMethod } from 'types';
 import { FormatEvent, FormatEventType } from 'providers/FormattingProvider';
 import { Engine } from '@liquify/specs';
@@ -43,6 +51,82 @@ export class Events extends CommandPalette {
   }
 
   /**
+   * onDidDeleteFiles
+   *
+   * Invoked when file/s are deleted within the workspace
+   */
+  public async onDidRenameFiles ({ files }: FileRenameEvent) {
+
+    if (!this.isActive) return;
+
+    for (const { oldUri, newUri } of files) {
+
+      const oldFile = oldUri.fsPath.endsWith('.schema');
+      const newFile = newUri.fsPath.endsWith('.schema');
+
+      if (oldFile && newFile) {
+        await this.getSharedSchema(oldUri, { rename: true });
+        await this.getSharedSchema(newUri);
+      } else if (oldFile === true && newFile === false) {
+        await this.getSharedSchema(oldUri, { remove: true });
+      } else if (newFile === true && oldFile === false) {
+        await this.getSharedSchema(newUri);
+      } else if (newUri.fsPath.endsWith('.liquid')) {
+        if (this.engine === 'shopify') {
+          await this.getFileCompletions([ 'snippets', 'sections' ]);
+          this.resetFeatures();
+        }
+      }
+
+    }
+
+  }
+
+  /**
+   * onDidDeleteFiles
+   *
+   * Invoked when file/s are created within the workspace
+   */
+  public async onDidCreateFiles ({ files }: FileCreateEvent) {
+
+    if (!this.isActive) return;
+
+    for (const uri of files) {
+      if (uri.fsPath.endsWith('.schema')) {
+        await this.getSharedSchema(uri);
+      } else if (uri.fsPath.endsWith('.liquid')) {
+        if (this.engine === 'shopify') {
+          await this.getFileCompletions([ 'snippets', 'sections' ]);
+          this.resetFeatures();
+        }
+      }
+    }
+
+  }
+
+  /**
+   * onDidDeleteFiles
+   *
+   * Invoked when file/s are deleted within the workspace
+   */
+  public async onDidDeleteFiles ({ files }: FileDeleteEvent) {
+
+    if (!this.isActive) return;
+
+    for (const uri of files) {
+      if (uri.fsPath.endsWith('.schema')) {
+        await this.getSharedSchema(uri, { remove: true });
+      } else if (uri.fsPath.endsWith('.liquid')) {
+        if (this.engine === 'shopify') {
+          await this.getFileCompletions([ 'snippets', 'sections' ]);
+          this.resetFeatures();
+        }
+      }
+    }
+
+  }
+
+  /**
    * onDidCloseTextDocument
    *
    * Invoked when an opened document is closed.
@@ -51,7 +135,9 @@ export class Events extends CommandPalette {
 
     if (!this.isActive) return;
 
-    if (this.formatting.register.has(uri.fsPath)) this.formatting.register.delete(uri.fsPath);
+    if (this.formatting.register.has(uri.fsPath)) {
+      this.formatting.register.delete(uri.fsPath);
+    }
 
   }
 
@@ -61,12 +147,18 @@ export class Events extends CommandPalette {
    * Invoked when a text document has changed. We only care about schema
    * in the event (for now). In Liquify we use LSP so this is just a hot
    * patch for the time being.
+   *
    */
   public async onDidChangeTextDocument ({ document, contentChanges }: TextDocumentChangeEvent) {
 
-    if (!this.isActive) return;
+    if (!this.isActive) return null;
+    if (!this.languages.has(document.languageId)) return null;
 
-    if (!this.languages.get(document.languageId)) return;
+    if (document.fileName.endsWith('.schema')) {
+      await this.getSharedSchema(document.uri);
+    } else if (!this.languages.get(document.languageId)) {
+      return null;
+    }
 
     const change = contentChanges[contentChanges.length - 1];
 
@@ -203,26 +295,24 @@ export class Events extends CommandPalette {
     if (!this.isActive) return;
 
     if (isFunction(this.formatting.ignoreMatch) && this.formatting.ignoreMatch(uri.fsPath)) {
-
       this.status.ignore();
       this.formatting.ignored.add(uri.fsPath);
       this.info(`Ignoring: ${uri.fsPath}`);
-
     }
 
     if (this.engine === Engine.shopify) {
 
       if (this.files.locales?.fsPath === uri.fsPath) {
 
-        await this.getExternal([ 'locales' ]);
+        await this.getLocaleFile();
 
-        this.info(`Updated: ${uri.fsPath}`);
+        this.info(`updated: ${uri.fsPath}`);
 
       } else if (this.files.settings?.fsPath === uri.fsPath) {
 
-        await this.getExternal([ 'settings' ]);
+        await this.getSettingsFile();
 
-        this.info(`Updated: ${uri.fsPath}`);
+        this.info(`updated: ${uri.fsPath}`);
 
       } else if (uri.fsPath.endsWith('.schema')) {
 
@@ -255,6 +345,8 @@ export class Events extends CommandPalette {
           }
         }
       }
+
+      this.resetFeatures();
 
     } else {
 

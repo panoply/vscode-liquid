@@ -23,16 +23,16 @@
   // "liquid.hover.filters": true,
   // "liquid.hover.schema": true,
   // "liquid.engine": "shopify",
-  // "liquid.files.shopify": {
-  //   "settings": "./theme/config/settings_schema.json",
-  //   "locales": "./theme/locales/en.default.json",
-  //   "sections": [
-  //     "./sections/*.liquid"
-  //   ],
-  //   "snippets": [
-  //     "./completions/*.liquid"
-  //   ],
-  // },
+  "liquid.files.shopify": {
+    "settings": "./theme/config/settings_schema.json",
+    "locales": "./theme/locales/en.default.json",
+    "sections": [
+      "./sections/*.liquid"
+    ],
+    "snippets": [
+      "./completions/*.liquid"
+    ],
+  },
   // "editor.foldingStrategy": "indentation"
   // "[liquid]": {
   //   "editor.defaultFormatter": "sissel.shopify-liquid",

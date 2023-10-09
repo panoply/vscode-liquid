@@ -13,6 +13,10 @@ import { delay } from 'rambdax';
  */
 export class StatusBarItem {
 
+  /* -------------------------------------------- */
+  /* PRIVATE REFERENCES                           */
+  /* -------------------------------------------- */
+
   /**
    * The status bar item instance
    */
@@ -36,6 +40,7 @@ export class StatusBarItem {
   /* -------------------------------------------- */
   /* PUBLIC EXPORTS                               */
   /* -------------------------------------------- */
+
   /**
    * The current state of the status bar item
    */

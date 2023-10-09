@@ -1,9 +1,9 @@
 import slash, { entries, keys } from 'utils';
 import { basename, join, dirname } from 'node:path';
 import { Filter, Tags, IObject, Type, Types, liquid, IProperty, $, p } from '@liquify/specs';
-import { mdString } from 'parse/helpers';
+import { mdString, settingsType } from 'parse/helpers';
 import { has, path } from 'rambdax';
-import { Complete, SettingsData } from 'types';
+import { Complete, SettingsSchema } from 'types';
 import {
   CompletionItemKind,
   CompletionItem,
@@ -158,7 +158,7 @@ export function getLocaleSchemaSetting (key: string) {
  * Generates the `settings_schema.json` completions following the
  * `settings.*` object.
  */
-export function getSettingsCompletions (uri: string, data: SettingsData[]) {
+export function getSettingsCompletions (uri: string, data: SettingsSchema[]) {
 
   const reference = `[${basename(uri)}](${uri})`;
   const objects:{ [prop: string]: IProperty } = {};
@@ -197,7 +197,7 @@ export function getSettingsCompletions (uri: string, data: SettingsData[]) {
           objects[type.id] = <IProperty>{
             global: true,
             scope: 'settings',
-            type: type.type,
+            type: settingsType(type.type),
             summary: `${prop} (${type.type})`,
             description: description.join('')
           };
@@ -233,7 +233,7 @@ export function getSettingsCompletions (uri: string, data: SettingsData[]) {
 
           objects[type.id] = <IProperty>{
             global: true,
-            type: type.type,
+            type: settingsType(type.type),
             scope: 'settings',
             summary: `${setting.name} (${type.type})`,
             description: description.join('')

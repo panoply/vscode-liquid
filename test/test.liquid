@@ -1,12 +1,20 @@
 <div>
 
-  {{ section.settings.x }}
+  {% render 'filters' %}
 
-  {% for block in section.blocks %}
+  {{ section.settings.x
+    | abs
+    | append: 'fff'
+    | asset_url
+    | abs
+    | base64_encode
+    | abs }}
 
-    {% if block.type == 'xxx' %}
+  {% for b in section.blocks %}
 
-      {{ block.settings.xxx }}
+    {% if b.type == 'xxx' %}
+
+      {{ b.settings }}
 
     {% endif %}
 
@@ -216,15 +224,11 @@
         "type": "header",
         "content": "",
         "info": ""
-      },
-      {
-        "type": "collection_list",
-        "limit": 0
       }
     ],
     "blocks": [
       {
-      "$ref":"testing.foo"
+        "$ref": "testing.foo"
       },
       {
         "name": "s",
@@ -242,6 +246,7 @@
           {
             "type": "select",
             "id": "logo_position",
+
             "options": [
               {
                 "value": "top-left",

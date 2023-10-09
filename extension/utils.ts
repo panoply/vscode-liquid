@@ -21,24 +21,9 @@ const HOMEDIR = typeof os.homedir === 'undefined' ? '' : os.homedir().replace(/\
 /* -------------------------------------------- */
 
 /**
- * Cache reference of `Object.entries`
+ * Cache reference of `Object` methods
  */
-export const entries = Object.entries;
-
-/**
- * Cache reference of `Object.keys`
- */
-export const values = Object.values;
-
-/**
- * Cache reference of `Object.keys`
- */
-export const keys = Object.keys;
-
-/**
- * Cache reference of `Object.keys`
- */
-export const assign = Object.assign;
+export const { entries, values, keys, assign } = Object;
 
 /**
  * Native prototype `toString` for type checks
@@ -49,6 +34,10 @@ export const { toString } = Object.prototype;
  * Text Decoder instance
  */
 export const { decode } = new TextDecoder();
+
+/* -------------------------------------------- */
+/* TYPEOF COMPARISONS                           */
+/* -------------------------------------------- */
 
 /**
  * Check if param is an array type
@@ -265,7 +254,7 @@ export function upcase (string: string) {
  * Creates a string list of error stacks that are cleaned
  * for rendering in the output log.
  */
-export function parseStack (error: Error) {
+export function parseStack (error: Error | string) {
 
   const stack = error instanceof Error ? error.stack : error;
 
@@ -364,7 +353,7 @@ export async function getRangeInFile (uri: Uri, find: string) {
  * file exists at the provided path, if path is not found
  * it returns values of `null`
  */
-export async function parseJsonFile (uri: Uri) {
+export async function parseJsonFile <T> (uri: Uri): Promise<T> {
 
   if (uri === null || !uri.fsPath) return null;
 
@@ -378,10 +367,15 @@ export async function parseJsonFile (uri: Uri) {
 
     if (json.trim().length === 0) return null;
 
-    const parsed = parseJSON(json, basename(fsPath));
+    try {
 
-    return parsed;
+      const parsed = parseJSON(json, basename(fsPath));
+      return <T>parsed;
 
+    } catch (e) {
+
+      throw new Error(e);
+    }
   } else {
 
     return null;

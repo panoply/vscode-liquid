@@ -1,6 +1,11 @@
 import { LiteralUnion } from 'type-fest';
 
 /**
+ * Configuration Type
+ */
+export type ConfigSource = '.liquidrc' | 'workspace' | 'global'
+
+/**
  * Accepted Language IDs
  */
 export type LanguageIds = LiteralUnion<(

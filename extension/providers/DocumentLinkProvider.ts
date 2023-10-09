@@ -39,7 +39,7 @@ export class DocumentLinkProvider implements IDocumentLinkProvider {
   /* PROVIDER                                     */
   /* -------------------------------------------- */
 
-  async provideDocumentLinks (document: TextDocument, _token: CancellationToken): Promise<DocumentLink[]> {
+  provideDocumentLinks (document: TextDocument, _token: CancellationToken): DocumentLink[] {
 
     const content = document.getText();
     const links: DocumentLink[] = [];

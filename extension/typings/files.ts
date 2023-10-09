@@ -1,6 +1,14 @@
 import { Engines } from '@liquify/specs';
 import { Rules } from 'esthetic';
-import { Merge } from 'type-fest';
+import { LiteralUnion, Merge } from 'type-fest';
+
+export type FileKeys = LiteralUnion<
+| 'data'
+| 'includes'
+| 'layouts'
+| 'snippets'
+| 'sections'
+, string>
 
 /**
  * 11ty File paths
@@ -78,13 +86,6 @@ export interface ShopifyFiles {
    * Reference to directory of files used as sections.
    */
   sections?: string[];
-  /**
-   * **Shopify X Syncify**
-   *
-   * Reference to directory of Shared Schema files for projects
-   * leveraging Syncify.
-   */
-  schema?: string[];
 }
 
 /**

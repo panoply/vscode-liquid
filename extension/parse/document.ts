@@ -12,16 +12,11 @@ import parseJson from 'parse-json';
  *
  * Looks for variables within the provided `content` and inserts them into the
  * `vars` set store. The `vars` store exists on the `CompletionProvider` class.
+ *
  * The passed in `content` is in accordance with current cursor position.
  *
- * @todo
- * - Support Captures
- * - Handle Filters
- * - Support Liquid Tags
  */
 export function parseDocument (content: string, vars: Complete.Vars) {
-
-  // console.log(content);
 
   vars.clear();
 
@@ -156,7 +151,7 @@ export function parseDocument (content: string, vars: Complete.Vars) {
         });
 
         if (ender > i) {
-          i = isLiqTagEnd(10);
+          i = isLiquidTagEnd(10);
           continue;
         }
 
@@ -292,7 +287,7 @@ export function parseDocument (content: string, vars: Complete.Vars) {
           });
 
           if (ender > i) {
-            i = isliq > -1 ? isLiqTagEnd(0) : ender;
+            i = isliq > -1 ? isLiquidTagEnd(0) : ender;
             continue;
           }
         }
@@ -307,7 +302,7 @@ export function parseDocument (content: string, vars: Complete.Vars) {
    *
    * Returns the index of the ending delimiter or a `{% liquid %}` tag
    */
-  function isLiqTagEnd (endTrim: number) {
+  function isLiquidTagEnd (endTrim: number) {
 
     const delim = content.slice(ender + endTrim).trim();
 

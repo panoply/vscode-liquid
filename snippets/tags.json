@@ -2,7 +2,11 @@
   "frontmatter": {
     "prefix": "frontmatter",
     "description": "Frontmatter",
-    "body": ["---", "$2", "---"]
+    "body": [
+      "---",
+      "$2",
+      "---"
+    ]
   },
   "if": {
     "prefix": "if",
@@ -14,11 +18,17 @@
   },
   "else": {
     "prefix": "else",
-    "body": ["{% else %}", "\t"]
+    "body": [
+      "{% else %}",
+      "\t"
+    ]
   },
   "elsif": {
     "prefix": "elsif",
-    "body": ["{% elsif ${1:condition} %}", "\t"]
+    "body": [
+      "{% elsif ${1:condition} %}",
+      "\t"
+    ]
   },
   "if, elsif": {
     "prefix": "if elsif",
@@ -72,12 +82,17 @@
   "when": {
     "prefix": "when",
     "description": "Control flow tag: when",
-    "body": ["{% when ${1:condition} %}", "$0"]
+    "body": [
+      "{% when ${1:condition} %}",
+      "$0"
+    ]
   },
   "cycle": {
     "prefix": "cycle",
     "description": "Iteration tag: cycle",
-    "body": ["{% cycle '${1:odd}', '${2:even}' %}"]
+    "body": [
+      "{% cycle '${1:odd}', '${2:even}' %}"
+    ]
   },
   "cycle, group": {
     "prefix": "cycle group",
@@ -96,11 +111,15 @@
   },
   "break": {
     "prefix": "break",
-    "body": ["{% break %}"]
+    "body": [
+      "{% break %}"
+    ]
   },
   "continue": {
     "prefix": "continue",
-    "body": ["{% continue %}"]
+    "body": [
+      "{% continue %}"
+    ]
   },
   "tablerow": {
     "prefix": "tablerow",
@@ -112,15 +131,21 @@
   },
   "assign": {
     "prefix": "assign",
-    "body": ["{% assign ${1:variable} = ${2:value} %}"]
+    "body": [
+      "{% assign ${1:variable} = ${2:value} %}"
+    ]
   },
   "increment": {
     "prefix": "increment",
-    "body": ["{% increment ${1:variable} %}"]
+    "body": [
+      "{% increment ${1:variable} %}"
+    ]
   },
   "decrement": {
     "prefix": "decrement",
-    "body": ["{% decrement ${1:variable} %}"]
+    "body": [
+      "{% decrement ${1:variable} %}"
+    ]
   },
   "capture": {
     "prefix": "capture",
@@ -132,46 +157,68 @@
   },
   "liquid": {
     "prefix": "liquid",
-    "body": ["{% liquid", "\t$1", "%}"]
+    "body": [
+      "{% liquid",
+      "\t$1",
+      "%}"
+    ]
   },
   "render": {
     "prefix": "render",
-    "body": ["{% render $1 %}"]
+    "body": [
+      "{% render $1 %}"
+    ]
   },
   "render, parameters": {
     "prefix": "render",
-    "body": ["{% render $1, ${2:param}: ${3:value}"]
+    "body": [
+      "{% render $1, ${2:param}: ${3:value}"
+    ]
   },
   "include": {
     "prefix": "include",
-    "body": ["{% include $1 %}"]
+    "body": [
+      "{% include $1 %}"
+    ]
   },
   "include, parameters": {
     "prefix": "includewith",
-    "body": ["{% include 1, ${2:param}: ${3:value} %}"]
+    "body": [
+      "{% include 1, ${2:param}: ${3:value} %}"
+    ]
   },
   "section": {
     "prefix": "section",
-    "body": ["{% section $1 %}"]
+    "body": [
+      "{% section $1 %}"
+    ]
   },
   "sections": {
     "prefix": "sections",
     "description": "Section Group",
-    "body": ["{% sections '${1:group}' %}"]
+    "body": [
+      "{% sections '${1:group}' %}"
+    ]
   },
   "raw": {
     "prefix": "raw",
     "description": "Theme tag: raw",
-    "body": ["{% raw %}", "\t$1", "{% endraw %}"]
+    "body": [
+      "{% raw %}",
+      "\t$1",
+      "{% endraw %}"
+    ]
   },
   "layout": {
     "prefix": "layout",
-    "body": ["{% layout '${1:layout}' %}"]
+    "body": [
+      "{% layout '${1:layout}' %}"
+    ]
   },
   "form": {
     "prefix": "form",
     "body": [
-      "{% form '${1:product}', ${2:product} %}",
+      "{% form '${1:name}', ${2:product} %}",
       "\t$3",
       "{% endform %}"
     ]
@@ -201,7 +248,11 @@
   },
   "style": {
     "prefix": "style",
-    "body": ["{% style %}", "\t$1", "{% endstyle %}"]
+    "body": [
+      "{% style %}",
+      "\t$1",
+      "{% endstyle %}"
+    ]
   },
   "stylesheet": {
     "prefix": "stylesheet",
@@ -221,7 +272,9 @@
   },
   "comment, line": {
     "prefix": "#",
-    "body": ["{% # $2 %}"]
+    "body": [
+      "{% # $2 %}"
+    ]
   },
   "comment, block": {
     "prefix": "comment",

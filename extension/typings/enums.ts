@@ -77,6 +77,10 @@ export const enum Token {
    */
   Tag = 1,
   /**
+   * Liquid Tag Argument
+   */
+  TagForm = 1,
+  /**
    * Liquid Object
    */
   Object,
@@ -361,7 +365,31 @@ export const enum ConfigMethod {
   /**
    * Using workspace settings ie: `.vscode/settings.json`
    */
-  Workspace
+  Workspace,
+}
+
+/**
+ * Configuration Source
+ *
+ * Informs upon the configuration source
+ */
+export const enum ConfigSource {
+  /**
+   * Using a `.liquidrc` file
+   */
+  Liquidrc,
+  /**
+   * Using workspace settings ie: `.vscode/settings.json`
+   */
+  Workspace,
+  /**
+   * Using user settings
+   */
+  User,
+  /**
+   * Default settings
+   */
+  Default
 }
 
 export const enum StatusItem {

@@ -12,12 +12,20 @@ import { Providers } from '../providers';
  */
 export class StatusLanguageItem extends Providers {
 
+  /* -------------------------------------------- */
+  /* PRIVATE REFERENCES                           */
+  /* -------------------------------------------- */
+
   /**
    * Language Items
    *
    * Set reference of known language items
    */
   private languageItems: Set<LanguageStatusItem> = new Set();
+
+  /* -------------------------------------------- */
+  /* PUBLIC EXPORTS                               */
+  /* -------------------------------------------- */
 
   /**
    * Language Disposal
