@@ -655,7 +655,10 @@ If you are using a `.vscode/settings.json` file to define formatting options, yo
 
 In addition to file ignores, users can also take advantage of Æsthetic [inline control](https://github.com/panoply/esthetic#inline-control) comments. This will allow you to skip blocks of code or files from beautification.
 
-<strong>Ignoring Next</strong><br>
+<details>
+<summary>
+<strong>Ignoring Next</strong>
+</summary>
 
 Using `esthetic-ignore-next` comments can be annotated above tags blocks. Æsthetic will exclude the entire region of code when applying beautification.
 
@@ -665,10 +668,7 @@ Using `esthetic-ignore-next` comments can be annotated above tags blocks. Æsthe
 {% comment %} esthetic-ignore-next {% endcomment %}
 ```
 
-<details>
-<summary>
-Example
-</summary>
+**Example**
 
 ```liquid
 <div class="foo">
@@ -691,7 +691,10 @@ Example
 
 </details>
 
-<strong>Ignoring Regions</strong><br>
+<details>
+<summary>
+<strong>Ignoring Regions</strong>
+</summary>
 
 Using `esthetic-ignore-start` and `esthetic-ignore-end` can be wrapped around regions of code you wish to have excluded (ignored) from formatting.
 
@@ -706,10 +709,7 @@ Using `esthetic-ignore-start` and `esthetic-ignore-end` can be wrapped around re
 {% comment %} esthetic-ignore-end {% endcomment %}
 ```
 
-<details>
-<summary>
-Example
-</summary>
+**Example**
 
 ```liquid
 <div class="foo">
@@ -733,7 +733,10 @@ Example
 
 </details>
 
-<strong>Ignoring Files</strong><br>
+<details>
+<summary>
+<strong>Ignoring Files</strong>
+</summary>
 
 You can exclude entire files from formatting by placing the `esthetic-ignore` comment at the very top of documents. When provided, Æsthetic will skip beautification of the entire file.
 
@@ -743,10 +746,7 @@ You can exclude entire files from formatting by placing the `esthetic-ignore` co
 {% comment %} esthetic-ignore {% endcomment %}
 ```
 
-<details>
-<summary>
-Example
-</summary>
+**Example**
 
 ```liquid
 {% # esthetic-ignore %}
@@ -772,7 +772,7 @@ Developers may prefer to use the [Liquid Prettier Plugin](https://github.com/Sho
 
 **Setting Default Formatter**
 
-```json
+```jsonc
 {
   "[liquid]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
