@@ -1316,7 +1316,11 @@ export class WorkspaceSettings extends OutputChannel {
 
     } else if (this.engine === '11ty' || this.engine === 'eleventy') {
 
-      await this.getFileCompletions([ 'data', 'includes', 'layouts' ]);
+      await this.getFileCompletions([
+        'data',
+        'includes',
+        'layouts'
+      ]);
 
     }
 
