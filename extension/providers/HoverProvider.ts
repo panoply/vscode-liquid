@@ -45,7 +45,7 @@ function walkProps (cursor: string, next: string[], object: IProperty) {
 
 export function getPropertyHover (cursor: string, token: string, objects: string[]) {
 
-  if (!$.liquid.data.variation?.objects) return null;
+  if (!$.liquid.data.variation?.objects?.[token]) return null;
 
   const root = $.liquid.data.variation.objects[token];
 
@@ -55,7 +55,12 @@ export function getPropertyHover (cursor: string, token: string, objects: string
     return mdString(root.description, root.reference);
   }
 
+  if (!('properties' in root)) return null;
+
   const prop = objects.shift();
+
+  if (!(prop in root.properties)) return null;
+
   const spec = walkProps(cursor, objects, root.properties[prop]);
 
   return mdString(spec.description, root.reference);
