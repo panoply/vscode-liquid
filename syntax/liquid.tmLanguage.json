@@ -77,6 +77,12 @@
         {
           "match": "(?<=import)\\s+(?={[{%]-?)",
           "name": "punctuation.output.liquid"
+        },
+        {
+          "include": "#tags"
+        },
+        {
+          "include": "#output"
         }
       ]
     }
