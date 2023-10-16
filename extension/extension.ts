@@ -4,7 +4,7 @@ import { Engines } from '@liquify/specs';
 import { Config, URI, Meta, Files } from './typings/store';
 import { Liquidrc, PackageJSON } from './typings/files';
 import { Selectors, LanguageIds } from './typings/document';
-import { ConfigurationTarget, Extension as IExtension, Uri, workspace, Disposable, EventEmitter } from 'vscode';
+import { ConfigurationTarget, Extension as IExtension, Uri, workspace, EventEmitter } from 'vscode';
 import { ConfigMethod } from './typings/enums';
 import { Service } from './services';
 import { FormatEvent } from 'providers/FormattingProvider';
