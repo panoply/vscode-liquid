@@ -1,18 +1,18 @@
 {% # FILTER COMPLETES %}
 
 
-{{ foo  }}
+{{ foo }}
 
 
-{{ foo | append: '' | upcase   }}
+{{ foo | append: '' | upcase }}
 
-{% # FILTER COMPLETES - ONLY SHOW TYPE STRING OBJECTS  %}
+{% # FILTER COMPLETES - ONLY SHOW TYPE STRING OBJECTS %}
 
-{{ foo | append:  | prepend:  }}
+{{ foo | append: | prepend: }}
 
-{% # FILTER COMPLETES - ONLY SHOW TYPE NUMBER OBJECTS  %}
+{% # FILTER COMPLETES - ONLY SHOW TYPE NUMBER OBJECTS %}
 
-{{ produc    | plus:  | minus:  }}
+{{ produc | plus: | minus: }}
 
 {% # FILTER COMPLETES - ONLY SHOW IN ASSIGN %}
 
@@ -21,6 +21,7 @@
 
 {% for item in product %}
 
-  {{ item.price | plus:  }}  <!-- TYPE AWARENESS ONLY NUMBERS SHOW -->
+  {{ item.price | plus: rating.price }}
+  <!-- TYPE AWARENESS ONLY NUMBERS SHOW -->
 
 {% endfor %}
