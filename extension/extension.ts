@@ -105,7 +105,7 @@ export class Extension extends Service {
         layouts: null
       },
       '11ty': {
-        data: null,
+        data: new Set(),
         includes: new Set(),
         layouts: new Set()
       },
