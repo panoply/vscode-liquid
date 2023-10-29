@@ -109,7 +109,10 @@
     {% endif %}
   </head>
 
-  <body
+  {{ d | }}
+
+
+    <body
     class="template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }}{% if request.path == '/challenge' %} template-challange{% endif %}"
     data-center-text="{{ settings.type_body_align_text }}"
     data-button_style="{{ settings.button_style }}"

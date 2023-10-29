@@ -6,9 +6,9 @@
 
   Usage:
   {% render 'product-variant-options',
-    product: product,
-    option: option,
-    block: block
+  product: product,
+  option: option,
+  block: block
   %}
 
   Accepts:
@@ -24,13 +24,20 @@
   - media_fit: {String} Method ("contain" or "cover") to fit image into container
   - media_width: {Float} The width percentage that the media column occupies on desktop.
   - lazy_load: {Boolean} Image should be lazy loaded. Default: true (optional)
-
 {% endcomment %}
 
 {% comment %}
+  There's a non-breaking single quote in this line
+
+  Accepts:
+  - update_url: {Boolean} There's a breaking single quote here
+
+  Usage:
+  {% render 'product-variant-picker', product: product %}
+{% endcomment %}
+{% comment %}
 
   ONLY THE CORRECT STRUCTURES WILL HIGHLIGHT
-
 {% endcomment %}
 
 {% # RENDER TAG %}
@@ -41,9 +48,11 @@
 
 {% render 'filename' for array as item %}
 
-{% render 'filename' with product as name, param: collection.products %}
-
-{% render 'filename', param: 1, param2: foo.prop.foo.bar, param3: 'string', param5: false %}
+{% render 'filename' with product as name, param: collection.products %}{% render 'filename'
+  , param: 1
+  , param2: foo.prop.foo.bar
+  , param3: 'string'
+  , param5: false %}
 
 {% # ASSIGNMENT LOGICS %}
 
@@ -54,7 +63,8 @@
 
 {{ bar }}
 
-{% if true %}{% endif %}
+{% if true %}
+{% endif %}
 
 {% # FOR LOOP %}
 
@@ -67,49 +77,39 @@
 
 {% # FOR LOOP INFERRED ARRAY ITERATION %}
 
-{% for variable in inferred %}{% endfor %}
+{% for variable in inferred %}
+{% endfor %}
 
-{% for variable in (1..200) %}{% endfor %}
+{% for variable in (1..200) %}
+{% endfor %}
 
 {% render 'filename'
- , param: 1.20
- , param2: foo.prop.foo.bar
- , param3: 'string'
- , param5: false
- , param_foo: nil
- , 123_param: product.available %}
+  , param: 1.20
+  , param2: foo.prop.foo.bar
+  , param3: 'string'
+  , param5: false
+  , param_foo: nil
+  , 123_param: product.available %}
 
- {% render 'filename',
-   param: 1.20,
-   param2: foo.prop.foo.bar,
-   param3: 'string',
-   param5: false,
-   param_foo: nil,
-   123_param: product.available %}
+{% render 'filename'
+  , param: 1.20
+  , param2: foo.prop.foo.bar
+  , param3: 'string'
+  , param5: false
+  , param_foo: nil
+  , 123_param: product.available %}
 
 {% # CONDITION %}
 
-{% if condition == product.available %}{% elsif condition %}{% endif %}{% case variable %}
-{% when condition == product.available %}{% else %}{% endcase %}
+{% if condition == product.available %}
+{% elsif condition %}
+{% endif %}
+{% case variable %}
+  {% when condition == product.available %}
+{% else %}{% endcase %}{% # FOR LOOP %}
 
-{% # FOR LOOP %}
+{% for product in collection.products limit: 2 %}{{ product.title }}{% endfor %}{% for variable in (1..200) %}expression{% endfor %}
 
-{% for product in collection.products limit: 2 %}
+{% for product in collection.products reversed %}{{ product.title }}{% endfor %}
 
-{{ product.title }}{% endfor %}
-
-{% for variable in (1..200) %}
-
-  expression
-
-{% endfor %}
-
-{% for product in collection.products reversed %}
-
-{{ product.title }}
-
-{% endfor %}
-
-{% for item in collection %}
-
-{% endfor %}
+{% for item in collection %}{% endfor %}

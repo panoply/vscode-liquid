@@ -1,0 +1,136 @@
+{
+  "groups": [
+    "Introduction",
+    "Usage",
+    "Parser",
+    "Integrate",
+    "Misc"
+  ],
+  "urls": [
+    {
+      "group": "introduction",
+      "title": "What is Æsthetic?",
+      "url": "/introduction/what-is-esthetic/"
+    },
+    {
+      "group": "introduction",
+      "title": "Motivation",
+      "url": "/introduction/motivation/"
+    },
+    {
+      "group": "introduction",
+      "title": "Language Support",
+      "url": "/introduction/language-support/"
+    },
+    {
+      "group": "introduction",
+      "title": "Installation",
+      "url": "/introduction/installation/"
+    },
+    {
+      "group": "usage",
+      "title": "Config Files",
+      "url": "/usage/config-files/"
+    },
+    {
+      "group": "usage",
+      "title": "CLI",
+      "url": "/usage/cli/"
+    },
+    {
+      "group": "usage",
+      "title": "Rules",
+      "url": "/usage/rules/"
+    },
+    {
+      "group": "usage",
+      "title": "Format",
+      "url": "/usage/format/"
+    },
+    {
+      "group": "usage",
+      "title": "Ignoring Code",
+      "url": "/usage/ignoring-code/"
+    },
+    {
+      "group": "usage",
+      "title": "Inline Control",
+      "url": "/usage/inline-control/"
+    },
+    {
+      "group": "usage",
+      "title": "Parse",
+      "url": "/usage/parse/"
+    },
+    {
+      "group": "usage",
+      "title": "Settings",
+      "url": "/usage/settings/"
+    },
+    {
+      "group": "usage",
+      "title": "Events",
+      "url": "/usage/events/"
+    },
+    {
+      "group": "usage",
+      "title": "Utilities",
+      "url": "/usage/utilities/"
+    },
+    {
+      "group": "parser",
+      "title": "Algorithm",
+      "url": "/parser/algorithm/"
+    },
+    {
+      "group": "parser",
+      "title": "Tokens",
+      "url": "/parser/tokens/"
+    },
+    {
+      "group": "parser",
+      "title": "Lexers",
+      "url": "/parser/lexers/"
+    },
+    {
+      "group": "parser",
+      "title": "Error Handling",
+      "url": "/parser/error-handling/"
+    },
+    {
+      "group": "parser",
+      "title": "Terminology",
+      "url": "/parser/terminology/"
+    },
+    {
+      "group": "integrate",
+      "title": "Text Editor",
+      "url": "/integrate/text-editor/"
+    },
+    {
+      "group": "integrate",
+      "title": "Linters",
+      "url": "/integrate/linters/"
+    },
+    {
+      "group": "integrate",
+      "title": "Browser",
+      "url": "/integrate/browser/"
+    },
+    {
+      "group": "misc",
+      "title": "Limitations",
+      "url": "/misc/limitations/"
+    },
+    {
+      "group": "misc",
+      "title": "Benchmarks",
+      "url": "/misc/benchmarks/"
+    },
+    {
+      "group": "misc",
+      "title": "Acknowledgements",
+      "url": "/misc/acknowledgements/"
+    }
+  ]
+}
