@@ -1,6 +1,6 @@
-import slash, { entries, keys } from 'utils';
+import slash, { entries, isArray, isBoolean, isNumber, isObject, isString, keys } from 'utils';
 import { basename, join, dirname } from 'node:path';
-import { Filter, Tags, IObject, Type, Types, liquid, IProperty, $, p } from '@liquify/specs';
+import { Filter, Tags, IObject, Type, Types, liquid, IProperty, $, p, Engine } from '@liquify/specs';
 import { mdString, settingsType } from 'parse/helpers';
 import { has, path } from 'rambdax';
 import { Complete, SettingsSchema } from 'types';
@@ -249,6 +249,66 @@ export function getSettingsCompletions (uri: string, data: SettingsSchema[]) {
   return liquid.shopify.objects;
 };
 
+export function getEleventyDataComponents (uri: string) {
+
+  const objects:{ [prop: string]: IProperty } = { data: { type: Type.any } };
+
+  const build = (function traverse (data, spec?: IProperty) {
+
+    if (spec) {
+      if (spec.type === Type.object) {
+
+        for (const prop in data) {
+
+          if (isString(data[prop])) {
+            spec.properties[prop] = { type: Type.string };
+          } else if (isBoolean(data[prop])) {
+            spec.properties[prop] = { type: Type.boolean };
+          } else if (isObject(data[prop])) {
+            spec.properties[prop] = { type: Type.object };
+            traverse(data[prop], spec.properties[prop]);
+          } else if (isNumber(data[prop])) {
+            spec.properties[prop] = { type: Type.number };
+          } else if (isArray(data[prop])) {
+            spec.properties[prop] = { type: Type.array };
+            traverse(data[prop], spec.properties[prop]);
+          }
+
+        }
+      }
+    } else {
+
+      if (isObject(data)) {
+
+        for (const item in data) {
+
+          if (isObject(data[item])) {
+            objects[item] = { type: Type.object, properties: {} };
+            traverse(data[item], objects[item]);
+          } else if (isArray(data[item])) {
+            objects[item] = { type: Type.array };
+          }
+        }
+
+      }
+
+      if (isArray(data)) {
+        for (const item of data) {
+          objects[item] = { type: Type.array };
+          for (const value of data[item]) {
+            traverse(value, objects[item]);
+          }
+        }
+      }
+    }
+
+    return objects;
+
+  })($.liquid.files.get(uri));
+
+  liquid.extend(Engine.standard, { objects: build });
+
+}
 /**
  * Get Locale Completions
  *
