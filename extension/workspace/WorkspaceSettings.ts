@@ -17,7 +17,7 @@ import { has, isNil, difference, hasPath, isEmpty, equals, T } from 'rambdax';
 import anymatch from 'anymatch';
 import { OutputChannel } from './OutputChannel';
 import * as u from '../utils';
-import { getSettingsCompletions } from 'data/liquid';
+import { getEleventyDataComponents, getSettingsCompletions } from 'data/liquid';
 import { $ } from '@liquify/specs';
 
 export class WorkspaceSettings extends OutputChannel {
@@ -305,6 +305,8 @@ export class WorkspaceSettings extends OutputChannel {
       }
     }
 
+    if (input === undefined) return;
+
     for (let i = 0; i < input.length; i++) {
 
       const path = input[i];
@@ -454,6 +456,60 @@ export class WorkspaceSettings extends OutputChannel {
     }
 
     return this;
+  }
+
+  /**
+   * Set Settings File
+   *
+   * Function method for data files in Eleventy
+   */
+  async setDataFile () {
+
+    let config: 'workspace' | '.liquidrc';
+    let input: string[];
+
+    if (this.config.sources.files.data === ConfigMethod.Workspace) {
+      config = 'workspace';
+      input = workspace.getConfiguration().get<string[]>('liquid.files.11ty.data');
+    } else {
+      config = '.liquidrc';
+      input = (this.liquidrc.files as { data: string[] }).data;
+    }
+
+    for (let i = 0; i < input.length; i++) {
+
+      const path = input[i];
+      const relative = new RelativePattern(this.uri.root, u.refineURI(path));
+      const paths = await workspace.findFiles(relative);
+
+      for (const entry of paths) {
+
+        const file = Uri.file(path);
+
+        if (!file.fsPath.endsWith('.json')) {
+          this.warn(`Unable to resolve data (File must be a JSON file type): ${path}`);
+          continue;
+        }
+
+        try {
+
+          const data = await u.parseJsonFile<any>(entry);
+
+          $.liquid.files.set(file.fsPath, data);
+
+          getEleventyDataComponents(file.fsPath);
+
+        } catch (e) {
+
+          this.catch('JSON Error', e);
+
+        }
+
+      }
+    }
+
+    return this;
+
   }
 
   /**
@@ -722,7 +778,7 @@ export class WorkspaceSettings extends OutputChannel {
     ]) {
       if (has(v, settings) && u.isBoolean(settings[v])) {
         if (v === 'schema' && this.engine !== 'shopify') {
-          this.warn('Hovers for {% schema %} only work in the Shopify variation');
+          continue;
         } else {
 
           if (settings[v] !== this.hovers.enable[v]) {
@@ -751,20 +807,18 @@ export class WorkspaceSettings extends OutputChannel {
     const settings = workspace.getConfiguration().get<Workspace.Validate>('liquid.validate');
 
     if (has('schema', settings) && u.isBoolean(settings.schema)) {
-      if (this.engine !== 'shopify') {
-        this.warn('Validations for {% schema %} only work when the Liquid "engine" is Shopify');
-      } else {
+      if (this.engine !== 'shopify') return;
 
-        if (settings.schema !== this.json.config.validate) {
-          if (settings.schema) {
-            this.info('Enabled {% schema %} validations');
-          } else {
-            this.info('Disable {% schema %} validations');
-          }
+      if (settings.schema !== this.json.config.validate) {
+        if (settings.schema) {
+          this.info('Enabled {% schema %} validations');
+        } else {
+          this.info('Disable {% schema %} validations');
         }
-
-        this.json.config.validate = settings.schema;
       }
+
+      this.json.config.validate = settings.schema;
+
     }
 
   }
@@ -796,17 +850,17 @@ export class WorkspaceSettings extends OutputChannel {
 
         if (has(v, settings) && u.isBoolean(settings[v])) {
 
-          if (v === 'section' || v === 'objects' || v === 'schema') {
+          if (v === 'sections' || v === 'objects' || v === 'schema') {
             if (this.engine !== 'shopify' && settings[v] === true) {
-              this.warn(`Completion for ${v} will not work in Liquid ${u.upcase(this.engine)}`);
+              continue;
             }
           }
 
           if (settings[v] !== this.completion.enable[v]) {
             if (settings[v]) {
-              this.info(`enabled ${v} completions`);
+              this.info(`Enabled ${v} completions`);
             } else {
-              this.info(`disabled ${v} completions`);
+              this.info(`Disabled ${v} completions`);
             }
           }
 
@@ -1107,10 +1161,18 @@ export class WorkspaceSettings extends OutputChannel {
           this.getEngine();
           this.getFormatRules();
 
-          await this.getFileCompletions([ 'sections', 'snippets' ]);
-          await this.setLocaleFile();
-          await this.setSettingsFile();
-          await this.getSharedSchema();
+          if (this.engine === 'shopify') {
+
+            await this.getFileCompletions([ 'sections', 'snippets' ]);
+            await this.setLocaleFile();
+            await this.setSettingsFile();
+            await this.getSharedSchema();
+
+          } else if (this.engine === '11ty' || this.engine === 'eleventy') {
+
+            await this.getFileCompletions([ 'includes', 'layouts' ]);
+
+          }
 
         }
 
@@ -1280,6 +1342,7 @@ export class WorkspaceSettings extends OutputChannel {
 
       this.config.target = ConfigurationTarget.Workspace;
       this.config.inspect = 'workspaceValue';
+
     } else {
       this.config.target = ConfigurationTarget.Global;
       this.config.inspect = 'globalValue';
@@ -1305,23 +1368,19 @@ export class WorkspaceSettings extends OutputChannel {
 
     await this.getFileSource();
 
-    if (this.engine === 'shopify') {
+    if (this.config.method === ConfigMethod.Workspace) {
+      if (this.engine === 'shopify') {
 
-      if (this.config.method === ConfigMethod.Workspace) {
         await this.getFileCompletions([ 'sections', 'snippets' ]);
         await this.setLocaleFile();
         await this.setSettingsFile();
         await this.getSharedSchema();
+
+      } else if (this.engine === '11ty' || this.engine === 'eleventy') {
+
+        await this.getFileCompletions([ 'includes', 'layouts' ]);
+
       }
-
-    } else if (this.engine === '11ty' || this.engine === 'eleventy') {
-
-      await this.getFileCompletions([
-        'data',
-        'includes',
-        'layouts'
-      ]);
-
     }
 
     this.getCompletions();
