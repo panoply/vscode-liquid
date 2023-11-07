@@ -28,7 +28,7 @@ export class DocumentLinkProvider implements IDocumentLinkProvider {
   /**
    *The `settings_schema.json` URI
    */
-  settings: Uri;
+  settings: Uri = null;
 
   /**
    * Render Tag URI's
@@ -44,8 +44,13 @@ export class DocumentLinkProvider implements IDocumentLinkProvider {
     const content = document.getText();
     const links: DocumentLink[] = [];
 
-    this.getSnippetLinks(document, content, links);
-    this.getSettingsLinks(document, content, links);
+    if (this.snippets.length > 0) {
+      this.getSnippetLinks(document, content, links);
+    }
+
+    if (this.settings !== null) {
+      this.getSettingsLinks(document, content, links);
+    }
 
     return links;
 

@@ -25,5 +25,9 @@
   ],
   "liquid.format.rules": {
     "json": {}
+  },
+  "[liquid]": {
+    "editor.defaultFormatter": "sissel.shopify-liquid",
+    "editor.formatOnSave": true
   }
 }

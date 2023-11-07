@@ -1,0 +1,96 @@
+{
+  "markup": [
+    {
+      "type": "doctype",
+      "description": "An HTML document type tag."
+    },
+    {
+      "type": "cdata",
+      "description": "An XML/SGML CDATA block. Typically used to allow extraneous string content in an XML document that might otherwise break the XML syntax rules."
+    },
+    {
+      "type": "cdata",
+      "description": "When a CDATA segment starts an enclosed grammar parsed with a different lexer."
+    },
+    {
+      "type": "cdata_start",
+      "description": "When a CDATA segment terminates an enclosed grammar parsed with a different lexer."
+    },
+    {
+      "type": "cdata_end",
+      "description": "Comment in XML or supporting template syntax."
+    },
+    {
+      "type": "comment",
+      "description": "JSX allows JavaScript style comments as tag attributes."
+    },
+    {
+      "type": "comment_attribute",
+      "description": "Comments used in IE to hack references to CSS by IE version. Follows a SGML square brace convention."
+    },
+    {
+      "type": "conditional",
+      "description": "Regular text nodes, but white space is removed from the front and end of the node as an 'approximate value is accounted for in the lines data field."
+    },
+    {
+      "type": "content_preserve",
+      "description": "A content type that lets consuming applications this token must not be modified."
+    },
+    {
+      "type": "start",
+      "description": "A start tag of a tag pair."
+    },
+    {
+      "type": "end",
+      "description": "An end tag of a tag pair."
+    },
+    {
+      "type": "ignore",
+      "description": "These types are used to excuse a structure from deeper evaluation and treats the element as a singleton even if it is part of tag pair and contains descendant nodes."
+    },
+    {
+      "type": "liquid_start",
+      "description": "A start type Liquid tag of a tag pair"
+    },
+    {
+      "type": "liquid_else",
+      "description": "A Liquid tag acting as the else block of a condition, must be contained within a liquid_start and liquid_end pair."
+    },
+    {
+      "type": "liquid_end",
+      "description": "An end type Liquid tag of a tag pair"
+    },
+    {
+      "type": "liquid_bad_start",
+      "description": "A liquid tag or tag sequences used as a HTML start tag type."
+    },
+    {
+      "type": "liquid_bad_end",
+      "description": "An end liquid tag sequences used as a HTML start tag type."
+    },
+    {
+      "type": "liquid_attribute",
+      "description": "A singleton type Liquid tag being used as an attribute of an HTML or XML start type tag."
+    },
+    {
+      "type": "liquid_attribute_chain",
+      "description": "A chained sequences of Liquid and HTML tokens being used together to make up a single attribute."
+    },
+    {
+      "type": "liquid_attribute_start",
+      "description": "A start type Liquid tag being used as an attribute of an HTML or XML start type tag."
+    },
+    {
+      "type": "liquid_attribute_else",
+      "description": "A else type Liquid tag being used as an attribute of an HTML or XML start type tag."
+    },
+    {
+      "type": "liquid_attribute_end",
+      "description": "An end type Liquid tag being used as an attribute of an HTML or XML start type tag."
+    },
+    {
+      "type": "xml",
+      "description": "XML pragmas. Typically used to declare the document for an XML interpreter, but otherwise not widely used."
+    }
+  ]
+}

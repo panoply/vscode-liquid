@@ -125,6 +125,7 @@ export class JSONLanguageProvider {
   extend (uri: Uri, shared: SharedSchema) {
 
     this.schema = getSharedSchema(uri, shared, this.schema);
+    this.configure();
 
   }
 

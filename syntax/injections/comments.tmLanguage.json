@@ -1,7 +1,7 @@
 {
   "scopeName": "source.liquid.doc-comments.injection",
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "injectionSelector": "L:source.liquid -comment",
+  "injectionSelector": "L:source.liquid -comment -string",
   "information_for_contributors": [
     "IMPORTANT",
     "----------",
@@ -16,8 +16,12 @@
       "begin": "{%-?\\s*\\bcomment\\b\\s*-?%}",
       "end": "(?<={%-?\\s*\\bendcomment\\b\\s*-?%})",
       "patterns": [
-        { "include": "#accepts" },
-        { "include": "#usage" }
+        {
+          "include": "#accepts"
+        },
+        {
+          "include": "#usage"
+        }
       ]
     }
   ],
@@ -49,7 +53,7 @@
               }
             },
             {
-              "match": "(\\{)(String|Number|Boolean|Object|Array|Float)(\\})\\s",
+              "match": "(\\{)(String|Number|Boolean|Object|Array|Float)(\\})\\s(.*?)",
               "captures": {
                 "1": {
                   "name": "punctuation.comment-doc.liquid"
@@ -59,6 +63,9 @@
                 },
                 "3": {
                   "name": "punctuation.comment-doc.liquid"
+                },
+                "4": {
+                  "name": "string.comment-doc.liquid"
                 }
               }
             },
@@ -90,8 +97,7 @@
             {
               "match": "(\\-)\\s",
               "name": "punctuation.comment-doc.liquid"
-            },
-            { "include": "source.liquid#strings" }
+            }
           ]
         }
       ]
@@ -107,8 +113,12 @@
           },
           "end": "(?={%-?\\s*\\bendcomment\\b\\s*-?%}|[Aa]ccepts:)",
           "patterns": [
-            { "include": "source.liquid#tags" },
-            { "include": "source.liquid#output" }
+            {
+              "include": "source.liquid#tags"
+            },
+            {
+              "include": "source.liquid#output"
+            }
           ]
         }
       ]

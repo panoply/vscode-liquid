@@ -1,14 +1,17 @@
 {
-  "engine": "shopify",
+  "engine": "11ty",
   "files": {
-    "settings": "",
-    "locales": "",
-    "sections": [],
-    "snippets": []
+    "data": [
+      "./11ty/data/*.json"
+    ],
+    "includes": [
+      "./sections/*.liquid"
+    ]
   },
   "format": {
     "ignore": [],
     "wrap": 120,
+    "wrapFraction": 80,
     "indentSize": 2,
     "preserveLine": 2,
     "endNewline": true,
@@ -17,7 +20,8 @@
       "lineBreakSeparator": "before",
       "normalizeSpacing": true,
       "quoteConvert": "single",
-      "ignoreTagList": []
+      "ignoreTagList": [],
+      "forceArgument": 3
     },
     "markup": {
       "quoteConvert": "double",

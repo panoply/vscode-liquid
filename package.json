@@ -5,7 +5,7 @@
   "publisher": "sissel",
   "icon": "images/logo.png",
   "author": "Νίκος Σαβίδης <n.savvidis@gmx.com>",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "keywords": [
     "liquid",
     "shopify",
@@ -1293,7 +1293,7 @@
   },
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup --onSuccess \"vsce package --no-dependencies\"",
+    "build": "tsup --minify --onSuccess \"vsce package --no-dependencies\"",
     "dry": "vsce ls package --no-dependencies",
     "schema": "node ./scripts/schemas.cjs",
     "grammar": "node ./scripts/grammars.cjs"

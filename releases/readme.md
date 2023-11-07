@@ -6,8 +6,9 @@ The extension is currently in the version **4.x.x** range.
 
 ## v4.0.0 ~ Latest
 
-The extension is currently shipping on version 4.
+The extension is currently shipping on version 4
 
+- [4.0.1](/releases/v4/4.0.1.md)
 - [4.0.0](/releases/v4/4.0.0.md)
 
 ## v3.0.0 ~ v3.2.2
