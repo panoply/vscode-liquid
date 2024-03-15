@@ -640,32 +640,32 @@
             "endNewline": {
               "type": "boolean",
               "default": false,
-              "markdownDescription": "Whether or not files should end with an empty newline. When this rule is `undefined` or omitted then Æsthetic will look for an `.editorconfig` file and use definitions inferred within.\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/global/endNewline/)\n"
+              "markdownDescription": "Whether or not files should end with an empty newline. When this rule is `undefined` or omitted then Æsthetic will look for an `.editorconfig` file and use definitions inferred within.\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/global/endNewline/)\n"
             },
             "wrap": {
               "type": "number",
               "default": 0,
-              "markdownDescription": "Character width limit before applying word wrap. A `0` value disables this option.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/global/wrap/)\n"
+              "markdownDescription": "Character width limit before applying word wrap. A `0` value disables this option.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/global/wrap/)\n"
             },
             "wrapFraction": {
               "type": "number",
               "default": 0,
-              "markdownDescription": "Wrap fraction is used on internal structures as a secondary point of control. By default, it will use a 75% metric according to `wrap` defined values.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/global/wrapFraction/)\n"
+              "markdownDescription": "Wrap fraction is used on internal structures as a secondary point of control. By default, it will use a 75% metric according to `wrap` defined values.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/global/wrapFraction/)\n"
             },
             "indentSize": {
               "type": "number",
               "default": 2,
-              "markdownDescription": "The number of `indentChar` values to comprise a single indentation. By default this is set to `2` meaning a single indentation will be 2 whitespace characters.\n\n**How to use Tabs?**\n\nIf you're heathen who prefers Tabs. You will need to set the `indentChar` to `\\t` and infer the size limit here.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/global/indentSize/)\n"
+              "markdownDescription": "The number of `indentChar` values to comprise a single indentation. By default this is set to `2` meaning a single indentation will be 2 whitespace characters.\n\n**How to use Tabs?**\n\nIf you're heathen who prefers Tabs. You will need to set the `indentChar` to `\\t` and infer the size limit here.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/global/indentSize/)\n"
             },
             "preserveLine": {
               "type": "number",
               "default": 3,
-              "markdownDescription": "The maximum number of consecutive empty lines to retain (ie: preserve). By default, `3` newlines are preserved.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/global/preserveLine/)\n\n"
+              "markdownDescription": "The maximum number of consecutive empty lines to retain (ie: preserve). By default, `3` newlines are preserved.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/global/preserveLine/)\n\n"
             },
             "crlf": {
               "type": "boolean",
               "default": false,
-              "markdownDescription": "If line termination should be Windows (CRLF) format. By default, Unix (LF) format is used. Setting this value to `true` will use CRLF.\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/global/crlf)\n"
+              "markdownDescription": "If line termination should be Windows (CRLF) format. By default, Unix (LF) format is used. Setting this value to `true` will use CRLF.\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/global/crlf)\n"
             },
             "preset": {
               "enum": [
@@ -676,7 +676,7 @@
                 "shopify"
               ],
               "default": "default",
-              "markdownDescription": "A preset ruleset style guide to use. This will assign rules according to a set of defaults to produce a certain beautification result. If this rule is `undefined` it will default to using `default` which is least obtrusive formatting style.\n\n**Options**\n\n**`default`** (required)\n\n> This is the **default** and the most unobtrusive. Formatting will use a preservationist based technique with this preset mode.\n\n**`recommended`**\n\n> This style guide is typically suited for most cases, it will apply a base set of rules aligned with the Æsthetic approach.\n\n**`warrington`**\n\n> This style guide preset is best suited for developers and specifically teams working with Shopify themes. The preset was curated by the talented [David Warrington](https://ellodave.dev/).\n\n**`strict`**\n\n> This is a strict ruleset curated by the projects author [Panoply (sissel)](https://github.com/panoply).\n\n**`shopify`** 🤡\n\n> Replicates the Prettier style of formatting. If you've used the Shopify Liquid Prettier Plugin and enjoy that beautification style using this preset will produce the same results.\n\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/global/preset/)\n"
+              "markdownDescription": "A preset ruleset style guide to use. This will assign rules according to a set of defaults to produce a certain beautification result. If this rule is `undefined` it will default to using `default` which is least obtrusive formatting style.\n\n**Options**\n\n**`default`** (required)\n\n> This is the **default** and the most unobtrusive. Formatting will use a preservationist based technique with this preset mode.\n\n**`recommended`**\n\n> This style guide is typically suited for most cases, it will apply a base set of rules aligned with the Æsthetic approach.\n\n**`warrington`**\n\n> This style guide preset is best suited for developers and specifically teams working with Shopify themes. The preset was curated by the talented [David Warrington](https://ellodave.dev/).\n\n**`strict`**\n\n> This is a strict ruleset curated by the projects author [Panoply (sissel)](https://github.com/panoply).\n\n**`shopify`** 🤡\n\n> Replicates the Prettier style of formatting. If you've used the Shopify Liquid Prettier Plugin and enjoy that beautification style using this preset will produce the same results.\n\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/global/preset/)\n"
             },
             "liquid": {
               "type": "object",
@@ -694,7 +694,7 @@
                     "multiline"
                   ],
                   "default": "preserve",
-                  "markdownDescription": "### Delimiter Trims\n\nHow delimiter whitespace trim dashes (`{%-`, `-%}`, `{{-` and `-}}`) should handled in Liquid tags and output object tokens. You should _maybe_ avoid setting this to `force` in order to avoid stripping whitespace in cases where text content contains Liquid.\n\n> **NOTE**\n>\n> This rule will not touch Liquid tokens encapsulated within strings, ie: `\"{{ foo }}\"` or `'{{ foo }}'` are left intact.\n\n\n**Options**\n\nThis is a Liquid specific formatting rule which defaults to using `preserve` when no option has been specified.\n\n- preserve\n- tags\n- outputs\n- never\n- always\n- multiline\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/delimiterTrims/)\n\n"
+                  "markdownDescription": "### Delimiter Trims\n\nHow delimiter whitespace trim dashes (`{%-`, `-%}`, `{{-` and `-}}`) should handled in Liquid tags and output object tokens. You should _maybe_ avoid setting this to `force` in order to avoid stripping whitespace in cases where text content contains Liquid.\n\n> **NOTE**\n>\n> This rule will not touch Liquid tokens encapsulated within strings, ie: `\"{{ foo }}\"` or `'{{ foo }}'` are left intact.\n\n\n**Options**\n\nThis is a Liquid specific formatting rule which defaults to using `preserve` when no option has been specified.\n\n- preserve\n- tags\n- outputs\n- never\n- always\n- multiline\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/delimiterTrims/)\n\n"
                 },
                 "delimiterPlacement": {
                   "type": "string",
@@ -706,32 +706,32 @@
                     "force-multiline"
                   ],
                   "default": "preserve",
-                  "markdownDescription": "Controls the placement of opening and closing Liquid tag delimiters (`{%`, `{{`, `}}` and `%}`). This rule provides 3 different formatting options and will ensure that delimiters are beautified in concordance. When the rule is `undefined` it will default to using `none`.\n\n**Options**\n\nThis is a Liquid specific formatting rule which defaults to using `preserve` when no option has been specified. The **recommended** option to use is `consistent` or `force-multiline`.\n\n- preserve\n- default\n- inline\n- consistent\n- force\n- force-multiline\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/delimiterPlacement/)\n\n"
+                  "markdownDescription": "Controls the placement of opening and closing Liquid tag delimiters (`{%`, `{{`, `}}` and `%}`). This rule provides 3 different formatting options and will ensure that delimiters are beautified in concordance. When the rule is `undefined` it will default to using `none`.\n\n**Options**\n\nThis is a Liquid specific formatting rule which defaults to using `preserve` when no option has been specified. The **recommended** option to use is `consistent` or `force-multiline`.\n\n- preserve\n- default\n- inline\n- consistent\n- force\n- force-multiline\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/delimiterPlacement/)\n\n"
                 },
                 "commentIndent": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Applies single indentation to containing content of Liquid comments. Liquid line type comments are currently not supported by this rule. Only block type Liquid tokens will be handled.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/commentIndent/)\n\n"
+                  "markdownDescription": "Applies single indentation to containing content of Liquid comments. Liquid line type comments are currently not supported by this rule. Only block type Liquid tokens will be handled.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/commentIndent/)\n\n"
                 },
                 "commentNewline": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Inserts a new line above comment tags. When enabled the rule will add a newline even if `preserveLine` is set to `0`. The rule will not inject new lines when the previous expression is determined to already contain a new line.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/commentNewline/)\n"
+                  "markdownDescription": "Inserts a new line above comment tags. When enabled the rule will add a newline even if `preserveLine` is set to `0`. The rule will not inject new lines when the previous expression is determined to already contain a new line.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/commentNewline/)\n"
                 },
                 "forceArgument": {
                   "type": "number",
                   "default": 0,
-                  "markdownDescription": "Forces Liquid tag and filter argument expressions onto newlines according to the number of arguments present on the token. By default, this rule uses a value of `0` which will result in arguments being forced when the tag or output token containing them spans ¾ (or 75%) of defined global [`wrap`](https://æsthetic.dev/rules/global/wrap) limit.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/forceArgument/)\n\n\n"
+                  "markdownDescription": "Forces Liquid tag and filter argument expressions onto newlines according to the number of arguments present on the token. By default, this rule uses a value of `0` which will result in arguments being forced when the tag or output token containing them spans ¾ (or 75%) of defined global [`wrap`](https://aesthetic.js.org/rules/global/wrap) limit.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/forceArgument/)\n\n\n"
                 },
                 "forceFilter": {
                   "type": "number",
                   "default": 0,
-                  "markdownDescription": "Forces Liquid filter `|` expressions onto newlines when the number of filters contained on a tag exceeds the limit defined. By default, this rule uses a value of `0` which will result in Liquid filters being forced when the tag or output token containing them spans ¾ (or 75%) of defined global [`wrap`](https://æsthetic.dev/rules/global/wrap) limit.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/forceFilter/)\n"
+                  "markdownDescription": "Forces Liquid filter `|` expressions onto newlines when the number of filters contained on a tag exceeds the limit defined. By default, this rule uses a value of `0` which will result in Liquid filters being forced when the tag or output token containing them spans ¾ (or 75%) of defined global [`wrap`](https://aesthetic.js.org/rules/global/wrap) limit.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/forceFilter/)\n"
                 },
                 "dedentTagList": {
                   "type": "array",
                   "default": [],
-                  "markdownDescription": "A list of Liquid tags that should exclude standard indentation. Only tags which contain a start and end types are valid.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/dedentTagList/)\n",
+                  "markdownDescription": "A list of Liquid tags that should exclude standard indentation. Only tags which contain a start and end types are valid.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/dedentTagList/)\n",
                   "items": {
                     "type": "string",
                     "additionalItems": true,
@@ -763,7 +763,7 @@
                 "ignoreTagList": {
                   "type": "array",
                   "default": [],
-                  "markdownDescription": "A list of Liquid tags that should excluded from formatting. Only tags which contain a start and end types are valid.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/ignoreTagList/)\n",
+                  "markdownDescription": "A list of Liquid tags that should excluded from formatting. Only tags which contain a start and end types are valid.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/ignoreTagList/)\n",
                   "items": {
                     "type": "string",
                     "additionalItems": true,
@@ -795,12 +795,12 @@
                 "indentAttribute": {
                   "default": false,
                   "type": "boolean",
-                  "markdownDescription": "Whether or not to apply indentation of HTML attributes within Liquid identified tag blocks contained in HTML Tags. This rule emulates the `liquid-prettier-plugin` structures with more refined controlling. This requires the `markup` rule `forceAttributes` be set to either `true` or have limit value (e.g: `2`) defined.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/indentAttribute/)\n"
+                  "markdownDescription": "Whether or not to apply indentation of HTML attributes within Liquid identified tag blocks contained in HTML Tags. This rule emulates the `liquid-prettier-plugin` structures with more refined controlling. This requires the `markup` rule `forceAttributes` be set to either `true` or have limit value (e.g: `2`) defined.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/indentAttribute/)\n"
                 },
                 "lineBreakSeparator": {
                   "default": "after",
                   "type": "string",
-                  "markdownDescription": "Controls the placement of Liquid separator type characters in new line structures. In situations where you write a multiline tag expression this rule can augment the order of leading operator characters such as the parameter comma `,` separator.\n\nThis rule will not break tag content on to new lines for you, it instead together with the inferred structure you've expressed. This means that you will need to manually new line the arguments.\n\n### Options\n\nThis is a Liquid specific formatting rule which will default to `after` when no option has been specified.\n\n- before\n- after\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/lineBreakSeparator/)\n",
+                  "markdownDescription": "Controls the placement of Liquid separator type characters in new line structures. In situations where you write a multiline tag expression this rule can augment the order of leading operator characters such as the parameter comma `,` separator.\n\nThis rule will not break tag content on to new lines for you, it instead together with the inferred structure you've expressed. This means that you will need to manually new line the arguments.\n\n### Options\n\nThis is a Liquid specific formatting rule which will default to `after` when no option has been specified.\n\n- before\n- after\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/lineBreakSeparator/)\n",
                   "enum": [
                     "before",
                     "after"
@@ -809,22 +809,22 @@
                 "normalizeSpacing": {
                   "default": true,
                   "type": "boolean",
-                  "markdownDescription": "Whether or not to normalize and correct the inner spacing of Liquid tokens. This rule will equally distribute whitespace characters contained within Liquid tags and output tokens. The rule will also inject spacing in accordance with common Liquid code structures.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/normalizeSpacing)\n"
+                  "markdownDescription": "Whether or not to normalize and correct the inner spacing of Liquid tokens. This rule will equally distribute whitespace characters contained within Liquid tags and output tokens. The rule will also inject spacing in accordance with common Liquid code structures.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/normalizeSpacing)\n"
                 },
                 "preserveComment": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Preserve the inner contents of Liquid block comments.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/preserveComment/)\n"
+                  "markdownDescription": "Preserve the inner contents of Liquid block comments.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/preserveComment/)\n"
                 },
                 "preserveInternal": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Prevent the internals structures of Liquid tokens from being formatted. When enabled, Æsthetic will preserve the internal formations of output and tags.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/preserveInternal/)\n"
+                  "markdownDescription": "Prevent the internals structures of Liquid tokens from being formatted. When enabled, Æsthetic will preserve the internal formations of output and tags.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/preserveInternal/)\n"
                 },
                 "quoteConvert": {
                   "default": "none",
                   "type": "string",
-                  "markdownDescription": "How quotation characters of markup attributes and Liquid tokens should be handled. Allows for conversion to single quotes or double quotes. Markup tag attributes should always use double quotations, it's the standard in languages like HTML.\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/liquid/quoteConvert/)\n",
+                  "markdownDescription": "How quotation characters of markup attributes and Liquid tokens should be handled. Allows for conversion to single quotes or double quotes. Markup tag attributes should always use double quotations, it's the standard in languages like HTML.\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/quoteConvert/)\n",
                   "enum": [
                     "none",
                     "double",
@@ -841,7 +841,7 @@
                 "attributeCasing": {
                   "type": "string",
                   "default": "preserve",
-                  "markdownDescription": "How markup attribute names and value casing should be processed. This defaults to `preserve` which will leave casing intact and _typically_ the best option to use.\n\n**Options**\n\nThis rule defaults to using `preserve` which will leave attribute names and values intact.\n\n- preserve\n- lowercase\n- lowercase-name\n- lowercase-value\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/attributeCasing/)\n",
+                  "markdownDescription": "How markup attribute names and value casing should be processed. This defaults to `preserve` which will leave casing intact and _typically_ the best option to use.\n\n**Options**\n\nThis rule defaults to using `preserve` which will leave attribute names and values intact.\n\n- preserve\n- lowercase\n- lowercase-name\n- lowercase-value\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/attributeCasing/)\n",
                   "enum": [
                     "preserve",
                     "lowercase",
@@ -866,12 +866,12 @@
                       "type": "boolean"
                     }
                   ],
-                  "markdownDescription": "Provides sorting of HTML and XML Attributes. When enabled (`true`) it will sort attributes in an alpha-numeric order. Sorting is ignored on tags which contain Liquid output and tag type tokens as attributes. The rule also accepts a list of attribute names and when provided will be sorted according to order passed.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/attributeSort/)\n"
+                  "markdownDescription": "Provides sorting of HTML and XML Attributes. When enabled (`true`) it will sort attributes in an alpha-numeric order. Sorting is ignored on tags which contain Liquid output and tag type tokens as attributes. The rule also accepts a list of attribute names and when provided will be sorted according to order passed.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/attributeSort/)\n"
                 },
                 "commentIndent": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Applies single indentation to containing content of HTML comments.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/commentIndent/)\n\n"
+                  "markdownDescription": "Applies single indentation to containing content of HTML comments.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/commentIndent/)\n\n"
                 },
                 "commentDelimiters": {
                   "enum": [
@@ -882,12 +882,12 @@
                     "consistent"
                   ],
                   "default": "preserve",
-                  "markdownDescription": "Controls the placement of HTML and XML (i.e: markup) type comment delimiters. This is a markup specific formatting rule that defaults to using preserve and applied to languages using `<!--` and `-->` delimiter tokens.\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/commentDelimiters/)"
+                  "markdownDescription": "Controls the placement of HTML and XML (i.e: markup) type comment delimiters. This is a markup specific formatting rule that defaults to using preserve and applied to languages using `<!--` and `-->` delimiter tokens.\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/commentDelimiters/)"
                 },
                 "commentNewline": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Inserts a new line above comment tags. When enabled the rule will add a newline even if `preserveLine` is set to `0`. The rule will not inject new lines when the previous expression is determined to already contain a new line.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/commentNewline/)\n\n"
+                  "markdownDescription": "Inserts a new line above comment tags. When enabled the rule will add a newline even if `preserveLine` is set to `0`. The rule will not inject new lines when the previous expression is determined to already contain a new line.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/commentNewline/)\n\n"
                 },
                 "delimiterTerminus": {
                   "enum": [
@@ -896,12 +896,12 @@
                     "adapt"
                   ],
                   "default": "inline",
-                  "markdownDescription": "Whether or not ending HTML tag delimiters should be forced onto a newline. This will emulate the style of Prettier's `singleAttributePerLine` formatting option, wherein the last `>` delimiter character breaks itself onto a new line. Though this output style was popularized by Prettier, the resulting structures produced are far from elegant (aesthetically).\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/delimiterTerminus/)\n\n"
+                  "markdownDescription": "Whether or not ending HTML tag delimiters should be forced onto a newline. This will emulate the style of Prettier's `singleAttributePerLine` formatting option, wherein the last `>` delimiter character breaks itself onto a new line. Though this output style was popularized by Prettier, the resulting structures produced are far from elegant (aesthetically).\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/delimiterTerminus/)\n\n"
                 },
                 "forceIndent": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Will force indentation upon all content and tags without regard for the text nodes. To some degree this rule emulates a result similar to that you'd expect in Prettier. Inline preservation is respected in cases where a Liquid output object token is encapsulated between text nodes. In such scenarios the text content will only force indent the start and end portions.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/forceIndent/)\n"
+                  "markdownDescription": "Will force indentation upon all content and tags without regard for the text nodes. To some degree this rule emulates a result similar to that you'd expect in Prettier. Inline preservation is respected in cases where a Liquid output object token is encapsulated between text nodes. In such scenarios the text content will only force indent the start and end portions.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/forceIndent/)\n"
                 },
                 "forceAttribute": {
                   "type": [
@@ -909,7 +909,7 @@
                     "number"
                   ],
                   "default": false,
-                  "markdownDescription": "How or if markup attributes should be indented each onto their own line. You can optionally provide an integer value of `1` or more. When an integer value is passed, attributes will be forced only if the number of attributes contained on the tag exceeds the supplied value limit. When you define a `wrap` level then attributes will be automatically forced when limit is exceeded unless you've set this rule to `true` or provided an integer threshold.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/forceAttribute/)\n"
+                  "markdownDescription": "How or if markup attributes should be indented each onto their own line. You can optionally provide an integer value of `1` or more. When an integer value is passed, attributes will be forced only if the number of attributes contained on the tag exceeds the supplied value limit. When you define a `wrap` level then attributes will be automatically forced when limit is exceeded unless you've set this rule to `true` or provided an integer threshold.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/forceAttribute/)\n"
                 },
                 "lineBreakValue": {
                   "enum": [
@@ -921,57 +921,57 @@
                     "force-indent"
                   ],
                   "default": "preserve",
-                  "markdownDescription": "Attribute value handling applied when values span multiple lines.\n\n**Options**\n\n- preserve\n- align\n- indent\n- force-preserve\n- force-align\n- force-indent\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/lineBreakValue/)\n"
+                  "markdownDescription": "Attribute value handling applied when values span multiple lines.\n\n**Options**\n\n- preserve\n- align\n- indent\n- force-preserve\n- force-align\n- force-indent\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/lineBreakValue/)\n"
                 },
                 "ignoreJS": {
                   "type": "boolean",
                   "default": true,
-                  "markdownDescription": "Whether or not to format regions of code that are identified to be JavaScript. Tags such as `<script>` and `{% javascript %}` can contain JavaScript and by default beautification is applied using the `script` rules. When ignored (ie: `true`) Æsthetic will not apply formatting to these regions.\n\nWhen enabled (ie: `true`) the entire `<script>` region is excluded including indentation levels. If the `<script>` tag is being used to link an external file (eg: `<script src=\"/path/fle.js\"></script>`) and no code is detected between the opening and closing tags then formatting will be applied in accordance with defined rules pertaining to markup.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/ignoreJS)\n"
+                  "markdownDescription": "Whether or not to format regions of code that are identified to be JavaScript. Tags such as `<script>` and `{% javascript %}` can contain JavaScript and by default beautification is applied using the `script` rules. When ignored (ie: `true`) Æsthetic will not apply formatting to these regions.\n\nWhen enabled (ie: `true`) the entire `<script>` region is excluded including indentation levels. If the `<script>` tag is being used to link an external file (eg: `<script src=\"/path/fle.js\"></script>`) and no code is detected between the opening and closing tags then formatting will be applied in accordance with defined rules pertaining to markup.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/ignoreJS)\n"
                 },
                 "ignoreJSON": {
                   "type": "boolean",
                   "default": true,
-                  "markdownDescription": "Whether or not to format regions of code that are identified to be JSON. Such tags are typically identified using attribute annotations like `<script type=\"application/json\">`. By default, beautification is applied using the `json` rules. When ignored (ie: `true`) Æsthetic will not apply formatting to these regions.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/ignoreJSON/)\n"
+                  "markdownDescription": "Whether or not to format regions of code that are identified to be JSON. Such tags are typically identified using attribute annotations like `<script type=\"application/json\">`. By default, beautification is applied using the `json` rules. When ignored (ie: `true`) Æsthetic will not apply formatting to these regions.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/ignoreJSON/)\n"
                 },
                 "ignoreCSS": {
                   "type": "boolean",
                   "default": true,
-                  "markdownDescription": "Whether or not to format regions of code that are identified to be CSS. Tags such as `<style>` and `{% style %}` can contain CSS and by default beautification is applied using the `style` rules. When ignored (ie: `true`) Æsthetic will not apply formatting to these regions.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/ignoreCSS/)\n"
+                  "markdownDescription": "Whether or not to format regions of code that are identified to be CSS. Tags such as `<style>` and `{% style %}` can contain CSS and by default beautification is applied using the `style` rules. When ignored (ie: `true`) Æsthetic will not apply formatting to these regions.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/ignoreCSS/)\n"
                 },
                 "preserveText": {
                   "type": "boolean",
                   "default": true,
-                  "markdownDescription": "If text in the provided markup code should be preserved exactly as provided. This option eliminates beautification and wrapping of text content.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/preserveText/)\n"
+                  "markdownDescription": "If text in the provided markup code should be preserved exactly as provided. This option eliminates beautification and wrapping of text content.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/preserveText/)\n"
                 },
                 "selfCloseSpace": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Whether markup self-closing (void) tags should apply a single space to ending portion of the delimiter which  results in the tag output to produce `' />'` instead of `'/>'`.\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/selfCloseSpace/)\n"
+                  "markdownDescription": "Whether markup self-closing (void) tags should apply a single space to ending portion of the delimiter which  results in the tag output to produce `' />'` instead of `'/>'`.\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/selfCloseSpace/)\n"
                 },
                 "selfCloseSVG": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Whether or not SVG type tags should be converted to self closing void  types. When enabled, tags which contain a closing tag will instead become void type.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/selfCloseSVG/)\n"
+                  "markdownDescription": "Whether or not SVG type tags should be converted to self closing void  types. When enabled, tags which contain a closing tag will instead become void type.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/selfCloseSVG/)\n"
                 },
                 "stripAttributeLines": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Whether or not newlines contained within tag attributes or preserved. This rule will be used along side the `forceAttribute` rule and when enabled (`true`) will strip newlines contained in HTML attributes. When disabled (`false`) then newlines will be preserved according to the **global** `preserveLine` limit defined.\n\nThis rule wil only take effect when `forceAttribute` is enabled (ie: `true`) or the `forceAttribute` limit has been exceeded as per the provided value. In addition to `forceAttribute`, the global `preserveLine` rule value is used to determine the amount of lines allowed.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/stripAttributeLines/)\n"
+                  "markdownDescription": "Whether or not newlines contained within tag attributes or preserved. This rule will be used along side the `forceAttribute` rule and when enabled (`true`) will strip newlines contained in HTML attributes. When disabled (`false`) then newlines will be preserved according to the **global** `preserveLine` limit defined.\n\nThis rule wil only take effect when `forceAttribute` is enabled (ie: `true`) or the `forceAttribute` limit has been exceeded as per the provided value. In addition to `forceAttribute`, the global `preserveLine` rule value is used to determine the amount of lines allowed.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/stripAttributeLines/)\n"
                 },
                 "preserveComment": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Preserve the inner contents of HTML comments.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/preserveComment/)\n"
+                  "markdownDescription": "Preserve the inner contents of HTML comments.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/preserveComment/)\n"
                 },
                 "preserveAttribute": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Whether or not markup tags should have their insides preserved, ie: attributes. This option is only available to markup and does not support child tokens that require a different lexer. When enabled, this rule will run precedence and override all attribute related rules.\n\nIf you're working with a JavaScript framework that implements a data-attribute development based architecture (like Alpine or Angular) which requires a build-step then this rule _might_ help prevent Æsthetic augmenting code or failing when it encounters otherwise invalid structures not supported or recognized by official markup based language specifications.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/preserveAttribute/)"
+                  "markdownDescription": "Whether or not markup tags should have their insides preserved, ie: attributes. This option is only available to markup and does not support child tokens that require a different lexer. When enabled, this rule will run precedence and override all attribute related rules.\n\nIf you're working with a JavaScript framework that implements a data-attribute development based architecture (like Alpine or Angular) which requires a build-step then this rule _might_ help prevent Æsthetic augmenting code or failing when it encounters otherwise invalid structures not supported or recognized by official markup based language specifications.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/preserveAttribute/)"
                 },
                 "quoteConvert": {
                   "default": "none",
                   "type": "string",
-                  "markdownDescription": "How quotation characters of markup attributes and Liquid tokens should be handled. Allows for conversion to single quotes or double quotes. Markup tag attributes should always use double quotations, it's the standard in languages like HTML.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/markup/quoteConvert/)\n",
+                  "markdownDescription": "How quotation characters of markup attributes and Liquid tokens should be handled. Allows for conversion to single quotes or double quotes. Markup tag attributes should always use double quotations, it's the standard in languages like HTML.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/quoteConvert/)\n",
                   "enum": [
                     "none",
                     "double",
@@ -1017,12 +1017,12 @@
                 "commentIndent": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Whether or not to indent the containing content of comment blocks.\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/style/preserveComment/)"
+                  "markdownDescription": "Whether or not to indent the containing content of comment blocks.\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/style/preserveComment/)"
                 },
                 "commentNewline": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Inserts a new line above comment tags. When enabled the rule will add a newline even if `preserveLine` is set to `0`. The rule will not inject new lines when the previous expression is determined to already contain a new line.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/style/commentNewline/)\n"
+                  "markdownDescription": "Inserts a new line above comment tags. When enabled the rule will add a newline even if `preserveLine` is set to `0`. The rule will not inject new lines when the previous expression is determined to already contain a new line.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/style/commentNewline/)\n"
                 },
                 "caseSpace": {
                   "type": "boolean",
@@ -1105,7 +1105,7 @@
                 "preserveComment": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Preserve the inner contents of comments and do not apply indentation.\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/style/preserveComment/)"
+                  "markdownDescription": "Preserve the inner contents of comments and do not apply indentation.\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/style/preserveComment/)"
                 },
                 "quoteConvert": {
                   "default": "none",
@@ -1146,12 +1146,12 @@
             "style": {
               "type": "object",
               "additionalProperties": false,
-              "markdownDescription": "Beautification rules for the following _style_ languages:\n\n- **CSS**\n- **SCSS**\n- **\n- **SASS**\n- **LESS**\n\n. Options provided here will also be applied to the following markup embedded language blocks.",
+              "markdownDescription": "Beautification rules for the following _style_ languages:\n\n- **CSS**\n- **SCSS**\n- **SASS**\n- **LESS**\n\n. Options provided here will also be applied to the following markup embedded language blocks.",
               "properties": {
                 "atRuleSpace": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Insert a single whitespace character between `@`prefixed rule types.\n\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/global/wrapFraction/)"
+                  "markdownDescription": "Insert a single whitespace character between `@`prefixed rule types.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/global/wrapFraction/)"
                 },
                 "commentNewline": {
                   "type": "boolean",
@@ -1161,7 +1161,7 @@
                 "commentIndent": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Whether or not to indent the containing content of comment blocks.\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/style/preserveComment/)"
+                  "markdownDescription": "Whether or not to indent the containing content of comment blocks.\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/style/preserveComment/)"
                 },
                 "correct": {
                   "type": "boolean",
@@ -1191,7 +1191,7 @@
                 "preserveComment": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Preserve the inner contents of comments and do not apply indentation.\n\n[Æsthetic Documentation](https://æsthetic.dev/rules/style/preserveComment/)"
+                  "markdownDescription": "Preserve the inner contents of comments and do not apply indentation.\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/style/preserveComment/)"
                 },
                 "quoteConvert": {
                   "default": "none",
@@ -1323,27 +1323,27 @@
     "ignorePatterns": [
       "dist/extension.js"
     ],
-    "extends": "@liquify/eslint-config"
+    "extends": "@sissel/eslint-config"
   },
   "devDependencies": {
-    "@liquify/eslint-config": "^1.2.0",
     "@liquify/prettier-config": "^1.2.1",
-    "@types/vscode": "^1.70.0",
-    "@vscode/vsce": "^2.21.1",
-    "eslint": "^8.51.0",
+    "@sissel/eslint-config": "^1.2.1",
+    "@types/vscode": "^1.87.0",
+    "@vscode/vsce": "^2.24.0",
+    "eslint": "^8.57.0",
     "esthetic": "link:../liquify/packages/esthetic",
-    "prettier": "^3.0.3",
-    "tsup": "^7.2.0",
-    "type-fest": "^4.4.0"
+    "prettier": "^3.2.5",
+    "tsup": "^8.0.2",
+    "type-fest": "^4.12.0"
   },
   "dependencies": {
-    "@liquify/schema": "^0.8.3",
-    "@liquify/specs": "^0.2.5",
+    "@liquify/schema": "^0.9.1",
+    "@liquify/specs": "^0.2.7",
     "anymatch": "^3.1.3",
-    "parse-json": "^7.1.0",
-    "rambdax": "10.0.0",
+    "parse-json": "^8.1.0",
+    "rambdax": "11.0.0",
     "strip-json-comments": "^5.0.1",
-    "vscode-css-languageservice": "^6.2.9",
-    "vscode-json-languageservice": "^5.3.6"
+    "vscode-css-languageservice": "^6.2.12",
+    "vscode-json-languageservice": "^5.3.9"
   }
 }
