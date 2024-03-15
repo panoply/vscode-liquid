@@ -1,6 +1,6 @@
 import slash, { entries, isArray, isBoolean, isNumber, isObject, isString, keys } from 'utils';
 import { basename, join, dirname } from 'node:path';
-import { Filter, Tags, IObject, Type, Types, liquid, IProperty, $, p, Engine } from '@liquify/specs';
+import { Filter, Tags, IObject, Type, Types, liquid, IProperty, $, p, Engine, Objects } from '@liquify/specs';
 import { mdString, settingsType } from 'parse/helpers';
 import { has, path } from 'rambdax';
 import { Complete, SettingsSchema } from 'types';
@@ -249,52 +249,105 @@ export function getSettingsCompletions (uri: string, data: SettingsSchema[]) {
   return liquid.shopify.objects;
 };
 
+/**
+ * Get Eleventy Data File Completions
+ *
+ * Generates components for the 11ty data cascade. Completions will be created
+ * and types will be assumed in accordance with the structures. This can potentially
+ * be a rather heavy operation depending on the cascade itself.
+ */
 export function getEleventyDataComponents (uri: string) {
 
-  const objects:{ [prop: string]: IProperty } = { data: { type: Type.any } };
+  const reference = `[${basename(uri)}](${uri})`;
+  const propName: string = basename(uri, '.json');
+  const objects: Objects = {
+    [propName]: {
+      description: `11ty data file\n\n**${reference}**`,
+      global: true
+    }
+  };
 
-  const build = (function traverse (data, spec?: IProperty) {
+  const build = (function traverse (data, spec?: IObject) {
 
-    if (spec) {
-      if (spec.type === Type.object) {
+    if (spec && has('type', spec)) {
 
-        for (const prop in data) {
+      for (const prop in data) {
 
-          if (isString(data[prop])) {
-            spec.properties[prop] = { type: Type.string };
-          } else if (isBoolean(data[prop])) {
-            spec.properties[prop] = { type: Type.boolean };
-          } else if (isObject(data[prop])) {
-            spec.properties[prop] = { type: Type.object };
-            traverse(data[prop], spec.properties[prop]);
-          } else if (isNumber(data[prop])) {
-            spec.properties[prop] = { type: Type.number };
-          } else if (isArray(data[prop])) {
-            spec.properties[prop] = { type: Type.array };
-            traverse(data[prop], spec.properties[prop]);
-          }
+        if (isString(data[prop])) {
+
+          spec.properties[prop] = { type: Type.string };
+
+        } else if (isBoolean(data[prop])) {
+
+          spec.properties[prop] = { type: Type.boolean };
+
+        } else if (isObject(data[prop])) {
+
+          spec.properties[prop] = { type: Type.object };
+
+          traverse(data[prop], spec.properties[prop]);
+
+        } else if (isNumber(data[prop])) {
+
+          spec.properties[prop] = { type: Type.number };
+
+        } else if (isArray(data[prop])) {
+
+          spec.properties[prop] = { type: Type.array };
+
+          console.log(data[prop]);
+
+          traverse(data[prop], spec[prop]);
 
         }
       }
+
     } else {
 
       if (isObject(data)) {
 
-        for (const item in data) {
+        if (!has('type', spec)) spec.type = Type.object;
+        if (!has('properties', spec)) spec.properties = {};
 
-          if (isObject(data[item])) {
-            objects[item] = { type: Type.object, properties: {} };
-            traverse(data[item], objects[item]);
-          } else if (isArray(data[item])) {
-            objects[item] = { type: Type.array };
+        for (const prop in data) {
+          if (isObject(data[prop])) {
+
+            spec.properties[prop] = {
+              type: Type.object,
+              properties: {},
+              description: `11ty data file\n\n**${reference}**`
+            };
+
+            traverse(data[prop], spec.properties[prop]);
+
+          } else if (isArray(data[prop])) {
+
+            spec.properties[prop] = {
+              type: Type.array,
+              properties: {},
+              description: `11ty data file\n\n**${reference}**`
+            };
+
+            if (isString(data[prop][0]) && data[prop].every((i: string) => isString(i))) {
+              spec.properties[prop].items = Type.string as any;
+            } else if (isNumber(data[prop][0]) && data[prop].every((i: number) => isNumber(i))) {
+              spec.properties[prop].items = Type.number as any;
+            } else if (isBoolean(data[prop][0]) && data[prop].every((i: boolean) => isBoolean(i))) {
+              spec.properties[prop].items = Type.boolean as any;
+            } else if (isArray(data[prop][0]) && data[prop].every((i: any[]) => isArray(i))) {
+              spec.properties[prop].items = Type.array as any;
+            } else if (isObject(data[prop][0]) && data[prop].every((i: object) => isObject(i))) {
+              spec.properties[prop].items = Type.object as any;
+              spec.properties[prop].properties = {};
+              traverse(data[prop][0], spec.properties[prop]);
+            }
           }
         }
-
       }
 
       if (isArray(data)) {
         for (const item of data) {
-          objects[item] = { type: Type.array };
+          spec[item] = { type: Type.array };
           for (const value of data[item]) {
             traverse(value, objects[item]);
           }
@@ -304,9 +357,11 @@ export function getEleventyDataComponents (uri: string) {
 
     return objects;
 
-  })($.liquid.files.get(uri));
+  })($.liquid.files.get(uri), objects[propName]);
 
-  liquid.extend(Engine.standard, { objects: build });
+  const applied = liquid.extend(Engine.eleventy, { objects: build });
+
+  console.log(applied);
 
 }
 /**
