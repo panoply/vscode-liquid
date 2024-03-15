@@ -27,11 +27,13 @@ import { has, path } from 'rambdax';
  * Walks over a provided object string and determines
  * the property completions to show.
  */
-function walkProps (next: string[], objectProps: Properties) {
+function walkProps (next: string[], objectProps: Properties, inForLoop: boolean) {
 
   if (next.length > 0 && q.isProperty(next.shift())) {
 
-    return walkProps(next, $.liquid.object.properties);
+    if ($.liquid.object.type === Type.array && inForLoop !== true) return null;
+
+    return walkProps(next, $.liquid.object.properties, inForLoop);
 
   } else {
 
@@ -305,7 +307,7 @@ export function getPropertyCompletions (token: IToken, vars: Complete.Vars) {
 
   } else {
 
-    if (q.setObject(props.shift())) return walkProps(props, $.liquid.object.properties);
+    if (q.setObject(props.shift())) return walkProps(props, $.liquid.object.properties, array);
 
   }
   return null;
@@ -367,7 +369,7 @@ export function getObjectCompletions (
     });
   }
 
-  items.push(...objects);
+  if (objects) items.push(...objects);
 
   return items;
 
