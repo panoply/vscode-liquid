@@ -120,6 +120,9 @@ export class Events extends CommandPalette {
         if (this.engine === 'shopify') {
           await this.getFileCompletions([ 'snippets', 'sections' ]);
           this.resetFeatures();
+        } else if (this.engine === 'eleventy' || this.engine === '11ty') {
+          await this.getFileCompletions([ 'includes', 'layouts' ]);
+          this.resetFeatures();
         }
       }
     }
@@ -167,7 +170,7 @@ export class Events extends CommandPalette {
       parseDocument(document.getText(range), this.completion.vars);
     }
 
-    if (this.completion.enable.schema && this.json.config.validate) {
+    if (this.engine === 'shopify' && this.completion.enable.schema && this.json.config.validate) {
 
       const schema = await parseSchema(document);
 
@@ -240,8 +243,13 @@ export class Events extends CommandPalette {
 
         }
 
-        if (this.completion.enable.objects && this.engine === 'shopify') {
+        if (this.completion.enable.objects && (
+          this.engine === 'shopify' ||
+          this.engine === '11ty' ||
+          this.engine === 'eleventy')) {
+
           getObjectCompletions(uri.fsPath, this.completion.items);
+
         }
 
         if (this.isDirty) {
