@@ -1305,7 +1305,8 @@
       "strip-json-comments",
       "anymatch",
       "rambdax",
-      "vscode-json-languageservice"
+      "vscode-json-languageservice",
+      "js-yaml"
     ],
     "external": [
       "vscode",
