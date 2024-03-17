@@ -465,8 +465,7 @@
           "enum": [
             "standard",
             "shopify",
-            "11ty",
-            "jekyll"
+            "11ty"
           ],
           "markdownDescription": "**Default** `shopify`\n\nThe `liquid.engine` option is used to determine the Liquid template variation you are working with. This extension supports the following Liquid variations:\n\n- [Standard](https://shopify.github.io/liquid/)\n- [Shopify](https://shopify.dev/docs/api/liquid)\n- [11ty](https://www.11ty.dev/docs/languages/liquid/)\n- [Jekyll](https://jekyllrb.com/docs/liquid/)\n\nFeatures and capabilities differ depending on the engine you define. For example, if you are working with the **Shopify** Liquid variation the engine is set to `Standard` it will result in features like object and property completions not being available.\n\n**Tip**\n\nYou can optionally infer the engine with your `.liquidrc` file.\n"
         },
@@ -548,14 +547,6 @@
                 "uniqueItems": true,
                 "type": "string"
               }
-            },
-            "layouts": {
-              "type": "array",
-              "markdownDescription": "**NOT YET SUPPORTED**\n\nThis option will be available in future versions. References provided here will be ignored until the capability is ready.\n\n---\n\n**Default** `[]`\n\nDefine a string list of paths relative to the projects root directory which contain layout files. When you provide layout file location references they will be made available to YAML Frontmatter.\n\n",
-              "items": {
-                "uniqueItems": true,
-                "type": "string"
-              }
             }
           }
         },
@@ -598,6 +589,11 @@
           "type": "boolean",
           "default": true,
           "markdownDescription": "**Default** `true`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `true`\n\nWhether or not to enable Liquid defined variable completions. When enabled (ie: `true`) then completions will include variable assignments and captures. The extension also supports re-assignment scoping and iteree array scoping.\n\n\n**Example**\n\nBelow is an example of variable completions when enabled (`true`) which is the default.\n\n```js\n\n{% assign foo = 'hello world' %}\n\n{{ f }} // The assignment foo will be shown in completions\n\n```\n\n"
+        },
+        "liquid.completion.frontmatter": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "**Default** `true`\n\n💁🏽‍♀️ &nbsp;&nbsp; Recommended setting is `true`\n\nWhether or not to enable Liquid object completions for frontmatter in files. This is typically used in [11ty](https://www.11ty.dev/) projects and allows for YAML frontmatter data to be made available in liquid objects completions.\n\n\n"
         },
         "liquid.validate.schema": {
           "type": "boolean",
@@ -1337,9 +1333,10 @@
     "type-fest": "^4.12.0"
   },
   "dependencies": {
-    "@liquify/schema": "^0.9.1",
-    "@liquify/specs": "^0.2.7",
+    "@liquify/schema": "^0.9.4",
+    "@liquify/specs": "link:../liquify/packages/specs",
     "anymatch": "^3.1.3",
+    "js-yaml": "^4.1.0",
     "parse-json": "^8.1.0",
     "rambdax": "11.0.0",
     "strip-json-comments": "^5.0.1",
