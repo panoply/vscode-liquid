@@ -119,6 +119,36 @@ export class WorkspaceSettings extends OutputChannel {
   }
 
   /**
+   * Get Formatting Status
+   *
+   * Returns the formatting status.
+   */
+  public isFormattingOnSave (languageId: string = 'liquid'): boolean {
+
+    if (this.isDefaultFormatter(languageId)) {
+
+      const setting = workspace.getConfiguration().inspect(`[${languageId}]`);
+
+      if (setting.workspaceValue !== undefined && has('editor.formatOnSave', setting.workspaceValue)) {
+
+        return setting.workspaceValue['editor.formatOnSave'];
+
+      } else if (setting.globalValue !== undefined && has('editor.formatOnSave', setting.globalValue)) {
+
+        return setting.globalValue['editor.formatOnSave'];
+
+      } else {
+
+        this.warn(`${u.upcase(languageId)} editor.formatOnSave setting is not defined`);
+
+      }
+    }
+
+    return false;
+
+  }
+
+  /**
    * Engine Defintion
    *
    * Assigns and returns the known Liquid engine being used.
@@ -631,7 +661,7 @@ export class WorkspaceSettings extends OutputChannel {
       'settings',
       'snippets',
       'sections'
-    ] : this.engine === '11ty' || this.engine === 'eleventy' ? [
+    ] : this.engine === '11ty' ? [
       'data',
       'layouts',
       'includes'
@@ -740,36 +770,6 @@ export class WorkspaceSettings extends OutputChannel {
         this.formatting.ignoreMatch = anymatch(this.formatting.ignoreList);
       }
     }
-
-  }
-
-  /**
-   * Get Formatting Status
-   *
-   * Returns the formatting status.
-   */
-  public isFormattingOnSave (languageId: string = 'liquid'): boolean {
-
-    if (this.isDefaultFormatter(languageId)) {
-
-      const setting = workspace.getConfiguration().inspect(`[${languageId}]`);
-
-      if (setting.workspaceValue !== undefined && has('editor.formatOnSave', setting.workspaceValue)) {
-
-        return setting.workspaceValue['editor.formatOnSave'];
-
-      } else if (setting.globalValue !== undefined && has('editor.formatOnSave', setting.globalValue)) {
-
-        return setting.globalValue['editor.formatOnSave'];
-
-      } else {
-
-        this.warn(`${u.upcase(languageId)} editor.formatOnSave setting is not defined`);
-
-      }
-    }
-
-    return false;
 
   }
 
@@ -1184,7 +1184,7 @@ export class WorkspaceSettings extends OutputChannel {
             await this.setSettingsFile();
             await this.getSharedSchema();
 
-          } else if (this.engine === '11ty' || this.engine === 'eleventy') {
+          } else if (this.engine === '11ty') {
 
             await this.setDataFile();
             await this.getFileCompletions([ 'includes', 'layouts' ]);
@@ -1393,7 +1393,7 @@ export class WorkspaceSettings extends OutputChannel {
         await this.setSettingsFile();
         await this.getSharedSchema();
 
-      } else if (this.engine === '11ty' || this.engine === 'eleventy') {
+      } else if (this.engine === '11ty') {
 
         await this.getFileCompletions([ 'includes', 'layouts' ]);
         await this.setDataFile();
