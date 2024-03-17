@@ -5,11 +5,7 @@
   Renders a product thumbnail with a modal-opener
 
   Usage:
-  {% render 'product-variant-options',
-  product: product,
-  option: option,
-  block: block
-  %}
+  {% render 'product-variant-options', product: product %}
 
   Accepts:
   - media: {Object} Product Media object
@@ -44,11 +40,13 @@
 
 {% render 'filename' %}
 
-{% render 'filename', param: article.author %}
+{% render 'filename'
+  , param: article.author %}
 
 {% render 'filename' for array as item %}
 
-{% render 'filename' with product as name, param: collection.products %}{% render 'filename'
+{% render 'filename' with product as name
+  , param: collection.products %}{% render 'filename'
   , param: 1
   , param2: foo.prop.foo.bar
   , param3: 'string'
@@ -105,11 +103,15 @@
 {% elsif condition %}
 {% endif %}
 {% case variable %}
-  {% when condition == product.available %}
-{% else %}{% endcase %}{% # FOR LOOP %}
+  {% when condition == product.available %}{% else %}
+{% endcase %}
+{% # FOR LOOP %}
 
-{% for product in collection.products limit: 2 %}{{ product.title }}{% endfor %}{% for variable in (1..200) %}expression{% endfor %}
+{% for product in collection.products limit: 2 %}
+  {{ product.title }}{% endfor %}
+{% for variable in (1..200) %}expression{% endfor %}
 
-{% for product in collection.products reversed %}{{ product.title }}{% endfor %}
+{% for product in collection.products reversed %}
+  {{ product.title }}{% endfor %}
 
 {% for item in collection %}{% endfor %}

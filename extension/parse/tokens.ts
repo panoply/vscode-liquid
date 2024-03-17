@@ -2,6 +2,7 @@ import { Token, Char, Complete } from 'types';
 import { isString } from 'utils';
 import * as r from 'parse/helpers';
 import { $, q } from '@liquify/specs';
+import { Diagnostic, Range, TextDocument } from 'vscode';
 
 export interface IToken {
   /**
@@ -31,6 +32,10 @@ export interface IToken {
    */
   offset: number;
   /**
+   * A Diagnostic to apply for this token
+   */
+  diagnostic: Diagnostic[]
+  /**
    * The tag or output token name
    */
   get tagName(): string;
@@ -46,6 +51,10 @@ export interface IToken {
    * The last known object property (if any) on the token, defaults to `null`
    */
   get object(): string;
+  /**
+   * Returns the range of the token
+   */
+  get range(): Range;
 }
 
 /* -------------------------------------------- */
@@ -372,7 +381,7 @@ export function getTokenType (content: string, offset: number) {
  * should be shown and provided via the completion provider. The returned object can be used to
  * determine the token and reason about with it.
  */
-export function getToken (content: string, index: number): IToken {
+export function getToken (content: string, index: number, document: TextDocument): IToken {
 
   const output = content.lastIndexOf('{{', index);
   const tag = content.lastIndexOf('{%', index);
@@ -390,6 +399,7 @@ export function getToken (content: string, index: number): IToken {
     ender,
     text,
     offset,
+    diagnostic: [],
     get locale () {
 
       if (type !== Token.Object) return null;
@@ -445,6 +455,10 @@ export function getToken (content: string, index: number): IToken {
 
       return null;
 
+    },
+    get range () {
+
+      return new Range(document.positionAt(begin), document.positionAt(ender));
     }
   };
 }

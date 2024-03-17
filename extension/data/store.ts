@@ -657,6 +657,13 @@ export const schema = {
               },
               {
                 "enum": [
+                  "text_alignment"
+                ],
+                "title": "Text Alignment",
+                "markdownDescription": "A setting of type `text_alignment` outputs a `SegmentedControl` field with icons. In addition to the standard [attributes](https://shopify.dev/docs/themes/architecture/settings/input-settings#standard-attributes) of an input setting.\n\nWhen you access the value of a `text_alignment` type setting, data is returned as a string.\n\n> **NOTE**\n>\n> If you don't specify the default attribute, then the `left` option is selected by default.\n> Note\nIf you don't specify the default attribute, then the left option is selected by default.\n\n#\n\n---\n\n[Shopify Documentation](https://shopify.dev/docs/themes/architecture/settings/input-settings#text_alignment)\n\n\n"
+              },
+              {
+                "enum": [
                   "html"
                 ],
                 "title": "HTML",
@@ -737,6 +744,7 @@ export const schema = {
                 "url",
                 "richtext",
                 "inline_richtext",
+                "text_alignment",
                 "html",
                 "article",
                 "liquid",
@@ -755,6 +763,7 @@ export const schema = {
             "id": {
               "type": "string",
               "default": "",
+              "minLength": 1,
               "markdownDescription": "The setting ID, which is used to access the setting value. The id is exposed to the liquid templates via the settings object. It must only contain alphanumeric characters, underscores, and dashes.\n\n> **REQUIRED**\n>\n> The `id` attribute is required for all settings.\n\n\n#\n\n---\n\n[Shopify Documentation](https://shopify.dev/docs/themes/architecture/settings/input-settings#standard-attributes)\n"
             },
             "label": {
@@ -775,7 +784,6 @@ export const schema = {
                 "number",
                 "boolean"
               ],
-              "default": "",
               "markdownDescription": "The default value for the setting.\n\n#\n\n---\n\n[Shopify Documentation](https://shopify.dev/docs/themes/architecture/settings/input-settings#standard-attributes)\n"
             },
             "info": {
@@ -842,6 +850,22 @@ export const schema = {
               },
               "then": {
                 "$ref": "#/definitions/select"
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "type"
+                ],
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "text_alignment"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "#/definitions/text_alignment"
               }
             },
             {
@@ -1003,6 +1027,16 @@ export const schema = {
               "id": "$2",
               "label": "${2/([^_]+)(_*)/${1:/capitalize}${2:+ }/g}$3",
               "${4|default,placeholder,info|}": "$5"
+            }
+          },
+          {
+            "label": "Text Alignment",
+            "markdownDescription": "A setting of type `text_alignment` outputs a `SegmentedControl` field with icons. In addition to the standard [attributes](https://shopify.dev/docs/themes/architecture/settings/input-settings#standard-attributes) of an input setting.\n\nWhen you access the value of a `text_alignment` type setting, data is returned as a string.\n\n> **NOTE**\n>\n> If you don't specify the default attribute, then the `left` option is selected by default.\n> Note\nIf you don't specify the default attribute, then the left option is selected by default.\n\n#\n\n---\n\n[Shopify Documentation](https://shopify.dev/docs/themes/architecture/settings/input-settings#text_alignment)\n\n\n",
+            "body": {
+              "type": "text_alignment",
+              "id": "$2",
+              "label": "${2/([^_]+)(_*)/${1:/capitalize}${2:+ }/g}$3",
+              "default": "${4|left,center,right|}"
             }
           },
           {
@@ -1732,6 +1766,20 @@ export const schema = {
         "header",
         "section"
       ]
+    },
+    "text_alignment": {
+      "type": "object",
+      "properties": {
+        "default": {
+          "type": "string",
+          "default": "left",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ]
+        }
+      }
     },
     "enabled_on": {
       "title": "Enabled On",

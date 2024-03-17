@@ -13,7 +13,7 @@ import {
 import { workspace, ConfigurationTarget, Uri, RelativePattern } from 'vscode';
 import { existsSync } from 'node:fs';
 import { join, basename, relative } from 'node:path';
-import { has, isNil, difference, hasPath, isEmpty, equals, T } from 'rambdax';
+import { has, isNil, difference, hasPath, isEmpty, equals } from 'rambdax';
 import anymatch from 'anymatch';
 import { OutputChannel } from './OutputChannel';
 import * as u from '../utils';
@@ -119,11 +119,43 @@ export class WorkspaceSettings extends OutputChannel {
   }
 
   /**
+   * Get Formatting Status
+   *
+   * Returns the formatting status.
+   */
+  public isFormattingOnSave (languageId: string = 'liquid'): boolean {
+
+    if (this.isDefaultFormatter(languageId)) {
+
+      const setting = workspace.getConfiguration().inspect(`[${languageId}]`);
+
+      if (setting.workspaceValue !== undefined && has('editor.formatOnSave', setting.workspaceValue)) {
+
+        return setting.workspaceValue['editor.formatOnSave'];
+
+      } else if (setting.globalValue !== undefined && has('editor.formatOnSave', setting.globalValue)) {
+
+        return setting.globalValue['editor.formatOnSave'];
+
+      } else {
+
+        this.warn(`${u.upcase(languageId)} editor.formatOnSave setting is not defined`);
+
+      }
+    }
+
+    return false;
+
+  }
+
+  /**
    * Engine Defintion
    *
    * Assigns and returns the known Liquid engine being used.
    */
   public getEngine () {
+
+    const engine = this.engine;
 
     if (this.config.method === ConfigMethod.Liquidrc) {
 
@@ -147,6 +179,13 @@ export class WorkspaceSettings extends OutputChannel {
 
     }
 
+    if (this.isReady === false) {
+      this.info(`${this.engine} liquid engine`);
+    } else {
+      if (engine !== this.engine) {
+        this.info(`Changed liquid engine, now using: ${this.engine}`);
+      }
+    }
   }
 
   /**
@@ -290,6 +329,7 @@ export class WorkspaceSettings extends OutputChannel {
       config = 'workspace';
       input = workspace.getConfiguration().get<string[]>(`liquid.files.${this.engine}.${type}`);
     } else {
+      if (!has(type, this.liquidrc.files)) return;
       config = '.liquidrc';
       input = this.liquidrc.files[type];
     }
@@ -389,6 +429,7 @@ export class WorkspaceSettings extends OutputChannel {
       config = 'workspace';
       input = workspace.getConfiguration().get<string>('liquid.files.shopify.locales');
     } else {
+      if (!has('locales', this.liquidrc.files)) return;
       config = '.liquidrc';
       input = (this.liquidrc.files as { locales: string }).locales;
     }
@@ -484,10 +525,10 @@ export class WorkspaceSettings extends OutputChannel {
 
       for (const entry of paths) {
 
-        const file = Uri.file(path);
+        const file = entry.path;
 
-        if (!file.fsPath.endsWith('.json')) {
-          this.warn(`Unable to resolve data (File must be a JSON file type): ${path}`);
+        if (!file.endsWith('.json')) {
+          this.warn(`Unable to resolve ${this.engine} data (File must be a JSON file type): ${file}`);
           continue;
         }
 
@@ -495,9 +536,11 @@ export class WorkspaceSettings extends OutputChannel {
 
           const data = await u.parseJsonFile<any>(entry);
 
-          $.liquid.files.set(file.fsPath, data);
+          $.liquid.files.set(file, data);
 
-          getEleventyDataComponents(file.fsPath);
+          getEleventyDataComponents(file);
+
+          this.info(`${config} ${this.engine} data completions: ${basename(file)}`);
 
         } catch (e) {
 
@@ -528,6 +571,7 @@ export class WorkspaceSettings extends OutputChannel {
       config = 'workspace';
       input = workspace.getConfiguration().get<string>('liquid.files.shopify.settings');
     } else {
+      if (!has('settings', this.liquidrc.files)) return;
       config = '.liquidrc';
       input = (this.liquidrc.files as { settings: string }).settings;
     }
@@ -617,7 +661,7 @@ export class WorkspaceSettings extends OutputChannel {
       'settings',
       'snippets',
       'sections'
-    ] : this.engine === '11ty' || this.engine === 'eleventy' ? [
+    ] : this.engine === '11ty' ? [
       'data',
       'layouts',
       'includes'
@@ -730,36 +774,6 @@ export class WorkspaceSettings extends OutputChannel {
   }
 
   /**
-   * Get Formatting Status
-   *
-   * Returns the formatting status.
-   */
-  public isFormattingOnSave (languageId: string = 'liquid'): boolean {
-
-    if (this.isDefaultFormatter(languageId)) {
-
-      const setting = workspace.getConfiguration().inspect(`[${languageId}]`);
-
-      if (setting.workspaceValue !== undefined && has('editor.formatOnSave', setting.workspaceValue)) {
-
-        return setting.workspaceValue['editor.formatOnSave'];
-
-      } else if (setting.globalValue !== undefined && has('editor.formatOnSave', setting.globalValue)) {
-
-        return setting.globalValue['editor.formatOnSave'];
-
-      } else {
-
-        this.warn(`${u.upcase(languageId)} editor.formatOnSave setting is not defined`);
-
-      }
-    }
-
-    return false;
-
-  }
-
-  /**
    * Get Hover Status
    *
    * Applied the hover control settings
@@ -843,6 +857,7 @@ export class WorkspaceSettings extends OutputChannel {
         'section',
         'schema',
         'snippets',
+        'includes',
         'sections',
         'settings',
         'variables'
@@ -850,7 +865,7 @@ export class WorkspaceSettings extends OutputChannel {
 
         if (has(v, settings) && u.isBoolean(settings[v])) {
 
-          if (v === 'sections' || v === 'objects' || v === 'schema') {
+          if (v === 'sections' || v === 'schema') {
             if (this.engine !== 'shopify' && settings[v] === true) {
               continue;
             }
@@ -1154,6 +1169,7 @@ export class WorkspaceSettings extends OutputChannel {
         }
 
       }
+
       if (touch !== Setting.LiquidrcTouch) {
 
         if (this.deprecation.liquidrc === null) {
@@ -1168,8 +1184,9 @@ export class WorkspaceSettings extends OutputChannel {
             await this.setSettingsFile();
             await this.getSharedSchema();
 
-          } else if (this.engine === '11ty' || this.engine === 'eleventy') {
+          } else if (this.engine === '11ty') {
 
+            await this.setDataFile();
             await this.getFileCompletions([ 'includes', 'layouts' ]);
 
           }
@@ -1376,9 +1393,10 @@ export class WorkspaceSettings extends OutputChannel {
         await this.setSettingsFile();
         await this.getSharedSchema();
 
-      } else if (this.engine === '11ty' || this.engine === 'eleventy') {
+      } else if (this.engine === '11ty') {
 
         await this.getFileCompletions([ 'includes', 'layouts' ]);
+        await this.setDataFile();
 
       }
     }

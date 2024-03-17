@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import { Type } from '@liquify/specs';
+import { Objects, Type } from '@liquify/specs';
 import { CompletionItem } from 'vscode';
 import { Tag } from './enums';
 import { SchemaSectionTag } from './schema';
@@ -129,24 +129,33 @@ export namespace Complete {
   export type Vars = Map<string, Variable>
 
   /**
+   * Completion Item Keys
+   *
+   * Map Keys for the completion Types store
+   */
+  export type ItemKeys = (
+    | 'tags'
+    | 'operators'
+    | 'filters'
+    | 'objects'
+    | 'object:template'
+    | `object:${number}`
+    | 'object:boolean'
+    | 'object:number'
+    | 'object:array'
+    | 'object:constant'
+    | 'snippets'
+    | 'sections'
+    | 'settings'
+    | 'locales'
+    | 'frontmatter'
+  )
+
+  /**
    * Completion Items
    *
    * Map store of the completion items available
    */
-  export type Items = Map<
-  | 'tags'
-  | 'operators'
-  | 'filters'
-  | 'objects'
-  | 'object:template'
-  | `object:${number}`
-  | 'object:boolean'
-  | 'object:number'
-  | 'object:array'
-  | 'object:constant'
-  | 'snippets'
-  | 'sections'
-  | 'settings'
-  | 'locales', CompletionItem[]>
+  export type Items = Map<ItemKeys, CompletionItem[]>
 
 }

@@ -2,9 +2,10 @@ import { has } from 'rambdax';
 import { basename } from 'node:path';
 import { SchemaSectionTag, SchemaSettings, SchemaSettingTypes } from 'types';
 import { MarkdownString, CompletionItemKind, Uri } from 'vscode';
-import { Type, Types } from '@liquify/specs';
+import { Type, TypeBasic, Types } from '@liquify/specs';
 import { getSharedSchemaRef } from './schema';
 import { isArray } from 'utils';
+import { LiteralUnion } from 'type-fest';
 
 export const Tag = (name: string) => new RegExp(`{%-?\\s*\\b${name}\\b\\s+-?%}`);
 
@@ -173,7 +174,7 @@ export function mdSchema (setting: SchemaSettings & { default?: string}) {
  * Returns the `CompletionItemKind` enum reference that
  * should be applied to the generated completion item.
  */
-export function kind (type: SchemaSettingTypes) {
+export function kind (type: LiteralUnion<SchemaSettingTypes, any>) {
 
   switch (type) {
     case 'color':
@@ -207,7 +208,7 @@ export function kind (type: SchemaSettingTypes) {
 
 }
 
-export function objectKind (type: Type) {
+export function objectKind (type: LiteralUnion<Type, any>) {
 
   switch (type) {
     case Type.string:
@@ -266,23 +267,23 @@ export function settingsType (type: SchemaSettingTypes) {
     case 'url':
     case 'select':
     case 'radio':
-      return Type.string;
+      return TypeBasic.string;
     case 'article':
     case 'blog':
     case 'product':
     case 'page':
     case 'image_picker':
     case 'font_picker':
-      return Type.any;
+      return TypeBasic.any;
     case 'product_list':
-      return Type.array;
+      return TypeBasic.array;
     case 'checkbox':
-      return Type.boolean;
+      return TypeBasic.boolean;
     case 'range':
     case 'number':
-      return Type.number;
+      return TypeBasic.number;
     default:
-      return Type.any;
+      return TypeBasic.any;
   }
 
 }

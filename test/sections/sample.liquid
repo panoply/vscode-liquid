@@ -1,12 +1,11 @@
 <!-- TEST: Liquid String Injections -->
-<div
-  class="{{ object.prop | filter: 'string' }}">
+<div class="{{ object.prop | filter: 'string' }}">
 
   <!-- TEST: Liquid Attribute Injections -->
   <div
     id="test"
     {% if condition == false %}
-    data-id="{{ x }}"
+      data-id="{{ x }}"
     {% endif %}>
     sss
 
@@ -15,7 +14,8 @@
 </div>
 
 
-{% form %}{% endform %}
+{% form %}
+{% endform %}
 
 {{ section.settings }}
 
@@ -31,10 +31,10 @@
   data-carousel-mobile-value="1"
   data-carousel-tablet-value="1"
   {% if condition %}
-  data-carousel-hydrate-value="true"
-  data-carousel-id-value="{{ section.id | base64_encode }}"
+    data-carousel-hydrate-value="true"
+    data-carousel-id-value="{{ section.id | base64_encode }}"
   {% else %}
-  data-carousel-interval-value="{{ section.settings.interval }}"
+    data-carousel-interval-value="{{ section.settings.interval }}"
   {% endif %}>
 
   {% assign bar = 'baz' %}
@@ -46,18 +46,16 @@
 
       {{ foo.button_color }}
 
-{% capture foo %}
+      {% capture foo %}
         I will not be formatter
       {% endcapture %}
-
-{% capture foo %}{% endcapture %}
-
-      {% assign foo = '' %} {% capture pros %}
+      {% capture foo %}{% endcapture %}
+      {% assign foo = '' %}
+      {% capture pros %}
         {{ section.blocks }} {{ foo | append: '' | append: article }}
       {% endcapture %}
-
-
-      {% if %}{% endif %}
+      {% if %}
+      {% endif %}
 
 
       {% liquid
@@ -155,7 +153,8 @@
 </div>
 
 
-{% if block.type == 'collection_links' %}{% endif %}
+{% if block.type == 'collection_links' %}
+{% endif %}
 {{ section.settings }}
 
 
@@ -172,7 +171,6 @@
       {
         "ref": "images.dropdown"
       },
-
       {
         "type": "range",
         "id": "test_4",
@@ -181,7 +179,7 @@
         "max": 1,
         "step": 0.1,
         "default": 0,
-        "info": "Some Text",
+        "info": "Some Text"
       },
       {
         "type": "select",
@@ -283,7 +281,7 @@
         "settings": [
           {
 
-          "type": "text",
+            "type": "text",
             "id": "title",
             "label": "Title"
           },

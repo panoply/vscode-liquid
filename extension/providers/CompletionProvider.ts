@@ -57,13 +57,13 @@ export class CompletionProvider extends Service implements CompletionItemProvide
     objects: true,
     schema: true,
     variables: true,
+    frontmatter: true,
+    schemas: true,
     locales: false,
     sections: false,
     settings: false,
     snippets: false,
-    schemas: true,
     data: false,
-    frontmatter: false,
     includes: false
   };
 
@@ -79,7 +79,10 @@ export class CompletionProvider extends Service implements CompletionItemProvide
    *
    * The completion file uri path references
    */
-  public files: { locales: string; settings: string } = { locales: null, settings: null };
+  public files: {
+    locales: string;
+    settings: string
+  } = { locales: null, settings: null };
 
   /**
    * Completion Variables
@@ -87,6 +90,13 @@ export class CompletionProvider extends Service implements CompletionItemProvide
    * The completion variables to be provided on resolution
    */
   public vars: Complete.Vars = new Map();
+
+  /**
+   * Completion Frontmatter
+   *
+   * The completion frontmatter to be provided on resolution
+   */
+  public frontmatter: { offset: number; keys: string[] } = { offset: 0, keys: [] };
 
   /**
    * Text Edits
@@ -103,10 +113,12 @@ export class CompletionProvider extends Service implements CompletionItemProvide
    * The completion item provider interface defines the contract between extensions and
    * [IntelliSense](https://code.visualstudio.com/docs/editor/intellisense).
    */
-  async provideCompletionItems (document: TextDocument, position: Position, _token: CancellationToken, {
-    triggerCharacter,
-    triggerKind
-  }: CompletionContext): Promise<CompletionItem[]> {
+  async provideCompletionItems (
+    document: TextDocument,
+    position: Position,
+    _token: CancellationToken,
+    { triggerCharacter, triggerKind }: CompletionContext
+  ): Promise<CompletionItem[]> {
 
     if (document.languageId !== 'liquid') return null;
 
@@ -147,7 +159,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
     /* INTELLISENSE                                 */
     /* -------------------------------------------- */
 
-    const token = getToken(content, offset);
+    const token = getToken(content, offset, document);
 
     if (token.within === false) {
 
@@ -155,15 +167,11 @@ export class CompletionProvider extends Service implements CompletionItemProvide
       /* TAG COMPLETIONS                              */
       /* -------------------------------------------- */
       if (trigger === Char.PER) {
-
         if (!this.enable.tags) return null;
-
         q.setType(null);
 
         this.textEdits = insertTag(position);
-
         return this.items.get('tags');
-
       }
 
       return null;
@@ -289,11 +297,7 @@ export class CompletionProvider extends Service implements CompletionItemProvide
         )
       ) {
 
-        return getLocaleCompletions(
-          this.files.locales,
-          token.locale,
-          insertTranslate(position, token.text)
-        );
+        return getLocaleCompletions(this.files.locales, token.locale, insertTranslate(position, token.text));
 
       }
     }

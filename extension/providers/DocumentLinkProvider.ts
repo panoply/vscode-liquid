@@ -16,12 +16,12 @@ export class DocumentLinkProvider implements IDocumentLinkProvider {
   /* -------------------------------------------- */
 
   /**
-   * Render Tag URI's
+   * Render Tag URI's for 11ty Liquid engine
    */
   includes: Uri[];
 
   /**
-   * Render Tag URI's
+   * Render Tag URI's for Shopify Liquid engine
    */
   snippets: Uri[];
 
@@ -44,8 +44,12 @@ export class DocumentLinkProvider implements IDocumentLinkProvider {
     const content = document.getText();
     const links: DocumentLink[] = [];
 
-    if (this.snippets.length > 0) {
-      this.getSnippetLinks(document, content, links);
+    if (this.snippets && this.snippets.length > 0) {
+      this.getPartialFileLinks(document, content, links);
+    }
+
+    if (this.includes && this.includes.length > 0) {
+      this.getPartialFileLinks(document, content, links);
     }
 
     if (this.settings !== null) {
@@ -56,7 +60,7 @@ export class DocumentLinkProvider implements IDocumentLinkProvider {
 
   }
 
-  private getSnippetLinks (document: TextDocument, content: string, links: DocumentLink[]) {
+  private getPartialFileLinks (document: TextDocument, content: string, links: DocumentLink[]) {
 
     let m: RegExpExecArray;
 
