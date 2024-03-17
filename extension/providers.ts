@@ -69,7 +69,7 @@ export class Providers extends Extension {
         this.links.sections = Array.from(this.files.sections);
       }
 
-    } else if (this.engine === '11ty' || this.engine === 'eleventy') {
+    } else if (this.engine === '11ty') {
 
       if (this.completion.enable.includes) {
         this.completion.items.set('snippets', getFileCompletions(this.files.includes));
@@ -114,7 +114,7 @@ export class Providers extends Extension {
         this.links.settings = this.files.settings;
       }
 
-    } else if (this.engine === '11ty' || this.engine === 'eleventy') {
+    } else if (this.engine === '11ty') {
 
       q.setEngine(Engine.eleventy);
 
