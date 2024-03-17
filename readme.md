@@ -96,13 +96,6 @@ The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (
 - [Acknowledgements](#acknowledgements)
 - [Support](#support)
 
-# Updating to v4.0.0
-
-Users who were upgraded to version **4.0.0** will need to align their configurations.
-
-- [Release Notes](https://github.com/panoply/vscode-liquid/releases/tag/v4.0.0)
-- [Sample Project](https://github.com/panoply/vscode-liquid-sample)
-
 # Command Palette
 
 Below are the available commands exposed to the vscode command palette (`cmd + shift + p`)
@@ -426,11 +419,9 @@ Liquid object completions from provided frontmatter within files is supported. T
 
 ### Files
 
-The extension supports file completions. Depending on the specified Liquid `engine` variation defined, different types of file completions are made available. `locale`, `settings`, `snippets` and `section` file based completions but you will need to provide path references to enable this capability. You can provide path references in your `.liquidrc` file on `files` key. The paths must be relative to your projects root directory.
+The extension supports file completions. Depending on the specified Liquid `engine` variation defined, different types of file completions are made available.You can provide path references in your `.liquidrc` file on `files` key. The paths must be relative to your projects root directory and depending on the engine file paths differ.
 
-**Using `.liquidrc` File**
-
-Example for usage with the Shopify Liquid Variation:
+**Using `.liquidrc` File** - Shopify Liquid Variation:
 
 ```jsonc
 {
@@ -445,8 +436,6 @@ Example for usage with the Shopify Liquid Variation:
 ```
 
 **Using `.liquidrc` File** - Eleventy Liquid Variation
-
-Example for usage with the Eleventy Liquid Variation:
 
 ```jsonc
 {
