@@ -928,7 +928,7 @@ Contributions are welcome! This project uses [pnpm](https://pnpm.js.org/en/cli/i
 
 ### Developing
 
-The project uses [tsup](https://tsup.egoist.sh) for producing the distributed bundle. You can produce a VSIX by running the `pnpm build` command. The `.vscode/launch.json` file contains the extension host logic.
+The project uses [tsup](https://tsup.egoist.dev) for producing the distributed bundle. You can produce a VSIX by running the `pnpm build` command. The `.vscode/launch.json` file contains the extension host logic.
 
 ```bash
 pnpm dev         # Development in watch mode
