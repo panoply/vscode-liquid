@@ -412,6 +412,16 @@
         ],
         "scopeName": "source.liquid.doc-comments.injection",
         "path": "./syntax/injections/comments.tmLanguage.json"
+      },
+      {
+        "scopeName": "source.json.embedded",
+        "path": "./syntax/injections/json-script.tmLanguage.json",
+        "injectTo": [
+          "source.liquid"
+        ],
+        "embeddedLanguages": {
+          "meta.embedded.block.json.html": "json"
+        }
       }
     ],
     "snippets": [
@@ -679,6 +689,11 @@
               "additionalProperties": false,
               "markdownDescription": "Beautification rules applied to **Liquid**",
               "properties": {
+                "argumentLineBreak": {
+                  "type": "number",
+                  "default": 0,
+                  "markdownDescription": "Forces Liquid tag and filter argument expressions onto newlines according to the number of arguments present on the token. By default, this rule uses a value of `0` which will result in arguments being forced when the tag or output token containing them spans ¾ (or 75%) of defined global [`wrap`](https://aesthetic.js.org/rules/global/wrap) limit.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/argumentLineBreak/)\n\n\n"
+                },
                 "delimiterTrims": {
                   "type": "string",
                   "enum": [
@@ -709,17 +724,12 @@
                   "default": false,
                   "markdownDescription": "Applies single indentation to containing content of Liquid comments. Liquid line type comments are currently not supported by this rule. Only block type Liquid tokens will be handled.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/commentIndent/)\n\n"
                 },
-                "commentNewline": {
+                "commentPreserve": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Inserts a new line above comment tags. When enabled the rule will add a newline even if `preserveLine` is set to `0`. The rule will not inject new lines when the previous expression is determined to already contain a new line.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/commentNewline/)\n"
+                  "markdownDescription": "Preserve the inner contents of Liquid block comments.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/preserveComment/)\n"
                 },
-                "forceArgument": {
-                  "type": "number",
-                  "default": 0,
-                  "markdownDescription": "Forces Liquid tag and filter argument expressions onto newlines according to the number of arguments present on the token. By default, this rule uses a value of `0` which will result in arguments being forced when the tag or output token containing them spans ¾ (or 75%) of defined global [`wrap`](https://aesthetic.js.org/rules/global/wrap) limit.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/forceArgument/)\n\n\n"
-                },
-                "forceFilter": {
+                "filterLineBreak": {
                   "type": "number",
                   "default": 0,
                   "markdownDescription": "Forces Liquid filter `|` expressions onto newlines when the number of filters contained on a tag exceeds the limit defined. By default, this rule uses a value of `0` which will result in Liquid filters being forced when the tag or output token containing them spans ¾ (or 75%) of defined global [`wrap`](https://aesthetic.js.org/rules/global/wrap) limit.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/forceFilter/)\n"
@@ -802,15 +812,10 @@
                     "after"
                   ]
                 },
-                "normalizeSpacing": {
+                "equipoiseSpacing": {
                   "default": true,
                   "type": "boolean",
-                  "markdownDescription": "Whether or not to normalize and correct the inner spacing of Liquid tokens. This rule will equally distribute whitespace characters contained within Liquid tags and output tokens. The rule will also inject spacing in accordance with common Liquid code structures.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/normalizeSpacing)\n"
-                },
-                "preserveComment": {
-                  "type": "boolean",
-                  "default": false,
-                  "markdownDescription": "Preserve the inner contents of Liquid block comments.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/preserveComment/)\n"
+                  "markdownDescription": "Whether or not to normalize and correct the inner spacing of Liquid tokens. This rule will equally distribute whitespace characters contained within Liquid tags and output tokens. The rule will also inject spacing in accordance with common Liquid code structures.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/liquid/equipoiseSpacing)\n"
                 },
                 "preserveInternal": {
                   "type": "boolean",
@@ -826,6 +831,21 @@
                     "double",
                     "single"
                   ]
+                },
+                "commentNewline": {
+                  "deprecationMessage": "DEPRECATED\n\nThe liquid \"commentNewline\" rule has been deprecated. This formatting rule no longer has any effect.\n\n𐄂 NO LONGER SUPPORTED\n{\n  \"liquid\": {\n    \"commentNewline\": true\n  }\n}"
+                },
+                "forceArgument": {
+                  "deprecationMessage": "DEPRECATED\n\nThe liquid \"forceArgument\" rule has changed. You should instead use \"argumentLineBreak\" for example:\n\n✓ THIS IS CORRECT\n\n{\n  \"liquid\": {\n    \"argumentLineBreak\": 3\n  }\n}\n\n𐄂 THIS IS INCORRECT\n{\n  \"liquid\": {\n    \"forceArgument\": 3\n  }\n}"
+                },
+                "forceFilter": {
+                  "deprecationMessage": "DEPRECATED\n\nThe liquid \"forceFilter\" rule has changed. You should instead use \"filterLineBreak\" for example:\n\n✓ THIS IS CORRECT\n\n{\n  \"liquid\": {\n    \"filterLineBreak\": 3\n  }\n}\n\n𐄂 THIS IS INCORRECT\n{\n  \"liquid\": {\n    \"forceFilter\": 3\n  }\n}"
+                },
+                "preserveComment": {
+                  "deprecationMessage": "DEPRECATED\n\nThe liquid \"preserveComment\" rule has changed. You should instead use \"commentPreserve\" for example:\n\n✓ THIS IS CORRECT\n\n{\n  \"liquid\": {\n    \"commentPreserve\": true\n  }\n}\n\n𐄂 THIS IS INCORRECT\n{\n  \"liquid\": {\n    \"preserveComment\": true\n  }\n}"
+                },
+                "normalizeSpacing": {
+                  "deprecationMessage": "DEPRECATED\n\nThe liquid \"normalizeSpacing\" rule has changed. You should instead use \"equipoiseSpacing\" for example:\n\n✓ THIS IS CORRECT\n\n{\n  \"liquid\": {\n    \"normalizeSpacing\": true\n  }\n}\n\n𐄂 THIS IS INCORRECT\n{\n  \"liquid\": {\n    \"equipoiseSpacing\": true\n  }\n}"
                 }
               }
             },
@@ -844,6 +864,19 @@
                     "lowercase-name",
                     "lowercase-value"
                   ]
+                },
+                "attributeLineBreak": {
+                  "type": [
+                    "boolean",
+                    "number"
+                  ],
+                  "default": false,
+                  "markdownDescription": "How or if markup attributes should be indented each onto their own line. You can optionally provide an integer value of `1` or more. When an integer value is passed, attributes will be forced only if the number of attributes contained on the tag exceeds the supplied value limit. When you define a `wrap` level then attributes will be automatically forced when limit is exceeded unless you've set this rule to `true` or provided an integer threshold.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/forceAttribute/)\n"
+                },
+                "attributePreserve": {
+                  "type": "boolean",
+                  "default": false,
+                  "markdownDescription": "Whether or not markup tags should have their insides preserved, ie: attributes. This option is only available to markup and does not support child tokens that require a different lexer. When enabled, this rule will run precedence and override all attribute related rules.\n\nIf you're working with a JavaScript framework that implements a data-attribute development based architecture (like Alpine or Angular) which requires a build-step then this rule _might_ help prevent Æsthetic augmenting code or failing when it encounters otherwise invalid structures not supported or recognized by official markup based language specifications.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/attributePreserve/)"
                 },
                 "attributeSort": {
                   "type": [
@@ -869,7 +902,7 @@
                   "default": false,
                   "markdownDescription": "Applies single indentation to containing content of HTML comments.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/commentIndent/)\n\n"
                 },
-                "commentDelimiters": {
+                "commentDelimiter": {
                   "enum": [
                     "preserve",
                     "inline",
@@ -880,10 +913,10 @@
                   "default": "preserve",
                   "markdownDescription": "Controls the placement of HTML and XML (i.e: markup) type comment delimiters. This is a markup specific formatting rule that defaults to using preserve and applied to languages using `<!--` and `-->` delimiter tokens.\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/commentDelimiters/)"
                 },
-                "commentNewline": {
+                "commentPreserve": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Inserts a new line above comment tags. When enabled the rule will add a newline even if `preserveLine` is set to `0`. The rule will not inject new lines when the previous expression is determined to already contain a new line.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/commentNewline/)\n\n"
+                  "markdownDescription": "Preserve the inner contents of HTML comments.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/preserveComment/)\n"
                 },
                 "delimiterTerminus": {
                   "enum": [
@@ -898,26 +931,6 @@
                   "type": "boolean",
                   "default": false,
                   "markdownDescription": "Will force indentation upon all content and tags without regard for the text nodes. To some degree this rule emulates a result similar to that you'd expect in Prettier. Inline preservation is respected in cases where a Liquid output object token is encapsulated between text nodes. In such scenarios the text content will only force indent the start and end portions.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/forceIndent/)\n"
-                },
-                "forceAttribute": {
-                  "type": [
-                    "boolean",
-                    "number"
-                  ],
-                  "default": false,
-                  "markdownDescription": "How or if markup attributes should be indented each onto their own line. You can optionally provide an integer value of `1` or more. When an integer value is passed, attributes will be forced only if the number of attributes contained on the tag exceeds the supplied value limit. When you define a `wrap` level then attributes will be automatically forced when limit is exceeded unless you've set this rule to `true` or provided an integer threshold.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/forceAttribute/)\n"
-                },
-                "lineBreakValue": {
-                  "enum": [
-                    "preserve",
-                    "align",
-                    "indent",
-                    "force-preserve",
-                    "force-align",
-                    "force-indent"
-                  ],
-                  "default": "preserve",
-                  "markdownDescription": "Attribute value handling applied when values span multiple lines.\n\n**Options**\n\n- preserve\n- align\n- indent\n- force-preserve\n- force-align\n- force-indent\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/lineBreakValue/)\n"
                 },
                 "ignoreJS": {
                   "type": "boolean",
@@ -954,15 +967,10 @@
                   "default": false,
                   "markdownDescription": "Whether or not newlines contained within tag attributes or preserved. This rule will be used along side the `forceAttribute` rule and when enabled (`true`) will strip newlines contained in HTML attributes. When disabled (`false`) then newlines will be preserved according to the **global** `preserveLine` limit defined.\n\nThis rule wil only take effect when `forceAttribute` is enabled (ie: `true`) or the `forceAttribute` limit has been exceeded as per the provided value. In addition to `forceAttribute`, the global `preserveLine` rule value is used to determine the amount of lines allowed.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/stripAttributeLines/)\n"
                 },
-                "preserveComment": {
+                "stripTextWrapLines": {
                   "type": "boolean",
                   "default": false,
-                  "markdownDescription": "Preserve the inner contents of HTML comments.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/preserveComment/)\n"
-                },
-                "preserveAttribute": {
-                  "type": "boolean",
-                  "default": false,
-                  "markdownDescription": "Whether or not markup tags should have their insides preserved, ie: attributes. This option is only available to markup and does not support child tokens that require a different lexer. When enabled, this rule will run precedence and override all attribute related rules.\n\nIf you're working with a JavaScript framework that implements a data-attribute development based architecture (like Alpine or Angular) which requires a build-step then this rule _might_ help prevent Æsthetic augmenting code or failing when it encounters otherwise invalid structures not supported or recognized by official markup based language specifications.\n\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/preserveAttribute/)"
+                  "markdownDescription": "Whether or not Æsthetic should strip newline occurrences when applying word-wrap on text content. This rule will only take effect if a word wrap limit has been defined via `wrap` option. When enabled, Æsthetic will remove newline occurrences from text identified content and produce a strictly formed wrap.\n\nBy default, this rule is `false` and Æsthetic will preserve newlines within text content, ensuring that newline occurrences adhere to the `preserveLine` limit regardless of whether or not a `wrap` limit has been set. Setting this to `true` will override `preserveLine` within text specific content and instead refer to the `wrap` limitation.\n\n> **NOTE**\n>\n> If you have set `preserveText` to `true` this rule will be ignored, as `preserveText` take precedence and\n> will override all text content related formatting options.\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/stripTextWrapLines/)"
                 },
                 "quoteConvert": {
                   "default": "none",
@@ -974,17 +982,40 @@
                     "single"
                   ]
                 },
-                "delimiterTrims": {
-                  "deprecationMessage": "DEPRECATED\n\nYou can no longer define Liquid beautification rules within \"markup\". Move this rule to the new \"liquid\" specific property.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid\": {\n    \"delimiterTrims\": \"preserve\",\n    \"lineBreakSeparator\": \"default\",\n    \"normalizeSpacing\": true,\n    \"valueForce\": \"intent\"\n  },\n  \"markup: {}\n}\n"
+                "valueLineBreak": {
+                  "enum": [
+                    "preserve",
+                    "inline",
+                    "force-align",
+                    "force-indent"
+                  ],
+                  "default": "preserve",
+                  "markdownDescription": "Attribute value handling applied when values span multiple lines.\n\n**Options**\n\n- preserve\n- align\n- indent\n- force-preserve\n- force-align\n- force-indent\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/valueLineBreak/)\n"
                 },
-                "lineBreakSeparator": {
-                  "deprecationMessage": "DEPRECATED\n\nYou can no longer define Liquid beautification rules within \"markup\". Move this rule to the new \"liquid\" specific property.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid\": {\n    \"delimiterTrims\": \"preserve\",\n    \"lineBreakSeparator\": \"default\",\n    \"normalizeSpacing\": true,\n    \"valueForce\": \"intent\"\n  },\n  \"markup: {}\n}\n"
+                "valueSpacing": {
+                  "enum": [
+                    "preserve",
+                    "equipoise",
+                    "wrap",
+                    "wrap-fraction"
+                  ],
+                  "default": "preserve",
+                  "markdownDescription": "Whitespace separator control for occurrences contained within attribute values.\n\n**Options**\n\n- preserve\n- equipoise\n- wrap\n- wrap-fraction\n\n[Æsthetic Documentation](https://aesthetic.js.org/rules/markup/valueSpacing/)"
                 },
-                "normalizeSpacing": {
-                  "deprecationMessage": "DEPRECATED\n\nYou can no longer define Liquid beautification rules within \"markup\". Move this rule to the new \"liquid\" specific property.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid\": {\n    \"delimiterTrims\": \"preserve\",\n    \"lineBreakSeparator\": \"default\",\n    \"normalizeSpacing\": true,\n    \"valueForce\": \"intent\"\n  },\n  \"markup: {}\n}\n"
+                "commentNewline": {
+                  "deprecationMessage": "DEPRECATED\n\nThe markup \"commentNewline\" rule has been deprecated. This formatting rule no longer has any effect.\n\n𐄂 NO LONGER SUPPORTED\n{\n  \"markup\": {\n    \"commentNewline\": true\n  }\n}"
                 },
-                "valueForce": {
-                  "deprecationMessage": "DEPRECATED\n\nYou can no longer define Liquid beautification rules within \"markup\". Move this rule to the new \"liquid\" specific property.\n\n\nNEW SETTINGS AS OF v4^\n\n{\n  \"liquid\": {\n    \"delimiterTrims\": \"preserve\",\n    \"lineBreakSeparator\": \"default\",\n    \"normalizeSpacing\": true,\n    \"valueForce\": \"intent\"\n  },\n  \"markup: {}\n}\n"
+                "commentDelimiters": {
+                  "deprecationMessage": "DEPRECATED\n\nThe markup \"commentDelimiters\" rule has changed. Remove the \"s\" from the rule, as it now named \"commentDelimiter\" for example:\n\n✓ THIS IS CORRECT\n\n{\n  \"liquid\": {\n    \"commentDelimiter\": true\n  }\n}\n\n𐄂 THIS IS INCORRECT\n{\n  \"liquid\": {\n    \"commenterDelimiters\": true\n  }\n}"
+                },
+                "forceAttribute": {
+                  "deprecationMessage": "DEPRECATED\n\nThe markup \"forceAttribute\" rule has changed. You should instead use \"attributeLineBreak\" for example:\n\n✓ THIS IS CORRECT\n\n{\n  \"liquid\": {\n    \"attributeLineBreak\": true\n  }\n}\n\n𐄂 THIS IS INCORRECT\n{\n  \"liquid\": {\n    \"forceAttribute\": true\n  }\n}"
+                },
+                "preserveComment": {
+                  "deprecationMessage": "DEPRECATED\n\nThe markup \"preserveComment\" rule has changed. You should instead use \"commentPreserve\" for example:\n\n✓ THIS IS CORRECT\n\n{\n  \"liquid\": {\n    \"commentPreserve\": true\n  }\n}\n\n𐄂 THIS IS INCORRECT\n{\n  \"liquid\": {\n    \"preserveComment\": true\n  }\n}"
+                },
+                "preserveAttribute": {
+                  "deprecationMessage": "DEPRECATED\n\nThe markup \"preserveAttribute\" rule has changed. You should instead use \"attributePreserve\" for example:\n\n✓ THIS IS CORRECT\n{\n  \"liquid\": {\n    \"attributePreserve\": false\n  }\n}\n\n𐄂 THIS IS INCORRECT\n{\n  \"liquid\": {\n    \"preserveAttribute\": false\n  }\n}"
                 }
               }
             },
@@ -1208,7 +1239,7 @@
               "properties": {
                 "arrayFormat": {
                   "type": "string",
-                  "default": "default",
+                  "default": "indent",
                   "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `default`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `indent`\n\n#### Array Format\n\nThe `arrayFormat` rule controls how arrays on objects are formatted. This rule will determine if all array indexes should be indented, never indented, or left to the default.\n\n#\n\n---\n\n\n#### 👎 &nbsp;&nbsp; `default`\n\n_Setting the rule to `default` will leave array indexes intact and format according to the provided input style._\n\n```json\n\n{\n  \"array\": [ 1, 2,\n    3,\n    4,\n    5 ]\n}\n\n\n```\n\n---\n\n#### 👍 👍 &nbsp;&nbsp; `indent`\n\n_Setting the rule to use `indent` is the recommended beautification option. This will ensure array indexes always appear on their own line._\n\n```json\n\n{\n  \"array\": [\n    1,\n    2,\n    3,\n    4,\n    5\n  ]\n}\n\n\n```\n\n---\n\n#### 👎 &nbsp;&nbsp; `inline`\n\n_Setting the rule to use `inline` will output all indexes on the same line._\n\n```json\n\n{\n  \"array\": [ 1, 2, 3, 4, 5 ]\n}\n\n\n```\n",
                   "enum": [
                     "default",
@@ -1218,7 +1249,7 @@
                 },
                 "braceAllman": {
                   "type": "boolean",
-                  "default": false,
+                  "default": true,
                   "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `true`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `true`\n\n#### Brace Allman\n\nThe `braceAllman` rule puts JSON braces onto new lines, producing an [Allman Style](https://en.wikipedia.org/wiki/Indentation_style#Allman_style) output.\n\n\n#\n\n---\n\n\n#### 👍 &nbsp;&nbsp; Enabled\n\n_Below is an example of the formatting style applied when this rule is enabled (ie: `true`) which is the **default** setting. Notice how all braces and placed onto new lines._\n\n```json\n\n[\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  },\n  {\n    \"prop\": \"value\"\n  }\n]\n\n\n```\n\n---\n\n\n#### 👎 &nbsp;&nbsp; Disabled\n\n_Below is an example of the formatting style applied this rule when it is disabled (ie: `false`). Notice how JSON object braces as inlined. It is typically best to keep this rule enabled when working with JSON for readability purposes._\n\n```json\n\n[\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" },\n  { \"prop\": \"value\" }\n]\n\n\n```\n\n"
                 },
                 "bracePadding": {
@@ -1228,7 +1259,7 @@
                 },
                 "objectIndent": {
                   "type": "string",
-                  "default": "default",
+                  "default": "indent",
                   "markdownDescription": "&nbsp;⚙️&nbsp;&nbsp;&nbsp;**Default** `default`\n\n&nbsp;💁🏽‍♀️&nbsp;&nbsp;&nbsp;Recommended setting is `indent`\n\n#### Object Indent\n\nThe `objectSort` rule will control how object keys should be handled. You can apply indented, never indented, or left to the default. Typically, you will want to leave this option to the default to prevent unreadable objects.\n\n#\n\n---\n\n\n#### 👍 &nbsp;&nbsp; `indent`\n\n```json\n\n{\n  \"foo\": {\n    \"bar\": {\n      \"bax\": true\n    }\n  }\n}\n\n\n```\n\n---\n\n#### 👎  &nbsp;&nbsp; `default`\n\n```json\n\n{\n  \"foo\": {\n    \"bar\": { \"bax\": true }\n  }\n}\n\n\n```\n\n---\n\n#### 👎  &nbsp;&nbsp; `inline`\n\n```json\n\n{\n  \"foo\": { \"bar\": { \"bax\": true } }\n}\n\n\n```\n",
                   "enum": [
                     "default",
@@ -1325,23 +1356,23 @@
   "devDependencies": {
     "@liquify/prettier-config": "^1.2.1",
     "@sissel/eslint-config": "^1.2.1",
-    "@vscode/vsce": "^2.24.0",
-    "eslint": "^8.57.0",
+    "@types/vscode": "^1.87.0",
+    "@vscode/vsce": "^2.27.0",
+    "eslint": "^9.4.0",
     "esthetic": "link:../liquify/packages/esthetic",
-    "prettier": "^3.2.5",
-    "tsup": "^8.0.2",
-    "type-fest": "^4.12.0"
+    "prettier": "^3.3.2",
+    "tsup": "^8.1.0",
+    "type-fest": "^4.20.0"
   },
   "dependencies": {
-    "@liquify/schema": "^0.9.4",
+    "@liquify/schema": "^0.9.5",
     "@liquify/specs": "link:../liquify/packages/specs",
-    "@types/vscode": "^1.87.0",
     "anymatch": "^3.1.3",
     "js-yaml": "^4.1.0",
     "parse-json": "^8.1.0",
-    "rambdax": "11.0.0",
+    "rambdax": "11.1.1",
     "strip-json-comments": "^5.0.1",
-    "vscode-css-languageservice": "^6.2.12",
-    "vscode-json-languageservice": "^5.3.9"
+    "vscode-css-languageservice": "^6.2.14",
+    "vscode-json-languageservice": "^5.3.11"
   }
 }
