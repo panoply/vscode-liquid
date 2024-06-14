@@ -297,7 +297,11 @@ export class CompletionProvider extends Service implements CompletionItemProvide
         )
       ) {
 
-        return getLocaleCompletions(this.files.locales, token.locale, insertTranslate(position, token.text));
+        return getLocaleCompletions(
+          this.files.locales,
+          token.locale,
+          insertTranslate(position, token.text)
+        );
 
       }
     }
