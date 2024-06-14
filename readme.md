@@ -35,7 +35,7 @@
 
 # Liquid <small style="color:#999;">(vscode)</small>
 
-The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (template language). Supports formatting, tag, filter, object, locale, snippet and schema auto-completions, hovers, syntax highlighting and diagnostic capabilities.
+The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (template language) for usage in Shopify Themes, Eleventy Projects and more! Supports formatting, tag, filter, object, locale, snippet, frontmatter and schema auto-completions, hovers, syntax highlighting and diagnostic capabilities.
 
 - [Discord](https://discord.com/channels/597504637167468564)
 
@@ -96,13 +96,6 @@ The essential vscode extension for [Liquid](https://shopify.github.io/liquid/) (
 - [Acknowledgements](#acknowledgements)
 - [Support](#support)
 
-# Updating to v4.0.0
-
-Users who were upgraded to version **4.0.0** will need to align their configurations.
-
-- [Release Notes](https://github.com/panoply/vscode-liquid/releases/tag/v3.0.0)
-- [Sample Project](https://github.com/panoply/vscode-liquid-sample)
-
 # Command Palette
 
 Below are the available commands exposed to the vscode command palette (`cmd + shift + p`)
@@ -139,11 +132,11 @@ By default, it is assumed you are using vscode workspace/user settings.
 
   // Liquid Configuration
   //
-  // If you are not using a .liquidrc file you can set the
-  // "liquid.config.method" setting to "workspace"
+  // If you are using a .liquidrc file you can set the
+  // "liquid.config.method" setting to "liquidrc"
   //
   "liquid.config.baseDir": ".",
-  "liquid.config.method": "liquidrc",
+  "liquid.config.method": "workspace",
 
   // Liquid Completion Settings
   //
@@ -154,6 +147,7 @@ By default, it is assumed you are using vscode workspace/user settings.
   "liquid.completion.filters": true,
   "liquid.completion.operators": true,
   "liquid.completion.schema": true,
+  "liquid.completion.frontmatter": true,
 
   // Liquid Validations
   //
@@ -299,7 +293,8 @@ The extension supports Standard and Shopify variation completions. This feature 
   "liquid.completion.operators": true,
   "liquid.completion.properties": true,
   "liquid.completion.sections": true,
-  "liquid.completion.variables": true
+  "liquid.completion.variables": true,
+  "liquid.completion.frontmatter": true
 }
 ```
 
@@ -373,6 +368,23 @@ Liquid operator completions will be invoked within control flow tokens such as `
 
 <details>
 <summary>
+<strong>Sections</strong>
+</summary>
+
+Liquid `section.*` object completions are provided in accordance with the contents contained within `{% schema %}` embedded tags. Section completions are scope aware and respect `block.type` regions implemented with either control flow `{% if %}` or `{% case %}` tags. Tag completions support sensible re-assignment variable naming, which means you can assign to different names and completions will work. You can disable/enable Liquid section object completions within your workspace settings configuration.
+
+**Workspace Settings**
+
+```jsonc
+{
+  "liquid.completion.sections": true // Pass a value of false to disable
+}
+```
+
+</details>
+
+<details>
+<summary>
 <strong>Variables</strong>
 </summary>
 
@@ -390,16 +402,16 @@ Liquid variable completions are supported and made available a per-document basi
 
 <details>
 <summary>
-<strong>Sections</strong>
+<strong>Frontmatter</strong>
 </summary>
 
-Liquid `section.*` object completions are provided in accordance with the contents contained within `{% schema %}` embedded tags. Section completions are scope aware and respect `block.type` regions implemented with either control flow `{% if %}` or `{% case %}` tags. Tag completions support sensible re-assignment variable naming, which means you can assign to different names and completions will work. You can disable/enable Liquid section object completions within your workspace settings configuration.
+Liquid object completions from provided frontmatter within files is supported. These is typical in [11ty](https://www.11ty.dev/) projects and is enabled by default. YAML Frontmatter occurrences within `.liquid` files is parsed and made available within output Liquid `{{ }}` output tag types.
 
 **Workspace Settings**
 
 ```jsonc
 {
-  "liquid.completion.sections": true // Pass a value of false to disable
+  "liquid.completion.frontmatter": true // Pass a value of false to disable
 }
 ```
 
@@ -407,9 +419,9 @@ Liquid `section.*` object completions are provided in accordance with the conten
 
 ### Files
 
-The extension supports file completions. Depending on the specified Liquid `engine` variation defined, different types of file completions are made available. `locale`, `settings`, `snippets` and `section` file based completions but you will need to provide path references to enable this capability. You can provide path references in your `.liquidrc` file on `files` key. The paths must be relative to your projects root directory.
+The extension supports file completions. Depending on the specified Liquid `engine` variation defined, different types of file completions are made available.You can provide path references in your `.liquidrc` file on `files` key. The paths must be relative to your projects root directory and depending on the engine file paths differ.
 
-**Using `.liquidrc` File**
+**Using `.liquidrc` File** - Shopify Liquid Variation:
 
 ```jsonc
 {
@@ -419,6 +431,18 @@ The extension supports file completions. Depending on the specified Liquid `engi
     "settings": "config/settings_schema.json",
     "snippets": ["snippets/*.liquid"],
     "sections": ["sections/*.liquid"]
+  }
+}
+```
+
+**Using `.liquidrc` File** - Eleventy Liquid Variation
+
+```jsonc
+{
+  "engine": "11ty",
+  "files": {
+    "includes": ["src/includes/**/*.liquid"],
+    "data": ["src/data/**/*.json"]
   }
 }
 ```
@@ -447,8 +471,7 @@ If you defining configuration via workspace settings, the extension only support
   //
   "liquid.files.11ty": {
     "data": [],
-    "includes": [],
-    "layouts": []
+    "includes": []
   }
 }
 ```
@@ -523,7 +546,7 @@ Take the follow shared schema. Below we define a what is known as a Settings Spr
 ```jsonc
 {
   "foo": [
-      {
+    {
       "type": "checkbox",
       "id": "test",
       "label": "Some Example",

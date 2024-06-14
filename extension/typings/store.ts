@@ -312,6 +312,14 @@ export namespace Files {
      * Layouts directories
      */
     layouts: Set<Uri>;
+    /**
+     * Collections directories
+     */
+    collections: Set<Uri>;
+    /**
+     * Frontmatter
+     */
+    frontmatter: Set<Uri>;
   }
 }
 

@@ -4,28 +4,29 @@ import { Engines } from '@liquify/specs';
 import { Config, URI, Meta, Files } from './typings/store';
 import { Liquidrc, PackageJSON } from './typings/files';
 import { Selectors, LanguageIds } from './typings/document';
-import { ConfigurationTarget, Extension as IExtension, Uri, workspace, EventEmitter } from 'vscode';
+import * as vscode from 'vscode';
 import { ConfigMethod } from './typings/enums';
 import { Service } from './services';
 import { FormatEvent } from 'providers/FormattingProvider';
+import { Replace } from 'type-fest';
 
 /**
  * Extension State - Localized store for the extension
  */
 export class Extension extends Service {
 
-  constructor ({ packageJSON, isActive }: IExtension<PackageJSON>) {
+  constructor ({ packageJSON, isActive }: vscode.Extension<PackageJSON>) {
 
     super();
 
     this.isActive = isActive;
-    this.uri.root = workspace.workspaceFolders[0].uri;
+    this.uri.root = vscode.workspace.workspaceFolders[0].uri;
     this.uri.base = this.uri.root;
-    this.uri.workspace = Uri.joinPath(this.uri.root, '.vscode', 'settings.json');
+    this.uri.workspace = vscode.Uri.joinPath(this.uri.root, '.vscode', 'settings.json');
     this.meta.version = packageJSON.version;
     this.meta.displayName = packageJSON.displayName;
     this.meta.estheticVersion = packageJSON.dependencies.esthetic;
-    this.meta.releaseNotes = Uri.parse(`${this.meta.repository}/releases/tag/v${this.meta.version}`);
+    this.meta.releaseNotes = vscode.Uri.parse(`${this.meta.repository}/releases/tag/v${this.meta.version}`);
 
   }
 
@@ -47,7 +48,7 @@ export class Extension extends Service {
   /**
    * Error event
    */
-  listen: EventEmitter<FormatEvent> = new EventEmitter();
+  listen: vscode.EventEmitter<FormatEvent> = new vscode.EventEmitter();
 
   /**
    * Meta Information
@@ -79,7 +80,7 @@ export class Extension extends Service {
    *
    * @default 'shopify'
    */
-  engine: '11ty' | Engines = 'shopify';
+  engine: Replace<Engines, 'eleventy', '11ty'> = 'shopify';
 
   /**
    * Copy of the parsed `.liquidrc` file
@@ -98,16 +99,12 @@ export class Extension extends Service {
     liquidrc: null,
     workspace: null,
     files: {
-      jekyll: {
-        collectons: null,
-        data: null,
-        includes: null,
-        layouts: null
-      },
       '11ty': {
         data: new Set(),
         includes: new Set(),
-        layouts: new Set()
+        layouts: new Set(),
+        collections: new Set(),
+        frontmatter: new Set()
       },
       shopify: {
         locales: null,
@@ -117,6 +114,12 @@ export class Extension extends Service {
         snippets: new Set(),
         sections: new Set(),
         sectionGroups: new Set()
+      },
+      jekyll: {
+        collectons: null,
+        data: null,
+        includes: null,
+        layouts: null
       }
     }
   };
@@ -127,7 +130,7 @@ export class Extension extends Service {
    * @default ConfigurationTarget.Global
    */
   config: Config = {
-    target: ConfigurationTarget.Global,
+    target: vscode.ConfigurationTarget.Global,
     inspect: 'globalValue',
     method: ConfigMethod.Liquidrc,
     sources: {

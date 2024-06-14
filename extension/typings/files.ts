@@ -1,6 +1,6 @@
 import { Engines } from '@liquify/specs';
 import { Rules } from 'esthetic';
-import { LiteralUnion, Merge } from 'type-fest';
+import { LiteralUnion, Merge, Replace } from 'type-fest';
 
 export type FileKeys = LiteralUnion<
 | 'data'
@@ -100,7 +100,7 @@ export interface Liquidrc {
   /**
    * Liquid Engine Reference
    */
-  engine?: Engines | '11ty';
+  engine?: Replace<Engines, 'eleventy', '11ty'>;
   /**
    * File references
    */

@@ -1,6 +1,6 @@
 import { Char, Complete, Tag, Token } from 'types';
 import { IToken } from 'parse/tokens';
-import { Properties, $, Type, q, Value } from '@liquify/specs';
+import { Properties, $, Type, q, Value, TypeBasic, IProperty } from '@liquify/specs';
 import slash, { entries, isNumber, isObject, isString, keys } from 'utils';
 import { join } from 'node:path';
 import { mdString, detail, kind, objectKind } from 'parse/helpers';
@@ -15,6 +15,7 @@ import {
   Position,
   Uri
 } from 'vscode';
+
 import { has, path } from 'rambdax';
 
 /* -------------------------------------------- */
@@ -27,19 +28,51 @@ import { has, path } from 'rambdax';
  * Walks over a provided object string and determines
  * the property completions to show.
  */
-function walkProps (next: string[], objectProps: Properties) {
+function walkProps (next: string[], objectProps: Properties, inForLoop: boolean) {
 
   if (next.length > 0 && q.isProperty(next.shift())) {
 
-    return walkProps(next, $.liquid.object.properties);
+    if ($.liquid.object.type === TypeBasic.array && inForLoop !== true) return null;
+
+    return walkProps(next, $.liquid.object.properties, inForLoop);
 
   } else {
 
     if (!objectProps) return null;
 
     return $.liquid.type
-      ? entries(objectProps).filter(x => x[1]?.type === $.liquid.type).map(getObjectProperties)
+      ? entries(objectProps).filter(x => x[1]?.type === $.liquid.type as any).map(getObjectProperties)
       : entries(objectProps).map(getObjectProperties);
+  }
+
+};
+
+/**
+ * Frontmatter Walks
+ *
+ * Walks over files frontmatter data
+ */
+function frontmatterProps (next: string[], objectProps: object) {
+
+  if (next.length > 0) {
+    return walkLocales(next, objectProps[next.shift()]);
+  } else {
+    return objectProps;
+  }
+
+};
+
+/**
+ * Frontmatter Walks
+ *
+ * Walks over files frontmatter data
+ */
+function dataFileProps (next: string[], objectProps: object) {
+
+  if (next.length > 0) {
+    return walkLocales(next, objectProps[next.shift()]);
+  } else {
+    return objectProps;
   }
 
 };
@@ -203,7 +236,7 @@ export function getLocaleCompletions (
  * Sets the completion items that are passed to the completion resolver.
  * Extracts necessary values from the passed in specification record.
  */
-function getObjectProperties ([ label, spec ]): CompletionItem {
+function getObjectProperties ([ label, spec ]: [ string, IProperty]): CompletionItem {
 
   const settings = spec.scope === 'settings';
 
@@ -305,7 +338,13 @@ export function getPropertyCompletions (token: IToken, vars: Complete.Vars) {
 
   } else {
 
-    if (q.setObject(props.shift())) return walkProps(props, $.liquid.object.properties);
+    if (q.setObject(props.shift())) {
+      return walkProps(
+        props,
+        $.liquid.object.properties,
+        array
+      );
+    }
 
   }
   return null;
@@ -367,7 +406,7 @@ export function getObjectCompletions (
     });
   }
 
-  items.push(...objects);
+  if (objects) items.push(...objects);
 
   return items;
 
@@ -437,8 +476,10 @@ export function getLiquidTagSnippets () {
         `end${label}`
         ].join('\n');
 
-      } else if (label === 'render' || label === 'section') {
+      } else if (label === 'render' || label === 'section' || label === 'include') {
+
         insertText = `${label} $0`;
+
       } else {
 
         insertText = spec.singleton

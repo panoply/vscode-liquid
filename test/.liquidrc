@@ -1,11 +1,11 @@
 {
   "engine": "11ty",
   "files": {
-    "data": [
-      "./11ty/data/*.json"
-    ],
     "includes": [
       "./sections/*.liquid"
+    ],
+    "data": [
+      "./11ty/data/*.json"
     ]
   },
   "format": {

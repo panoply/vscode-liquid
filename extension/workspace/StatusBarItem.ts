@@ -2,8 +2,9 @@
 /* eslint-disable no-unused-vars */
 import { StatusBarAlignment, ThemeColor, window } from 'vscode';
 import { StatusItem } from '../types';
-import { mdString } from '../utils';
+import { mdString, upcase } from '../utils';
 import { delay } from 'rambdax';
+import { $, Engine } from '@liquify/specs';
 
 /**
  * Status Bar Item Provider
@@ -36,6 +37,12 @@ export class StatusBarItem {
    * The last known state of the status bar item before a warning
    */
   private last: keyof Pick<StatusBarItem, | 'enable' | 'disable' | 'ignore' | 'loading' | 'hide' | 'error'>;
+
+  private get engine () {
+    return $.liquid.engine !== Engine.eleventy
+      ? upcase($.liquid.engine)
+      : '11ty';
+  }
 
   /* -------------------------------------------- */
   /* PUBLIC EXPORTS                               */
@@ -74,7 +81,7 @@ export class StatusBarItem {
 
     this.show();
     this.state = StatusItem.Loading;
-    this.item.text = '💧 $(sync~spin)';
+    this.item.text = `${this.engine}  💧 $(sync~spin)`;
     this.item.tooltip = tooltip;
     this.item.command = 'liquid.toggleOutput';
     await delay(delayed);
@@ -87,7 +94,7 @@ export class StatusBarItem {
   public enable () {
 
     this.state = StatusItem.Enabled;
-    this.item.text = '💧 $(check)';
+    this.item.text = `${this.engine}  💧 $(check)`;
     this.item.tooltip = 'Disable Liquid Formatting';
     this.item.command = 'liquid.disableFormatting';
     this.item.tooltip = mdString('Press to disable formatting');
@@ -102,7 +109,7 @@ export class StatusBarItem {
   public ignore () {
 
     this.state = StatusItem.Ignoring;
-    this.item.text = '💧 $(eye-closed)';
+    this.item.text = `${this.engine}  💧 $(eye-closed)`;
     this.item.tooltip = mdString('File is ignored from formatting');
     this.item.command = 'liquid.openOutput';
     this.item.color = 'white';
@@ -115,7 +122,7 @@ export class StatusBarItem {
   public disable () {
 
     this.state = StatusItem.Disabled;
-    this.item.text = '💧 $(x)';
+    this.item.text = `${this.engine}  💧 $(x)`;
     this.item.command = 'liquid.enableFormatting';
     this.item.tooltip = mdString('Press to enable formatting');
     this.item.color = 'white';

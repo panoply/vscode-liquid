@@ -69,6 +69,13 @@ export class Providers extends Extension {
         this.links.sections = Array.from(this.files.sections);
       }
 
+    } else if (this.engine === '11ty') {
+
+      if (this.completion.enable.includes) {
+        this.completion.items.set('snippets', getFileCompletions(this.files.includes));
+        this.links.includes = Array.from(this.files.includes);
+      }
+
     }
   }
 
@@ -107,11 +114,29 @@ export class Providers extends Extension {
         this.links.settings = this.files.settings;
       }
 
+    } else if (this.engine === '11ty') {
+
+      q.setEngine(Engine.eleventy);
+
+      if (this.completion.enable.operators) {
+        this.completion.items.set('operators', StandardOperators);
+      }
+
+      if (this.completion.enable.tags) {
+        this.completion.items.set('tags', getTagCompletions(liquid.eleventy.tags));
+      }
+
+      if (this.completion.enable.filters) {
+        this.completion.items.set('filters', getFilterCompletions(liquid.eleventy.filters));
+      }
+
+      if (this.completion.enable.includes) {
+        this.completion.items.set('snippets', getFileCompletions(this.files.includes));
+      }
+
     } else {
 
-      if (this.engine === '11ty') {
-        q.setEngine(Engine.standard);
-      } else if (this.engine === 'jekyll') {
+      if (this.engine === 'jekyll') {
         q.setEngine(Engine.jekyll);
       } else if (this.engine === 'standard') {
         q.setEngine(Engine.standard);
