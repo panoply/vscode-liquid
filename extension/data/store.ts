@@ -221,6 +221,10 @@ export const schema = {
         }
       }
     },
+    "@app": {
+      "title": "App",
+      "markdownDescription": "App block wrapperAnchor link to section titled **\"App block wrapper\"**. Merchants can add app blocks to a page in the following ways:\n\n- As a block within the confines of the section that's rendering the block\n- In a similar manner to sections, giving them the full width of the page to render content\n\nAs app blocks aren't sections themselves, Shopify wraps these full-width app blocks in a platform-generated section by default. However, you can override this default section by creating your own section called apps.liquid.\n\nThe `apps.liquid` section schema needs to include a block of type `@app`, as well as a `preset`. If either of these is missing, then an `Apps not supported` or `Apps section is invalid` error is returned in the theme editor and merchants aren't able to use the section.\n\n> **CAUTION**\n>\n> The `apps.liquid` section schema can't contain the `templates` schema attribute. This also includes the `templates` attribute within the `enabled_on/disabled_on` schema attributes. It's expected that the `apps.liquid` section is available on all templates.\n\n**Example**\n\n```liquid\n\n{% for block in section.blocks %}\n  {% render block %}\n{% endfor %}\n\n{% schema %}\n  {\n    \"name\": \"App wrapper\",\n    \"settings\": [],\n    \"blocks\": [\n      {\n        \"type\": \"@app\"\n      }\n    ],\n    \"presets\": [\n      {\n        \"name\": \"App wrapper\"\n      }\n    ]\n  }\n{% endschema %}\n\n\n```\n\n#\n\n---\n\n[Shopify Documentation](https://shopify.dev/docs/storefronts/themes/architecture/blocks/app-blocks#app-block-wrapper)\n"
+    },
     "content": {
       "required": [
         "content"
@@ -463,7 +467,7 @@ export const schema = {
     },
     "video_url": {
       "required": [
-        "accepts"
+        "accept"
       ],
       "type": "object",
       "properties": {
@@ -501,6 +505,13 @@ export const schema = {
             ],
             "markdownDescription": "The setting type, which can be any of the [basic](https://shopify.dev/docs/themes/architecture/settings/input-settings#basic-input-settings) or [specialized](https://shopify.dev/docs/themes/architecture/settings/input-settings#specialized-input-settings) input setting types.\n\n**Basic input settings**\n\nAnchor link to section titled \"Basic input settings\" The following are the basic input setting types:\n\n- [checkbox](https://shopify.dev/docs/themes/architecture/settings/input-settings#checkbox)\n- [number](https://shopify.dev/docs/themes/architecture/settings/input-settings#number)\n- [radio](https://shopify.dev/docs/themes/architecture/settings/input-settings#radio)\n- [range](https://shopify.dev/docs/themes/architecture/settings/input-settings#range)\n- [select](https://shopify.dev/docs/themes/architecture/settings/input-settings#select)\n- [text](https://shopify.dev/docs/themes/architecture/settings/input-settings#text)\n- [textarea](https://shopify.dev/docs/themes/architecture/settings/input-settings#textarea)\n\n\n**Specialized input settings**\n\nAnchor link to section titled \"Specialized input settings\" The following are the specialized input setting types:\n\n- [article](https://shopify.dev/docs/themes/architecture/settings/input-settings#article)\n- [blog](https://shopify.dev/docs/themes/architecture/settings/input-settings#blog)\n- [collection](https://shopify.dev/docs/themes/architecture/settings/input-settings#collection)\n- [collection_list](https://shopify.dev/docs/themes/architecture/settings/input-settings#collection_list)\n- [color](https://shopify.dev/docs/themes/architecture/settings/input-settings#color)\n- [color_background](https://shopify.dev/docs/themes/architecture/settings/input-settings#color_background)\n- [color_scheme](https://shopify.dev/docs/themes/architecture/settings/input-settings#color_scheme)\n- [color_scheme_group](https://shopify.dev/docs/themes/architecture/settings/input-settings#color_scheme_group)\n- [font_picker](https://shopify.dev/docs/themes/architecture/settings/input-settings#font_picker)\n- [html](https://shopify.dev/docs/themes/architecture/settings/input-settings#html)\n- [image_picker](https://shopify.dev/docs/themes/architecture/settings/input-settings#image_picker)\n- [inline_richtext](https://shopify.dev/docs/themes/architecture/settings/input-settings#inline_richtext)\n- [link_list](https://shopify.dev/docs/themes/architecture/settings/input-settings#link_list)\n- [liquid](https://shopify.dev/docs/themes/architecture/settings/input-settings#liquid)\n- [page](https://shopify.dev/docs/themes/architecture/settings/input-settings#page)\n- [product](https://shopify.dev/docs/themes/architecture/settings/input-settings#product)\n- [product_list](https://shopify.dev/docs/themes/architecture/settings/input-settings#product_list)\n- [richtext](https://shopify.dev/docs/themes/architecture/settings/input-settings#rich_text)\n- [url](https://shopify.dev/docs/themes/architecture/settings/input-settings#url)\n- [video](https://shopify.dev/docs/themes/architecture/settings/input-settings#video)\n- [video_url](https://shopify.dev/docs/themes/architecture/settings/input-settings#video_url)\n\n#\n\n---\n\n[Shopify Documentation](https://shopify.dev/themes/architecture/sections/section-schema#default)\n",
             "oneOf": [
+              {
+                "enum": [
+                  "@app"
+                ],
+                "title": "App",
+                "markdownDescription": "App block wrapperAnchor link to section titled **\"App block wrapper\"**. Merchants can add app blocks to a page in the following ways:\n\n- As a block within the confines of the section that's rendering the block\n- In a similar manner to sections, giving them the full width of the page to render content\n\nAs app blocks aren't sections themselves, Shopify wraps these full-width app blocks in a platform-generated section by default. However, you can override this default section by creating your own section called apps.liquid.\n\nThe `apps.liquid` section schema needs to include a block of type `@app`, as well as a `preset`. If either of these is missing, then an `Apps not supported` or `Apps section is invalid` error is returned in the theme editor and merchants aren't able to use the section.\n\n> **CAUTION**\n>\n> The `apps.liquid` section schema can't contain the `templates` schema attribute. This also includes the `templates` attribute within the `enabled_on/disabled_on` schema attributes. It's expected that the `apps.liquid` section is available on all templates.\n\n**Example**\n\n```liquid\n\n{% for block in section.blocks %}\n  {% render block %}\n{% endfor %}\n\n{% schema %}\n  {\n    \"name\": \"App wrapper\",\n    \"settings\": [],\n    \"blocks\": [\n      {\n        \"type\": \"@app\"\n      }\n    ],\n    \"presets\": [\n      {\n        \"name\": \"App wrapper\"\n      }\n    ]\n  }\n{% endschema %}\n\n\n```\n\n#\n\n---\n\n[Shopify Documentation](https://shopify.dev/docs/storefronts/themes/architecture/blocks/app-blocks#app-block-wrapper)\n"
+              },
               {
                 "enum": [
                   "text"
@@ -996,9 +1007,45 @@ export const schema = {
             ]
           },
           "else": {
-            "required": [],
-            "$comment": "Shared Section Schema $ref (references) will be inserted here",
-            "$ref": "#/definitions/shared_settings"
+            "if": {
+              "required": [
+                "type"
+              ],
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "@app"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "allOf": [
+                {
+                  "if": {
+                    "required": [
+                      "type"
+                    ],
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "@app",
+                        "markdownDescription": "App block wrapperAnchor link to section titled **\"App block wrapper\"**. Merchants can add app blocks to a page in the following ways:\n\n- As a block within the confines of the section that's rendering the block\n- In a similar manner to sections, giving them the full width of the page to render content\n\nAs app blocks aren't sections themselves, Shopify wraps these full-width app blocks in a platform-generated section by default. However, you can override this default section by creating your own section called apps.liquid.\n\nThe `apps.liquid` section schema needs to include a block of type `@app`, as well as a `preset`. If either of these is missing, then an `Apps not supported` or `Apps section is invalid` error is returned in the theme editor and merchants aren't able to use the section.\n\n> **CAUTION**\n>\n> The `apps.liquid` section schema can't contain the `templates` schema attribute. This also includes the `templates` attribute within the `enabled_on/disabled_on` schema attributes. It's expected that the `apps.liquid` section is available on all templates.\n\n**Example**\n\n```liquid\n\n{% for block in section.blocks %}\n  {% render block %}\n{% endfor %}\n\n{% schema %}\n  {\n    \"name\": \"App wrapper\",\n    \"settings\": [],\n    \"blocks\": [\n      {\n        \"type\": \"@app\"\n      }\n    ],\n    \"presets\": [\n      {\n        \"name\": \"App wrapper\"\n      }\n    ]\n  }\n{% endschema %}\n\n\n```\n\n#\n\n---\n\n[Shopify Documentation](https://shopify.dev/docs/storefronts/themes/architecture/blocks/app-blocks#app-block-wrapper)\n"
+                      }
+                    }
+                  },
+                  "then": {
+                    "$ref": "#/definitions/@app"
+                  }
+                }
+              ]
+            },
+            "else": {
+              "required": [],
+              "$comment": "Shared Section Schema $ref (references) will be inserted here",
+              "$ref": "#/definitions/shared_settings"
+            }
           }
         },
         "defaultSnippets": [
@@ -1007,6 +1054,13 @@ export const schema = {
             "markdownDescription": "> **This capability is for developers leveraging [Syncify](https://github.com/panoply/syncify). If you are not using Syncify then please consider adopting it as an alternative to the Shopify CLI.**\n>\n> Use [Syncify](https://github.com/panoply/syncify) for theme development and take advantage of Shared Section Schema files plus a ton of essential features that will empower your productivity. Support open source tools that are created, maintained and backed by developers for developers.\n\n---\n\nProvide a key identifier and either a schema setting/block (object) or array of settings/blocks. In your `{% schema %}` tag, you can import the shared schema using a `$ref` property key. The `$ref` property value **requires** you to pass the shared schema filename (without the `.json` extension) followed by a `.` and then the shared schema property key.\n\n**Example**\n\nSay (for example) your shared schema file is named `foo.json` and contains the following:\n\n```json\n{\n  \"hero_image\": {\n    \"type\": \"image_picker\",\n    \"id\": \"hero\",\n    \"label\": \"Some Hero\"\n  },\n  \"hero_caption\": {\n    \"type\": \"text\",\n    \"id\": \"caption\",\n    \"label\": \"Caption\",\n    \"default\": \"Some Caption\"\n  }\n}\n```\n\nYou can inject the `hero_image` and `hero_caption` schema into any section, and also overwrite the `id`, `label` etc. In the below example, we inject the `hero_image` and apply an overwrite to the `hero_caption`.\n\n```liquid\n{% schema %}\n{\n  \"name\": \"tester\",\n  \"class\": \"example\",\n  \"tag\": \"section\",\n  \"settings\": [\n    {\n      \"ref\": \"foo.hero_image\"\n    },\n    {\n      \"ref\": \"foo.hero_caption\",\n      \"label\": \"New Caption\",\n      \"default\": \"xxx\"\n    }\n  ]\n}\n{% endschema %}\n```",
             "body": {
               "${1|$ref|}": "^$2"
+            }
+          },
+          {
+            "label": "App",
+            "markdownDescription": "App block wrapperAnchor link to section titled **\"App block wrapper\"**. Merchants can add app blocks to a page in the following ways:\n\n- As a block within the confines of the section that's rendering the block\n- In a similar manner to sections, giving them the full width of the page to render content\n\nAs app blocks aren't sections themselves, Shopify wraps these full-width app blocks in a platform-generated section by default. However, you can override this default section by creating your own section called apps.liquid.\n\nThe `apps.liquid` section schema needs to include a block of type `@app`, as well as a `preset`. If either of these is missing, then an `Apps not supported` or `Apps section is invalid` error is returned in the theme editor and merchants aren't able to use the section.\n\n> **CAUTION**\n>\n> The `apps.liquid` section schema can't contain the `templates` schema attribute. This also includes the `templates` attribute within the `enabled_on/disabled_on` schema attributes. It's expected that the `apps.liquid` section is available on all templates.\n\n**Example**\n\n```liquid\n\n{% for block in section.blocks %}\n  {% render block %}\n{% endfor %}\n\n{% schema %}\n  {\n    \"name\": \"App wrapper\",\n    \"settings\": [],\n    \"blocks\": [\n      {\n        \"type\": \"@app\"\n      }\n    ],\n    \"presets\": [\n      {\n        \"name\": \"App wrapper\"\n      }\n    ]\n  }\n{% endschema %}\n\n\n```\n\n#\n\n---\n\n[Shopify Documentation](https://shopify.dev/docs/storefronts/themes/architecture/blocks/app-blocks#app-block-wrapper)\n",
+            "body": {
+              "type": "@app"
             }
           },
           {
@@ -1305,8 +1359,8 @@ export const schema = {
               "type": "video_url",
               "id": "$1",
               "label": "${1/([^_]+)(_*)/${1:/capitalize}${2:+ }/g}$2",
-              "accepts": [
-                "^3"
+              "accept": [
+                "^$3"
               ]
             }
           }
