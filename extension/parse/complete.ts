@@ -1,6 +1,6 @@
 import { Char, Complete, Tag, Token } from 'types';
 import { IToken } from 'parse/tokens';
-import { Properties, $, Type, q, Value, TypeBasic, IProperty, IObject } from '@liquify/specs';
+import { Properties, $, Type, q, Value, TypeBasic, IProperty } from '@liquify/specs';
 import slash, { entries, isNumber, isObject, isString, keys } from 'utils';
 import { join } from 'node:path';
 import { mdString, detail, kind, objectKind } from 'parse/helpers';
@@ -476,8 +476,10 @@ export function getLiquidTagSnippets () {
         `end${label}`
         ].join('\n');
 
-      } else if (label === 'render' || label === 'section') {
+      } else if (label === 'render' || label === 'section' || label === 'include') {
+
         insertText = `${label} $0`;
+
       } else {
 
         insertText = spec.singleton
