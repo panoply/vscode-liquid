@@ -1,11 +1,45 @@
 import { Char, Complete, SchemaSectionTag, Tag } from 'types';
-import { Type } from '@liquify/specs';
+import { $, Objects, Type, liquid } from '@liquify/specs';
 import { TextDocument } from 'vscode';
 import parseJson from 'parse-json';
+import parseYaml from 'js-yaml';
+import { keys } from 'utils';
 
 /* -------------------------------------------- */
 /* PUBLIC                                       */
 /* -------------------------------------------- */
+
+export function parseFrontmatter (textContent: string): { offset: number; keys: string[] } {
+
+  const text = textContent.trimStart();
+  const none = { offset: 0, keys: [] };
+
+  if (!text.startsWith('---\n')) return none;
+
+  const before = textContent.indexOf('---\n');
+  const offset = textContent.indexOf('---', before + 4);
+
+  if (offset < 0) return none;
+
+  const content = textContent.slice(before, offset);
+
+  try {
+
+    const data: any = parseYaml.load(content);
+    const objects = liquid.generate<Objects>(data, {});
+    liquid.extend($.liquid.engine, { objects });
+
+    return {
+      offset,
+      keys: keys(objects)
+    };
+
+  } catch (e) {
+
+    return none;
+  }
+
+}
 
 /**
  * Parse Document

@@ -1,4 +1,5 @@
 import { JSONLanguageProvider } from './services/JSONLanguageService';
+import { DiagnosticProvider } from './providers/DiagnosticProvider';
 
 /**
  * Providers
@@ -19,5 +20,12 @@ export class Service {
    * The implemented JSON Language Service provider
    */
   public json = new JSONLanguageProvider();
+
+  /**
+   * Diagnostic Item Provider
+   *
+   * The diagnostics provider instance
+   */
+  public diagnostic = new DiagnosticProvider();
 
 }

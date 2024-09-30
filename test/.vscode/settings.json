@@ -35,7 +35,7 @@
   },
   "[liquid]": {
     "editor.defaultFormatter": "sissel.shopify-liquid",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": false
   },
   // "editor.foldingStrategy": "indentation"
   // "[liquid]": {

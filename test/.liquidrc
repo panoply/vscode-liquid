@@ -1,13 +1,5 @@
 {
-  "engine": "11ty",
-  "files": {
-    "data": [
-      "./11ty/data/*.json"
-    ],
-    "includes": [
-      "./sections/*.liquid"
-    ]
-  },
+  "engine": "shopify",
   "format": {
     "ignore": [],
     "wrap": 120,
@@ -39,11 +31,13 @@
     "json": {
       "bracePadding": false,
       "braceAllman": true,
+      "commentNewline": false,
       "arrayFormat": "indent",
       "objectIndent": "indent",
       "objectSort": false
     },
     "style": {
+      "commentNewline": false,
       "noLeadZero": true,
       "quoteConvert": "single",
       "atRuleSpace": true

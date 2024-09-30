@@ -46,10 +46,8 @@ export class FSWatch extends NotificationMessage {
   /**
    * Watched change was config
    */
-  private isMatch (fsPath: string) {
-
+  private isRC (fsPath: string) {
     return fsPath !== this.uri.liquidrc.fsPath;
-
   }
 
   /**
@@ -131,9 +129,9 @@ export class FSWatch extends NotificationMessage {
    *
    * Callback for the `onDidChange` event
    */
-  private async onDidChange ({ fsPath }: Uri) {
+  private async onDidChange (uri: Uri) {
 
-    if (this.isMatch(fsPath)) return null;
+    if (this.isRC(uri.fsPath)) return null;
 
     const liquidrc = await this.getLiquidrc();
 
@@ -162,7 +160,7 @@ export class FSWatch extends NotificationMessage {
       this.info('Created .liquidrc file, this will be used for extension capabilities');
     }
 
-    if (this.isMatch(fsPath)) return null;
+    if (this.isRC(fsPath)) return null;
 
     const fileName = basename(fsPath);
 
@@ -195,7 +193,7 @@ export class FSWatch extends NotificationMessage {
    */
   private async onDidDelete ({ fsPath }: Uri) {
 
-    if (this.isMatch(fsPath)) return null;
+    if (this.isRC(fsPath)) return null;
 
     this.config.method = ConfigMethod.Workspace;
     this.info('Using workspace settings for configuration');

@@ -9,10 +9,10 @@ import {
 } from 'vscode';
 import { ConfigMethod } from 'types';
 import { FormatEvent, FormatEventType } from 'providers/FormattingProvider';
-import { Engine } from '@liquify/specs';
+import { $, Engine, liquid } from '@liquify/specs';
 import { dirty, isFunction, isObject, setEndRange } from 'utils';
 import { CommandPalette } from 'workspace/CommandPalette';
-import { parseSchema, parseDocument } from 'parse/document';
+import { parseSchema, parseDocument, parseFrontmatter } from 'parse/document';
 import { getObjectCompletions } from 'data/liquid';
 
 /**
@@ -98,6 +98,9 @@ export class Events extends CommandPalette {
         if (this.engine === 'shopify') {
           await this.getFileCompletions([ 'snippets', 'sections' ]);
           this.resetFeatures();
+        } else if (this.engine === '11ty') {
+          await this.getFileCompletions([ 'includes' ]);
+          this.resetFeatures();
         }
       }
     }
@@ -119,6 +122,9 @@ export class Events extends CommandPalette {
       } else if (uri.fsPath.endsWith('.liquid')) {
         if (this.engine === 'shopify') {
           await this.getFileCompletions([ 'snippets', 'sections' ]);
+          this.resetFeatures();
+        } else if (this.engine === '11ty') {
+          await this.getFileCompletions([ 'includes' ]);
           this.resetFeatures();
         }
       }
@@ -162,12 +168,37 @@ export class Events extends CommandPalette {
 
     const change = contentChanges[contentChanges.length - 1];
 
-    if (isObject(change?.range) && this.completion.enable.variables) {
-      const range = setEndRange(document, change.range.end);
-      parseDocument(document.getText(range), this.completion.vars);
+    if (isObject(change?.range)) {
+
+      let content = document.getText(setEndRange(document, change.range.end));
+
+      if (this.completion.enable.frontmatter) {
+
+        const fm = this.completion.frontmatter;
+
+        if (fm.offset > 0 && document.offsetAt(change.range.end) < fm.offset) {
+
+          liquid.purge($.liquid.engine, { objects: this.completion.frontmatter.keys });
+
+          this.completion.frontmatter = parseFrontmatter(content);
+
+          if (this.completion.frontmatter.offset > 0) {
+            content = content.slice(this.completion.frontmatter.offset + 3);
+          }
+
+        }
+      }
+
+      if (this.completion.enable.variables) {
+        parseDocument(content, this.completion.vars);
+      }
+
+      if (this.completion.enable.objects && (this.engine === 'shopify' || this.engine === '11ty')) {
+        getObjectCompletions(document.uri.fsPath, this.completion.items);
+      }
     }
 
-    if (this.completion.enable.schema && this.json.config.validate) {
+    if (this.engine === 'shopify' && this.completion.enable.schema && this.json.config.validate) {
 
       const schema = await parseSchema(document);
 
@@ -227,6 +258,16 @@ export class Events extends CommandPalette {
 
         this.status.show();
 
+        if (this.completion.enable.frontmatter && this.engine === '11ty') {
+
+          if (this.completion.frontmatter.offset > 0) {
+            liquid.purge($.liquid.engine, { objects: this.completion.frontmatter.keys });
+          }
+
+          this.completion.frontmatter = parseFrontmatter(textDocument.document.getText());
+
+        }
+
         const schema = await parseSchema(textDocument.document);
 
         if (schema !== false) {
@@ -240,7 +281,7 @@ export class Events extends CommandPalette {
 
         }
 
-        if (this.completion.enable.objects && this.engine === 'shopify') {
+        if (this.completion.enable.objects && (this.engine === 'shopify' || this.engine === '11ty')) {
           getObjectCompletions(uri.fsPath, this.completion.items);
         }
 

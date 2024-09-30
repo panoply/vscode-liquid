@@ -1,6 +1,6 @@
-import slash, { entries, isArray, isBoolean, isNumber, isObject, isString, keys } from 'utils';
+import slash, { entries, keys } from 'utils';
 import { basename, join, dirname } from 'node:path';
-import { Filter, Tags, IObject, Type, Types, liquid, IProperty, $, p, Engine } from '@liquify/specs';
+import { Filter, Tags, IObject, Type, Types, liquid, IProperty, $, p, Engine, Properties, TypeBasic } from '@liquify/specs';
 import { mdString, settingsType } from 'parse/helpers';
 import { has, path } from 'rambdax';
 import { Complete, SettingsSchema } from 'types';
@@ -249,66 +249,31 @@ export function getSettingsCompletions (uri: string, data: SettingsSchema[]) {
   return liquid.shopify.objects;
 };
 
+/**
+ * Get Eleventy Data File Completions
+ *
+ * Generates components for the 11ty data cascade. Completions will be created
+ * and types will be assumed in accordance with the structures. This can potentially
+ * be a rather heavy operation depending on the cascade itself.
+ */
 export function getEleventyDataComponents (uri: string) {
 
-  const objects:{ [prop: string]: IProperty } = { data: { type: Type.any } };
+  const properties = liquid.generate<Properties>($.liquid.files.get(uri));
+  const reference = `[${basename(uri)}](${uri})`;
+  const propName: string = basename(uri, '.json');
 
-  const build = (function traverse (data, spec?: IProperty) {
-
-    if (spec) {
-      if (spec.type === Type.object) {
-
-        for (const prop in data) {
-
-          if (isString(data[prop])) {
-            spec.properties[prop] = { type: Type.string };
-          } else if (isBoolean(data[prop])) {
-            spec.properties[prop] = { type: Type.boolean };
-          } else if (isObject(data[prop])) {
-            spec.properties[prop] = { type: Type.object };
-            traverse(data[prop], spec.properties[prop]);
-          } else if (isNumber(data[prop])) {
-            spec.properties[prop] = { type: Type.number };
-          } else if (isArray(data[prop])) {
-            spec.properties[prop] = { type: Type.array };
-            traverse(data[prop], spec.properties[prop]);
-          }
-
-        }
-      }
-    } else {
-
-      if (isObject(data)) {
-
-        for (const item in data) {
-
-          if (isObject(data[item])) {
-            objects[item] = { type: Type.object, properties: {} };
-            traverse(data[item], objects[item]);
-          } else if (isArray(data[item])) {
-            objects[item] = { type: Type.array };
-          }
-        }
-
-      }
-
-      if (isArray(data)) {
-        for (const item of data) {
-          objects[item] = { type: Type.array };
-          for (const value of data[item]) {
-            traverse(value, objects[item]);
-          }
-        }
+  liquid.extend(Engine.eleventy, {
+    objects: {
+      [propName]: {
+        description: `11ty data file\n\n${reference}`,
+        global: true,
+        properties
       }
     }
-
-    return objects;
-
-  })($.liquid.files.get(uri));
-
-  liquid.extend(Engine.standard, { objects: build });
+  });
 
 }
+
 /**
  * Get Locale Completions
  *
@@ -375,6 +340,17 @@ export function getObjectCompletions (fsPath: string, items: Complete.Items) {
 
   const dirn = dirname(fsPath);
   const base = basename(fsPath, '.liquid');
+  const keys = <Complete.ItemKeys[]>[
+    'objects',
+    'object:template',
+    `object:${Type.any}`,
+    `object:${Type.array}`,
+    `object:${Type.string}`,
+    `object:${Type.constant}`,
+    `object:${Type.boolean}`,
+    `object:${Type.number}`,
+    `object:${Type.object}`
+  ];
 
   if (base === 'gift_card' || base === 'robots.txt') {
     template = base + '.liquid';
@@ -384,19 +360,11 @@ export function getObjectCompletions (fsPath: string, items: Complete.Items) {
     template = base;
   }
 
-  items.delete('objects');
-  items.delete('object:template');
-  items.delete(`object:${Type.any}`);
-  items.delete(`object:${Type.array}`);
-  items.delete(`object:${Type.string}`);
-  items.delete(`object:${Type.constant}`);
-  items.delete(`object:${Type.boolean}`);
-  items.delete(`object:${Type.number}`);
-  items.delete(`object:${Type.object}`);
+  for (const key of keys) items.delete(key);
 
   const group = p.ObjectGroups(template, (object: IObject, item: CompletionItem): CompletionItem => {
 
-    if (object.type === Type.object) item.kind = CompletionItemKind.Module;
+    if (object.type === TypeBasic.object) item.kind = CompletionItemKind.Module;
     if (object.const) item.kind = CompletionItemKind.Constant;
 
     item.tags = object.deprecated ? [ CompletionItemTag.Deprecated ] : [];

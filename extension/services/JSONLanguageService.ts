@@ -63,7 +63,7 @@ export class JSONLanguageProvider {
    */
   private settings: DocumentLanguageSettings = {
     trailingCommas: 'error',
-    comments: 'error',
+    comments: 'ignore',
     schemaDraft: SchemaDraft.v7,
     schemaRequest: 'warning',
     schemaValidation: 'error'
@@ -107,7 +107,7 @@ export class JSONLanguageProvider {
 
     this.service.configure({
       validate: true,
-      allowComments: false,
+      allowComments: true,
       schemas: [
         {
           uri: 'section',

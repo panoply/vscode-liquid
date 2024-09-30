@@ -13,14 +13,15 @@
     "",
     "Shopify employee/s or those working for Shopify do not have permission to use, borrow or even take inspiration",
     "from this grammar file. This grammar file was created for developers by a developer. The grammars are not for",
-    "developers being paid by Shopify to take credit for in a attempt to get a gold star. Everyone else, feel free."
+    "developers being paid by Shopify to take credit for in a attempt to get a gold star. Everyone else, feel free.",
+    "",
+    "TODO",
+    "",
+    "ERROR IN JAVASCRIPT"
   ],
   "patterns": [
     {
       "include": "#schema"
-    },
-    {
-      "include": "#json"
     },
     {
       "include": "#javascript"
@@ -37,7 +38,7 @@
   ],
   "repository": {
     "schema": {
-      "name": "meta.embedded.block.liquid",
+      "name": "meta.embedded.block.json.liquid",
       "contentName": "source.json",
       "begin": "({%)(-)?\\s*(schema)\\s*(-)?(%})\\s*",
       "beginCaptures": {
@@ -82,7 +83,7 @@
       ]
     },
     "style": {
-      "name": "meta.embedded.block.liquid",
+      "name": "meta.embedded.block.css-liquid.liquid",
       "contentName": "source.css.liquid",
       "begin": "({%)(-)?\\s*\\b(style)\\b\\s*(-)?(%})",
       "beginCaptures": {
@@ -127,7 +128,7 @@
       ]
     },
     "stylesheet": {
-      "name": "meta.embedded.block.liquid",
+      "name": "meta.embedded.block.css.liquid",
       "contentName": "source.css",
       "begin": "({%)(-)?\\s*(stylesheet)\\s*(-)?(%})",
       "beginCaptures": {
@@ -178,7 +179,7 @@
       ]
     },
     "stylesheet-scss": {
-      "name": "meta.embedded.block.liquid",
+      "name": "meta.embedded.block.scss.liquid",
       "contentName": "source.css.scss",
       "begin": "({%)(-)?\\s*(stylesheet)\\s*('(scss)')\\s*(-)?(%})\\s*",
       "beginCaptures": {
@@ -235,9 +236,8 @@
       ]
     },
     "javascript": {
-      "name": "meta.embedded.block.liquid",
-      "contentName": "source.js",
-      "begin": "({%)(-)?\\s*(javascript)\\s*(-)?(%})\\s*",
+      "name": "meta.embedded.block.js.liquid",
+      "begin": "({%)(-)?\\s*(javascript)\\s*(-)?(%})",
       "beginCaptures": {
         "0": {
           "name": "meta.tag.metadata.javascript.start.liquid"
@@ -285,62 +285,5 @@
         }
       ]
     }
-  },
-  "json": {
-    "name": "meta.embedded.block.html",
-    "contentName": "source.json",
-    "begin": "(<)(script)\\b(?=[^>]*type=('application/(ld\\+)?json'|\"application/(ld\\+)?json\"))(?![^/>]*/>\\s*$)",
-    "beginCaptures": {
-      "1": {
-        "name": "punctuation.definition.tag.begin.html"
-      },
-      "2": {
-        "name": "entity.name.tag.html"
-      }
-    },
-    "end": "(</)(script)(>)",
-    "endCaptures": {
-      "1": {
-        "name": "punctuation.definition.tag.begin.html"
-      },
-      "2": {
-        "name": "entity.name.tag.html"
-      },
-      "3": {
-        "name": "punctuation.definition.tag.end.html"
-      }
-    },
-    "patterns": [
-      {
-        "name": "entity.other.attribute-name.html",
-        "match": "\\b([a-zA-Z\\-:_]+)"
-      },
-      {
-        "name": "string.quoted.double.html",
-        "match": "(\"|').*?(\"|')"
-      },
-      {
-        "begin": "(>)",
-        "beginCaptures": {
-          "0": {
-            "name": "meta.tag.metadata.json.start.html"
-          },
-          "1": {
-            "name": "punctuation.definition.tag.end.html"
-          }
-        },
-        "end": "(?=</script>)",
-        "endCaptures": {
-          "0": {
-            "name": "meta.tag.metadata.json.end.html"
-          }
-        },
-        "patterns": [
-          {
-            "include": "source.json"
-          }
-        ]
-      }
-    ]
   }
 }
